@@ -10,6 +10,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isSearching;
   final TextEditingController searchController;
   final Function(String) onSearch;
+  final VoidCallback toggleSearching;
 
   const CustomAppBar({
     required this.title,
@@ -17,11 +18,12 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.searchController,
     required this.onSearch,
     super.key,
+    required this.toggleSearching,
   });
   @override
   Size get preferredSize => Size.fromHeight(
         isSearching
-            ? AppBar().preferredSize.height + 55
+            ? AppBar().preferredSize.height + 65
             : AppBar().preferredSize.height + 5,
       );
 
@@ -35,7 +37,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.decelerate,
       height: widget.preferredSize.height + MediaQuery.of(context).padding.top,
       decoration: const BoxDecoration(
@@ -63,12 +65,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 children: [
                   Text(
                     "San Jose, USA",
-                    style:
-                        AppStyles.normalTextStyle.copyWith(color: Colors.white),
+                    style: AppStyles.h5.copyWith(color: Colors.white),
                   ),
                   Text(
                     "94088",
-                    style: AppStyles.normalTextStyle.copyWith(
+                    style: AppStyles.h5.copyWith(
                       color: Colors.white.withOpacity(0.5),
                     ),
                   )
@@ -100,14 +101,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
               left: 0,
               right: 0,
               child: Container(
-                height: 40,
+                height: 50,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextField(
                   controller: widget.searchController,
                   focusNode: searchFocusNode,
+                  cursorHeight: 24,
+                  style: AppStyles.h4.copyWith(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Search for an event',
-                    hintStyle: AppStyles.normalTextStyle.copyWith(
+                    hintStyle: AppStyles.h4.copyWith(
                       color: Colors.white.withOpacity(0.7),
                     ),
                     prefixIcon: Icon(CupertinoIcons.search,
@@ -145,7 +148,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       ),
                     ),
                   ),
-                  onChanged: widget.onSearch,
                 ),
               ),
             ),

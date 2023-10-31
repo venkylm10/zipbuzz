@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/models/event_model.dart';
 import 'package:zipbuzz/widgets/home/appbar.dart';
+import 'package:zipbuzz/widgets/home/custom_calendar.dart';
+import 'package:zipbuzz/widgets/home/event_card.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomeTab extends StatefulWidget {
+  const HomeTab({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeTabState extends State<HomeTab> {
   final scrollController = ScrollController();
   bool _isSearching = false;
   int index = 0;
@@ -26,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void updateIndex(double offset) {
-    index = (offset / MediaQuery.of(context).size.width).floor();
+    index = ((offset + 100) / MediaQuery.of(context).size.width).floor();
     setState(() {});
   }
 
@@ -43,30 +48,39 @@ class _HomePageState extends State<HomePage> {
             _isSearching = !_isSearching;
           });
         },
+        toggleSearching: () {
+          setState(() {
+            _isSearching = !_isSearching;
+          });
+        },
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _isSearching = false;
-            });
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildCategories(context),
-              if (_isSearching) buildPageIndicator(),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
-                child: Text(
-                  "My Calendar Events",
-                  style: AppStyles.titleStyle,
-                ),
-              )
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildCategories(context),
+            if (_isSearching) buildPageIndicator(),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
+              child: Text(
+                "My Calendar Events",
+                style: AppStyles.titleStyle,
+              ),
+            ),
+            const CustomCalendar(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
+              child: Text(
+                "Upcoming Events",
+                style: AppStyles.titleStyle,
+              ),
+            ),
+            Column(
+              children: dummyEvents.map((e) => EventCard(event: e)).toList(),
+            ),
+          ],
         ),
       ),
     );
@@ -75,29 +89,38 @@ class _HomePageState extends State<HomePage> {
   SingleChildScrollView buildCategories(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      physics: const PageScrollPhysics(),
+      physics: _isSearching
+          ? const PageScrollPhysics()
+          : const BouncingScrollPhysics(),
       controller: scrollController,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: _isSearching
-            ? List.generate(
-                (categories.length / 8).ceil(),
-                (index) => buildCategoryPage(index, context),
-              )
-            : List.generate(
-                categories.length,
-                (index) => Padding(
-                  padding: EdgeInsets.only(
-                    top: 20,
-                    left: index == 0 ? 18 : 8,
-                    right: index == categories.length - 1 ? 18 : 8,
-                  ),
-                  child: SvgPicture.asset(
-                    categories[index]['iconPath']!,
-                    height: 30,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _isSearching = false;
+          });
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: _isSearching
+              ? List.generate(
+                  (categories.length / 8).ceil(),
+                  (index) => buildCategoryPage(index, context),
+                )
+              : List.generate(
+                  categories.length,
+                  (index) => Padding(
+                    padding: EdgeInsets.only(
+                      top: 20,
+                      left: index == 0 ? 18 : 8,
+                      right: index == categories.length - 1 ? 18 : 8,
+                    ),
+                    child: SvgPicture.asset(
+                      categories[index]['iconPath']!,
+                      height: 30,
+                    ),
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }
@@ -136,7 +159,6 @@ class _HomePageState extends State<HomePage> {
         crossAxisCount: 4,
         childAspectRatio: 0.8,
         crossAxisSpacing: 20,
-        mainAxisSpacing: 5,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
@@ -156,6 +178,7 @@ class _HomePageState extends State<HomePage> {
                 subCategories[index]['name']!,
                 softWrap: true,
                 textAlign: TextAlign.center,
+                style: AppStyles.h5,
               ),
             ],
           ),

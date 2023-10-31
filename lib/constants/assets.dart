@@ -1,5 +1,6 @@
 class Assets {
   static const icons = AppIcons();
+  static const eventImage = EventImages();
 }
 
 class AppIcons {
@@ -21,6 +22,23 @@ class AppIcons {
   final search = 'assets/icons/search.svg';
   final notification = 'assets/icons/notification.svg';
   final searchBarIcon = 'assets/icons/search_bar_icon.svg';
+  final home = 'assets/icons/home.svg';
+  final events = 'assets/icons/calendar.svg';
+  final map = 'assets/icons/map.svg';
+  final person = 'assets/icons/person.svg';
+  final person_fill = 'assets/icons/person_fill.svg';
+  final people = 'assets/icons/people.svg';
+  final geo_mini = 'assets/icons/geo_mini.svg';
+  final clock = 'assets/icons/clock.svg';
+}
+
+class EventImages {
+  const EventImages();
+  final band_music = 'assets/images/events/band_music.png';
+  final shake_y = 'assets/images/events/shake_y.png';
+  final nature = 'assets/images/events/wild_with_nature.png';
+  final evermore = 'assets/images/events/dazzling_of_evermore.png';
+  final art_museum = 'assets/images/events/art_museum.png';
 }
 
 final categories = [
