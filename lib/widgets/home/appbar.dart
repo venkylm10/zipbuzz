@@ -1,4 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zipbuzz/constants/assets.dart';
+import 'package:zipbuzz/constants/colors.dart';
+import 'package:zipbuzz/constants/styles.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
@@ -16,8 +21,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(
         isSearching
-            ? AppBar().preferredSize.height + 60
-            : AppBar().preferredSize.height,
+            ? AppBar().preferredSize.height + 55
+            : AppBar().preferredSize.height + 5,
       );
 
   @override
@@ -34,57 +39,60 @@ class _CustomAppBarState extends State<CustomAppBar> {
       curve: Curves.decelerate,
       height: widget.preferredSize.height + MediaQuery.of(context).padding.top,
       decoration: const BoxDecoration(
-          color: Color(0xFF4A43EC),
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
       child: Stack(
         children: [
-          AppBar(
-            backgroundColor: const Color(0xFF4A43EC),
-            elevation: 0,
-            shape: const RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(30))),
-            leading: const Icon(
-              Icons.pin_drop_rounded,
-              size: 30,
-              color: Colors.white,
-            ),
-            titleSpacing: -8,
-            title: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "San Jose, USA",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+          Container(
+            margin: const EdgeInsets.only(bottom: 5),
+            child: AppBar(
+              backgroundColor: const Color(0xFF4A43EC),
+              elevation: 0,
+              shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(30))),
+              leading: Padding(
+                padding: const EdgeInsets.all(10),
+                child: SvgPicture.asset(
+                  Assets.icons.geo,
                 ),
-                Text(
-                  "94088",
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                )
+              ),
+              titleSpacing: -5,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "San Jose, USA",
+                    style:
+                        AppStyles.normalTextStyle.copyWith(color: Colors.white),
+                  ),
+                  Text(
+                    "94088",
+                    style: AppStyles.normalTextStyle.copyWith(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  )
+                ],
+              ),
+              actions: [
+                if (!widget.isSearching)
+                  GestureDetector(
+                    onTap: () {
+                      if (!widget.isSearching) {
+                        widget.onSearch('');
+                        FocusScope.of(context).requestFocus(searchFocusNode);
+                      }
+                    },
+                    child: SvgPicture.asset(Assets.icons.search),
+                  ),
+                const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: () {},
+                  child: SvgPicture.asset(Assets.icons.notification),
+                ),
+                const SizedBox(width: 12)
               ],
             ),
-            actions: [
-              if (!widget.isSearching)
-                IconButton(
-                  color: Colors.white,
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    if (!widget.isSearching) {
-                      // Only call onSearch when not in searching state
-                      widget.onSearch('');
-                      FocusScope.of(context).requestFocus(searchFocusNode);
-                    }
-                  },
-                ),
-              IconButton(
-                color: Colors.white,
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  // Handle notification button press
-                },
-              ),
-              const SizedBox(width: 10)
-            ],
           ),
           if (widget.isSearching)
             Positioned(
@@ -92,27 +100,49 @@ class _CustomAppBarState extends State<CustomAppBar> {
               left: 0,
               right: 0,
               child: Container(
-                height: 50,
+                height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                color: Colors.transparent,
                 child: TextField(
                   controller: widget.searchController,
                   focusNode: searchFocusNode,
                   decoration: InputDecoration(
-                    hintText: 'Search...',
-                    hintStyle: const TextStyle(color: Colors.white),
-                    prefixIcon: const Icon(Icons.search, color: Colors.white),
+                    hintText: 'Search for an event',
+                    hintStyle: AppStyles.normalTextStyle.copyWith(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    prefixIcon: Icon(CupertinoIcons.search,
+                        color: Colors.white.withOpacity(0.7)),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(25),
-                      borderSide: const BorderSide(color: Colors.white),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.1),
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(25),
-                      borderSide: const BorderSide(color: Colors.white),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.1),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(25),
-                      borderSide: const BorderSide(color: Colors.white),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.1),
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.1),
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.1),
+                      ),
                     ),
                   ),
                   onChanged: widget.onSearch,
