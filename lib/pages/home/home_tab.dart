@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
@@ -70,16 +68,16 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             const CustomCalendar(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
-              child: Text(
-                "Upcoming Events",
-                style: AppStyles.titleStyle,
-              ),
-            ),
-            Column(
-              children: dummyEvents.map((e) => EventCard(event: e)).toList(),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
+            //   child: Text(
+            //     "Upcoming Events",
+            //     style: AppStyles.titleStyle,
+            //   ),
+            // ),
+            // Column(
+            //   children: dummyEvents.map((e) => EventCard(event: e)).toList(),
+            // ),
           ],
         ),
       ),

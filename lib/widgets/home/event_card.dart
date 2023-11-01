@@ -11,7 +11,7 @@ class EventCard extends StatelessWidget {
   const EventCard({super.key, required this.event});
 
   Color getCategoryColor(String categoryPath) {
-    return categoryColors[categoryPath]!;
+    return categoryColors[categoryPath]!.withOpacity(0.2);
   }
 
   String getMonth(DateTime date) {
@@ -53,7 +53,7 @@ class EventCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.grey[50],
                         borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(10),
+                          top: Radius.circular(8),
                         ),
                       ),
                       child: Text(
@@ -270,18 +270,18 @@ class EventCard extends StatelessWidget {
   }
 }
 
-final categoryColors = {
-  Assets.icons.hiking: Colors.brown[100],
-  Assets.icons.sports: Colors.green[100],
-  Assets.icons.music: Colors.yellow[100],
-  Assets.icons.movieClubs: Colors.deepPurple[100],
-  Assets.icons.dance: Colors.red[100],
-  Assets.icons.fitness: Colors.blueGrey[100],
-  Assets.icons.parties: Colors.pink[50],
-  Assets.icons.book: Colors.lightGreen[100],
-  Assets.icons.boating: Colors.lime[100],
-  Assets.icons.wineTasting: Colors.blueGrey[100],
-  Assets.icons.gaming: Colors.red[100],
-  Assets.icons.kidPlaydates: Colors.pink[50],
-  Assets.icons.petActivites: Colors.orange[100],
+final Map<String, Color> categoryColors = {
+  Assets.icons.hiking: Colors.brown,
+  Assets.icons.sports: Colors.green,
+  Assets.icons.music: Colors.yellow,
+  Assets.icons.movieClubs: Colors.deepPurple,
+  Assets.icons.dance: Colors.red,
+  Assets.icons.fitness: Colors.blueGrey,
+  Assets.icons.parties: Colors.pink,
+  Assets.icons.book: Colors.lightGreen,
+  Assets.icons.boating: Colors.lime,
+  Assets.icons.wineTasting: Colors.blueGrey,
+  Assets.icons.gaming: Colors.red,
+  Assets.icons.kidPlaydates: Colors.pink,
+  Assets.icons.petActivites: Colors.orange,
 };
