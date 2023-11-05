@@ -5,8 +5,9 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/models/event_model.dart';
+import 'package:zipbuzz/pages/home/calendar/calendar_controller.dart';
 import 'package:zipbuzz/widgets/home/event_card.dart';
-import 'package:zipbuzz/widgets/home/events_provider.dart';
+import 'package:zipbuzz/pages/home/calendar/events_controller.dart';
 
 class CustomCalendar extends ConsumerStatefulWidget {
   const CustomCalendar({super.key});
@@ -16,17 +17,22 @@ class CustomCalendar extends ConsumerStatefulWidget {
 }
 
 class _CustomCalendarState extends ConsumerState<CustomCalendar> {
-  DateTime focusedDay = DateTime.now();
+  late DateTime focusedDay;
   void onDaySelected(DateTime day, DateTime focusedDay) {
     ref.read(eventsControllerProvider.notifier).updateEvents(focusedDay);
-    setState(() {
-      this.focusedDay = focusedDay;
-    });
+    ref.read(calendarControllerProvider).updatedFocusedDay(focusedDay);
+  }
+
+  @override
+  void initState() {
+    focusedDay = DateTime.now();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final selectedDaysEvents = ref.watch(eventsControllerProvider);
+    focusedDay = ref.watch(calendarControllerProvider).focusedDay;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -81,27 +87,25 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: const [0.2, 0.85],
-                  colors: [
-                    AppColors.primaryColor.withOpacity(0.2),
-                    Colors.transparent
-                  ],
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.primaryColor.withOpacity(0.2),
                 ),
-              ),
-              child: Text(
-                day.day.toString(),
-                textAlign: TextAlign.center,
-                style: AppStyles.h4.copyWith(
-                  fontWeight: focusedDay == DateTime.now()
-                      ? FontWeight.bold
-                      : FontWeight.normal,
+                child: Center(
+                  child: Text(
+                    day.day.toString(),
+                    textAlign: TextAlign.center,
+                    style: AppStyles.h4.copyWith(
+                      fontWeight: focusedDay == DateTime.now()
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -180,7 +184,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
     );
   }
 
-  Expanded buildEventIndicator(EventModel event) {
+  Widget buildEventIndicator(EventModel event) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(

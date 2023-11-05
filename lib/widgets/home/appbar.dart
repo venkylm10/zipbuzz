@@ -6,53 +6,58 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final String title;
   final bool isSearching;
   final TextEditingController searchController;
   final Function(String) onSearch;
   final VoidCallback toggleSearching;
+  final double topPadding;
 
   const CustomAppBar({
-    required this.title,
     required this.isSearching,
     required this.searchController,
     required this.onSearch,
     super.key,
     required this.toggleSearching,
+    required this.topPadding,
   });
   @override
   Size get preferredSize => Size.fromHeight(
-        isSearching
-            ? AppBar().preferredSize.height + 65
-            : AppBar().preferredSize.height + 5,
-      );
+      AppBar().preferredSize.height + (isSearching ? 65 : 5) + topPadding);
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
 }
 
-class _CustomAppBarState extends State<CustomAppBar> {
-  final searchFocusNode = FocusNode();
+class _CustomAppBarState extends State<CustomAppBar>
+    with SingleTickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.decelerate,
-      height: widget.preferredSize.height + MediaQuery.of(context).padding.top,
+      duration: const Duration(milliseconds: 500),
+      height: widget.preferredSize.height,
       decoration: const BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
+        color: AppColors.primaryColor,
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(30),
+        ),
+      ),
       child: Stack(
         children: [
           Container(
             margin: const EdgeInsets.only(bottom: 5),
             child: AppBar(
-              backgroundColor: const Color(0xFF4A43EC),
+              backgroundColor: AppColors.primaryColor,
               elevation: 0,
               shape: const RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(30))),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
+              ),
               leading: Padding(
                 padding: const EdgeInsets.all(10),
                 child: SvgPicture.asset(
@@ -76,16 +81,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ],
               ),
               actions: [
-                if (!widget.isSearching)
-                  GestureDetector(
-                    onTap: () {
-                      if (!widget.isSearching) {
-                        widget.onSearch('');
-                        FocusScope.of(context).requestFocus(searchFocusNode);
-                      }
-                    },
-                    child: SvgPicture.asset(Assets.icons.search),
-                  ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  child: !widget.isSearching
+                      ? GestureDetector(
+                          onTap: () {
+                            widget.toggleSearching();
+                            widget.onSearch(widget.searchController.text);
+                          },
+                          child: SvgPicture.asset(Assets.icons.search),
+                        )
+                      : const SizedBox(),
+                ),
                 const SizedBox(width: 12),
                 GestureDetector(
                   onTap: () {},
@@ -97,24 +104,30 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
           if (widget.isSearching)
             Positioned(
-              bottom: 10,
+              bottom: 0,
               left: 0,
               right: 0,
               child: Container(
                 height: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.all(10),
                 child: TextField(
                   controller: widget.searchController,
-                  focusNode: searchFocusNode,
                   cursorHeight: 24,
                   style: AppStyles.h4.copyWith(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Search for an event',
                     hintStyle: AppStyles.h4.copyWith(
-                      color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withOpacity(0.7), height: 1),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: SvgPicture.asset(
+                        Assets.icons.searchBarIcon,
+                        colorFilter: ColorFilter.mode(
+                          Colors.white.withOpacity(0.7),
+                          BlendMode.srcIn,
+                        ),
+                      ),
                     ),
-                    prefixIcon: Icon(CupertinoIcons.search,
-                        color: Colors.white.withOpacity(0.7)),
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.1),
                     border: OutlineInputBorder(

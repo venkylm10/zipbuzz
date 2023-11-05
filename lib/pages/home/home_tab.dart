@@ -3,10 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/models/event_model.dart';
 import 'package:zipbuzz/widgets/home/appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
-import 'package:zipbuzz/widgets/home/event_card.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -16,14 +14,31 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  final scrollController = ScrollController();
-  bool _isSearching = false;
+  final pageScrollController = ScrollController();
+  final bodyScrollController = ScrollController();
+  final queryController = TextEditingController();
+  double topPadding = 0;
+  bool _isSearching = true;
   int index = 0;
+  double previousOffset = 0;
 
   @override
   void initState() {
-    scrollController.addListener(() {
-      updateIndex(scrollController.offset);
+    pageScrollController.addListener(() {
+      updateIndex(pageScrollController.offset);
+    });
+    bodyScrollController.addListener(() {
+      print(bodyScrollController.offset);
+      if (bodyScrollController.offset > 150 && _isSearching) {
+        setState(() {
+          _isSearching = false;
+        });
+      } else if (bodyScrollController.offset < 150 && !_isSearching) {
+        setState(() {
+          _isSearching = true;
+        });
+      }
+      previousOffset = bodyScrollController.offset;
     });
     super.initState();
   }
@@ -35,108 +50,132 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    topPadding = MediaQuery.of(context).padding.top;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: 'Your App Title',
         isSearching: _isSearching,
-        searchController: TextEditingController(),
+        searchController: queryController,
         onSearch: (query) {
-          setState(() {
-            _isSearching = !_isSearching;
-          });
+          FocusScope.of(context).nextFocus();
         },
         toggleSearching: () {
           setState(() {
             _isSearching = !_isSearching;
           });
         },
+        topPadding: topPadding,
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildCategories(context),
-            if (_isSearching) buildPageIndicator(),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
-              child: Text(
-                "My Calendar Events",
-                style: AppStyles.titleStyle,
-              ),
-            ),
-            const CustomCalendar(),
-            // Padding(
-            //   padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
-            //   child: Text(
-            //     "Upcoming Events",
-            //     style: AppStyles.titleStyle,
-            //   ),
-            // ),
-            // Column(
-            //   children: dummyEvents.map((e) => EventCard(event: e)).toList(),
-            // ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  SingleChildScrollView buildCategories(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: _isSearching
-          ? const PageScrollPhysics()
-          : const BouncingScrollPhysics(),
-      controller: scrollController,
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _isSearching = false;
-          });
-        },
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: _isSearching
-              ? List.generate(
-                  (categories.length / 8).ceil(),
-                  (index) => buildCategoryPage(index, context),
-                )
-              : List.generate(
-                  categories.length,
-                  (index) => Padding(
-                    padding: EdgeInsets.only(
-                      top: 20,
-                      left: index == 0 ? 18 : 8,
-                      right: index == categories.length - 1 ? 18 : 8,
-                    ),
-                    child: SvgPicture.asset(
-                      categories[index]['iconPath']!,
-                      height: 30,
-                    ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            controller: bodyScrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildCategories(context),
+                buildPageIndicator(),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
+                  child: Text(
+                    "My Calendar Events",
+                    style: AppStyles.titleStyle,
                   ),
                 ),
+                const CustomCalendar(),
+                const SizedBox(height: 200)
+              ],
+            ),
+          ),
+          buildCategoryRow(),
+        ],
+      ),
+    );
+  }
+
+  Widget buildCategoryRow() {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 500),
+      opacity: _isSearching ? 0 : 1,
+      child: Container(
+        width: double.infinity,
+        color: Colors.white,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(
+              categories.length,
+              (index) => Padding(
+                padding: EdgeInsets.only(
+                  top: 10,
+                  bottom: 10,
+                  left: index == 0 ? 18 : 8,
+                  right: index == categories.length - 1 ? 18 : 8,
+                ),
+                child: SvgPicture.asset(
+                  categories[index]['iconPath']!,
+                  height: 30,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Row buildPageIndicator() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        (categories.length / 8).ceil(),
-        (pageIndex) => Container(
-          height: 6,
-          width: 6,
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          decoration: BoxDecoration(
-            color:
-                index == pageIndex ? AppColors.primaryColor : Colors.grey[350],
-            borderRadius: BorderRadius.circular(3),
+  Widget buildCategories(BuildContext context) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 500),
+      opacity: _isSearching ? 1 : 0,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: _isSearching
+            ? const PageScrollPhysics()
+            : const BouncingScrollPhysics(),
+        controller: pageScrollController,
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              _isSearching = false;
+            });
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(
+              (categories.length / 8).ceil(),
+              (index) => buildCategoryPage(index, context),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPageIndicator() {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 500),
+      opacity: _isSearching ? 1 : 0,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          (categories.length / 8).ceil(),
+          (pageIndex) => Container(
+            height: 6,
+            width: 6,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            decoration: BoxDecoration(
+              color: index == pageIndex
+                  ? AppColors.primaryColor
+                  : Colors.grey[350],
+              borderRadius: BorderRadius.circular(3),
+            ),
           ),
         ),
       ),
