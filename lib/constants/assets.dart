@@ -5,19 +5,19 @@ class Assets {
 
 class AppIcons {
   const AppIcons();
-  final hiking = 'assets/icons/hiking.svg';
-  final sports = 'assets/icons/sports.svg';
-  final music = 'assets/icons/music.svg';
-  final movieClubs = 'assets/icons/movie_clubs.svg';
-  final dance = 'assets/icons/dance.svg';
-  final fitness = 'assets/icons/fitness.svg';
-  final parties = 'assets/icons/parties.svg';
-  final book = 'assets/icons/book.svg';
-  final boating = 'assets/icons/boating.svg';
-  final wineTasting = 'assets/icons/wine_tasting.svg';
-  final gaming = 'assets/icons/gaming.svg';
-  final kidPlaydates = 'assets/icons/kid_playdates.svg';
-  final petActivites = 'assets/icons/pet_activities.svg';
+  final hiking = 'assets/icons/hiking.png';
+  final sports = 'assets/icons/sports.png';
+  final music = 'assets/icons/music.png';
+  final movieClubs = 'assets/icons/movie_clubs.png';
+  final dance = 'assets/icons/dance.png';
+  final fitness = 'assets/icons/fitness.png';
+  final parties = 'assets/icons/parties.png';
+  final book = 'assets/icons/book.png';
+  final boating = 'assets/icons/boating.png';
+  final wineTasting = 'assets/icons/wine_tasting.png';
+  final gaming = 'assets/icons/gaming.png';
+  final kidPlaydates = 'assets/icons/kid_playdates.png';
+  final petActivites = 'assets/icons/pet_activities.png';
   final geo = 'assets/icons/geo.svg';
   final search = 'assets/icons/search.svg';
   final notification = 'assets/icons/notification.svg';

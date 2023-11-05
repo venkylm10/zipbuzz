@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/pages/home/calendar/events_controller.dart';
 import 'package:zipbuzz/widgets/home/appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
 
-class HomeTab extends StatefulWidget {
+class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
 
   @override
-  State<HomeTab> createState() => _HomeTabState();
+  ConsumerState<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends ConsumerState<HomeTab> {
   final pageScrollController = ScrollController();
   final bodyScrollController = ScrollController();
   final queryController = TextEditingController();
@@ -21,6 +23,7 @@ class _HomeTabState extends State<HomeTab> {
   bool _isSearching = true;
   int index = 0;
   double previousOffset = 0;
+  String selectedCategory = '';
 
   @override
   void initState() {
@@ -51,6 +54,8 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
+    selectedCategory =
+        ref.watch(eventsControllerProvider.notifier).selectedCategory;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -96,35 +101,75 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget buildCategoryRow() {
-    return AnimatedOpacity(
+    return AnimatedSwitcher(
       duration: const Duration(milliseconds: 500),
-      opacity: _isSearching ? 0 : 1,
-      child: Container(
-        width: double.infinity,
-        color: Colors.white,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(
-              categories.length,
-              (index) => Padding(
-                padding: EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                  left: index == 0 ? 18 : 8,
-                  right: index == categories.length - 1 ? 18 : 8,
-                ),
-                child: SvgPicture.asset(
-                  categories[index]['iconPath']!,
-                  height: 30,
+      child: !_isSearching
+          ? Container(
+              width: double.infinity,
+              color: Colors.white,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    categories.length,
+                    (index) {
+                      final category = categories[index];
+                      return GestureDetector(
+                        onTap: () {
+                          if (selectedCategory != category['name']) {
+                            ref
+                                .read(eventsControllerProvider.notifier)
+                                .updateCategory(
+                                    category: category['name'] ?? '');
+                            setState(() {});
+                          } else {
+                            ref
+                                .read(eventsControllerProvider.notifier)
+                                .updateCategory(category: '');
+                            setState(() {});
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            top: 5,
+                            left: index == 0 ? 12 : 2,
+                            right: index == categories.length - 1 ? 12 : 2,
+                            bottom: 5,
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: ref
+                                        .watch(
+                                            eventsControllerProvider.notifier)
+                                        .selectedCategory ==
+                                    category['name']
+                                ? Colors.green.withOpacity(0.15)
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Opacity(
+                            opacity: ref
+                                        .watch(
+                                            eventsControllerProvider.notifier)
+                                        .selectedCategory ==
+                                    category['name']
+                                ? 1
+                                : 0.5,
+                            child: Image.asset(
+                              categories[index]['iconPath']!,
+                              height: 30,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
+            )
+          : const SizedBox(),
     );
   }
 
@@ -200,24 +245,35 @@ class _HomeTabState extends State<HomeTab> {
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
           subCategories.length,
-          (index) => Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                constraints: const BoxConstraints(minHeight: 50),
-                child: SvgPicture.asset(
-                  subCategories[index]['iconPath']!,
-                  height: 40,
+          (index) => GestureDetector(
+            onTap: () {
+              print(subCategories[index]['name']);
+              ref
+                  .read(eventsControllerProvider.notifier)
+                  .updateCategory(category: subCategories[index]['name']);
+              bodyScrollController.animateTo(200,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  constraints: const BoxConstraints(minHeight: 50),
+                  child: Image.asset(
+                    subCategories[index]['iconPath']!,
+                    height: 40,
+                  ),
                 ),
-              ),
-              Text(
-                subCategories[index]['name']!,
-                softWrap: true,
-                textAlign: TextAlign.center,
-                style: AppStyles.h5,
-              ),
-            ],
+                Text(
+                  subCategories[index]['name']!,
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                  style: AppStyles.h5,
+                ),
+              ],
+            ),
           ),
         ),
       ),

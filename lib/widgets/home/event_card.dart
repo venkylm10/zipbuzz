@@ -85,7 +85,7 @@ class EventCard extends StatelessWidget {
                   color: getCategoryColor(event.iconPath),
                   borderRadius: BorderRadius.circular(25),
                 ),
-                child: SvgPicture.asset(event.iconPath),
+                child: Image.asset(event.iconPath),
               )
             ],
           ),
