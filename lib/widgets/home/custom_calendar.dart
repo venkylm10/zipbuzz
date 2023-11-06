@@ -5,7 +5,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/models/event_model.dart';
-import 'package:zipbuzz/pages/home/calendar/calendar_controller.dart';
 import 'package:zipbuzz/widgets/home/event_card.dart';
 import 'package:zipbuzz/pages/home/calendar/events_controller.dart';
 
@@ -17,22 +16,28 @@ class CustomCalendar extends ConsumerStatefulWidget {
 }
 
 class _CustomCalendarState extends ConsumerState<CustomCalendar> {
-  late DateTime focusedDay;
+  DateTime focusedDay = DateTime.now();
+  List<EventModel> upcomingEvents = [];
+  List<EventModel> focusedEvents = [];
+
   void onDaySelected(DateTime day, DateTime focusedDay) {
-    ref.read(eventsControllerProvider.notifier).updateEvents(focusedDay);
-    ref.read(calendarControllerProvider).updatedFocusedDay(focusedDay);
+    ref.read(eventsControllerProvider).updatedFocusedDay(focusedDay);
+    ref.read(eventsControllerProvider).updateFocusedEvents();
+    setState(() {});
   }
 
   @override
   void initState() {
-    focusedDay = DateTime.now();
+    ref.read(eventsControllerProvider).getUpcomingEvents();
+    ref.read(eventsControllerProvider).updateFocusedEvents();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectedDaysEvents = ref.watch(eventsControllerProvider);
-    focusedDay = ref.watch(calendarControllerProvider).focusedDay;
+    upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
+    focusedDay = ref.watch(eventsControllerProvider).focusedDay;
+    focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -56,9 +61,44 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             onDaySelected: onDaySelected,
             startingDayOfWeek: StartingDayOfWeek.monday,
             rowHeight: 48,
+            availableGestures: AvailableGestures.horizontalSwipe,
             calendarBuilders: customCalendarBuilders(),
             eventLoader: (day) => events[day] ?? [],
           ),
+        ),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          child: focusedEvents.isNotEmpty
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      DateFormat('d\'th\' MMM').format(focusedDay),
+                      style: AppStyles.h4.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      " (${DateFormat('EEEE').format(focusedDay)})",
+                      style: AppStyles.h4.copyWith(
+                        color: AppColors.lightGreyColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                )
+              : const SizedBox(),
+        ),
+        const SizedBox(height: 15),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: focusedEvents.isNotEmpty
+              ? Column(
+                  children: focusedEvents
+                      .map((e) => EventCard(event: e, focusedEvent: true))
+                      .toList(),
+                )
+              : const SizedBox(),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
@@ -68,7 +108,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
           ),
         ),
         Column(
-          children: selectedDaysEvents.map((e) => EventCard(event: e)).toList(),
+          children: upcomingEvents.map((e) => EventCard(event: e)).toList(),
         ),
       ],
     );
@@ -177,19 +217,31 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
           height: 6,
           width: 36,
           child: Row(
-            children: dayEvents.map((e) => buildEventIndicator(e)).toList(),
+            children: List.generate(
+              dayEvents.length,
+              (index) => buildEventIndicator(
+                dayEvents[index],
+                index,
+                dayEvents.length,
+              ),
+            ),
           ),
         );
       },
     );
   }
 
-  Widget buildEventIndicator(EventModel event) {
+  Widget buildEventIndicator(EventModel event, int index, int length) {
+    final color = getCategoryColor(event.iconPath);
     return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: getCategoryColor(event.iconPath),
-          borderRadius: BorderRadius.circular(3),
+      child: Transform.translate(
+        offset: Offset(-(2 * index).toDouble(), 0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            border: Border.all(color: Colors.white, width: 0.75),
+            borderRadius: BorderRadius.circular(3),
+          ),
         ),
       ),
     );

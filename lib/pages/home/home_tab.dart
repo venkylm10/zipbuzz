@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/pages/home/calendar/events_controller.dart';
-import 'package:zipbuzz/widgets/home/appbar.dart';
+import 'package:zipbuzz/widgets/home/custom_appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
+
+final categoryPageKey = GlobalKey();
+final rowCategoryKey = GlobalKey();
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
@@ -17,6 +19,7 @@ class HomeTab extends ConsumerStatefulWidget {
 
 class _HomeTabState extends ConsumerState<HomeTab> {
   final pageScrollController = ScrollController();
+  final rowScrollController = ScrollController();
   final bodyScrollController = ScrollController();
   final queryController = TextEditingController();
   double topPadding = 0;
@@ -31,12 +34,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       updateIndex(pageScrollController.offset);
     });
     bodyScrollController.addListener(() {
-      print(bodyScrollController.offset);
-      if (bodyScrollController.offset > 150 && _isSearching) {
+      if (bodyScrollController.offset > 120 && _isSearching) {
         setState(() {
           _isSearching = false;
         });
-      } else if (bodyScrollController.offset < 150 && !_isSearching) {
+      } else if (bodyScrollController.offset < 120 && !_isSearching) {
         setState(() {
           _isSearching = true;
         });
@@ -51,11 +53,51 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     setState(() {});
   }
 
+  void scrollDownCategories() {
+    final RenderBox renderBox =
+        categoryPageKey.currentContext!.findRenderObject() as RenderBox;
+    final containerHeight = renderBox.size.height;
+    bodyScrollController.animateTo(
+      containerHeight - 50,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  // void scrollToSelectedCategory() {
+  //   final RenderBox renderBox =
+  //       rowCategoryKey.currentContext!.findRenderObject() as RenderBox;
+  //   final position = renderBox.localToGlobal(Offset.zero);
+  //   rowScrollController.animateTo(
+  //     position.dx,
+  //     duration: const Duration(milliseconds: 300),
+  //     curve: Curves.easeInOut,
+  //   );
+  // }
+
+  void onTapRowCategory(Map<String, String> category) {
+    if (selectedCategory != category['name']) {
+      ref
+          .read(eventsControllerProvider)
+          .selectCategory(category: category['name'] ?? '');
+      setState(() {});
+    } else {
+      ref.read(eventsControllerProvider).selectCategory(category: '');
+      setState(() {});
+    }
+  }
+
+  void onTapGridCategory(List<Map<String, String>> subCategories) {
+    ref
+        .read(eventsControllerProvider)
+        .selectCategory(category: subCategories[index]['name']);
+    scrollDownCategories();
+  }
+
   @override
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
-    selectedCategory =
-        ref.watch(eventsControllerProvider.notifier).selectedCategory;
+    selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -102,12 +144,13 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   Widget buildCategoryRow() {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
       child: !_isSearching
           ? Container(
               width: double.infinity,
               color: Colors.white,
               child: SingleChildScrollView(
+                controller: rowScrollController,
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 child: Row(
@@ -117,21 +160,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     (index) {
                       final category = categories[index];
                       return GestureDetector(
-                        onTap: () {
-                          if (selectedCategory != category['name']) {
-                            ref
-                                .read(eventsControllerProvider.notifier)
-                                .updateCategory(
-                                    category: category['name'] ?? '');
-                            setState(() {});
-                          } else {
-                            ref
-                                .read(eventsControllerProvider.notifier)
-                                .updateCategory(category: '');
-                            setState(() {});
-                          }
-                        },
+                        onTap: () => onTapRowCategory(category),
                         child: Container(
+                          key: selectedCategory == category['name']
+                              ? rowCategoryKey
+                              : null,
                           margin: EdgeInsets.only(
                             top: 5,
                             left: index == 0 ? 12 : 2,
@@ -141,8 +174,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
                             color: ref
-                                        .watch(
-                                            eventsControllerProvider.notifier)
+                                        .watch(eventsControllerProvider)
                                         .selectedCategory ==
                                     category['name']
                                 ? Colors.green.withOpacity(0.15)
@@ -151,8 +183,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                           ),
                           child: Opacity(
                             opacity: ref
-                                        .watch(
-                                            eventsControllerProvider.notifier)
+                                        .watch(eventsControllerProvider)
                                         .selectedCategory ==
                                     category['name']
                                 ? 1
@@ -175,6 +206,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   Widget buildCategories(BuildContext context) {
     return AnimatedOpacity(
+      key: categoryPageKey,
       duration: const Duration(milliseconds: 500),
       opacity: _isSearching ? 1 : 0,
       child: SingleChildScrollView(
@@ -246,15 +278,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         children: List.generate(
           subCategories.length,
           (index) => GestureDetector(
-            onTap: () {
-              print(subCategories[index]['name']);
-              ref
-                  .read(eventsControllerProvider.notifier)
-                  .updateCategory(category: subCategories[index]['name']);
-              bodyScrollController.animateTo(200,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-            },
+            onTap: () => onTapGridCategory(subCategories),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
