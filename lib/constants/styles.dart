@@ -10,6 +10,13 @@ class AppStyles {
       color: AppColors.textColor,
     ),
   );
+  static final h3 = GoogleFonts.poppins(
+    textStyle: const TextStyle(
+      fontWeight: FontWeight.normal,
+      fontSize: 16,
+      color: AppColors.textColor,
+    ),
+  );
   static final h4 = GoogleFonts.poppins(
     textStyle: const TextStyle(
       fontWeight: FontWeight.normal,

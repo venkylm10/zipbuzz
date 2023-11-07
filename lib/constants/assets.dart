@@ -24,6 +24,7 @@ class AppIcons {
   final searchBarIcon = 'assets/icons/search_bar_icon.svg';
   final home = 'assets/icons/home.svg';
   final events = 'assets/icons/calendar.svg';
+  final calendar = 'assets/icons/calendar_fill.svg';
   final map = 'assets/icons/map.svg';
   final person = 'assets/icons/person.svg';
   final person_fill = 'assets/icons/person_fill.svg';

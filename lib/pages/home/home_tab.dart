@@ -270,27 +270,27 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
           subCategories.length,
-          (index) => Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () => onTapGridCategory(subCategories[index]),
-                child: Container(
+          (index) => GestureDetector(
+            onTap: () => onTapGridCategory(subCategories[index]),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
                   constraints: const BoxConstraints(minHeight: 50),
                   child: Image.asset(
                     subCategories[index]['iconPath']!,
                     height: 40,
                   ),
                 ),
-              ),
-              Text(
-                subCategories[index]['name']!,
-                softWrap: true,
-                textAlign: TextAlign.center,
-                style: AppStyles.h5,
-              ),
-            ],
+                Text(
+                  subCategories[index]['name']!,
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                  style: AppStyles.h5,
+                ),
+              ],
+            ),
           ),
         ),
       ),
