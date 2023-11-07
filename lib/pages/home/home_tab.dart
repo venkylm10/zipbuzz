@@ -34,11 +34,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       updateIndex(pageScrollController.offset);
     });
     bodyScrollController.addListener(() {
-      if (bodyScrollController.offset > 80 && _isSearching) {
+      if (bodyScrollController.offset > 120 && _isSearching) {
         setState(() {
           _isSearching = false;
         });
-      } else if (bodyScrollController.offset < 80 && !_isSearching) {
+      } else if (bodyScrollController.offset < 120 && !_isSearching) {
         setState(() {
           _isSearching = true;
         });
