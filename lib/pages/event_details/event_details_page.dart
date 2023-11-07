@@ -5,6 +5,7 @@ import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/event_model.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
+import 'package:zipbuzz/widgets/common/event_chip.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final EventModel event;
@@ -130,7 +131,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        EventChip(eventColor: eventColor, widget: widget),
+                        EventChip(
+                          eventColor: eventColor,
+                          category: widget.event.category,
+                          iconPath: widget.event.iconPath,
+                        ),
                         const SizedBox(width: 10),
                         AttendeeNumbers(
                           attendees: widget.event.attendees,
@@ -156,48 +161,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class EventChip extends StatelessWidget {
-  const EventChip({
-    super.key,
-    required this.eventColor,
-    required this.widget,
-  });
-
-  final Color eventColor;
-  final EventDetailsPage widget;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 6,
-      ),
-      decoration: BoxDecoration(
-        color: eventColor.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            widget.event.iconPath,
-            height: 16,
-          ),
-          const SizedBox(width: 5),
-          Text(
-            widget.event.category,
-            style: AppStyles.h5.copyWith(
-              color: eventColor,
-            ),
-          ),
-        ],
       ),
     );
   }
