@@ -100,13 +100,14 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
                 )
               : const SizedBox(),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
-          child: Text(
-            "Upcoming Events",
-            style: AppStyles.titleStyle,
+        if (upcomingEvents.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
+            child: Text(
+              "Upcoming Events",
+              style: AppStyles.titleStyle,
+            ),
           ),
-        ),
         Column(
           children: upcomingEvents.map((e) => EventCard(event: e)).toList(),
         ),

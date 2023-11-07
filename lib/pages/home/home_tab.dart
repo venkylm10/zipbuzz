@@ -34,11 +34,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       updateIndex(pageScrollController.offset);
     });
     bodyScrollController.addListener(() {
-      if (bodyScrollController.offset > 120 && _isSearching) {
+      if (bodyScrollController.offset > 80 && _isSearching) {
         setState(() {
           _isSearching = false;
         });
-      } else if (bodyScrollController.offset < 120 && !_isSearching) {
+      } else if (bodyScrollController.offset < 80 && !_isSearching) {
         setState(() {
           _isSearching = true;
         });
@@ -87,11 +87,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     }
   }
 
-  void onTapGridCategory(List<Map<String, String>> subCategories) {
+  void onTapGridCategory(Map<String, String> category) {
+    scrollDownCategories();
     ref
         .read(eventsControllerProvider)
-        .selectCategory(category: subCategories[index]['name']);
-    scrollDownCategories();
+        .selectCategory(category: category['name']);
   }
 
   @override
@@ -215,19 +215,12 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             ? const PageScrollPhysics()
             : const BouncingScrollPhysics(),
         controller: pageScrollController,
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _isSearching = false;
-            });
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(
-              (categories.length / 8).ceil(),
-              (index) => buildCategoryPage(index, context),
-            ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(
+            (categories.length / 8).ceil(),
+            (index) => buildCategoryPage(index, context),
           ),
         ),
       ),
@@ -277,27 +270,27 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
           subCategories.length,
-          (index) => GestureDetector(
-            onTap: () => onTapGridCategory(subCategories),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
+          (index) => Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => onTapGridCategory(subCategories[index]),
+                child: Container(
                   constraints: const BoxConstraints(minHeight: 50),
                   child: Image.asset(
                     subCategories[index]['iconPath']!,
                     height: 40,
                   ),
                 ),
-                Text(
-                  subCategories[index]['name']!,
-                  softWrap: true,
-                  textAlign: TextAlign.center,
-                  style: AppStyles.h5,
-                ),
-              ],
-            ),
+              ),
+              Text(
+                subCategories[index]['name']!,
+                softWrap: true,
+                textAlign: TextAlign.center,
+                style: AppStyles.h5,
+              ),
+            ],
           ),
         ),
       ),

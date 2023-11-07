@@ -37,7 +37,7 @@ class _CustomAppBarState extends State<CustomAppBar>
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
       height: widget.preferredSize.height,
       decoration: const BoxDecoration(
         color: AppColors.primaryColor,
@@ -81,7 +81,7 @@ class _CustomAppBarState extends State<CustomAppBar>
               ),
               actions: [
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 300),
                   child: !widget.isSearching
                       ? GestureDetector(
                           onTap: () {
@@ -101,69 +101,87 @@ class _CustomAppBarState extends State<CustomAppBar>
               ],
             ),
           ),
-          if (widget.isSearching)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 50,
-                margin: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: widget.searchController,
-                  cursorHeight: 24,
-                  style: AppStyles.h4.copyWith(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Search for an event',
-                    hintStyle: AppStyles.h4.copyWith(
-                        color: Colors.white.withOpacity(0.7), height: 1),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: SvgPicture.asset(
-                        Assets.icons.searchBarIcon,
-                        colorFilter: ColorFilter.mode(
-                          Colors.white.withOpacity(0.7),
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25),
-                      borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.1),
-                      ),
-                    ),
-                  ),
-                ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: widget.isSearching
+                  ? AppBarSearchField(widget: widget)
+                  : const SizedBox(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AppBarSearchField extends StatelessWidget {
+  const AppBarSearchField({
+    super.key,
+    required this.widget,
+  });
+
+  final CustomAppBar widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      margin: const EdgeInsets.all(10),
+      child: TextField(
+        controller: widget.searchController,
+        cursorHeight: 24,
+        style: AppStyles.h4.copyWith(color: Colors.white),
+        decoration: InputDecoration(
+          hintText: 'Search for an event',
+          hintStyle: AppStyles.h4
+              .copyWith(color: Colors.white.withOpacity(0.7), height: 1),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12),
+            child: SvgPicture.asset(
+              Assets.icons.searchBarIcon,
+              colorFilter: ColorFilter.mode(
+                Colors.white.withOpacity(0.7),
+                BlendMode.srcIn,
               ),
             ),
-        ],
+          ),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+        ),
       ),
     );
   }
