@@ -1,9 +1,10 @@
 import 'package:zipbuzz/constants/assets.dart';
+import 'package:zipbuzz/models/host_model.dart';
 
 class EventModel {
   final String title;
   final String? description;
-  final String host;
+  final List<Host> hosts;
   final String location;
   final DateTime dateTime;
   final int attendees;
@@ -12,9 +13,9 @@ class EventModel {
   final bool favourite;
   final String bannerPath;
   final String iconPath;
-  EventModel({
+  const EventModel({
     required this.title,
-    required this.host,
+    this.hosts = const <Host>[],
     required this.location,
     required this.dateTime,
     required this.attendees,
@@ -30,7 +31,7 @@ class EventModel {
 final dummyEvents = [
   EventModel(
     title: "International Band Music Festival",
-    host: "John Smith",
+    hosts: const [Host(name: "John Smith")],
     location: "420 Gala St, San Jose 95125",
     dateTime: DateTime.utc(2023, 11, 20, 20, 0, 0),
     attendees: 8,
@@ -42,7 +43,7 @@ final dummyEvents = [
   ),
   EventModel(
     title: "I'm Going to Shake Y",
-    host: "John Smith",
+    hosts: const [Host(name: "John Smith")],
     location: "420 Gala St, San Jose 95125",
     dateTime: DateTime.utc(2023, 12, 22, 20, 0, 0),
     attendees: 8,
@@ -54,7 +55,7 @@ final dummyEvents = [
   ),
   EventModel(
     title: "Wild with the Nature",
-    host: "John Smith",
+    hosts: const [Host(name: "John Smith")],
     location: "420 Gala St, San Jose 95125",
     dateTime: DateTime.utc(2023, 12, 20, 20, 0, 0),
     attendees: 8,
@@ -66,7 +67,7 @@ final dummyEvents = [
   ),
   EventModel(
     title: "Dazzling Of Evermore",
-    host: "John Smith",
+    hosts: const [Host(name: "John Smith")],
     location: "420 Gala St, San Jose 95125",
     dateTime: DateTime.utc(2023, 12, 24, 20, 0, 0),
     attendees: 8,
@@ -80,7 +81,7 @@ final dummyEvents = [
     title: "Art Museum: Life of Abstract",
     description:
         "An art museum or art gallery is a building or space for the display of art, usually from the museum's own collection.",
-    host: "John Smith",
+    hosts: const [Host(name: "John Smith")],
     location: "420 Gala St, San Jose 95125",
     dateTime: DateTime.utc(2023, 12, 23, 20, 0, 0),
     attendees: 8,
@@ -96,7 +97,7 @@ Map<DateTime, List<EventModel>> events = {
   DateTime.utc(2023, 11, 20, 0, 0, 0): [
     EventModel(
       title: "International Band Music Festival",
-      host: "John Smith",
+      hosts: const [Host(name: "John Smith")],
       location: "420 Gala St, San Jose 95125",
       dateTime: DateTime.utc(2023, 11, 1, 20, 0, 0),
       attendees: 8,
@@ -108,7 +109,7 @@ Map<DateTime, List<EventModel>> events = {
     ),
     EventModel(
       title: "I'm Going to Shake Y",
-      host: "John Smith",
+      hosts: const [Host(name: "John Smith")],
       location: "420 Gala St, San Jose 95125",
       dateTime: DateTime.utc(2023, 11, 1, 20, 0, 0),
       attendees: 8,
@@ -120,7 +121,7 @@ Map<DateTime, List<EventModel>> events = {
     ),
     EventModel(
       title: "Wild with the Nature",
-      host: "John Smith",
+      hosts: const [Host(name: "John Smith")],
       location: "420 Gala St, San Jose 95125",
       dateTime: DateTime.utc(2023, 11, 1, 20, 0, 0),
       attendees: 8,
@@ -132,7 +133,7 @@ Map<DateTime, List<EventModel>> events = {
     ),
     EventModel(
       title: "Dazzling Of Evermore",
-      host: "John Smith",
+      hosts: const [Host(name: "John Smith")],
       location: "420 Gala St, San Jose 95125",
       dateTime: DateTime.utc(2023, 11, 1, 20, 0, 0),
       attendees: 8,
@@ -146,7 +147,7 @@ Map<DateTime, List<EventModel>> events = {
       title: "Art Museum: Life of Abstract",
       description:
           "An art museum or art gallery is a building or space for the display of art, usually from the museum's own collection.",
-      host: "John Smith",
+      hosts: const [Host(name: "John Smith")],
       location: "420 Gala St, San Jose 95125",
       dateTime: DateTime.utc(2023, 11, 1, 20, 0, 0),
       attendees: 8,

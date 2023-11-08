@@ -183,38 +183,39 @@ class _EventCardState extends State<EventCard> {
                                 ),
                               if (widget.focusedEvent!)
                                 const SizedBox(width: 5),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      AppColors.primaryColor.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SvgPicture.asset(
-                                      Assets.icons.person_fill,
-                                      colorFilter: const ColorFilter.mode(
-                                        AppColors.primaryColor,
-                                        BlendMode.srcIn,
+                              if (widget.event.hosts!.isNotEmpty)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        AppColors.primaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        Assets.icons.person_fill,
+                                        colorFilter: const ColorFilter.mode(
+                                          AppColors.primaryColor,
+                                          BlendMode.srcIn,
+                                        ),
+                                        height: 16,
                                       ),
-                                      height: 16,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      widget.event.host,
-                                      style: AppStyles.h5.copyWith(
-                                        color: AppColors.primaryColor,
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        widget.event.hosts!.first.name,
+                                        style: AppStyles.h5.copyWith(
+                                          color: AppColors.primaryColor,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                           const SizedBox(height: 5),

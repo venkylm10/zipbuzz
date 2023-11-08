@@ -30,7 +30,9 @@ class AppIcons {
   final person_fill = 'assets/icons/person_fill.svg';
   final people = 'assets/icons/people.svg';
   final geo_mini = 'assets/icons/geo_mini.svg';
+  final geo2 = 'assets/icons/geo2.svg';
   final clock = 'assets/icons/clock.svg';
+  final clock_fill = 'assets/icons/clock_fill.svg';
 }
 
 class EventImages {
