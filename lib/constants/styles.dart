@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:zipbuzz/constants/colors.dart';
 
 class AppStyles {
+  static final poppins = GoogleFonts.poppins();
   static final titleStyle = GoogleFonts.poppins(
     textStyle: const TextStyle(
       fontWeight: FontWeight.w600,

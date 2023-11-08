@@ -1,15 +1,16 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/event_model.dart';
-import 'package:zipbuzz/models/host_model.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 import 'package:zipbuzz/widgets/common/event_chip.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_buttons.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_details.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_hosts.dart';
 
@@ -24,6 +25,12 @@ class EventDetailsPage extends StatefulWidget {
 class _EventDetailsPageState extends State<EventDetailsPage> {
   Color dominantColor = Colors.white;
   Color eventColor = Colors.white;
+  final _controller = QuillController(
+    document: Document(),
+    selection: const TextSelection.collapsed(offset: 0),
+  );
+  final aboutScrollController = ScrollController();
+  String dummyText = '';
 
   Future<void> getDominantColor() async {
     final image = AssetImage(widget.event.bannerPath);
@@ -43,10 +50,23 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     setState(() {});
   }
 
+  Future<void> loadQuillContentFromAsset(QuillController controller) async {
+    try {
+      final jsonString = await rootBundle.loadString('assets/about.json');
+      final data = json.decode(jsonString);
+      final delta = Delta.fromJson(data);
+      final document = Document.fromDelta(delta);
+      controller.document = document;
+    } catch (e) {
+      print('Error loading Quill content: $e');
+    }
+  }
+
   @override
   void initState() {
     getDominantColor();
     getEventColor();
+    loadQuillContentFromAsset(_controller);
     super.initState();
   }
 
@@ -186,8 +206,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       style: AppStyles.h5
                           .copyWith(color: AppColors.lightGreyColor),
                     ),
-                    const SizedBox(height: 16),
-                    // about text
+                    _buildQuillEditor(),
                     const SizedBox(height: 16),
                     Divider(
                       color: AppColors.greyColor.withOpacity(0.2),
@@ -201,14 +220,27 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ),
                     const SizedBox(height: 16),
                     Container(
-                      height: 300,
-                      width: double.infinity,
                       decoration: BoxDecoration(
-                        color: AppColors.lightGreyColor.withOpacity(0.5),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Center(
-                        child: Text("Images"),
+                      child: StaggeredGrid.count(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                        children: List.generate(
+                          7,
+                          (index) => StaggeredGridTile.count(
+                            crossAxisCellCount: index % 6 == 0 ? 2 : 1,
+                            mainAxisCellCount: 1,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                'assets/images/about/Image-$index.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -223,69 +255,73 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       floatingActionButton: EventButtons(event: widget.event),
     );
   }
-}
 
-class EventButtons extends StatelessWidget {
-  const EventButtons({
-    required this.event,
-    super.key,
-  });
-
-  final EventModel event;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 48,
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Join ",
-                      style: AppStyles.h3.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "(${event.attendees}/${event.maxAttendees})",
-                      style: AppStyles.h4.copyWith(color: Colors.white),
-                    )
-                  ],
-                ),
-              ),
+  QuillProvider _buildQuillEditor() {
+    return QuillProvider(
+      configurations: QuillConfigurations(
+        controller: _controller,
+        sharedConfigurations: const QuillSharedConfigurations(
+          locale: Locale('en'),
+        ),
+      ),
+      child: QuillEditor(
+        configurations: QuillEditorConfigurations(
+          readOnly: true,
+          scrollable: true,
+          autoFocus: false,
+          expands: false,
+          showCursor: false,
+          padding: EdgeInsets.zero,
+          scrollPhysics: const BouncingScrollPhysics(),
+          customStyles: DefaultStyles(
+            h1: DefaultTextBlockStyle(
+              AppStyles.titleStyle,
+              const VerticalSpacing(16, 0),
+              const VerticalSpacing(0, 0),
+              null,
+            ),
+            h2: DefaultTextBlockStyle(
+              AppStyles.h3,
+              const VerticalSpacing(16, 0),
+              const VerticalSpacing(0, 0),
+              null,
+            ),
+            h3: DefaultTextBlockStyle(
+              AppStyles.h4,
+              const VerticalSpacing(16, 0),
+              const VerticalSpacing(0, 0),
+              null,
+            ),
+            bold: AppStyles.h4.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            paragraph: DefaultTextBlockStyle(
+              AppStyles.h4,
+              const VerticalSpacing(16, 0),
+              const VerticalSpacing(0, 0),
+              null,
+            ),
+            lists: DefaultListBlockStyle(
+              AppStyles.h4,
+              const VerticalSpacing(16, 0),
+              const VerticalSpacing(0, 0),
+              null,
+              null,
+            ),
+            italic: AppStyles.h4.copyWith(
+              fontStyle: FontStyle.italic,
+            ),
+            underline: AppStyles.h4.copyWith(
+              decoration: TextDecoration.underline,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  "Share",
-                  style: AppStyles.h3.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
+          textSelectionThemeData: TextSelectionThemeData(
+            selectionHandleColor: AppColors.textColor,
+            selectionColor: AppColors.textColor.withOpacity(0.1),
           ),
-        ],
+        ),
+        scrollController: aboutScrollController,
+        focusNode: FocusNode(),
       ),
     );
   }
