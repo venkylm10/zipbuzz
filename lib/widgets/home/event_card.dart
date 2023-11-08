@@ -183,7 +183,7 @@ class _EventCardState extends State<EventCard> {
                                 ),
                               if (widget.focusedEvent!)
                                 const SizedBox(width: 5),
-                              if (widget.event.hosts!.isNotEmpty)
+                              if (widget.event.hosts.isNotEmpty)
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 10,
@@ -208,7 +208,7 @@ class _EventCardState extends State<EventCard> {
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
-                                        widget.event.hosts!.first.name,
+                                        widget.event.hosts.first.name,
                                         style: AppStyles.h5.copyWith(
                                           color: AppColors.primaryColor,
                                         ),

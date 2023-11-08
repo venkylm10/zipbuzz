@@ -112,10 +112,12 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   color: Colors.white.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(
                     Icons.favorite_rounded,
-                    color: AppColors.lightGreyColor,
+                    color: widget.event.favourite
+                        ? Colors.pink[400]
+                        : Colors.grey[300],
                   ),
                 ),
               ),
