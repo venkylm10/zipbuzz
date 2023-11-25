@@ -4,7 +4,14 @@ import 'package:zipbuzz/constants/colors.dart';
 
 class AppStyles {
   static final poppins = GoogleFonts.poppins();
-  static final titleStyle = GoogleFonts.poppins(
+  static final h1 = GoogleFonts.poppins(
+    textStyle: const TextStyle(
+      fontWeight: FontWeight.w600,
+      fontSize: 24,
+      color: AppColors.textColor,
+    ),
+  );
+  static final h2 = GoogleFonts.poppins(
     textStyle: const TextStyle(
       fontWeight: FontWeight.w600,
       fontSize: 18,

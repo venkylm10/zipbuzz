@@ -310,7 +310,7 @@ class _EventCardState extends State<EventCard> {
           ),
           Text(
             widget.event.dateTime.day.toString(),
-            style: AppStyles.titleStyle,
+            style: AppStyles.h2,
           ),
           Text(
             getWeekDay(widget.event.dateTime),

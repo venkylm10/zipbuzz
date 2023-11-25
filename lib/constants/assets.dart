@@ -1,6 +1,7 @@
 class Assets {
   static const icons = AppIcons();
   static const eventImage = EventImages();
+  static const welcomeImage = WelcomeImage();
 }
 
 class AppIcons {
@@ -33,6 +34,15 @@ class AppIcons {
   final geo2 = 'assets/icons/geo2.svg';
   final clock = 'assets/icons/clock.svg';
   final clock_fill = 'assets/icons/clock_fill.svg';
+  final google_logo = 'assets/icons/google.svg';
+  final apple_logo = 'assets/icons/apple.svg';
+}
+
+class WelcomeImage {
+  const WelcomeImage();
+  final welcome1 = 'assets/images/welcome/welcome1.png';
+  final welcome2 = 'assets/images/welcome/welcome2.png';
+  final welcome3 = 'assets/images/welcome/welcome3.png';
 }
 
 class EventImages {

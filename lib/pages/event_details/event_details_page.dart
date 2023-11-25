@@ -152,7 +152,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   children: [
                     Text(
                       widget.event.title,
-                      style: AppStyles.titleStyle,
+                      style: AppStyles.h2,
                       softWrap: true,
                     ),
                     const SizedBox(height: 10),
@@ -277,7 +277,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           scrollPhysics: const BouncingScrollPhysics(),
           customStyles: DefaultStyles(
             h1: DefaultTextBlockStyle(
-              AppStyles.titleStyle,
+              AppStyles.h2,
               const VerticalSpacing(16, 0),
               const VerticalSpacing(0, 0),
               null,

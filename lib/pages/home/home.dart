@@ -8,6 +8,7 @@ import 'package:zipbuzz/pages/map/map_tab.dart';
 import 'package:zipbuzz/pages/person/person_tab.dart';
 
 class Home extends StatefulWidget {
+  static const id = '/home';
   const Home({super.key});
 
   @override

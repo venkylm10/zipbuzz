@@ -55,7 +55,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             headerStyle: HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
-              titleTextStyle: AppStyles.titleStyle,
+              titleTextStyle: AppStyles.h2,
             ),
             selectedDayPredicate: (day) => isSameDay(day, focusedDay),
             onDaySelected: onDaySelected,
@@ -105,7 +105,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
             child: Text(
               "Upcoming Events",
-              style: AppStyles.titleStyle,
+              style: AppStyles.h2,
             ),
           ),
         Column(

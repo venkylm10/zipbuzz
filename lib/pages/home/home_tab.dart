@@ -128,7 +128,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
                   child: Text(
                     "My Calendar Events",
-                    style: AppStyles.titleStyle,
+                    style: AppStyles.h2,
                   ),
                 ),
                 const CustomCalendar(),

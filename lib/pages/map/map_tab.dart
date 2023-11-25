@@ -14,7 +14,7 @@ class MapTab extends StatelessWidget {
         backgroundColor: AppColors.primaryColor,
         title: Text(
           "Map",
-          style: AppStyles.titleStyle.copyWith(color: Colors.white),
+          style: AppStyles.h2.copyWith(color: Colors.white),
         ),
         leading: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
@@ -31,7 +31,7 @@ class MapTab extends StatelessWidget {
       body: Center(
         child: Text(
           "Map tab",
-          style: AppStyles.titleStyle,
+          style: AppStyles.h2,
         ),
       ),
     );
