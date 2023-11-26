@@ -4,16 +4,23 @@ import 'package:zipbuzz/constants/colors.dart';
 
 class AppStyles {
   static final poppins = GoogleFonts.poppins();
+  static final extraLarge = GoogleFonts.poppins(
+    textStyle: const TextStyle(
+      fontWeight: FontWeight.normal,
+      fontSize: 28,
+      color: AppColors.textColor,
+    ),
+  );
   static final h1 = GoogleFonts.poppins(
     textStyle: const TextStyle(
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.normal,
       fontSize: 24,
       color: AppColors.textColor,
     ),
   );
   static final h2 = GoogleFonts.poppins(
     textStyle: const TextStyle(
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.normal,
       fontSize: 18,
       color: AppColors.textColor,
     ),

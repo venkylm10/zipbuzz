@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 class Assets {
   static const icons = AppIcons();
   static const eventImage = EventImages();
@@ -36,6 +38,7 @@ class AppIcons {
   final clock_fill = 'assets/icons/clock_fill.svg';
   final google_logo = 'assets/icons/google.svg';
   final apple_logo = 'assets/icons/apple.svg';
+  final telephone = 'assets/icons/telephone.svg';
 }
 
 class WelcomeImage {
@@ -54,7 +57,7 @@ class EventImages {
   final art_museum = 'assets/images/events/art_museum.png';
 }
 
-final categories = [
+final interests = [
   {
     'name': "Hiking",
     'iconPath': Assets.icons.hiking,

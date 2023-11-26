@@ -6,6 +6,7 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 
 class SignInSheet extends StatelessWidget {
   const SignInSheet({super.key});
@@ -53,8 +54,8 @@ class SignInSheet extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             GestureDetector(
-              onTap: () => navigatorKey.currentState!
-                  .pushNamedAndRemoveUntil(Home.id, (route) => false),
+              onTap: () =>
+                  navigatorKey.currentState!.pushNamed(PersonalisePage.id),
               child: Container(
                 height: 56,
                 width: double.infinity,

@@ -53,7 +53,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     setState(() {});
   }
 
-  void scrollDownCategories() {
+  void scrollDownInterests() {
     final RenderBox renderBox =
         categoryPageKey.currentContext!.findRenderObject() as RenderBox;
     final containerHeight = renderBox.size.height;
@@ -88,7 +88,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   void onTapGridCategory(Map<String, String> category) {
-    scrollDownCategories();
+    scrollDownInterests();
     ref
         .read(eventsControllerProvider)
         .selectCategory(category: category['name']);
@@ -121,7 +121,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildCategories(context),
+                buildInterests(context),
                 buildPageIndicator(),
                 const SizedBox(height: 10),
                 Padding(
@@ -156,9 +156,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(
-                    categories.length,
+                    interests.length,
                     (index) {
-                      final category = categories[index];
+                      final category = interests[index];
                       return GestureDetector(
                         onTap: () => onTapRowCategory(category),
                         child: Container(
@@ -168,7 +168,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                           margin: EdgeInsets.only(
                             top: 5,
                             left: index == 0 ? 12 : 2,
-                            right: index == categories.length - 1 ? 12 : 2,
+                            right: index == interests.length - 1 ? 12 : 2,
                             bottom: 5,
                           ),
                           padding: const EdgeInsets.all(6),
@@ -189,7 +189,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                                 ? 1
                                 : 0.5,
                             child: Image.asset(
-                              categories[index]['iconPath']!,
+                              interests[index]['iconPath']!,
                               height: 30,
                             ),
                           ),
@@ -204,7 +204,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     );
   }
 
-  Widget buildCategories(BuildContext context) {
+  Widget buildInterests(BuildContext context) {
     return AnimatedOpacity(
       key: categoryPageKey,
       duration: const Duration(milliseconds: 500),
@@ -219,7 +219,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
-            (categories.length / 8).ceil(),
+            (interests.length / 8).ceil(),
             (index) => buildCategoryPage(index, context),
           ),
         ),
@@ -235,7 +235,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          (categories.length / 8).ceil(),
+          (interests.length / 8).ceil(),
           (pageIndex) => Container(
             height: 6,
             width: 6,
@@ -253,10 +253,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildCategoryPage(int pageIndex, BuildContext context) {
-    final subCategories = categories.sublist(
+    final subInterests = interests.sublist(
         pageIndex * 8,
-        (pageIndex + 1) * 8 > categories.length
-            ? categories.length
+        (pageIndex + 1) * 8 > interests.length
+            ? interests.length
             : (pageIndex + 1) * 8);
     final width = MediaQuery.of(context).size.width;
     return Container(
@@ -269,9 +269,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
-          subCategories.length,
+          subInterests.length,
           (index) => GestureDetector(
-            onTap: () => onTapGridCategory(subCategories[index]),
+            onTap: () => onTapGridCategory(subInterests[index]),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -279,12 +279,12 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 Container(
                   constraints: const BoxConstraints(minHeight: 50),
                   child: Image.asset(
-                    subCategories[index]['iconPath']!,
+                    subInterests[index]['iconPath']!,
                     height: 40,
                   ),
                 ),
                 Text(
-                  subCategories[index]['name']!,
+                  subInterests[index]['name']!,
                   softWrap: true,
                   textAlign: TextAlign.center,
                   style: AppStyles.h5,

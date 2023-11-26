@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/main.dart';
-import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 
 class WelcomePage extends StatefulWidget {
