@@ -324,18 +324,3 @@ class _EventCardState extends State<EventCard> {
   }
 }
 
-final Map<String, Color> categoryColors = {
-  Assets.icons.hiking: Colors.brown,
-  Assets.icons.sports: Colors.green,
-  Assets.icons.music: Colors.yellow,
-  Assets.icons.movieClubs: Colors.deepPurple,
-  Assets.icons.dance: Colors.red,
-  Assets.icons.fitness: Colors.blueGrey,
-  Assets.icons.parties: Colors.pink,
-  Assets.icons.book: Colors.lightGreen,
-  Assets.icons.boating: Colors.lime,
-  Assets.icons.wineTasting: Colors.blueGrey,
-  Assets.icons.gaming: Colors.red,
-  Assets.icons.kidPlaydates: Colors.pink,
-  Assets.icons.petActivites: Colors.orange,
-};

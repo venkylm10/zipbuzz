@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/main.dart';
+import 'package:zipbuzz/pages/home/home.dart';
 
 class PersonalisePage extends ConsumerStatefulWidget {
   static const id = '/welcome/personalise';
@@ -50,34 +52,6 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24)
-                  .copyWith(bottom: 8),
-              child: InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(24),
-                child: Ink(
-                  height: 48,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Confirm & Personalize",
-                      style: AppStyles.h3.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
           Container(
             height: size.height,
             width: size.width,
@@ -137,7 +111,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                   ),
                   const SizedBox(height: 24),
                   buildTextField(
-                    Assets.icons.telephone,
+                    Assets.icons.telephone_filled,
                     "Mobile no",
                     mobileController,
                     "(+1) (400) 444-5555",
@@ -157,6 +131,34 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               ),
             ),
           ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24)
+                  .copyWith(bottom: 8),
+              child: InkWell(
+                onTap: () => navigatorKey.currentState!.pushNamed(Home.id),
+                borderRadius: BorderRadius.circular(24),
+                child: Ink(
+                  height: 48,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Confirm & Personalize",
+                      style: AppStyles.h3.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -166,9 +168,9 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: interests.map(
-        (interest) {
-          final name = interest['name']!;
+      children: interests.entries.map(
+        (e) {
+          final name = e.key;
           return GestureDetector(
             onTap: () => updateInterests(name),
             child: Container(

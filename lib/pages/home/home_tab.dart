@@ -75,11 +75,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   //   );
   // }
 
-  void onTapRowCategory(Map<String, String> category) {
-    if (selectedCategory != category['name']) {
+  void onTapRowCategory(String interest) {
+    if (selectedCategory != interest) {
       ref
           .read(eventsControllerProvider)
-          .selectCategory(category: category['name'] ?? '');
+          .selectCategory(category: interest ?? '');
       setState(() {});
     } else {
       ref.read(eventsControllerProvider).selectCategory(category: '');
@@ -87,11 +87,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     }
   }
 
-  void onTapGridCategory(Map<String, String> category) {
+  void onTapGridCategory(String interest) {
     scrollDownInterests();
-    ref
-        .read(eventsControllerProvider)
-        .selectCategory(category: category['name']);
+    ref.read(eventsControllerProvider).selectCategory(category: interest);
   }
 
   @override
@@ -154,17 +152,14 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(
-                    interests.length,
-                    (index) {
-                      final category = interests[index];
+                    mainAxisSize: MainAxisSize.min,
+                    children: interests.entries.map((e) {
+                      final name = e.key;
+                      final iconPath = e.value;
                       return GestureDetector(
-                        onTap: () => onTapRowCategory(category),
+                        onTap: () => onTapRowCategory(name),
                         child: Container(
-                          key: selectedCategory == category['name']
-                              ? rowCategoryKey
-                              : null,
+                          key: selectedCategory == name ? rowCategoryKey : null,
                           margin: EdgeInsets.only(
                             top: 5,
                             left: index == 0 ? 12 : 2,
@@ -176,7 +171,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                             color: ref
                                         .watch(eventsControllerProvider)
                                         .selectedCategory ==
-                                    category['name']
+                                    name
                                 ? Colors.green.withOpacity(0.15)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(8),
@@ -185,19 +180,17 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                             opacity: ref
                                         .watch(eventsControllerProvider)
                                         .selectedCategory ==
-                                    category['name']
+                                    name
                                 ? 1
                                 : 0.5,
                             child: Image.asset(
-                              interests[index]['iconPath']!,
+                              iconPath,
                               height: 30,
                             ),
                           ),
                         ),
                       );
-                    },
-                  ),
-                ),
+                    }).toList()),
               ),
             )
           : const SizedBox(),
@@ -253,7 +246,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildCategoryPage(int pageIndex, BuildContext context) {
-    final subInterests = interests.sublist(
+    final subInterests = interests.entries.map((e) => e.key).toList().sublist(
         pageIndex * 8,
         (pageIndex + 1) * 8 > interests.length
             ? interests.length
@@ -270,28 +263,31 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
           subInterests.length,
-          (index) => GestureDetector(
-            onTap: () => onTapGridCategory(subInterests[index]),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  constraints: const BoxConstraints(minHeight: 50),
-                  child: Image.asset(
-                    subInterests[index]['iconPath']!,
-                    height: 40,
+          (index) {
+            final name = subInterests[index];
+            return GestureDetector(
+              onTap: () => onTapGridCategory(subInterests[index]),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(minHeight: 50),
+                    child: Image.asset(
+                      interests[name]!,
+                      height: 40,
+                    ),
                   ),
-                ),
-                Text(
-                  subInterests[index]['name']!,
-                  softWrap: true,
-                  textAlign: TextAlign.center,
-                  style: AppStyles.h5,
-                ),
-              ],
-            ),
-          ),
+                  Text(
+                    name,
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.h5,
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

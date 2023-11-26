@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
+import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/map/map_tab.dart';
-import 'package:zipbuzz/pages/person/person_tab.dart';
+import 'package:zipbuzz/pages/profile/profile_tab.dart';
 
 class Home extends StatefulWidget {
   static const id = '/home';
@@ -17,7 +18,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int selectedIndex = 0;
-  final tabs = const [
+  final tabs =  [
     HomeTab(),
     EventsTab(),
     MapTab(),
@@ -29,9 +30,14 @@ class _HomeState extends State<Home> {
       body: tabs[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
-        showUnselectedLabels: false,
-        showSelectedLabels: false,
+        currentIndex: selectedIndex,
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
         type: BottomNavigationBarType.fixed,
+        selectedLabelStyle:
+            AppStyles.h5.copyWith(color: AppColors.primaryColor),
+        unselectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.greyColor),
+        fixedColor: AppColors.primaryColor,
         onTap: (value) {
           setState(() {
             selectedIndex = value;
@@ -39,7 +45,7 @@ class _HomeState extends State<Home> {
         },
         items: [
           BottomNavigationBarItem(
-            label: 'home',
+            label: 'Home',
             icon: SvgPicture.asset(
               Assets.icons.home,
               colorFilter: ColorFilter.mode(
@@ -51,7 +57,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           BottomNavigationBarItem(
-            label: 'events',
+            label: 'My Events',
             icon: SvgPicture.asset(
               Assets.icons.events,
               colorFilter: ColorFilter.mode(
@@ -63,7 +69,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           BottomNavigationBarItem(
-            label: 'map',
+            label: 'Map',
             icon: SvgPicture.asset(
               Assets.icons.map,
               colorFilter: ColorFilter.mode(
@@ -75,7 +81,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           BottomNavigationBarItem(
-            label: 'person',
+            label: 'Profile',
             icon: SvgPicture.asset(
               Assets.icons.person,
               colorFilter: ColorFilter.mode(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/models/event_model.dart';
@@ -233,7 +234,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   }
 
   Widget buildEventIndicator(EventModel event, int index, int length) {
-    final color = getCategoryColor(event.iconPath);
+    final color = getInterestColor(event.iconPath);
     return Expanded(
       child: Transform.translate(
         offset: Offset(-(2 * index).toDouble(), 0),
@@ -247,8 +248,4 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
       ),
     );
   }
-}
-
-Color getCategoryColor(String categoryPath) {
-  return categoryColors[categoryPath]!;
 }

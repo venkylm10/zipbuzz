@@ -1,8 +1,11 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:flutter/material.dart';
+import 'package:zipbuzz/constants/colors.dart';
+
 class Assets {
   static const icons = AppIcons();
-  static const eventImage = EventImages();
+  static const images = Images();
   static const welcomeImage = WelcomeImage();
 }
 
@@ -39,6 +42,20 @@ class AppIcons {
   final google_logo = 'assets/icons/google.svg';
   final apple_logo = 'assets/icons/apple.svg';
   final telephone = 'assets/icons/telephone.svg';
+  final telephone_filled = 'assets/icons/telephone_filled.svg';
+  final edit = 'assets/icons/edit.svg';
+  final check = 'assets/icons/check.svg';
+  final hosts = 'assets/icons/hosts.svg';
+  final rating = 'assets/icons/rating.svg';
+  final at = 'assets/icons/at.svg';
+  final follow_link = 'assets/icons/follow_link.svg';
+  final faqs = 'assets/icons/faqs.svg';
+  final notifications_settings = 'assets/icons/notifications_settings.svg';
+  final tnc = 'assets/icons/tnc.svg';
+  final privacy_policy = 'assets/icons/privacy_policy.svg';
+  final linkedin = 'assets/icons/linkedin.png';
+  final instagram = 'assets/icons/instagram.png';
+  final twitter = 'assets/icons/twitter.png';
 }
 
 class WelcomeImage {
@@ -48,66 +65,50 @@ class WelcomeImage {
   final welcome3 = 'assets/images/welcome/welcome3.png';
 }
 
-class EventImages {
-  const EventImages();
+class Images {
+  const Images();
+  // event images
   final band_music = 'assets/images/events/band_music.png';
   final shake_y = 'assets/images/events/shake_y.png';
   final nature = 'assets/images/events/wild_with_nature.png';
   final evermore = 'assets/images/events/dazzling_of_evermore.png';
   final art_museum = 'assets/images/events/art_museum.png';
+  // profile
+  final profile = 'assets/images/profile.png';
 }
 
-final interests = [
-  {
-    'name': "Hiking",
-    'iconPath': Assets.icons.hiking,
-  },
-  {
-    'name': "Sports",
-    'iconPath': Assets.icons.sports,
-  },
-  {
-    'name': "Music",
-    'iconPath': Assets.icons.music,
-  },
-  {
-    'name': "Movie Clubs",
-    'iconPath': Assets.icons.movieClubs,
-  },
-  {
-    'name': "Dance",
-    'iconPath': Assets.icons.dance,
-  },
-  {
-    'name': "Fitness",
-    'iconPath': Assets.icons.fitness,
-  },
-  {
-    'name': "Parties",
-    'iconPath': Assets.icons.parties,
-  },
-  {
-    'name': "Book",
-    'iconPath': Assets.icons.book,
-  },
-  {
-    'name': "Boating",
-    'iconPath': Assets.icons.boating,
-  },
-  {
-    'name': "Wine Tasting",
-    'iconPath': Assets.icons.wineTasting,
-  },
-  {
-    'name': "Gaming",
-    'iconPath': Assets.icons.gaming,
-  },
-  {
-    'name': "Kid Playdates",
-    'iconPath': Assets.icons.kidPlaydates,
-  },
-  {
-    'name': "Pet Activities",
-    'iconPath': Assets.icons.petActivites,
-  },
-];
+final interests = {
+  'Hiking': Assets.icons.hiking,
+  'Sports': Assets.icons.sports,
+  'Music': Assets.icons.music,
+  'Movie Clubs': Assets.icons.movieClubs,
+  'Dance': Assets.icons.dance,
+  'Fitness': Assets.icons.fitness,
+  'Parties': Assets.icons.parties,
+  'Book': Assets.icons.book,
+  'Boating': Assets.icons.boating,
+  'Wine Tasting': Assets.icons.wineTasting,
+  'Gaming': Assets.icons.gaming,
+  'Kid Playdates': Assets.icons.kidPlaydates,
+  'Pet Activities': Assets.icons.petActivites,
+};
+
+final Map<String, Color> interestColors = {
+  Assets.icons.hiking: Colors.brown,
+  Assets.icons.sports: Colors.green,
+  Assets.icons.music: Colors.yellow,
+  Assets.icons.movieClubs: Colors.deepPurple,
+  Assets.icons.dance: Colors.red,
+  Assets.icons.fitness: Colors.blueGrey,
+  Assets.icons.parties: Colors.pink,
+  Assets.icons.book: Colors.lightGreen,
+  Assets.icons.boating: Colors.lime,
+  Assets.icons.wineTasting: AppColors.primaryColor,
+  Assets.icons.gaming: Colors.red,
+  Assets.icons.kidPlaydates: Colors.pink,
+  Assets.icons.petActivites: Colors.orange,
+};
+
+Color getInterestColor(String iconPath) {
+  return interestColors[iconPath]!;
+}
