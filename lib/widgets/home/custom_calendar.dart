@@ -7,7 +7,7 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/models/event_model.dart';
 import 'package:zipbuzz/widgets/home/event_card.dart';
-import 'package:zipbuzz/pages/home/calendar/events_controller.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 
 class CustomCalendar extends ConsumerStatefulWidget {
   const CustomCalendar({super.key});

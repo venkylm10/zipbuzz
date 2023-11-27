@@ -8,6 +8,9 @@ import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
+import 'package:zipbuzz/widgets/profile/settings.dart';
+import 'package:zipbuzz/widgets/profile/socials.dart';
+import 'package:zipbuzz/widgets/profile/user_stats.dart';
 
 class ProfileTab extends ConsumerStatefulWidget {
   const ProfileTab({super.key});
@@ -135,7 +138,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 ],
               ),
               const SizedBox(height: 24),
-              buildStats(),
+              const UserStats(),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
@@ -144,28 +147,17 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
               ),
               const SizedBox(height: 16),
-              buildDetailTile(Assets.icons.geo_mini, "Zipcode:", "444444"),
+              buildDetailTile(Assets.icons.geo_mini, "Zipcode:", user.zipcode),
               const SizedBox(height: 4),
               buildDetailTile(
-                  Assets.icons.telephone, "Mobile no:", "(408) 238-3322"),
+                  Assets.icons.telephone, "Mobile no:", user.mobileNumber),
               const SizedBox(height: 4),
-              buildDetailTile(Assets.icons.at, "ZipBuzz handle:", "bealexlee",
+              buildDetailTile(Assets.icons.at, "ZipBuzz handle:", user.handle,
                   handle: true),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
-              Text(
-                "Social Links",
-                style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-              ),
-              const SizedBox(height: 16),
-              buildHyperLink(
-                  Assets.icons.linkedin, "LinkedIn", "alex-lee-24530611a"),
-              const SizedBox(height: 4),
-              buildHyperLink(
-                  Assets.icons.instagram, "Instagram", "The_alex_lee"),
-              const SizedBox(height: 4),
-              buildHyperLink(Assets.icons.twitter, "Twitter", "bealexlee"),
+              const UserSocials(),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
@@ -184,54 +176,13 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
               ),
               const SizedBox(height: 16),
               Text(
-                "I'm here to ensure that your experience is nothing short of extraordinary. With a passion for creating unforgettable moments and a knack for connecting with people, I thrive on the energy of the event and the joy it brings to all attendees. I'm your go-to person for any questions, assistance, or just a friendly chat.\n\nMy commitment is to make you feel welcome, entertained, and truly part of the event's magic. So, let's embark on this exciting journey together, and I promise you won't leave without a smile and wonderful memories to cherish.",
+                user.about,
                 style: AppStyles.h4,
               ),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
-              Text(
-                "Settings",
-                style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.borderGrey),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    buildSettingsTile("FAQs", Assets.icons.faqs),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Divider(
-                        color: AppColors.borderGrey.withOpacity(0.5),
-                        height: 1,
-                      ),
-                    ),
-                    buildSettingsTile(
-                        "Notification", Assets.icons.notifications_settings),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Divider(
-                        color: AppColors.borderGrey.withOpacity(0.5),
-                        height: 1,
-                      ),
-                    ),
-                    buildSettingsTile("Terms & Conditions", Assets.icons.tnc),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Divider(
-                        color: AppColors.borderGrey.withOpacity(0.5),
-                        height: 1,
-                      ),
-                    ),
-                    buildSettingsTile(
-                        "Privacy Policy", Assets.icons.privacy_policy),
-                  ],
-                ),
-              ),
+              const SettingsTiles(),
               const SizedBox(height: 24),
               InkWell(
                 child: Ink(
@@ -251,21 +202,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Padding buildSettingsTile(String label, String iconPath) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: Row(
-        children: [
-          SvgPicture.asset(iconPath, height: 20),
-          const SizedBox(width: 8),
-          Text(label, style: AppStyles.h4),
-          const Spacer(),
-          const Icon(Icons.arrow_right_rounded)
-        ],
       ),
     );
   }
@@ -340,105 +276,4 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  Row buildHyperLink(String iconPath, String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Image.asset(
-          iconPath,
-          height: 24,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: AppStyles.h4,
-        ),
-        const Expanded(child: SizedBox()),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.bgGrey,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderGrey),
-          ),
-          child: Row(
-            children: [
-              Text(
-                value,
-                style: AppStyles.h4.copyWith(
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-              const SizedBox(width: 8),
-              SvgPicture.asset(Assets.icons.follow_link, height: 16)
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Container buildStats() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        color: AppColors.bgGrey,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderGrey),
-      ),
-      child: Row(
-        children: [
-          SvgPicture.asset(Assets.icons.hosts, height: 40),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                "8",
-                style: AppStyles.h3.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "Events hosted",
-                style: AppStyles.h6.copyWith(
-                  color: AppColors.lightGreyColor,
-                ),
-              )
-            ],
-          ),
-          const Expanded(child: SizedBox()),
-          Container(
-            height: 24,
-            width: 2,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              color: AppColors.borderGrey,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(1),
-              ),
-            ),
-          ),
-          SvgPicture.asset(Assets.icons.rating, height: 40),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                "4.5",
-                style: AppStyles.h3.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "Host rating",
-                style: AppStyles.h6.copyWith(
-                  color: AppColors.lightGreyColor,
-                ),
-              )
-            ],
-          ),
-          const Expanded(child: SizedBox()),
-        ],
-      ),
-    );
-  }
 }

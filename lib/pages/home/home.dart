@@ -18,7 +18,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int selectedIndex = 0;
-  final tabs =  [
+  final tabs =  const [
     HomeTab(),
     EventsTab(),
     MapTab(),

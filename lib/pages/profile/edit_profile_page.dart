@@ -8,6 +8,7 @@ import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
+import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
   static const id = "/profile/edit";
@@ -167,11 +168,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 8),
               Text("Name:", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(controller: nameController),
+              CustomTextField(controller: nameController),
               const SizedBox(height: 8),
               Text("About me:", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(controller: aboutController, maxLength: 550),
+              CustomTextField(controller: aboutController, maxLength: 550),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
@@ -182,7 +183,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 16),
               Text("Zipcode:", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(
+              CustomTextField(
                 controller: zipcodeController,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -192,7 +193,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 8),
               Text("Mobile no:", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(
+              CustomTextField(
                 controller: mobileController,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -202,7 +203,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 8),
               Text("ZipBuzz handle:", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(
+              CustomTextField(
                 controller: handleController,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -220,7 +221,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 16),
               Text("LinkedIn", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(
+              CustomTextField(
                 controller: linkedinIdControler,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -230,7 +231,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 8),
               Text("Instagram", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(
+              CustomTextField(
                 controller: instagramIdController,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -240,7 +241,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 8),
               Text("Twitter", style: AppStyles.h4),
               const SizedBox(height: 4),
-              buildTextField(
+              CustomTextField(
                 controller: twitterIdController,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -373,66 +374,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           }
         },
       ).toList(),
-    );
-  }
-
-  Container buildTextField({
-    required TextEditingController controller,
-    int? maxLength,
-    Widget? prefixIcon,
-    bool? enabled = true,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.bgGrey,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderGrey),
-      ),
-      child: Row(
-        children: [
-          if (prefixIcon != null) prefixIcon,
-          Expanded(
-            child: TextField(
-              controller: controller,
-              cursorColor: AppColors.primaryColor,
-              style: AppStyles.h4,
-              maxLines: null,
-              maxLength: maxLength,
-              decoration: InputDecoration(
-                enabled: enabled!,
-                hintText: "",
-                hintStyle: AppStyles.h4,
-                contentPadding: const EdgeInsets.all(8),
-                counter: maxLength != null
-                    ? Transform.translate(
-                        offset: const Offset(0, -8),
-                        child: Text(
-                          "${controller.text.length}/$maxLength",
-                          style: AppStyles.h6
-                              .copyWith(color: AppColors.lightGreyColor),
-                        ),
-                      )
-                    : null,
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                errorBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                disabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

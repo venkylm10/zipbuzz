@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/pages/home/calendar/events_controller.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/widgets/home/custom_appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
 
