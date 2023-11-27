@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
@@ -43,12 +42,8 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-  Future<void> getEventColor() async {
-    final image = AssetImage(widget.event.iconPath);
-    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-      image,
-    );
-    eventColor = generator.dominantColor!.color;
+  void getEventColor() {
+    eventColor = getInterestColor(widget.event.iconPath);
     setState(() {});
   }
 
@@ -208,7 +203,8 @@ class _EventCardState extends State<EventCard> {
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
-                                        widget.event.hosts.first.name,
+                                        widget.event.hosts.first.name ??
+                                            "username",
                                         style: AppStyles.h5.copyWith(
                                           color: AppColors.primaryColor,
                                         ),
@@ -323,4 +319,3 @@ class _EventCardState extends State<EventCard> {
     );
   }
 }
-

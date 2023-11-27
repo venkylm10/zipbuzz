@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
@@ -41,12 +42,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     setState(() {});
   }
 
-  Future<void> getEventColor() async {
-    final image = AssetImage(widget.event.iconPath);
-    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-      image,
-    );
-    eventColor = generator.dominantColor!.color;
+  void getEventColor() {
+    eventColor = getInterestColor(widget.event.iconPath);
     setState(() {});
   }
 

@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/widgets/home/custom_calendar.dart';
+import 'package:zipbuzz/controllers/user_controller.dart';
+import 'package:zipbuzz/main.dart';
+import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 
-class ProfileTab extends StatelessWidget {
-  ProfileTab({super.key});
-  List<String> myInterests = ['Hiking', 'Sports', 'Dance', 'Wine Tasting'];
+class ProfileTab extends ConsumerStatefulWidget {
+  const ProfileTab({super.key});
+
+  @override
+  ConsumerState<ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends ConsumerState<ProfileTab> {
+  void editProfile(UserModel user) async {
+    await navigatorKey.currentState!
+        .pushNamed(EditProfilePage.id, arguments: {"user": user});
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -24,24 +39,27 @@ class ProfileTab extends StatelessWidget {
         leading: const SizedBox(),
         elevation: 0,
         actions: [
-          Container(
-            height: 32,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.borderGrey),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Center(
-              child: Row(
-                children: [
-                  SvgPicture.asset(Assets.icons.edit, height: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    "Edit",
-                    style: AppStyles.h5.copyWith(color: AppColors.greyColor),
-                  )
-                ],
+          GestureDetector(
+            onTap: () => editProfile(user),
+            child: Container(
+              height: 32,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.borderGrey),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Center(
+                child: Row(
+                  children: [
+                    SvgPicture.asset(Assets.icons.edit, height: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      "Edit",
+                      style: AppStyles.h5.copyWith(color: AppColors.greyColor),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -62,12 +80,12 @@ class ProfileTab extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Alex Lee",
+                        user.name,
                         style:
                             AppStyles.h1.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "@bealexlee",
+                        user.handle,
                         style:
                             AppStyles.h4.copyWith(color: AppColors.greyColor),
                       ),
@@ -95,7 +113,7 @@ class ProfileTab extends StatelessWidget {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              "Brand Ambassador",
+                              user.position,
                               style: AppStyles.h5.copyWith(
                                 color: AppColors.primaryColor,
                               ),
@@ -141,10 +159,11 @@ class ProfileTab extends StatelessWidget {
                 style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
               ),
               const SizedBox(height: 16),
-              buildHyperLink(Assets.icons.linkedin, "LinkedIn", "444-444"),
+              buildHyperLink(
+                  Assets.icons.linkedin, "LinkedIn", "alex-lee-24530611a"),
               const SizedBox(height: 4),
               buildHyperLink(
-                  Assets.icons.instagram, "Instagram", "(408) 238-3322"),
+                  Assets.icons.instagram, "Instagram", "The_alex_lee"),
               const SizedBox(height: 4),
               buildHyperLink(Assets.icons.twitter, "Twitter", "bealexlee"),
               const SizedBox(height: 24),
@@ -155,7 +174,7 @@ class ProfileTab extends StatelessWidget {
                 style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
               ),
               const SizedBox(height: 16),
-              buildInterests(),
+              buildInterests(user, ref),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
@@ -165,7 +184,7 @@ class ProfileTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                "I'm here to ensure that your experience is nothing short of extraordinary. With a passion for creating unforgettable moments and a knack for connecting with people, I thrive on the energy of the event and the joy it brings to all attendees. I'm your go-to person for any questions, assistance, or just a friendly chat.\nMy commitment is to make you feel welcome, entertained, and truly part of the event's magic. So, let's embark on this exciting journey together, and I promise you won't leave without a smile and wonderful memories to cherish.",
+                "I'm here to ensure that your experience is nothing short of extraordinary. With a passion for creating unforgettable moments and a knack for connecting with people, I thrive on the energy of the event and the joy it brings to all attendees. I'm your go-to person for any questions, assistance, or just a friendly chat.\n\nMy commitment is to make you feel welcome, entertained, and truly part of the event's magic. So, let's embark on this exciting journey together, and I promise you won't leave without a smile and wonderful memories to cherish.",
                 style: AppStyles.h4,
               ),
               const SizedBox(height: 24),
@@ -251,13 +270,14 @@ class ProfileTab extends StatelessWidget {
     );
   }
 
-  Wrap buildInterests() {
+  Wrap buildInterests(UserModel user, WidgetRef ref) {
+    final interests = ref.watch(userProvider).interests;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: myInterests.map(
+      children: interests.map(
         (e) {
-          final iconPath = interests[e]!;
+          final iconPath = allInterests[e]!;
           final color = getInterestColor(iconPath);
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -363,7 +383,7 @@ class ProfileTab extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         color: AppColors.bgGrey,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.borderGrey),
       ),
       child: Row(

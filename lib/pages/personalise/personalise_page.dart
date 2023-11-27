@@ -168,7 +168,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: interests.entries.map(
+      children: allInterests.entries.map(
         (e) {
           final name = e.key;
           return GestureDetector(

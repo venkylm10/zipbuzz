@@ -56,6 +56,9 @@ class AppIcons {
   final linkedin = 'assets/icons/linkedin.png';
   final instagram = 'assets/icons/instagram.png';
   final twitter = 'assets/icons/twitter.png';
+  final delete = 'assets/icons/delete.svg';
+  final x = 'assets/icons/x.svg';
+  final save = 'assets/icons/save.svg';
 }
 
 class WelcomeImage {
@@ -77,7 +80,7 @@ class Images {
   final profile = 'assets/images/profile.png';
 }
 
-final interests = {
+final allInterests = {
   'Hiking': Assets.icons.hiking,
   'Sports': Assets.icons.sports,
   'Music': Assets.icons.music,
@@ -96,7 +99,7 @@ final interests = {
 final Map<String, Color> interestColors = {
   Assets.icons.hiking: Colors.brown,
   Assets.icons.sports: Colors.green,
-  Assets.icons.music: Colors.yellow,
+  Assets.icons.music: const Color.fromARGB(255, 228, 208, 34),
   Assets.icons.movieClubs: Colors.deepPurple,
   Assets.icons.dance: Colors.red,
   Assets.icons.fitness: Colors.blueGrey,

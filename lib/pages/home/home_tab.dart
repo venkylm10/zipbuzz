@@ -153,7 +153,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 physics: const BouncingScrollPhysics(),
                 child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: interests.entries.map((e) {
+                    children: allInterests.entries.map((e) {
                       final name = e.key;
                       final iconPath = e.value;
                       return GestureDetector(
@@ -163,7 +163,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                           margin: EdgeInsets.only(
                             top: 5,
                             left: index == 0 ? 12 : 2,
-                            right: index == interests.length - 1 ? 12 : 2,
+                            right: index == allInterests.length - 1 ? 12 : 2,
                             bottom: 5,
                           ),
                           padding: const EdgeInsets.all(6),
@@ -212,7 +212,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
-            (interests.length / 8).ceil(),
+            (allInterests.length / 8).ceil(),
             (index) => buildCategoryPage(index, context),
           ),
         ),
@@ -228,7 +228,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          (interests.length / 8).ceil(),
+          (allInterests.length / 8).ceil(),
           (pageIndex) => Container(
             height: 6,
             width: 6,
@@ -246,11 +246,14 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildCategoryPage(int pageIndex, BuildContext context) {
-    final subInterests = interests.entries.map((e) => e.key).toList().sublist(
-        pageIndex * 8,
-        (pageIndex + 1) * 8 > interests.length
-            ? interests.length
-            : (pageIndex + 1) * 8);
+    final subInterests = allInterests.entries
+        .map((e) => e.key)
+        .toList()
+        .sublist(
+            pageIndex * 8,
+            (pageIndex + 1) * 8 > allInterests.length
+                ? allInterests.length
+                : (pageIndex + 1) * 8);
     final width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
@@ -274,7 +277,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   Container(
                     constraints: const BoxConstraints(minHeight: 50),
                     child: Image.asset(
-                      interests[name]!,
+                      allInterests[name]!,
                       height: 40,
                     ),
                   ),

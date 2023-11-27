@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/models/host_model.dart';
+import 'package:zipbuzz/models/user_model.dart';
 
 class EventHosts extends StatelessWidget {
   const EventHosts({
@@ -11,7 +11,7 @@ class EventHosts extends StatelessWidget {
     required this.hosts,
   });
 
-  final List<Host> hosts;
+  final List<UserModel> hosts;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class EventHosts extends StatelessWidget {
                 ),
               const SizedBox(width: 8),
               Text(
-                hosts.first.name,
+                hosts.first.name ?? 'username',
                 style: AppStyles.h5,
               ),
               const Expanded(child: SizedBox()),
