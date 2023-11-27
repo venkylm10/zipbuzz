@@ -30,7 +30,8 @@ class AppIcons {
   final searchBarIcon = 'assets/icons/search_bar_icon.svg';
   final home = 'assets/icons/home.svg';
   final events = 'assets/icons/calendar.svg';
-  final calendar = 'assets/icons/calendar_fill.svg';
+  final calendar = 'assets/icons/calendar.svg';
+  final calendar_fill = 'assets/icons/calendar_fill.svg';
   final map = 'assets/icons/map.svg';
   final person = 'assets/icons/person.svg';
   final person_fill = 'assets/icons/person_fill.svg';
@@ -59,6 +60,9 @@ class AppIcons {
   final delete = 'assets/icons/delete.svg';
   final x = 'assets/icons/x.svg';
   final save = 'assets/icons/save.svg';
+  final gallery = 'assets/icons/gallery.svg';
+  final save_event = 'assets/icons/save_event.svg';
+  final qr = 'assets/icons/qr.svg';
 }
 
 class WelcomeImage {

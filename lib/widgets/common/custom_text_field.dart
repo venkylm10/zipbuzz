@@ -7,12 +7,16 @@ class CustomTextField extends StatelessWidget {
   final int? maxLength;
   final Widget? prefixIcon;
   final bool? enabled;
+  final String? hintText;
+  final int? maxLines;
   const CustomTextField({
     super.key,
     required this.controller,
     this.maxLength,
     this.prefixIcon,
     this.enabled = true,
+    this.hintText,
+    this.maxLines,
   });
 
   @override
@@ -31,12 +35,13 @@ class CustomTextField extends StatelessWidget {
               controller: controller,
               cursorColor: AppColors.primaryColor,
               style: AppStyles.h4,
-              maxLines: null,
+              maxLines: maxLines,
               maxLength: maxLength,
               decoration: InputDecoration(
                 enabled: enabled!,
-                hintText: "",
-                hintStyle: AppStyles.h4,
+                hintText: hintText,
+                hintStyle:
+                    AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
                 contentPadding: const EdgeInsets.all(8),
                 counter: maxLength != null
                     ? Transform.translate(

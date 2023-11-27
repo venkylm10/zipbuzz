@@ -32,7 +32,7 @@ class EventDetails extends StatelessWidget {
                 ),
               ),
               child: SvgPicture.asset(
-                Assets.icons.calendar,
+                Assets.icons.calendar_fill,
               ),
             ),
             const SizedBox(width: 8),
