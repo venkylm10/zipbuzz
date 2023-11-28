@@ -58,11 +58,13 @@ class AppIcons {
   final instagram = 'assets/icons/instagram.png';
   final twitter = 'assets/icons/twitter.png';
   final delete = 'assets/icons/delete.svg';
-  final x = 'assets/icons/x.svg';
+  final remove = 'assets/icons/x.svg';
   final save = 'assets/icons/save.svg';
   final gallery = 'assets/icons/gallery.svg';
   final save_event = 'assets/icons/save_event.svg';
   final qr = 'assets/icons/qr.svg';
+  final add_circle = 'assets/icons/plus_circle.svg';
+  final delete_fill = 'assets/icons/delete_fill.svg';
 }
 
 class WelcomeImage {
@@ -80,6 +82,8 @@ class Images {
   final nature = 'assets/images/events/wild_with_nature.png';
   final evermore = 'assets/images/events/dazzling_of_evermore.png';
   final art_museum = 'assets/images/events/art_museum.png';
+  final no_events = 'assets/images/events/no_events.png';
+
   // profile
   final profile = 'assets/images/profile.png';
 }

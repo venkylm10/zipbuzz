@@ -169,7 +169,7 @@ class _EventCardState extends State<EventCard> {
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
-                                        widget.event.category,
+                                        widget.event.interest,
                                         style: AppStyles.h5
                                             .copyWith(color: eventColor),
                                       ),
@@ -203,8 +203,7 @@ class _EventCardState extends State<EventCard> {
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
-                                        widget.event.hosts.first.name ??
-                                            "username",
+                                        widget.event.hosts.first.name,
                                         style: AppStyles.h5.copyWith(
                                           color: AppColors.primaryColor,
                                         ),
@@ -223,9 +222,9 @@ class _EventCardState extends State<EventCard> {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          if (widget.event.description != null)
+                          if (widget.event.about != null)
                             Text(
-                              widget.event.description!,
+                              widget.event.about!,
                               softWrap: true,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -233,7 +232,7 @@ class _EventCardState extends State<EventCard> {
                                 color: AppColors.lightGreyColor,
                               ),
                             ),
-                          if (widget.event.description != null)
+                          if (widget.event.about != null)
                             const SizedBox(height: 10),
                           Row(
                             children: [

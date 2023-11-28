@@ -48,6 +48,7 @@ class _WelcomePageState extends State<WelcomePage> {
       context: context,
       backgroundColor: Colors.transparent,
       isDismissible: true,
+      barrierColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(32),

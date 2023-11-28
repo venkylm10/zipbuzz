@@ -5,12 +5,12 @@ class EventChip extends StatelessWidget {
   const EventChip({
     super.key,
     required this.eventColor,
-    required this.category,
+    required this.interest,
     required this.iconPath,
   });
 
   final Color eventColor;
-  final String category;
+  final String interest;
   final String iconPath;
 
   @override
@@ -34,7 +34,7 @@ class EventChip extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            category,
+            interest,
             style: AppStyles.h5.copyWith(
               color: eventColor,
             ),

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
 class CreateEventForm extends ConsumerStatefulWidget {
@@ -66,9 +67,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         ),
         const SizedBox(height: 16),
         categoryDropDown(),
-        const SizedBox(height: 32),
-        Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
-        const SizedBox(height: 32),
+        broadDivider(),
         Text(
           "Title & Description",
           style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
@@ -105,9 +104,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           maxLines: 5,
           maxLength: 100,
         ),
-        const SizedBox(height: 32),
-        Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
-        const SizedBox(height: 32),
+        broadDivider(),
         Text(
           "Location & Time",
           style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
@@ -247,6 +244,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             color: AppColors.lightGreyColor,
           ),
         ),
+        dropdownColor: AppColors.bgGrey,
+        elevation: 1,
         decoration: const InputDecoration(
           contentPadding: EdgeInsets.zero,
           border: OutlineInputBorder(

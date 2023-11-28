@@ -23,7 +23,6 @@ class EventHosts extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
             children: [
-              if (hosts.first.imagePath == null)
                 Container(
                   height: 32,
                   width: 32,
@@ -38,7 +37,7 @@ class EventHosts extends StatelessWidget {
                 ),
               const SizedBox(width: 8),
               Text(
-                hosts.first.name ?? 'username',
+                hosts.first.name,
                 style: AppStyles.h5,
               ),
               const Expanded(child: SizedBox()),

@@ -29,7 +29,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
 
   @override
   void initState() {
-    ref.read(eventsControllerProvider).getUpcomingEvents();
+    ref.read(eventsControllerProvider).updateUpcomingEvents();
     ref.read(eventsControllerProvider).updateFocusedEvents();
     super.initState();
   }

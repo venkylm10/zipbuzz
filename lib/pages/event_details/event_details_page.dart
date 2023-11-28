@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -26,10 +27,6 @@ class EventDetailsPage extends StatefulWidget {
 class _EventDetailsPageState extends State<EventDetailsPage> {
   Color dominantColor = Colors.white;
   Color eventColor = Colors.white;
-  final _controller = QuillController(
-    document: Document(),
-    selection: const TextSelection.collapsed(offset: 0),
-  );
   final aboutScrollController = ScrollController();
   String dummyText = '';
 
@@ -47,23 +44,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     setState(() {});
   }
 
-  Future<void> loadQuillContentFromAsset(QuillController controller) async {
-    try {
-      final jsonString = await rootBundle.loadString('assets/about.json');
-      final data = json.decode(jsonString);
-      final delta = Delta.fromJson(data);
-      final document = Document.fromDelta(delta);
-      controller.document = document;
-    } catch (e) {
-      print('Error loading Quill content: $e');
-    }
-  }
-
   @override
   void initState() {
     getDominantColor();
     getEventColor();
-    loadQuillContentFromAsset(_controller);
     super.initState();
   }
 
@@ -88,10 +72,16 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   color: Colors.white.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Center(
-                  child: Icon(
-                    Icons.arrow_back,
-                    color: dominantColor,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                    child: Center(
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: dominantColor,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -109,12 +99,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   color: Colors.white.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Center(
-                  child: Icon(
-                    Icons.favorite_rounded,
-                    color: widget.event.favourite
-                        ? Colors.pink[400]
-                        : Colors.grey[300],
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: 4,
+                      sigmaY: 4,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.favorite_rounded,
+                        color: widget.event.favourite
+                            ? Colors.pink[400]
+                            : Colors.grey[300],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -149,7 +148,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   children: [
                     Text(
                       widget.event.title,
-                      style: AppStyles.h2,
+                      style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
                       softWrap: true,
                     ),
                     const SizedBox(height: 10),
@@ -157,7 +156,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       children: [
                         EventChip(
                           eventColor: eventColor,
-                          category: widget.event.category,
+                          interest: widget.event.interest,
                           iconPath: widget.event.iconPath,
                         ),
                         const SizedBox(width: 10),
@@ -205,7 +204,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       style: AppStyles.h5
                           .copyWith(color: AppColors.lightGreyColor),
                     ),
-                    _buildQuillEditor(),
+                    const SizedBox(height: 16),
+                    Text(widget.event.about ?? '', style: AppStyles.h4),
                     const SizedBox(height: 16),
                     Divider(
                       color: AppColors.greyColor.withOpacity(0.2),
@@ -252,76 +252,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: EventButtons(event: widget.event),
-    );
-  }
-
-  QuillProvider _buildQuillEditor() {
-    return QuillProvider(
-      configurations: QuillConfigurations(
-        controller: _controller,
-        sharedConfigurations: const QuillSharedConfigurations(
-          locale: Locale('en'),
-        ),
-      ),
-      child: QuillEditor(
-        configurations: QuillEditorConfigurations(
-          readOnly: true,
-          scrollable: true,
-          autoFocus: false,
-          expands: false,
-          showCursor: false,
-          padding: EdgeInsets.zero,
-          scrollPhysics: const BouncingScrollPhysics(),
-          customStyles: DefaultStyles(
-            h1: DefaultTextBlockStyle(
-              AppStyles.h2,
-              const VerticalSpacing(16, 0),
-              const VerticalSpacing(0, 0),
-              null,
-            ),
-            h2: DefaultTextBlockStyle(
-              AppStyles.h3,
-              const VerticalSpacing(16, 0),
-              const VerticalSpacing(0, 0),
-              null,
-            ),
-            h3: DefaultTextBlockStyle(
-              AppStyles.h4,
-              const VerticalSpacing(16, 0),
-              const VerticalSpacing(0, 0),
-              null,
-            ),
-            bold: AppStyles.h4.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-            paragraph: DefaultTextBlockStyle(
-              AppStyles.h4,
-              const VerticalSpacing(16, 0),
-              const VerticalSpacing(0, 0),
-              null,
-            ),
-            lists: DefaultListBlockStyle(
-              AppStyles.h4,
-              const VerticalSpacing(16, 0),
-              const VerticalSpacing(0, 0),
-              null,
-              null,
-            ),
-            italic: AppStyles.h4.copyWith(
-              fontStyle: FontStyle.italic,
-            ),
-            underline: AppStyles.h4.copyWith(
-              decoration: TextDecoration.underline,
-            ),
-          ),
-          textSelectionThemeData: TextSelectionThemeData(
-            selectionHandleColor: AppColors.textColor,
-            selectionColor: AppColors.textColor.withOpacity(0.1),
-          ),
-        ),
-        scrollController: aboutScrollController,
-        focusNode: FocusNode(),
-      ),
     );
   }
 }

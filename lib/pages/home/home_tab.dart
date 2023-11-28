@@ -79,7 +79,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     if (selectedCategory != interest) {
       ref
           .read(eventsControllerProvider)
-          .selectCategory(category: interest ?? '');
+          .selectCategory(category: interest);
       setState(() {});
     } else {
       ref.read(eventsControllerProvider).selectCategory(category: '');

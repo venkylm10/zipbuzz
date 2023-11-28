@@ -359,7 +359,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         children: [
                           const SizedBox(width: 8),
                           SvgPicture.asset(
-                            Assets.icons.x,
+                            Assets.icons.remove,
                             colorFilter: ColorFilter.mode(
                               color,
                               BlendMode.srcIn,
