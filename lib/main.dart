@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           selectionColor: Colors.white.withOpacity(0.4),
         ),
       ),
-      initialRoute: WelcomePage.id,
+      initialRoute: Home.id,
       routes: routes,
     );
   }

@@ -96,6 +96,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               pageHeadings[currentPage],

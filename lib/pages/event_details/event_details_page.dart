@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
@@ -15,8 +13,10 @@ import 'package:zipbuzz/widgets/common/event_chip.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_buttons.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_details.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_hosts.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_qrcode.dart';
 
 class EventDetailsPage extends StatefulWidget {
+  static const id = 'event/details';
   final EventModel event;
   const EventDetailsPage({super.key, required this.event});
 
@@ -88,37 +88,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             ),
           ),
           const Expanded(child: SizedBox()),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () => navigatorKey.currentState!.pop(),
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 4,
-                      sigmaY: 4,
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.favorite_rounded,
-                        color: widget.event.favourite
-                            ? Colors.pink[400]
-                            : Colors.grey[300],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
       extendBodyBehindAppBar: true,
@@ -153,18 +122,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     ),
                     const SizedBox(height: 10),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        EventChip(
-                          eventColor: eventColor,
-                          interest: widget.event.interest,
-                          iconPath: widget.event.iconPath,
+                        Row(
+                          children: [
+                            EventChip(
+                              eventColor: eventColor,
+                              interest: widget.event.category,
+                              iconPath: widget.event.iconPath,
+                            ),
+                            const SizedBox(width: 10),
+                            AttendeeNumbers(
+                              attendees: widget.event.attendees,
+                              total: widget.event.maxAttendees,
+                              backgroundColor:
+                                  AppColors.greyColor.withOpacity(0.1),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        AttendeeNumbers(
-                          attendees: widget.event.attendees,
-                          total: widget.event.maxAttendees,
-                          backgroundColor: AppColors.greyColor.withOpacity(0.1),
-                        ),
+                        const EventQRCode(),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -185,19 +161,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       color: AppColors.greyColor.withOpacity(0.2),
                       thickness: 0,
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Hosts",
-                      style: AppStyles.h5
-                          .copyWith(color: AppColors.lightGreyColor),
-                    ),
-                    const SizedBox(height: 16),
-                    EventHosts(hosts: widget.event.hosts),
-                    const SizedBox(height: 16),
-                    Divider(
-                      color: AppColors.greyColor.withOpacity(0.2),
-                      thickness: 0,
-                    ),
+                    if (widget.event.hosts.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16),
+                          Text(
+                            "Hosts",
+                            style: AppStyles.h5
+                                .copyWith(color: AppColors.lightGreyColor),
+                          ),
+                          const SizedBox(height: 16),
+                          EventHosts(hosts: widget.event.hosts),
+                          const SizedBox(height: 16),
+                          Divider(
+                            color: AppColors.greyColor.withOpacity(0.2),
+                            thickness: 0,
+                          ),
+                        ],
+                      ),
                     const SizedBox(height: 16),
                     Text(
                       "About",
@@ -205,7 +187,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           .copyWith(color: AppColors.lightGreyColor),
                     ),
                     const SizedBox(height: 16),
-                    Text(widget.event.about ?? '', style: AppStyles.h4),
+                    Text(widget.event.about, style: AppStyles.h4),
                     const SizedBox(height: 16),
                     Divider(
                       color: AppColors.greyColor.withOpacity(0.2),

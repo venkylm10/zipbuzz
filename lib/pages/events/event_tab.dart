@@ -13,7 +13,7 @@ class EventsTab extends StatefulWidget {
 }
 
 class _EventsTabState extends State<EventsTab> {
-  int selectedTab = 2;
+  int selectedTab = 0;
   final tabs = ["Upcoming", "Past", "Create"];
   final tabPages = const [UpcomingEvents(), PastEvents(), CreateEvent()];
   @override

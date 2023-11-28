@@ -1,76 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 
-class EventTypeAndCapacity extends StatefulWidget {
+class EventTypeAndCapacity extends ConsumerStatefulWidget {
   const EventTypeAndCapacity({super.key});
 
   @override
-  State<EventTypeAndCapacity> createState() => _EventTypeAndCapacityState();
+  ConsumerState<EventTypeAndCapacity> createState() =>
+      _EventTypeAndCapacityState();
 }
 
-class _EventTypeAndCapacityState extends State<EventTypeAndCapacity> {
+class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
   int capacity = 10;
   var isPrivate = false;
   final capacityController = TextEditingController();
+  late EventsController eventsController;
 
-  void updateType(bool value) {
-    setState(() {
-      isPrivate = value;
-    });
+  void updateEventType(bool value) {
+    eventsController.updateEventType(value);
   }
 
   void increaseCapacity() {
-    setState(() {
-      capacity++;
-      capacityController.text = capacity.toString();
-    });
+    eventsController.increaseCapacity();
   }
 
   void decreaseCapacity() {
-    setState(() {
-      if (capacity > 0) {
-        capacity--;
-        capacityController.text = capacity.toString();
-      }
-    });
+    eventsController.decreaseCapacity();
   }
 
   void onChange(String value) {
+    eventsController.onChangeCapacity(value);
     if (value.isEmpty) {
       capacityController.text = 0.toString();
-      setState(() {
-        capacity = 0;
-      });
-      return;
-    }
-    if (value.length > 1 && value[0] == '0') {
-      value = value.substring(1);
-    }
-    final num = int.parse(value);
-
-    if (num < 0) {
-      capacityController.text = 0.toString();
-      setState(() {
-        capacity = 0;
-      });
     } else {
-      capacityController.text = value;
-      setState(() {
-        capacity = num;
-      });
+      capacityController.text = capacity.toString();
     }
   }
 
   @override
   void initState() {
+    eventsController = ref.read(eventsControllerProvider);
     capacityController.text = capacity.toString();
     super.initState();
+  }
+
+  void getValues() {
+    capacityController.text = capacity.toString();
+    isPrivate = ref.read(newEventProvider).isPrivate!;
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    capacity = ref.watch(newEventProvider).capacity;
+    isPrivate = ref.watch(newEventProvider).isPrivate!;
+    getValues();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -80,7 +66,7 @@ class _EventTypeAndCapacityState extends State<EventTypeAndCapacity> {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () => updateType(false),
+          onTap: () => updateEventType(false),
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -95,9 +81,7 @@ class _EventTypeAndCapacityState extends State<EventTypeAndCapacity> {
                   groupValue: isPrivate,
                   activeColor: AppColors.primaryColor,
                   onChanged: (value) {
-                    setState(() {
-                      isPrivate = !isPrivate;
-                    });
+                    updateEventType(false);
                   },
                 ),
                 Column(
@@ -120,7 +104,7 @@ class _EventTypeAndCapacityState extends State<EventTypeAndCapacity> {
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => updateType(true),
+          onTap: () => updateEventType(true),
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -135,9 +119,7 @@ class _EventTypeAndCapacityState extends State<EventTypeAndCapacity> {
                   groupValue: isPrivate,
                   activeColor: AppColors.primaryColor,
                   onChanged: (value) {
-                    setState(() {
-                      isPrivate = !isPrivate;
-                    });
+                    updateEventType(true);
                   },
                 ),
                 Column(

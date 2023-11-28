@@ -55,6 +55,7 @@ class _EventCardState extends State<EventCard> {
 
   @override
   Widget build(BuildContext context) {
+    final date = DateTime.parse(widget.event.date);
     return GestureDetector(
       onTap: () => navigateToEventDetails(),
       child: Container(
@@ -68,7 +69,7 @@ class _EventCardState extends State<EventCard> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  buildDate(),
+                  buildDate(date),
                   const SizedBox(height: 10),
                   Container(
                     height: 50,
@@ -169,7 +170,7 @@ class _EventCardState extends State<EventCard> {
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
-                                        widget.event.interest,
+                                        widget.event.category,
                                         style: AppStyles.h5
                                             .copyWith(color: eventColor),
                                       ),
@@ -258,7 +259,7 @@ class _EventCardState extends State<EventCard> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                getTime(widget.event.dateTime),
+                                getTime(date),
                                 style: AppStyles.h5.copyWith(
                                   color: AppColors.lightGreyColor,
                                 ),
@@ -278,7 +279,7 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-  Container buildDate() {
+  Container buildDate(DateTime date) {
     return Container(
       padding: const EdgeInsets.all(2),
       constraints: const BoxConstraints(minWidth: 50),
@@ -297,18 +298,18 @@ class _EventCardState extends State<EventCard> {
               ),
             ),
             child: Text(
-              getMonth(widget.event.dateTime),
+              getMonth(date),
               style: AppStyles.h4.copyWith(
                 color: AppColors.greyColor,
               ),
             ),
           ),
           Text(
-            widget.event.dateTime.day.toString(),
+            date.day.toString(),
             style: AppStyles.h2,
           ),
           Text(
-            getWeekDay(widget.event.dateTime),
+            getWeekDay(date),
             style: AppStyles.h4.copyWith(
               color: AppColors.greyColor,
             ),

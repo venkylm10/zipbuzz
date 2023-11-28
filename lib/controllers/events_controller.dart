@@ -20,14 +20,17 @@ class EventsController {
   EventModel newEvent = EventModel(
     title: "",
     location: "",
-    dateTime: DateTime.now(),
-    startTime: TimeOfDay.now(),
+    date: DateTime.now().toString(),
+    startTime: TimeOfDay.now().toString(),
     attendees: 0,
-    interest: "Hiking",
+    category: "Hiking",
     favourite: false,
     bannerPath: Assets.images.nature,
     iconPath: allInterests['Hiking']!,
     maxAttendees: 50,
+    about: "",
+    hosts: [],
+    capacity: 10,
   );
 
   final today =
@@ -54,7 +57,7 @@ class EventsController {
         upcomingEvents.addAll(value);
       }
     });
-    upcomingEvents.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    upcomingEvents.sort((a, b) => a.date.compareTo(b.date));
   }
 
   void updatePastEvents() {
@@ -64,10 +67,75 @@ class EventsController {
         pastEvents.addAll(value);
       }
     });
-    pastEvents.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    pastEvents.sort((a, b) => b.date.compareTo(a.date));
   }
 
   void selectCategory({String? category = ''}) {
     selectedCategory = category ?? '';
+  }
+
+  // new event methods
+  void updateName(String title) {
+    print(title);
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(title: title));
+  }
+
+  void updateCategory(String category) {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(category: category));
+  }
+
+  void updateDescription(String description) {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(about: description));
+  }
+
+  void onChangeCapacity(String value) {
+    if (value.isEmpty) {
+      ref
+          .read(newEventProvider.notifier)
+          .update((state) => state.copyWith(capacity: 0));
+
+      return;
+    }
+    if (value.length > 1 && value[0] == '0') {
+      value = value.substring(1);
+    }
+    final num = int.parse(value);
+
+    if (num < 0) {
+      ref
+          .read(newEventProvider.notifier)
+          .update((state) => state.copyWith(capacity: 0));
+    } else {
+      ref
+          .read(newEventProvider.notifier)
+          .update((state) => state.copyWith(capacity: num));
+    }
+  }
+
+  void updateEventType(bool value) {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(isPrivate: value));
+  }
+
+  void increaseCapacity() {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(capacity: state.capacity + 1));
+  }
+
+  void decreaseCapacity() {
+    if (ref.read(newEventProvider).capacity != 0) {
+      ref
+          .read(newEventProvider.notifier)
+          .update((state) => state.copyWith(capacity: state.capacity - 1));
+      return;
+    }
   }
 }

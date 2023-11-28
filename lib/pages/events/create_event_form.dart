@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
@@ -20,16 +21,19 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController dateController;
-  late TextEditingController venueController;
+  late TextEditingController locationController;
   late TextEditingController startTimeController;
   late TextEditingController endTimeController;
+  DateTime date = DateTime.now();
+  late EventsController eventController;
 
   @override
   void initState() {
+    eventController = ref.read(eventsControllerProvider);
     nameController = TextEditingController();
     descriptionController = TextEditingController();
     dateController = TextEditingController();
-    venueController = TextEditingController();
+    locationController = TextEditingController();
     startTimeController = TextEditingController();
     endTimeController = TextEditingController();
     super.initState();
@@ -40,14 +44,52 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     nameController.dispose();
     descriptionController.dispose();
     dateController.dispose();
-    venueController.dispose();
+    locationController.dispose();
     startTimeController.dispose();
     endTimeController.dispose();
     super.dispose();
   }
 
+  void updateEventName(String value) {
+    eventController.updateName(value);
+  }
+
+  void updateCategory() {
+    eventController.updateCategory(category);
+  }
+
+  void updateDescription() {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(about: descriptionController.text));
+  }
+
+  void updateDate() async {
+    date = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime.utc(2026),
+        ) ??
+        DateTime.now();
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(date: date.toString()));
+  }
+
+  void getNewEvent() {
+    final dummy = ref.read(newEventProvider);
+    nameController.text = dummy.title;
+    descriptionController.text = dummy.about;
+    date = DateTime.parse(dummy.date);
+    locationController.text = dummy.location;
+    startTimeController.text = dummy.startTime;
+    endTimeController.text = dummy.endTime ?? "";
+  }
+
   @override
   Widget build(BuildContext context) {
+    getNewEvent();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -86,6 +128,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         CustomTextField(
           controller: nameController,
           hintText: "eg: A madcap house party",
+          onChanged: updateEventName,
         ),
         const SizedBox(height: 16),
         Row(
@@ -122,11 +165,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         const SizedBox(height: 16),
         GestureDetector(
           onTap: () {
-            showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime.utc(2022),
-                lastDate: DateTime.utc(2025));
+            updateDate();
           },
           child: CustomTextField(
             controller: dateController,
@@ -150,7 +189,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         ),
         const SizedBox(height: 16),
         CustomTextField(
-          controller: venueController,
+          controller: locationController,
           hintText: "eg: 420 Gala St, San Jose 95125",
           prefixIcon: Padding(
             padding: const EdgeInsets.only(left: 8.0),

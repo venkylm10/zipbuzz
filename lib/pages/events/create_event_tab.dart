@@ -4,6 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
+import 'package:zipbuzz/main.dart';
+import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/create_event_form.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
@@ -57,7 +60,10 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           const AddEventPhotos(),
           broadDivider(),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              navigatorKey.currentState!.pushNamed(EventDetailsPage.id,
+                  arguments: {'event': ref.read(newEventProvider)});
+            },
             child: Ink(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(

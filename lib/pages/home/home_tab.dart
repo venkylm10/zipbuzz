@@ -77,9 +77,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   void onTapRowCategory(String interest) {
     if (selectedCategory != interest) {
-      ref
-          .read(eventsControllerProvider)
-          .selectCategory(category: interest);
+      ref.read(eventsControllerProvider).selectCategory(category: interest);
       setState(() {});
     } else {
       ref.read(eventsControllerProvider).selectCategory(category: '');
@@ -130,7 +128,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   ),
                 ),
                 const CustomCalendar(),
-                const SizedBox(height: 200)
+                const SizedBox(height: 400)
               ],
             ),
           ),

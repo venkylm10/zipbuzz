@@ -16,6 +16,7 @@ class EventDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final date = DateTime.parse(event.date);
     return Column(
       children: [
         //date
@@ -41,13 +42,13 @@ class EventDetails extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  DateFormat.MMMM().format(event.dateTime),
+                  DateFormat.MMMM().format(date),
                   style: AppStyles.h4.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
-                  DateFormat.EEEE().format(event.dateTime),
+                  DateFormat.EEEE().format(date),
                   style: AppStyles.h5.copyWith(
                     color: AppColors.lightGreyColor,
                   ),

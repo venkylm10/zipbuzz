@@ -64,7 +64,11 @@ class AppIcons {
   final save_event = 'assets/icons/save_event.svg';
   final qr = 'assets/icons/qr.svg';
   final add_circle = 'assets/icons/plus_circle.svg';
+  final add_fill = 'assets/icons/add_fill.svg';
   final delete_fill = 'assets/icons/delete_fill.svg';
+  final send_fill = 'assets/icons/send_fill.svg';
+  final heart_fill = 'assets/icons/heart_fill.svg';
+  final gallery_add = 'assets/icons/gallery_add.svg';
 }
 
 class WelcomeImage {
