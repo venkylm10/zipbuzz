@@ -223,9 +223,9 @@ class _EventCardState extends State<EventCard> {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          if (widget.event.about != null)
+                          if (widget.event.about.isNotEmpty)
                             Text(
-                              widget.event.about!,
+                              widget.event.about,
                               softWrap: true,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -233,7 +233,7 @@ class _EventCardState extends State<EventCard> {
                                 color: AppColors.lightGreyColor,
                               ),
                             ),
-                          if (widget.event.about != null)
+                          if (widget.event.about.isNotEmpty)
                             const SizedBox(height: 10),
                           Row(
                             children: [

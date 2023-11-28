@@ -138,4 +138,22 @@ class EventsController {
       return;
     }
   }
+
+  void updateDate(String date) {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(date: date));
+  }
+
+  void updateTime(String time, {bool? isEnd = false}) {
+    if (isEnd!) {
+      ref
+          .read(newEventProvider.notifier)
+          .update((state) => state.copyWith(endTime: time));
+    } else {
+      ref
+          .read(newEventProvider.notifier)
+          .update((state) => state.copyWith(startTime: time));
+    }
+  }
 }

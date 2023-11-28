@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class AddEventPhotos extends StatefulWidget {
   const AddEventPhotos({super.key});
@@ -46,25 +47,28 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
           style: AppStyles.h4,
         ),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          decoration: BoxDecoration(
-            color: AppColors.bgGrey,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderGrey),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(Assets.icons.add_circle),
-              const SizedBox(width: 8),
-              Text(
-                "Add",
-                style: AppStyles.h4.copyWith(
-                  color: AppColors.greyColor,
+        GestureDetector(
+          onTap: () => showSnackBar(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.bgGrey,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.borderGrey),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(Assets.icons.add_circle),
+                const SizedBox(width: 8),
+                Text(
+                  "Add",
+                  style: AppStyles.h4.copyWith(
+                    color: AppColors.greyColor,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -93,25 +97,29 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 36,
-                          width: 36,
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 4,
-                                    sigmaY: 4,
+                        child: GestureDetector(
+                          onTap: () => showSnackBar(),
+                          child: SizedBox(
+                            height: 36,
+                            width: 36,
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                      sigmaX: 4,
+                                      sigmaY: 4,
+                                    ),
+                                    child:
+                                        const SizedBox(height: 36, width: 36),
                                   ),
-                                  child: const SizedBox(height: 36, width: 36),
                                 ),
-                              ),
-                              SvgPicture.asset(
-                                Assets.icons.delete_fill,
-                                height: 36,
-                              ),
-                            ],
+                                SvgPicture.asset(
+                                  Assets.icons.delete_fill,
+                                  height: 36,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -123,25 +131,28 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          decoration: BoxDecoration(
-            color: AppColors.bgGrey,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderGrey),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(Assets.icons.add_circle),
-              const SizedBox(width: 8),
-              Text(
-                "Add more",
-                style: AppStyles.h4.copyWith(
-                  color: AppColors.greyColor,
+        GestureDetector(
+          onTap: () => showSnackBar(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.bgGrey,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.borderGrey),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(Assets.icons.add_circle),
+                const SizedBox(width: 8),
+                Text(
+                  "Add more",
+                  style: AppStyles.h4.copyWith(
+                    color: AppColors.greyColor,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

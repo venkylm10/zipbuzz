@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
@@ -72,9 +73,30 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           lastDate: DateTime.utc(2026),
         ) ??
         DateTime.now();
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(date: date.toString()));
+    eventController.updateDate(date.toString());
+    dateController.text = DateFormat('d\'th\' MMMM (EEEE)').format(date);
+    setState(() {});
+  }
+
+  void updateTime({bool? isEnd = false}) async {
+    final time =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (time != null) {
+      var eventDate = DateTime.parse(ref.read(newEventProvider).date);
+      final tempTime = DateTime(eventDate.year, eventDate.month, eventDate.day,
+          time.hour, time.minute);
+      final noon = tempTime.hour >= 12 ? true : false;
+      if (isEnd!) {
+        eventController.updateTime(tempTime.toString(), isEnd: true);
+        endTimeController.text =
+            "${tempTime.hour >= 13 ? tempTime.hour - 12 : tempTime.hour}:${tempTime.minute} ${noon ? "PM" : "AM"}";
+      } else {
+        eventController.updateTime(tempTime.toString());
+        startTimeController.text =
+            "${tempTime.hour >= 13 ? tempTime.hour - 12 : tempTime.hour}:${tempTime.minute} ${noon ? "PM" : "AM"}";
+      }
+      setState(() {});
+    }
   }
 
   void getNewEvent() {
@@ -83,8 +105,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     descriptionController.text = dummy.about;
     date = DateTime.parse(dummy.date);
     locationController.text = dummy.location;
-    startTimeController.text = dummy.startTime;
-    endTimeController.text = dummy.endTime ?? "";
   }
 
   @override
@@ -224,8 +244,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  showTimePicker(
-                      context: context, initialTime: TimeOfDay.now());
+                  updateTime();
                 },
                 child: CustomTextField(
                   controller: startTimeController,
@@ -243,8 +262,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  showTimePicker(
-                      context: context, initialTime: TimeOfDay.now());
+                  updateTime(isEnd: true);
                 },
                 child: CustomTextField(
                   controller: endTimeController,

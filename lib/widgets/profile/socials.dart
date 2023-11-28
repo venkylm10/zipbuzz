@@ -5,6 +5,7 @@ import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class UserSocials extends ConsumerWidget {
   const UserSocials({super.key});
@@ -13,6 +14,7 @@ class UserSocials extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Social Links",
@@ -46,24 +48,27 @@ class UserSocials extends ConsumerWidget {
           style: AppStyles.h4,
         ),
         const Expanded(child: SizedBox()),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.bgGrey,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderGrey),
-          ),
-          child: Row(
-            children: [
-              Text(
-                value,
-                style: AppStyles.h4.copyWith(
-                  decoration: TextDecoration.underline,
+        GestureDetector(
+          onTap: () => showSnackBar(),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.bgGrey,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.borderGrey),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  value,
+                  style: AppStyles.h4.copyWith(
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              SvgPicture.asset(Assets.icons.follow_link, height: 16)
-            ],
+                const SizedBox(width: 8),
+                SvgPicture.asset(Assets.icons.follow_link, height: 16)
+              ],
+            ),
           ),
         ),
       ],

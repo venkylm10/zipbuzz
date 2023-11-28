@@ -62,7 +62,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           InkWell(
             onTap: () {
               navigatorKey.currentState!.pushNamed(EventDetailsPage.id,
-                  arguments: {'event': ref.read(newEventProvider)});
+                  arguments: {'event': ref.read(newEventProvider), 'isPreview': true});
             },
             child: Ink(
               padding: const EdgeInsets.all(12),

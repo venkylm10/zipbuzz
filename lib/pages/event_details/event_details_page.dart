@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
@@ -18,7 +17,8 @@ import 'package:zipbuzz/widgets/event_details_page/event_qrcode.dart';
 class EventDetailsPage extends StatefulWidget {
   static const id = 'event/details';
   final EventModel event;
-  const EventDetailsPage({super.key, required this.event});
+  final bool? isPreview;
+  const EventDetailsPage({super.key, required this.event, this.isPreview = false});
 
   @override
   State<EventDetailsPage> createState() => _EventDetailsPageState();
@@ -233,7 +233,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: EventButtons(event: widget.event),
+      floatingActionButton: EventButtons(event: widget.event, isPreview: widget.isPreview),
     );
   }
 }

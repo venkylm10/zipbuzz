@@ -5,6 +5,7 @@ import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class AddHosts extends ConsumerWidget {
   const AddHosts({super.key});
@@ -78,56 +79,62 @@ class AddHosts extends ConsumerWidget {
                 style: AppStyles.h5,
               ),
               const Expanded(child: SizedBox()),
-              Container(
-                height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.borderGrey,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Row(
-                    children: [
-                      Text(
-                        "Co-host",
-                        style: AppStyles.h5,
-                      ),
-                      const SizedBox(width: 8),
-                      SvgPicture.asset(
-                        Assets.icons.remove,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.textColor,
-                          BlendMode.srcIn,
+              GestureDetector(
+                onTap: () => showSnackBar(),
+                child: Container(
+                  height: 32,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.borderGrey,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Text(
+                          "Co-host",
+                          style: AppStyles.h5,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          Assets.icons.remove,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.textColor,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
-        Container(
-          height: 44,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: AppColors.bgGrey,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderGrey),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SvgPicture.asset(Assets.icons.add_circle, height: 20),
-              const SizedBox(width: 8),
-              Text(
-                "Add Co-host",
-                style: AppStyles.h4.copyWith(
-                  color: AppColors.greyColor,
+        GestureDetector(
+          onTap: () => showSnackBar(),
+          child: Container(
+            height: 44,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.bgGrey,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.borderGrey),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(Assets.icons.add_circle, height: 20),
+                const SizedBox(width: 8),
+                Text(
+                  "Add Co-host",
+                  style: AppStyles.h4.copyWith(
+                    color: AppColors.greyColor,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

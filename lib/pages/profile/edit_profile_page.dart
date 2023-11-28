@@ -9,6 +9,7 @@ import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
   static const id = "/profile/edit";
@@ -98,35 +99,39 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 children: [
                   Column(
                     children: [
-                      SizedBox(
-                        height: 120,
-                        width: 120,
-                        child: Stack(
-                          children: [
-                            Image.asset(user.imagePath),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Container(
-                                height: 32,
-                                width: 32,
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.borderGrey,
-                                      blurRadius: 1,
-                                      spreadRadius: 2,
-                                    )
-                                  ],
-                                ),
-                                child: SvgPicture.asset(
-                                  Assets.icons.edit,
+                      GestureDetector(
+                        onTap: () => showSnackBar(),
+                        // add image picker for profile editing page
+                        child: SizedBox(
+                          height: 120,
+                          width: 120,
+                          child: Stack(
+                            children: [
+                              Image.asset(user.imagePath),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Container(
+                                  height: 32,
+                                  width: 32,
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.borderGrey,
+                                        blurRadius: 1,
+                                        spreadRadius: 2,
+                                      )
+                                    ],
+                                  ),
+                                  child: SvgPicture.asset(
+                                    Assets.icons.edit,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -261,7 +266,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
               InkWell(
-                onTap: () {},
+                onTap: () => showSnackBar(),
                 child: Ink(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(

@@ -69,6 +69,7 @@ class AppIcons {
   final send_fill = 'assets/icons/send_fill.svg';
   final heart_fill = 'assets/icons/heart_fill.svg';
   final gallery_add = 'assets/icons/gallery_add.svg';
+  final link = 'assets/icons/link.svg';
 }
 
 class WelcomeImage {

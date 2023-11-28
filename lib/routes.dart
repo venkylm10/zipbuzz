@@ -11,9 +11,11 @@ final routes = {
   PersonalisePage.id: (context) => const PersonalisePage(),
   Home.id: (context) => const Home(),
   EventDetailsPage.id: (context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final event = args['event'];
-    return EventDetailsPage(event: event);
+    final isPreview = args['isPreview'] ?? false;
+    return EventDetailsPage(event: event, isPreview: isPreview);
   },
   EditProfilePage.id: (context) => const EditProfilePage(),
   FAQsPage.id: (context) => const FAQsPage(),

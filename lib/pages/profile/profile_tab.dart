@@ -8,6 +8,7 @@ import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
 import 'package:zipbuzz/widgets/profile/socials.dart';
 import 'package:zipbuzz/widgets/profile/user_stats.dart';
@@ -185,6 +186,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
               const SettingsTiles(),
               const SizedBox(height: 24),
               InkWell(
+                onTap: () => showSnackBar(),
                 child: Ink(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -275,5 +277,4 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
       ],
     );
   }
-
 }

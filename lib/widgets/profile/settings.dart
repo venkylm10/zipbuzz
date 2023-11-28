@@ -5,6 +5,7 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/pages/settings/faqs_page.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class SettingsTiles extends StatelessWidget {
   const SettingsTiles({super.key});
@@ -12,6 +13,7 @@ class SettingsTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Settings",
@@ -38,7 +40,10 @@ class SettingsTiles extends StatelessWidget {
                 ),
               ),
               buildSettingsTile(
-                  "Notification", Assets.icons.notifications_settings),
+                "Notification",
+                Assets.icons.notifications_settings,
+                onTap: () => showSnackBar(),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Divider(
@@ -46,7 +51,11 @@ class SettingsTiles extends StatelessWidget {
                   height: 1,
                 ),
               ),
-              buildSettingsTile("Terms & Conditions", Assets.icons.tnc),
+              buildSettingsTile(
+                "Terms & Conditions",
+                Assets.icons.tnc,
+                onTap: () => showSnackBar(),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Divider(
@@ -54,7 +63,11 @@ class SettingsTiles extends StatelessWidget {
                   height: 1,
                 ),
               ),
-              buildSettingsTile("Privacy Policy", Assets.icons.privacy_policy),
+              buildSettingsTile(
+                "Privacy Policy",
+                Assets.icons.privacy_policy,
+                onTap: () => showSnackBar(),
+              ),
             ],
           ),
         ),

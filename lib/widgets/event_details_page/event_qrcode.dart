@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class EventQRCode extends StatelessWidget {
   const EventQRCode({super.key});
@@ -10,7 +11,7 @@ class EventQRCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () => showSnackBar(),
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 10,
