@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isSearching;
@@ -94,7 +95,7 @@ class _CustomAppBarState extends State<CustomAppBar>
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => showSnackBar(),
                   child: SvgPicture.asset(Assets.icons.notification),
                 ),
                 const SizedBox(width: 12)

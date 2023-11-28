@@ -76,22 +76,27 @@ class EventsController {
 
   // new event methods
   void updateName(String title) {
-    print(title);
     ref
         .read(newEventProvider.notifier)
         .update((state) => state.copyWith(title: title));
-  }
-
-  void updateCategory(String category) {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(category: category));
   }
 
   void updateDescription(String description) {
     ref
         .read(newEventProvider.notifier)
         .update((state) => state.copyWith(about: description));
+  }
+
+  void updateLocation(String location) {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(location: location));
+  }
+
+  void updateCategory(String category) {
+    ref
+        .read(newEventProvider.notifier)
+        .update((state) => state.copyWith(category: category));
   }
 
   void onChangeCapacity(String value) {

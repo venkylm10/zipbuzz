@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/routes.dart';
@@ -31,11 +32,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Colors.white.withOpacity(0.7),
-          selectionHandleColor: Colors.white,
-          selectionColor: Colors.white.withOpacity(0.4),
+          selectionHandleColor: AppColors.borderGrey,
+          selectionColor: AppColors.primaryColor.withOpacity(0.1),
         ),
       ),
-      initialRoute: Home.id,
+      initialRoute: WelcomePage.id,
       routes: routes,
     );
   }

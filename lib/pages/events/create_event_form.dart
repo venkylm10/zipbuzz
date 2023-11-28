@@ -59,10 +59,12 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     eventController.updateCategory(category);
   }
 
-  void updateDescription() {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(about: descriptionController.text));
+  void updateDescription(String value) {
+    eventController.updateDescription(value);
+  }
+
+  void updateLocation(String value) {
+    eventController.updateLocation(value);
   }
 
   void updateDate() async {
@@ -166,6 +168,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           hintText: "Event description",
           maxLines: 5,
           maxLength: 100,
+          onChanged: updateDescription,
         ),
         broadDivider(),
         Text(
