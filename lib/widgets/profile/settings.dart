@@ -42,7 +42,7 @@ class SettingsTiles extends StatelessWidget {
               buildSettingsTile(
                 "Notification",
                 Assets.icons.notifications_settings,
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -54,7 +54,7 @@ class SettingsTiles extends StatelessWidget {
               buildSettingsTile(
                 "Terms & Conditions",
                 Assets.icons.tnc,
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -66,7 +66,7 @@ class SettingsTiles extends StatelessWidget {
               buildSettingsTile(
                 "Privacy Policy",
                 Assets.icons.privacy_policy,
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
               ),
             ],
           ),

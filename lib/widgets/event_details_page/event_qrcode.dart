@@ -11,7 +11,7 @@ class EventQRCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => showSnackBar(),
+      onTap: showSnackBar,
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 10,

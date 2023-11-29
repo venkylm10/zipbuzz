@@ -48,7 +48,7 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () => showSnackBar(),
+          onTap: showSnackBar,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             decoration: BoxDecoration(
@@ -98,13 +98,14 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
                       Align(
                         alignment: Alignment.center,
                         child: GestureDetector(
-                          onTap: () => showSnackBar(),
+                          onTap: showSnackBar,
                           child: SizedBox(
                             height: 36,
                             width: 36,
                             child: Stack(
                               children: [
                                 ClipRRect(
+                                  borderRadius: BorderRadius.circular(18),
                                   child: BackdropFilter(
                                     filter: ImageFilter.blur(
                                       sigmaX: 4,
@@ -132,7 +133,7 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () => showSnackBar(),
+          onTap: showSnackBar,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             decoration: BoxDecoration(

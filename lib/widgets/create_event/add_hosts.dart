@@ -80,7 +80,7 @@ class AddHosts extends ConsumerWidget {
               ),
               const Expanded(child: SizedBox()),
               GestureDetector(
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
                 child: Container(
                   height: 32,
                   padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -112,7 +112,7 @@ class AddHosts extends ConsumerWidget {
           ),
         ),
         GestureDetector(
-          onTap: () => showSnackBar(),
+          onTap: showSnackBar,
           child: Container(
             height: 44,
             width: double.infinity,

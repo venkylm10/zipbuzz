@@ -39,16 +39,16 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
     }
   }
 
+  void getValues() {
+    capacityController.text = capacity.toString();
+    isPrivate = ref.read(newEventProvider).isPrivate!;
+  }
+
   @override
   void initState() {
     eventsController = ref.read(eventsControllerProvider);
     capacityController.text = capacity.toString();
     super.initState();
-  }
-
-  void getValues() {
-    capacityController.text = capacity.toString();
-    isPrivate = ref.read(newEventProvider).isPrivate!;
   }
 
   @override
@@ -72,7 +72,10 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: AppColors.bgGrey,
-              border: Border.all(color: AppColors.borderGrey),
+              border: Border.all(
+                  color: isPrivate
+                      ? AppColors.borderGrey
+                      : AppColors.primaryColor),
             ),
             child: Row(
               children: [
@@ -92,8 +95,9 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
                       width: size.width * 0.7,
                       child: Text(
                         "Anyone can view the guest list",
-                        style: AppStyles.h5
-                            .copyWith(color: AppColors.lightGreyColor),
+                        style: AppStyles.h5.copyWith(
+                          color: AppColors.lightGreyColor,
+                        ),
                       ),
                     ),
                   ],
@@ -110,7 +114,10 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: AppColors.bgGrey,
-              border: Border.all(color: AppColors.borderGrey),
+              border: Border.all(
+                color:
+                    !isPrivate ? AppColors.borderGrey : AppColors.primaryColor,
+              ),
             ),
             child: Row(
               children: [

@@ -95,7 +95,7 @@ class _CustomAppBarState extends State<CustomAppBar>
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(
-                  onTap: () => showSnackBar(),
+                  onTap: showSnackBar,
                   child: SvgPicture.asset(Assets.icons.notification),
                 ),
                 const SizedBox(width: 12)

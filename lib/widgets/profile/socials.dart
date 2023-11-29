@@ -49,7 +49,7 @@ class UserSocials extends ConsumerWidget {
         ),
         const Expanded(child: SizedBox()),
         GestureDetector(
-          onTap: () => showSnackBar(),
+          onTap: showSnackBar,
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(

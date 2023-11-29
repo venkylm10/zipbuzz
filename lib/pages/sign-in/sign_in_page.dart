@@ -48,13 +48,13 @@ class SignInSheet extends StatelessWidget {
               SignInButton(
                 title: "Google",
                 iconPath: Assets.icons.google_logo,
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
               ),
               const SizedBox(height: 8),
               SignInButton(
                 title: "Apple",
                 iconPath: Assets.icons.apple_logo,
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
               ),
               const SizedBox(height: 8),
               GestureDetector(

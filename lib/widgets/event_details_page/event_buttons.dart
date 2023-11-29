@@ -30,7 +30,7 @@ class EventButtons extends StatelessWidget {
                 children: [
                   Expanded(
                     child: GestureDetector(
-                      onTap: () => showSnackBar(),
+                      onTap: showSnackBar,
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColors.primaryColor,
@@ -63,7 +63,7 @@ class EventButtons extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(
-                    onTap: () => showSnackBar(),
+                    onTap: showSnackBar,
                     child: Container(
                       height: 48,
                       width: 48,
@@ -93,7 +93,7 @@ class EventButtons extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(
-                    onTap: () => showSnackBar(),
+                    onTap: showSnackBar,
                     child: Container(
                       height: 48,
                       width: 48,
@@ -136,7 +136,7 @@ class EventButtons extends StatelessWidget {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => showSnackBar(),
+                          onTap: showSnackBar,
                           child: Container(
                             height: 48,
                             decoration: BoxDecoration(
@@ -166,7 +166,7 @@ class EventButtons extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => showSnackBar(),
+                          onTap: showSnackBar,
                           child: Container(
                             height: 48,
                             decoration: BoxDecoration(
@@ -198,7 +198,7 @@ class EventButtons extends StatelessWidget {
                   const SizedBox(height: 8),
                   Expanded(
                     child: GestureDetector(
-                      onTap: () => showSnackBar(),
+                      onTap: showSnackBar,
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColors.primaryColor,

@@ -11,6 +11,13 @@ class CreateEventGuestList extends StatefulWidget {
 
 class _CreateEventGuestListState extends State<CreateEventGuestList> {
   bool isPrivate = false;
+
+  void togglePrivacy() {
+    setState(() {
+      isPrivate = !isPrivate;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -22,17 +29,16 @@ class _CreateEventGuestListState extends State<CreateEventGuestList> {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () {
-            setState(() {
-              isPrivate = !isPrivate;
-            });
-          },
+          onTap: togglePrivacy,
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: AppColors.bgGrey,
-              border: Border.all(color: AppColors.borderGrey),
+              border: Border.all(
+                color:
+                    !isPrivate ? AppColors.borderGrey : AppColors.primaryColor,
+              ),
             ),
             child: Row(
               children: [
@@ -42,9 +48,7 @@ class _CreateEventGuestListState extends State<CreateEventGuestList> {
                   toggleable: true,
                   activeColor: AppColors.primaryColor,
                   onChanged: (value) {
-                    setState(() {
-                      isPrivate = !isPrivate;
-                    });
+                    togglePrivacy();
                   },
                 ),
                 Column(

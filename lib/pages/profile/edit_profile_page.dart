@@ -100,7 +100,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   Column(
                     children: [
                       GestureDetector(
-                        onTap: () => showSnackBar(),
+                        onTap: showSnackBar,
                         // add image picker for profile editing page
                         child: SizedBox(
                           height: 120,
@@ -266,7 +266,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
               InkWell(
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
                 child: Ink(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(

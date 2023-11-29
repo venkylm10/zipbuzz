@@ -186,7 +186,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
               const SettingsTiles(),
               const SizedBox(height: 24),
               InkWell(
-                onTap: () => showSnackBar(),
+                onTap: showSnackBar,
                 child: Ink(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
