@@ -1,36 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/pages/events/event_tab.dart';
-import 'package:zipbuzz/pages/home/home_tab.dart';
-import 'package:zipbuzz/pages/map/map_tab.dart';
-import 'package:zipbuzz/pages/profile/profile_tab.dart';
+import 'package:zipbuzz/controllers/home_tab_controller.dart';
 
-class Home extends StatefulWidget {
+class Home extends ConsumerWidget {
   static const id = '/home';
   const Home({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  int selectedIndex = 0;
-  final tabs = const [
-    HomeTab(),
-    EventsTab(),
-    MapTab(),
-    ProfileTab(),
-  ];
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedTab = ref.watch(homeTabControllerProvider);
+    final tabs = ref.read(homeTabControllerProvider.notifier).tabs;
     return Scaffold(
-      body: tabs[selectedIndex],
+      body: tabs[selectedTab],
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
-        currentIndex: selectedIndex,
+        currentIndex: selectedTab,
         showUnselectedLabels: true,
         showSelectedLabels: true,
         type: BottomNavigationBarType.fixed,
@@ -39,9 +27,7 @@ class _HomeState extends State<Home> {
         unselectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.greyColor),
         fixedColor: AppColors.primaryColor,
         onTap: (value) {
-          setState(() {
-            selectedIndex = value;
-          });
+          ref.read(homeTabControllerProvider.notifier).updateIndex(value);
         },
         items: [
           BottomNavigationBarItem(
@@ -49,7 +35,7 @@ class _HomeState extends State<Home> {
             icon: SvgPicture.asset(
               Assets.icons.home,
               colorFilter: ColorFilter.mode(
-                selectedIndex == 0
+                selectedTab == 0
                     ? AppColors.primaryColor
                     : AppColors.greyColor,
                 BlendMode.srcIn,
@@ -61,7 +47,7 @@ class _HomeState extends State<Home> {
             icon: SvgPicture.asset(
               Assets.icons.events,
               colorFilter: ColorFilter.mode(
-                selectedIndex == 1
+                selectedTab == 1
                     ? AppColors.primaryColor
                     : AppColors.greyColor,
                 BlendMode.srcIn,
@@ -73,7 +59,7 @@ class _HomeState extends State<Home> {
             icon: SvgPicture.asset(
               Assets.icons.map,
               colorFilter: ColorFilter.mode(
-                selectedIndex == 2
+                selectedTab == 2
                     ? AppColors.primaryColor
                     : AppColors.greyColor,
                 BlendMode.srcIn,
@@ -85,7 +71,7 @@ class _HomeState extends State<Home> {
             icon: SvgPicture.asset(
               Assets.icons.person,
               colorFilter: ColorFilter.mode(
-                selectedIndex == 3
+                selectedTab == 3
                     ? AppColors.primaryColor
                     : AppColors.greyColor,
                 BlendMode.srcIn,

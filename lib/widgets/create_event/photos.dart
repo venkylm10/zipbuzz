@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -30,6 +31,19 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
       "assets/images/about/Image-6.png",
     ];
     super.initState();
+  }
+
+  void removeImage({File? image, String? imagePath}) {
+    if (image != null) {
+      assert(imagePath == null);
+    } else if (imagePath != null) {
+      assert(image == null);
+      if (defaultImagePaths.contains(imagePath)) {
+        defaultImagePaths.remove(imagePath);
+        setState(() {});
+        return;
+      }
+    }
   }
 
   @override
@@ -98,7 +112,8 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
                       Align(
                         alignment: Alignment.center,
                         child: GestureDetector(
-                          onTap: showSnackBar,
+                          onTap: () =>
+                              removeImage(imagePath: defaultImagePaths[index]),
                           child: SizedBox(
                             height: 36,
                             width: 36,
