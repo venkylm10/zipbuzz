@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -37,10 +38,21 @@ class _WelcomePageState extends State<WelcomePage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    pageController = PageController(initialPage: 0);
+  void skip() async {
+    await pageController.animateToPage(welcomeImages.length - 1,
+        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    showSignInForm(navigatorKey.currentContext!);
+  }
+
+  void next() {
+    if (currentPage < welcomeImages.length - 1) {
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      showSignInForm(context);
+    }
   }
 
   Future<dynamic> showSignInForm(BuildContext context) {
@@ -58,6 +70,12 @@ class _WelcomePageState extends State<WelcomePage> {
         return const SignInSheet();
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController(initialPage: 0);
   }
 
   @override
@@ -131,11 +149,7 @@ class _WelcomePageState extends State<WelcomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: () {
-                    pageController.animateToPage(welcomeImages.length - 1,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut);
-                  },
+                  onTap: skip,
                   child: Text(
                     'Skip',
                     style: AppStyles.h3.copyWith(
@@ -159,16 +173,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    if (currentPage < welcomeImages.length - 1) {
-                      pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
-                      showSignInForm(context);
-                    }
-                  },
+                  onTap: next,
                   child: Text(
                     currentPage == welcomeImages.length - 1 ? 'Finish' : 'Next',
                     style: AppStyles.h3.copyWith(

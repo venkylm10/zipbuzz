@@ -8,6 +8,7 @@ import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/widgets/common/event_chip.dart';
 
 class CreateEventForm extends ConsumerStatefulWidget {
   const CreateEventForm({super.key});
@@ -55,8 +56,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     eventController.updateName(value);
   }
 
-  void updateCategory() {
-    eventController.updateCategory(category);
+  void updateCategory({String? category = 'Hiking'}) {
+    eventController.updateCategory(category!);
   }
 
   void updateDescription(String value) {
@@ -107,6 +108,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     descriptionController.text = dummy.about;
     date = DateTime.parse(dummy.date);
     locationController.text = dummy.location;
+    category = ref.watch(newEventProvider).category;
   }
 
   @override
@@ -306,6 +308,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         ),
         dropdownColor: AppColors.bgGrey,
         elevation: 1,
+        onSaved: (newValue) => updateCategory(category: newValue),
         decoration: const InputDecoration(
           contentPadding: EdgeInsets.zero,
           border: OutlineInputBorder(
@@ -341,7 +344,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
               ),
             )
             .toList(),
-        onChanged: (value) {},
+        onChanged: (value) => updateCategory(category: value),
       ),
     );
   }

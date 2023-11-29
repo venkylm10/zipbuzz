@@ -6,8 +6,10 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class SignInSheet extends StatelessWidget {
+  static const id = '/sign_in';
   const SignInSheet({super.key});
 
   @override
@@ -46,11 +48,13 @@ class SignInSheet extends StatelessWidget {
               SignInButton(
                 title: "Google",
                 iconPath: Assets.icons.google_logo,
+                onTap: () => showSnackBar(),
               ),
               const SizedBox(height: 8),
               SignInButton(
                 title: "Apple",
                 iconPath: Assets.icons.apple_logo,
+                onTap: () => showSnackBar(),
               ),
               const SizedBox(height: 8),
               GestureDetector(
@@ -68,6 +72,7 @@ class SignInSheet extends StatelessWidget {
                       "Explore as Guest",
                       style: AppStyles.h4.copyWith(
                         decoration: TextDecoration.underline,
+                        decorationColor: Colors.white,
                         color: Colors.white,
                       ),
                     ),
@@ -85,37 +90,42 @@ class SignInSheet extends StatelessWidget {
 class SignInButton extends StatelessWidget {
   final String iconPath;
   final String title;
+  final void Function()? onTap;
   const SignInButton({
     super.key,
     required this.iconPath,
     required this.title,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 56,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              iconPath,
-              height: 24,
-            ),
-            const SizedBox(width: 16),
-            Text(
-              title,
-              style: AppStyles.h3.copyWith(
-                fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 56,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                iconPath,
+                height: 24,
               ),
-            ),
-          ],
+              const SizedBox(width: 16),
+              Text(
+                title,
+                style: AppStyles.h3.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
