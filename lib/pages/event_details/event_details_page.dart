@@ -18,7 +18,8 @@ class EventDetailsPage extends StatefulWidget {
   static const id = 'event/details';
   final EventModel event;
   final bool? isPreview;
-  const EventDetailsPage({super.key, required this.event, this.isPreview = false});
+  const EventDetailsPage(
+      {super.key, required this.event, this.isPreview = false});
 
   @override
   State<EventDetailsPage> createState() => _EventDetailsPageState();
@@ -27,8 +28,9 @@ class EventDetailsPage extends StatefulWidget {
 class _EventDetailsPageState extends State<EventDetailsPage> {
   Color dominantColor = Colors.white;
   Color eventColor = Colors.white;
-  final aboutScrollController = ScrollController();
+  final bodyScrollController = ScrollController();
   String dummyText = '';
+  double horizontalMargin = 16;
 
   Future<void> getDominantColor() async {
     final image = AssetImage(widget.event.bannerPath);
@@ -42,6 +44,17 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   void getEventColor() {
     eventColor = getInterestColor(widget.event.iconPath);
     setState(() {});
+  }
+
+  bool animateMargin() {
+    if (horizontalMargin >= 0) {
+      horizontalMargin = 12 - bodyScrollController.offset;
+      if (horizontalMargin < 0) {
+        horizontalMargin = 0;
+      }
+      setState(() {});
+    }
+    return true;
   }
 
   @override
@@ -91,149 +104,158 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ],
       ),
       extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(
-              widget.event.bannerPath,
-              fit: BoxFit.cover,
-              width: double.infinity,
-            ),
-            Transform.translate(
-              offset: const Offset(0, -40),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                padding: const EdgeInsets.all(16),
+      body: NotificationListener<ScrollUpdateNotification>(
+        onNotification: (notification) => animateMargin(),
+        child: SingleChildScrollView(
+          controller: bodyScrollController,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset(
+                widget.event.bannerPath,
+                fit: BoxFit.cover,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      widget.event.title,
-                      style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-                      softWrap: true,
+              ),
+              Transform.translate(
+                offset: const Offset(0, -40),
+                child: AnimatedPadding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalMargin),
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
+                        Text(
+                          widget.event.title,
+                          style: AppStyles.h2
+                              .copyWith(fontWeight: FontWeight.w600),
+                          softWrap: true,
+                        ),
+                        const SizedBox(height: 10),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            EventChip(
-                              eventColor: eventColor,
-                              interest: widget.event.category,
-                              iconPath: widget.event.iconPath,
+                            Row(
+                              children: [
+                                EventChip(
+                                  eventColor: eventColor,
+                                  interest: widget.event.category,
+                                  iconPath: widget.event.iconPath,
+                                ),
+                                const SizedBox(width: 10),
+                                AttendeeNumbers(
+                                  attendees: widget.event.attendees,
+                                  total: widget.event.maxAttendees,
+                                  backgroundColor:
+                                      AppColors.greyColor.withOpacity(0.1),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 10),
-                            AttendeeNumbers(
-                              attendees: widget.event.attendees,
-                              total: widget.event.maxAttendees,
-                              backgroundColor:
-                                  AppColors.greyColor.withOpacity(0.1),
-                            ),
+                            const EventQRCode(),
                           ],
                         ),
-                        const EventQRCode(),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Divider(
-                      color: AppColors.greyColor.withOpacity(0.2),
-                      thickness: 0,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Event details",
-                      style: AppStyles.h5
-                          .copyWith(color: AppColors.lightGreyColor),
-                    ),
-                    const SizedBox(height: 16),
-                    EventDetails(event: widget.event),
-                    const SizedBox(height: 16),
-                    Divider(
-                      color: AppColors.greyColor.withOpacity(0.2),
-                      thickness: 0,
-                    ),
-                    if (widget.event.hosts.isNotEmpty)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 16),
-                          Text(
-                            "Hosts",
-                            style: AppStyles.h5
-                                .copyWith(color: AppColors.lightGreyColor),
+                        const SizedBox(height: 16),
+                        Divider(
+                          color: AppColors.greyColor.withOpacity(0.2),
+                          thickness: 0,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Event details",
+                          style: AppStyles.h5
+                              .copyWith(color: AppColors.lightGreyColor),
+                        ),
+                        const SizedBox(height: 16),
+                        EventDetails(event: widget.event),
+                        const SizedBox(height: 16),
+                        Divider(
+                          color: AppColors.greyColor.withOpacity(0.2),
+                          thickness: 0,
+                        ),
+                        if (widget.event.hosts.isNotEmpty)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              Text(
+                                "Hosts",
+                                style: AppStyles.h5
+                                    .copyWith(color: AppColors.lightGreyColor),
+                              ),
+                              const SizedBox(height: 16),
+                              EventHosts(hosts: widget.event.hosts),
+                              const SizedBox(height: 16),
+                              Divider(
+                                color: AppColors.greyColor.withOpacity(0.2),
+                                thickness: 0,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 16),
-                          EventHosts(hosts: widget.event.hosts),
-                          const SizedBox(height: 16),
-                          Divider(
-                            color: AppColors.greyColor.withOpacity(0.2),
-                            thickness: 0,
+                        const SizedBox(height: 16),
+                        Text(
+                          "About",
+                          style: AppStyles.h5
+                              .copyWith(color: AppColors.lightGreyColor),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(widget.event.about, style: AppStyles.h4),
+                        const SizedBox(height: 16),
+                        Divider(
+                          color: AppColors.greyColor.withOpacity(0.2),
+                          thickness: 0,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Sneak peaks",
+                          style: AppStyles.h5
+                              .copyWith(color: AppColors.lightGreyColor),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
-                      ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "About",
-                      style: AppStyles.h5
-                          .copyWith(color: AppColors.lightGreyColor),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(widget.event.about, style: AppStyles.h4),
-                    const SizedBox(height: 16),
-                    Divider(
-                      color: AppColors.greyColor.withOpacity(0.2),
-                      thickness: 0,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Sneak peaks",
-                      style: AppStyles.h5
-                          .copyWith(color: AppColors.lightGreyColor),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: StaggeredGrid.count(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 8,
-                        children: List.generate(
-                          7,
-                          (index) => StaggeredGridTile.count(
-                            crossAxisCellCount: index % 6 == 0 ? 2 : 1,
-                            mainAxisCellCount: 1,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                'assets/images/about/Image-$index.png',
-                                fit: BoxFit.cover,
+                          child: StaggeredGrid.count(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            children: List.generate(
+                              7,
+                              (index) => StaggeredGridTile.count(
+                                crossAxisCellCount: index % 6 == 0 ? 2 : 1,
+                                mainAxisCellCount: 1,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    'assets/images/about/Image-$index.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 40),
-          ],
+              SizedBox(height: widget.isPreview! ? 100 : 40),
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: EventButtons(event: widget.event, isPreview: widget.isPreview),
+      floatingActionButton:
+          EventButtons(event: widget.event, isPreview: widget.isPreview),
     );
   }
 }
