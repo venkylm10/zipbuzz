@@ -11,7 +11,7 @@ void showSnackBar({String? message = "Yet to be implemented"}) {
       elevation: 0,
       duration: const Duration(seconds: 1),
       content: Container(
-        height: 40,
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(20),
@@ -20,7 +20,8 @@ void showSnackBar({String? message = "Yet to be implemented"}) {
         child: Center(
           child: Text(
             message!,
-            style: AppStyles.h4.copyWith(color: Colors.white),
+            style: AppStyles.h5.copyWith(color: Colors.white),
+            softWrap: true,
           ),
         ),
       ),

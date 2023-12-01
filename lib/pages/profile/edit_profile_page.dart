@@ -43,7 +43,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   void initialise() {
-    user = ref.read(userProvider).getClone();
+    user = ref.read(userProvider)!.getClone();
     nameController.text = user.name;
     aboutController.text = user.about;
     zipcodeController.text = user.zipcode;

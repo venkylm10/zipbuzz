@@ -108,6 +108,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                     "Zipcode",
                     zipcodeController,
                     "444-444",
+                    keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: 24),
                   buildTextField(
@@ -115,6 +116,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                     "Mobile no",
                     mobileController,
                     "(+1) (400) 444-5555",
+                    keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 40),
                   Text(
@@ -200,12 +202,9 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     );
   }
 
-  Row buildTextField(
-    String iconPath,
-    String label,
-    TextEditingController controller,
-    String hintText,
-  ) {
+  Row buildTextField(String iconPath, String label,
+      TextEditingController controller, String hintText,
+      {TextInputType? keyboardType}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -226,6 +225,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                 controller: controller,
                 cursorColor: AppColors.primaryColor,
                 style: AppStyles.h4,
+                keyboardType: keyboardType,
                 decoration: InputDecoration(
                   hintText: hintText,
                   hintStyle: AppStyles.h4,

@@ -30,7 +30,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userProvider)!;
     return WillPopScope(
       onWillPop: () =>
           ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
@@ -222,7 +222,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   }
 
   Wrap buildInterests(UserModel user, WidgetRef ref) {
-    final interests = ref.watch(userProvider).interests;
+    final interests = ref.watch(userProvider)!.interests;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
