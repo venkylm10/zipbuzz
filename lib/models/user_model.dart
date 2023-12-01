@@ -3,11 +3,12 @@ import 'package:zipbuzz/constants/assets.dart';
 class UserModel {
   final String uid;
   final String name;
+  final String email;
   final String handle;
   final String position;
   final int eventsHosted;
   final double rating;
-  final String imagePath;
+  final String imageUrl;
   final String mobileNumber;
   final String zipcode;
   final String? linkedinId;
@@ -17,10 +18,13 @@ class UserModel {
   final String about;
   final List<String>? eventUids;
   final List<String>? pastEventUids;
+  final String city;
+  final String country;
 
   const UserModel({
     required this.uid,
     required this.name,
+    required this.email,
     required this.handle,
     required this.position,
     required this.eventsHosted,
@@ -28,8 +32,10 @@ class UserModel {
     required this.zipcode,
     required this.interests,
     required this.about,
-    required this.imagePath,
+    required this.imageUrl,
     required this.mobileNumber,
+    required this.city,
+    required this.country,
     this.linkedinId,
     this.instagramId,
     this.twitterId,
@@ -39,12 +45,14 @@ class UserModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'uid': uid,
       'name': name,
+      'email': email,
       'handle': handle,
       'position': position,
       'eventsHosted': eventsHosted,
       'rating': rating,
-      'imagePath': imagePath,
+      'imageUrl': imageUrl,
       'mobileNumber': mobileNumber,
       'zipcode': zipcode,
       'linkedinId': linkedinId,
@@ -54,6 +62,8 @@ class UserModel {
       'about': about,
       'eventUids': eventUids,
       'pastEventUids': pastEventUids,
+      'city': city,
+      'country': country,
     };
   }
 
@@ -61,13 +71,14 @@ class UserModel {
     return UserModel(
       uid: map['uid'],
       name: map['name'] != null ? map['name'] as String : "username",
+      email: map['email'] != null ? map['email'] as String : "",
       handle: map['handle'] != null ? map['handle'] as String : "",
       position: map['position'] != null ? map['position'] as String : "",
       eventsHosted:
           map['eventsHosted'] != null ? map['eventsHosted'] as int : 0,
       rating: map['rating'] != null ? map['rating'] as double : 0,
-      imagePath: map['imagePath'] != null
-          ? map['imagePath'] as String
+      imageUrl: map['imageUrl'] != null
+          ? map['imageUrl'] as String
           : Assets.images.profile,
       mobileNumber: map['mobileNumber'] != null
           ? map['mobileNumber'] as String
@@ -87,18 +98,21 @@ class UserModel {
       pastEventUids: map['pastEventUids'] != null
           ? map['pastEventUids'] as List<String>
           : <String>[],
+      city: map['city'] != null ? map['city'] as String : "",
+      country: map['country'] != null ? map['country'] as String : "",
     );
   }
 
   UserModel copyWith({
     String? uid,
     String? name,
+    String? email,
     String? handle,
     String? about,
     String? position,
     int? eventsHosted,
     double? rating,
-    String? imagePath,
+    String? imageUrl,
     String? mobileNumber,
     String? zipcode,
     String? linkedinId,
@@ -107,15 +121,18 @@ class UserModel {
     List<String>? interests,
     List<String>? eventUids,
     List<String>? pastEventUids,
+    String? city,
+    String? country,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
       name: name ?? this.name,
+      email: email ?? this.email,
       handle: handle ?? this.handle,
       position: position ?? this.position,
       eventsHosted: eventsHosted ?? this.eventsHosted,
       rating: rating ?? this.rating,
-      imagePath: imagePath ?? this.imagePath,
+      imageUrl: imageUrl ?? this.imageUrl,
       mobileNumber: mobileNumber ?? this.mobileNumber,
       zipcode: zipcode ?? this.zipcode,
       linkedinId: linkedinId ?? this.linkedinId,
@@ -125,6 +142,8 @@ class UserModel {
       about: about ?? this.about,
       eventUids: eventUids ?? this.eventUids,
       pastEventUids: pastEventUids ?? this.pastEventUids,
+      city: city ?? this.city,
+      country: country ?? this.country,
     );
   }
 
@@ -137,8 +156,9 @@ class UserModel {
 final globalDummyUser = UserModel(
   uid: 'dummyUser',
   name: "Alex Lee",
+  email: "example@gmail.com",
   handle: "bealexlee",
-  imagePath: Assets.images.profile,
+  imageUrl: Assets.images.profile,
   position: "Brand Ambassadar",
   eventsHosted: 8,
   rating: 4.5,
@@ -152,4 +172,6 @@ final globalDummyUser = UserModel(
       "I'm here to ensure that your experience is nothing short of extraordinary. With a passion for creating unforgettable moments and a knack for connecting with people, I thrive on the energy of the event and the joy it brings to all attendees. I'm your go-to person for any questions, assistance, or just a friendly chat.\n\nMy commitment is to make you feel welcome, entertained, and truly part of the event's magic. So, let's embark on this exciting journey together, and I promise you won't leave without a smile and wonderful memories to cherish.",
   eventUids: [],
   pastEventUids: [],
+  city: "",
+  country: "",
 );

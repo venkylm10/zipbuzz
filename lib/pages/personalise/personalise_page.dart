@@ -1,11 +1,20 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
+import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/services/firebase_providers.dart';
+import 'package:zipbuzz/services/local_storage.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class PersonalisePage extends ConsumerStatefulWidget {
   static const id = '/welcome/personalise';
@@ -20,7 +29,12 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   late final TextEditingController zipcodeController;
   late final TextEditingController mobileController;
 
-  var selectedInterests = [];
+  var selectedInterests = <String>[];
+
+  var city = "";
+  var country = "";
+  var zipcode = "";
+  var loading = true;
 
   void updateInterests(String interest) {
     if (selectedInterests.contains(interest)) {
@@ -31,23 +45,116 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     setState(() {});
   }
 
+  void updateUser() {
+    final check = validate();
+    if (check) {
+      final auth = ref.read(authProvider);
+      UserModel currentUser = UserModel(
+        uid: auth.currentUser?.uid ?? '',
+        name: auth.currentUser?.displayName ?? '',
+        mobileNumber: auth.currentUser?.phoneNumber ?? '',
+        email: mobileController.text.trim(),
+        imageUrl: auth.currentUser?.photoURL ?? '',
+        handle: "",
+        position: "",
+        about: "",
+        eventsHosted: 0,
+        rating: 0,
+        zipcode: zipcodeController.text.trim(),
+        interests: selectedInterests,
+        eventUids: [],
+        pastEventUids: [],
+        instagramId: "",
+        linkedinId: "",
+        twitterId: "",
+        city: city,
+        country: country,
+      );
+
+      ref.read(userProvider.notifier).update((state) => currentUser);
+      ref.read(localDBProvider).saveUser(currentUser);
+    }
+  }
+
+  Future<bool> handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      showSnackBar(
+          message:
+              'Location services are disabled. Please enable the services');
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        showSnackBar(message: 'Location permissions are denied');
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      showSnackBar(
+          message:
+              'Location permissions are permanently denied, we cannot request permissions.');
+      return false;
+    }
+    await getLocationInfo();
+    return true;
+  }
+
+  Future<void> getLocationInfo() async {
+    Position position = await Geolocator.getCurrentPosition();
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks.first;
+    String zipcode = placemark.postalCode ?? "";
+    zipcodeController.text = zipcode;
+    this.zipcode = zipcode;
+    city = placemark.locality ?? "";
+    country = placemark.country ?? "";
+    setState(() {
+      loading = false;
+    });
+  }
+
+  void initialise() async {
+    await handleLocationPermission();
+    mobileController.text =
+        ref.read(authProvider).currentUser!.phoneNumber ?? "";
+    setState(() {});
+  }
+
+  bool validate() {
+    if (zipcodeController.text.isEmpty) {
+      showSnackBar(message: "Please enter zipcode");
+      return false;
+    }
+    if (mobileController.text.isEmpty) {
+      showSnackBar(message: "Please enter mobile number");
+      return false;
+    }
+    if (selectedInterests.length < 3) {
+      showSnackBar(message: "Please select at least 3 interests");
+      return false;
+    }
+    return true;
+  }
+
   @override
   void initState() {
+    initialise();
     zipcodeController = TextEditingController();
     mobileController = TextEditingController();
     super.initState();
   }
 
   @override
-  void dispose() {
-    zipcodeController.dispose();
-    mobileController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final currentUser = ref.read(authProvider).currentUser!;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -91,11 +198,12 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                 children: [
                   const SizedBox(height: 54),
                   Text(
-                    "Hi Alex!",
+                    "Hi ${currentUser.displayName ?? ""}!",
                     style: AppStyles.extraLarge.copyWith(
                       color: AppColors.primaryColor,
                       fontWeight: FontWeight.bold,
                     ),
+                    softWrap: true,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -107,16 +215,18 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                     Assets.icons.geo,
                     "Zipcode",
                     zipcodeController,
-                    "444-444",
+                    "444444",
                     keyboardType: TextInputType.number,
+                    maxLength: 6,
                   ),
                   const SizedBox(height: 24),
                   buildTextField(
                     Assets.icons.telephone_filled,
                     "Mobile no",
                     mobileController,
-                    "(+1) (400) 444-5555",
+                    "4004445555",
                     keyboardType: TextInputType.phone,
+                    maxLength: 10,
                   ),
                   const SizedBox(height: 40),
                   Text(
@@ -139,7 +249,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               padding: const EdgeInsets.symmetric(horizontal: 24)
                   .copyWith(bottom: 8),
               child: InkWell(
-                onTap: () => navigatorKey.currentState!.pushNamed(Home.id),
+                onTap: () => updateUser(),
                 borderRadius: BorderRadius.circular(24),
                 child: Ink(
                   height: 48,
@@ -160,7 +270,19 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                 ),
               ),
             ),
-          )
+          ),
+          if (loading)
+            Align(
+              alignment: Alignment.center,
+              child: Expanded(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                  child: const CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -204,7 +326,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   Row buildTextField(String iconPath, String label,
       TextEditingController controller, String hintText,
-      {TextInputType? keyboardType}) {
+      {TextInputType? keyboardType, int? maxLength}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -226,9 +348,13 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                 cursorColor: AppColors.primaryColor,
                 style: AppStyles.h4,
                 keyboardType: keyboardType,
+                maxLength: maxLength,
                 decoration: InputDecoration(
+                  counter: const SizedBox(),
                   hintText: hintText,
-                  hintStyle: AppStyles.h4,
+                  hintStyle: AppStyles.h4.copyWith(
+                    color: AppColors.lightGreyColor,
+                  ),
                   contentPadding: const EdgeInsets.all(16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),

@@ -1,13 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/firebase_options.dart';
 import 'package:zipbuzz/routes.dart';
+import 'package:zipbuzz/services/local_storage.dart';
+import 'package:zipbuzz/widgets/auth_gate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -15,8 +18,9 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-final navigatorKey = GlobalKey<NavigatorState>();
-final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+var navigatorKey = GlobalKey<NavigatorState>();
+var scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -36,7 +40,7 @@ class MyApp extends StatelessWidget {
           selectionColor: AppColors.primaryColor.withOpacity(0.1),
         ),
       ),
-      initialRoute: WelcomePage.id,
+      initialRoute: AuthGate.id,
       routes: routes,
     );
   }

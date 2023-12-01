@@ -107,7 +107,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           width: 120,
                           child: Stack(
                             children: [
-                              Image.asset(user.imagePath),
+                              Positioned.fill(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(60),
+                                  child: Image.network(
+                                    user.imageUrl,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: Container(

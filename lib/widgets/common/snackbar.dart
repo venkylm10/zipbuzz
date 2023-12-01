@@ -12,6 +12,7 @@ void showSnackBar({String? message = "Yet to be implemented"}) {
       duration: const Duration(seconds: 1),
       content: Container(
         padding: const EdgeInsets.all(8),
+        constraints: const BoxConstraints(minHeight: 40),
         decoration: BoxDecoration(
           color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(20),

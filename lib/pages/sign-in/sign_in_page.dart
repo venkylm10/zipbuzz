@@ -1,19 +1,22 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/home_tab_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
+import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-class SignInSheet extends StatelessWidget {
+class SignInSheet extends ConsumerWidget {
   static const id = '/sign_in';
   const SignInSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ClipRRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -48,7 +51,11 @@ class SignInSheet extends StatelessWidget {
               SignInButton(
                 title: "Google",
                 iconPath: Assets.icons.google_logo,
-                onTap: showSnackBar,
+                onTap: () {
+                  ref.read(authServicesProvider).signInWithGoogle();
+                  navigatorKey.currentState!.pop();
+                  ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+                },
               ),
               const SizedBox(height: 8),
               SignInButton(

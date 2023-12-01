@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
+class CustomAppBar extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
   final bool isSearching;
   final TextEditingController searchController;
   final Function(String) onSearch;
@@ -25,11 +28,14 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
       AppBar().preferredSize.height + (isSearching ? 65 : 5) + topPadding);
 
   @override
-  State<CustomAppBar> createState() => _CustomAppBarState();
+  ConsumerState<CustomAppBar> createState() => _CustomAppBarState();
 }
 
-class _CustomAppBarState extends State<CustomAppBar>
+class _CustomAppBarState extends ConsumerState<CustomAppBar>
     with SingleTickerProviderStateMixin {
+  final city = "";
+  final country = "";
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +43,7 @@ class _CustomAppBarState extends State<CustomAppBar>
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.read(userProvider)!;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: widget.preferredSize.height,
@@ -69,11 +76,11 @@ class _CustomAppBarState extends State<CustomAppBar>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "San Jose, USA",
+                    "${user.city}, ${user.country}",
                     style: AppStyles.h5.copyWith(color: Colors.white),
                   ),
                   Text(
-                    "94088",
+                    ref.read(userProvider)!.zipcode,
                     style: AppStyles.h5.copyWith(
                       color: Colors.white.withOpacity(0.5),
                     ),

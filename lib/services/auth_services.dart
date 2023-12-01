@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:zipbuzz/controllers/user_controller.dart';
+import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 
 final authServicesProvider = Provider((ref) => AuthServices(
@@ -29,8 +31,17 @@ class AuthServices {
             idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
         await _auth.signInWithCredential(authCredential);
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
+  }
+
+  void initialiseUser(UserModel user) {
+    _ref.read(userProvider.notifier).update((state) => user);
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+      await _googleSignIn.signOut();
+    } catch (e) {}
   }
 }

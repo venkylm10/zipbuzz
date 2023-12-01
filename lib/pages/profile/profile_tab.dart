@@ -9,6 +9,8 @@ import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
+import 'package:zipbuzz/services/auth_services.dart';
+import 'package:zipbuzz/services/local_storage.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
 import 'package:zipbuzz/widgets/profile/socials.dart';
@@ -26,6 +28,13 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     await navigatorKey.currentState!
         .pushNamed(EditProfilePage.id, arguments: {"user": user});
     setState(() {});
+  }
+
+  void logOut() async {
+    ref.read(userProvider.notifier).update((state) => null);
+    ref.read(authServicesProvider).signOut();
+    ref.read(localDBProvider).deleteUser();
+    showSnackBar(message: "Logged out successfully!");
   }
 
   @override
@@ -132,10 +141,10 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                         ),
                       ],
                     ),
-                    Container(
-                      decoration: const BoxDecoration(shape: BoxShape.circle),
-                      child: Image.asset(
-                        Assets.images.profile,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(36),
+                      child: Image.network(
+                        user.imageUrl,
                         height: 72,
                         width: 72,
                         fit: BoxFit.cover,
@@ -197,7 +206,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 const SettingsTiles(),
                 const SizedBox(height: 24),
                 InkWell(
-                  onTap: showSnackBar,
+                  onTap: () => logOut(),
                   child: Ink(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(

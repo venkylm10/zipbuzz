@@ -6,8 +6,10 @@ import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/pages/settings/faqs_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/widgets/auth_gate.dart';
 
 final routes = {
+  AuthGate.id: (context) => const AuthGate(),
   WelcomePage.id: (context) => const WelcomePage(),
   SignInSheet.id: (context) => const SignInSheet(),
   PersonalisePage.id: (context) => const PersonalisePage(),

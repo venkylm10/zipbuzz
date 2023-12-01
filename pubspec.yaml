@@ -50,6 +50,11 @@ dependencies:
   firebase_auth: ^4.15.0
   cloud_firestore: ^4.13.3
   google_sign_in: ^6.1.6
+  geolocator: ^10.1.0
+  geocoding: ^2.1.1
+  firebase_database: ^10.3.6
+  shared_preferences: ^2.2.2
+  
 
 dev_dependencies:
   flutter_test:
