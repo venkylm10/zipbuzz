@@ -8,7 +8,6 @@ import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
-import 'package:zipbuzz/widgets/common/event_chip.dart';
 
 class CreateEventForm extends ConsumerStatefulWidget {
   const CreateEventForm({super.key});

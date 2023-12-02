@@ -2,21 +2,23 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-class AddEventPhotos extends StatefulWidget {
+class AddEventPhotos extends ConsumerStatefulWidget {
   const AddEventPhotos({super.key});
 
   @override
-  State<AddEventPhotos> createState() => _AddEventPhotosState();
+  ConsumerState<AddEventPhotos> createState() => _AddEventPhotosState();
 }
 
-class _AddEventPhotosState extends State<AddEventPhotos> {
+class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
   List<File> selectedImages = [];
 
   @override
@@ -26,6 +28,16 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
 
   void removeImage({required File image}) {
     selectedImages.remove(image);
+  }
+
+  void addImage() async {
+    File? image;
+    final pickedImage = await ref.read(imageServicesProvider).pickImage();
+    if (pickedImage != null) {
+      image = File(pickedImage.path);
+      selectedImages.add(image);
+      setState(() {});
+    }
   }
 
   @override
@@ -45,7 +57,7 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
         if (selectedImages.isEmpty) const SizedBox(height: 16),
         if (selectedImages.isEmpty)
           GestureDetector(
-            onTap: showSnackBar,
+            onTap: addImage,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               decoration: BoxDecoration(
@@ -132,7 +144,7 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
         if (selectedImages.isNotEmpty) const SizedBox(height: 16),
         if (selectedImages.isNotEmpty)
           GestureDetector(
-            onTap: showSnackBar,
+            onTap: addImage,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               decoration: BoxDecoration(

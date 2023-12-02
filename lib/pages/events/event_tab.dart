@@ -17,8 +17,9 @@ class EventsTab extends ConsumerWidget {
     final selectedTab = ref.watch(eventTabControllerProvider);
     final tabs = ref.watch(eventTabControllerProvider.notifier).tabs;
     final tabTitles = ref.read(eventTabControllerProvider.notifier).tabTitles;
-    return WillPopScope(
-      onWillPop: () =>
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) =>
           ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
         appBar: AppBar(

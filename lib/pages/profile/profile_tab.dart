@@ -10,7 +10,6 @@ import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
-import 'package:zipbuzz/widgets/auth_gate.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
 import 'package:zipbuzz/widgets/profile/socials.dart';

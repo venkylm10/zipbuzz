@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
@@ -62,7 +63,9 @@ class AuthServices {
         }
         _ref.read(userProvider.notifier).update((state) => newUser);
       }
-    } catch (e) {}
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   void initialiseUser(UserModel user) {
@@ -73,7 +76,9 @@ class AuthServices {
     try {
       await _googleSignIn.signOut();
       await _auth.signOut();
-    } catch (e) {}
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Stream<UserModel?> getUserData() {

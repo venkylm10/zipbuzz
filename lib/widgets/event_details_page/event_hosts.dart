@@ -18,48 +18,51 @@ class EventHosts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      //TODO: change this later
+      //TODO: Update host and co-hosts
       children: List.generate(
         2,
-        (index) => host !=null ? Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Row(
-            children: [
-              Container(
-                height: 32,
-                width: 32,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.greyColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: SvgPicture.asset(
-                  Assets.icons.person,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                host!.name,
-                style: AppStyles.h5,
-              ),
-              const Expanded(child: SizedBox()),
-              Container(
-                height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    "Message",
-                    style: AppStyles.h4.copyWith(color: AppColors.primaryColor),
-                  ),
+        (index) => host != null
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 32,
+                      width: 32,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: AppColors.greyColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: SvgPicture.asset(
+                        Assets.icons.person,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      host!.name,
+                      style: AppStyles.h5,
+                    ),
+                    const Expanded(child: SizedBox()),
+                    Container(
+                      height: 32,
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Message",
+                          style: AppStyles.h4
+                              .copyWith(color: AppColors.primaryColor),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               )
-            ],
-          ),
-        ): const SizedBox(),
+            : const SizedBox(),
       ),
     );
   }

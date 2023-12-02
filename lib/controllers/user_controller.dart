@@ -12,7 +12,6 @@ class UserController {
   UserController({required Ref ref}) : _ref = ref;
   void updateInterest(String interest) {
     final updatedUser = _ref.read(userProvider)!;
-    print("interest: $interest");
     if (updatedUser.interests.contains(interest)) {
       updatedUser.interests.remove(interest);
       return;

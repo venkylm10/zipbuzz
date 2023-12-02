@@ -13,7 +13,7 @@ final routes = {
   WelcomePage.id: (context) => const WelcomePage(),
   SignInSheet.id: (context) => const SignInSheet(),
   PersonalisePage.id: (context) => const PersonalisePage(),
-  Home.id: (context) =>  Home(),
+  Home.id: (context) =>  const Home(),
   EventDetailsPage.id: (context) {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;

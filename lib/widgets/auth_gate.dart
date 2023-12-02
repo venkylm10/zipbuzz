@@ -7,7 +7,6 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
-import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 
 class AuthGate extends ConsumerStatefulWidget {

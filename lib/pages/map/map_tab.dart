@@ -11,8 +11,9 @@ class MapTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return WillPopScope(
-      onWillPop: () =>
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) =>
           ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
         appBar: AppBar(

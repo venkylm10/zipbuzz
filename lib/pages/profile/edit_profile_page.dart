@@ -32,7 +32,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late TextEditingController twitterIdController;
 
   void updateInterest(String interest) {
-    print("interest: $interest");
     if (user.interests.contains(interest)) {
       user.interests.remove(interest);
       setState(() {});
