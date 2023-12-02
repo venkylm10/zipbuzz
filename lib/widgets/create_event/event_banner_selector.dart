@@ -1,21 +1,23 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 
-class EventBannerSelector extends StatefulWidget {
+class EventBannerSelector extends ConsumerStatefulWidget {
   const EventBannerSelector({
     super.key,
   });
 
   @override
-  State<EventBannerSelector> createState() => _EventBannerSelectorState();
+  ConsumerState<EventBannerSelector> createState() => _EventBannerSelectorState();
 }
 
-class _EventBannerSelectorState extends State<EventBannerSelector> {
+class _EventBannerSelectorState extends ConsumerState<EventBannerSelector> {
   File? image;
 
   void pickImage() async {
@@ -23,6 +25,7 @@ class _EventBannerSelectorState extends State<EventBannerSelector> {
     if (pickedImage != null) {
       setState(() {
         image = File(pickedImage.path);
+        ref.read(newEventProvider.notifier).updateBannerImage(image!);
       });
     }
   }

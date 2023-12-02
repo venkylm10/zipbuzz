@@ -3,6 +3,7 @@ import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
+import 'package:zipbuzz/services/permission_handler.dart';
 
 class WelcomePage extends StatefulWidget {
   static const id = '/welcome';
@@ -44,14 +45,16 @@ class _WelcomePageState extends State<WelcomePage> {
     showSignInForm(navigatorKey.currentContext!);
   }
 
-  void next() {
+  void next() async {
     if (currentPage < welcomeImages.length - 1) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
-      showSignInForm(context);
+      if (await AppPermissions().getlocationPermission()) {
+        showSignInForm(navigatorKey.currentContext!);
+      }
     }
   }
 

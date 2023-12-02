@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -13,6 +14,8 @@ class AddHosts extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
+    final newEvent = ref.watch(newEventProvider);
+    if (newEvent.host == null) {}
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -25,15 +28,20 @@ class AddHosts extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
             children: [
-              Container(
-                height: 32,
-                width: 32,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.greyColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  height: 32,
+                  width: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.greyColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Image.network(
+                    user.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                child: Image.asset(Assets.images.profile),
               ),
               const SizedBox(width: 8),
               Text(
@@ -58,59 +66,79 @@ class AddHosts extends ConsumerWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                height: 32,
-                width: 32,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.greyColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Image.asset(Assets.images.profile),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                user.name,
-                style: AppStyles.h5,
-              ),
-              const Expanded(child: SizedBox()),
-              GestureDetector(
-                onTap: showSnackBar,
-                child: Container(
-                  height: 32,
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.borderGrey,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Row(
-                      children: [
-                        Text(
-                          "Co-host",
-                          style: AppStyles.h5,
-                        ),
-                        const SizedBox(width: 8),
-                        SvgPicture.asset(
-                          Assets.icons.remove,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.textColor,
-                            BlendMode.srcIn,
+        ListView.builder(
+            itemCount: newEvent.coHosts.length,
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              final cohost = newEvent.coHosts[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 32,
+                      width: 32,
+                      decoration: BoxDecoration(
+                        color: AppColors.greyColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                            color: AppColors.greyColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Image.network(
+                            cohost.imageUrl,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Text(
+                      cohost.name,
+                      style: AppStyles.h5,
+                    ),
+                    const Expanded(child: SizedBox()),
+                    GestureDetector(
+                      onTap: showSnackBar,
+                      child: Container(
+                        height: 32,
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.borderGrey,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Row(
+                            children: [
+                              Text(
+                                "Co-host",
+                                style: AppStyles.h5,
+                              ),
+                              const SizedBox(width: 8),
+                              SvgPicture.asset(
+                                Assets.icons.remove,
+                                colorFilter: const ColorFilter.mode(
+                                  AppColors.textColor,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ),
+              );
+            }),
         GestureDetector(
           onTap: showSnackBar,
           child: Container(

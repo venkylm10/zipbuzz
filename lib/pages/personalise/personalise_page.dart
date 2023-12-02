@@ -1,11 +1,10 @@
 import 'dart:ui';
-
 import 'package:country_dial_code/country_dial_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart' as geo;
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
@@ -33,8 +32,10 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   var country = "";
   var countryDialCode = "";
   var zipcode = "";
-  var loading = true;
+  bool loading = true;
   bool isMounted = true;
+
+  var location = geo.Location();
 
   void updateInterests(String interest) {
     if (selectedInterests.contains(interest)) {
@@ -71,60 +72,36 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     }
   }
 
-  Future<bool> handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      showSnackBar(
-          message:
-              'Location services are disabled. Please enable the services');
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        showSnackBar(message: 'Location permissions are denied');
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      showSnackBar(
-          message:
-              'Location permissions are permanently denied, we cannot request permissions.');
-      return false;
-    }
-    await getLocationInfo();
-    return true;
-  }
-
   Future<void> getLocationInfo() async {
-    Position position = await Geolocator.getCurrentPosition();
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks.first;
-    String zipcode = placemark.postalCode ?? "";
-    zipcodeController.text = zipcode;
-    this.zipcode = zipcode;
-    city = placemark.locality ?? "";
-    country = placemark.country ?? "";
-    if (placemark.isoCountryCode != null) {
-      countryDialCode =
-          CountryDialCode.fromCountryCode(placemark.isoCountryCode!).dialCode;
-    }
-    if (isMounted) {
-      setState(() {
-        loading = false;
-      });
+    try {
+      geo.LocationData? currentLocation = await location.getLocation();
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          currentLocation.latitude!, currentLocation.longitude!);
+
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks.first;
+        zipcode = placemark.postalCode ?? "";
+        zipcodeController.text = zipcode;
+        city = placemark.locality ?? "";
+        country = placemark.country ?? "";
+
+        if (placemark.isoCountryCode != null) {
+          countryDialCode =
+              CountryDialCode.fromCountryCode(placemark.isoCountryCode!)
+                  .dialCode;
+        }
+      }
+    } catch (e) {
+      debugPrint("Error getting location: $e");
     }
   }
 
   void initialise() async {
-    await handleLocationPermission();
+    await getLocationInfo();
     if (isMounted) {
       setState(() {
+        loading = false;
         mobileController.text =
             ref.read(authProvider).currentUser!.phoneNumber ?? "";
       });

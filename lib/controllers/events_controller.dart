@@ -1,39 +1,119 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:zipbuzz/constants/assets.dart';
+import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/models/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/models/user_model.dart';
 
-final eventsControllerProvider = Provider((ref) => EventsController(ref: ref));
-final newEventProvider = StateProvider(
-  (ref) => ref.watch(eventsControllerProvider).newEvent,
+final eventsControllerProvider = Provider(
+  (ref) => EventsController(ref: ref, user: ref.watch(userProvider)),
 );
+final newEventProvider =
+    StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent());
+
+class NewEvent extends StateNotifier<EventModel> {
+  NewEvent()
+      : super(EventModel(
+          id: "",
+          title: "",
+          location: "",
+          date: DateTime.now().toString(),
+          startTime: DateTime.now().toUtc().toString(),
+          endTime: DateTime.now().toUtc().toString(),
+          attendees: 0,
+          category: "Hiking",
+          favourite: false,
+          bannerPath: Assets.images.nature,
+          iconPath: allInterests['Hiking']!,
+          about: "",
+          host: null,
+          coHosts: <UserModel>[],
+          capacity: 10,
+          isPrivate: false,
+        ));
+
+  List<File> selectedImages = [];
+
+  File? bannerImage;
+
+  void updateBannerImage(File file) {
+    bannerImage = file;
+  }
+
+  void updateName(String title) {
+    state = state.copyWith(title: title);
+  }
+
+  void updateDescription(String description) {
+    state = state.copyWith(about: description);
+  }
+
+  void updateLocation(String location) {
+    state = state.copyWith(location: location);
+  }
+
+  void updateCategory(String category) {
+    state = state.copyWith(category: category);
+  }
+
+  void onChangeCapacity(String value) {
+    if (value.isEmpty) {
+      state = state.copyWith(capacity: 0);
+
+      return;
+    }
+    if (value.length > 1 && value[0] == '0') {
+      value = value.substring(1);
+    }
+    final num = int.parse(value);
+
+    if (num < 0) {
+      state = state.copyWith(capacity: 0);
+    } else {
+      state = state.copyWith(capacity: num);
+    }
+  }
+
+  void updateEventType(bool value) {
+    state = state.copyWith(isPrivate: value);
+  }
+
+  void increaseCapacity() {
+    state = state.copyWith(capacity: state.capacity + 1);
+  }
+
+  void decreaseCapacity() {
+    if (state.capacity != 0) {
+      state = state.copyWith(capacity: state.capacity - 1);
+      return;
+    }
+  }
+
+  void updateDate(String date) {
+    state = state.copyWith(date: date);
+  }
+
+  void updateTime(String time, {bool? isEnd = false}) {
+    if (isEnd!) {
+      state = state.copyWith(endTime: time);
+    } else {
+      state = state.copyWith(startTime: time);
+    }
+  }
+}
 
 class EventsController {
+  final UserModel? user;
   final Ref ref;
-  EventsController({required this.ref});
+  EventsController({required this.ref, required this.user});
 
   List<EventModel> upcomingEvents = [];
   List<EventModel> pastEvents = [];
   List<EventModel> focusedEvents = [];
   String selectedCategory = '';
   double calenderHeight = 150;
-  EventModel newEvent = EventModel(
-    title: "",
-    location: "",
-    date: DateTime.now().toString(),
-    startTime: TimeOfDay.now().toString(),
-    attendees: 0,
-    category: "Hiking",
-    favourite: false,
-    bannerPath: Assets.images.nature,
-    iconPath: allInterests['Hiking']!,
-    maxAttendees: 50,
-    about: "",
-    host: null,
-    coHosts: <UserModel>[],
-    capacity: 10,
-  );
 
   final today =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -77,90 +157,4 @@ class EventsController {
   }
 
   // new event methods
-  void updateName(String title) {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(title: title));
-  }
-
-  void updateDescription(String description) {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(about: description));
-  }
-
-  void updateLocation(String location) {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(location: location));
-  }
-
-  void updateCategory(String category) {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(category: category));
-  }
-
-  void onChangeCapacity(String value) {
-    if (value.isEmpty) {
-      ref
-          .read(newEventProvider.notifier)
-          .update((state) => state.copyWith(capacity: 0));
-
-      return;
-    }
-    if (value.length > 1 && value[0] == '0') {
-      value = value.substring(1);
-    }
-    final num = int.parse(value);
-
-    if (num < 0) {
-      ref
-          .read(newEventProvider.notifier)
-          .update((state) => state.copyWith(capacity: 0));
-    } else {
-      ref
-          .read(newEventProvider.notifier)
-          .update((state) => state.copyWith(capacity: num));
-    }
-  }
-
-  void updateEventType(bool value) {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(isPrivate: value));
-  }
-
-  void increaseCapacity() {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(capacity: state.capacity + 1));
-  }
-
-  void decreaseCapacity() {
-    if (ref.read(newEventProvider).capacity != 0) {
-      ref
-          .read(newEventProvider.notifier)
-          .update((state) => state.copyWith(capacity: state.capacity - 1));
-      return;
-    }
-  }
-
-  void updateDate(String date) {
-    ref
-        .read(newEventProvider.notifier)
-        .update((state) => state.copyWith(date: date));
-  }
-
-  void updateTime(String time, {bool? isEnd = false}) {
-    if (isEnd!) {
-      ref
-          .read(newEventProvider.notifier)
-          .update((state) => state.copyWith(endTime: time));
-    } else {
-      ref
-          .read(newEventProvider.notifier)
-          .update((state) => state.copyWith(startTime: time));
-    }
-  }
 }

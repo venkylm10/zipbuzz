@@ -16,22 +16,22 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
   int capacity = 10;
   var isPrivate = false;
   final capacityController = TextEditingController();
-  late EventsController eventsController;
+  late NewEvent newEvent;
 
   void updateEventType(bool value) {
-    eventsController.updateEventType(value);
+    newEvent.updateEventType(value);
   }
 
   void increaseCapacity() {
-    eventsController.increaseCapacity();
+    newEvent.increaseCapacity();
   }
 
   void decreaseCapacity() {
-    eventsController.decreaseCapacity();
+    newEvent.decreaseCapacity();
   }
 
   void onChange(String value) {
-    eventsController.onChangeCapacity(value);
+    newEvent.onChangeCapacity(value);
     if (value.isEmpty) {
       capacityController.text = 0.toString();
     } else {
@@ -39,14 +39,9 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
     }
   }
 
-  void getValues() {
-    capacityController.text = capacity.toString();
-    isPrivate = ref.read(newEventProvider).isPrivate!;
-  }
-
   @override
   void initState() {
-    eventsController = ref.read(eventsControllerProvider);
+    newEvent = ref.read(newEventProvider.notifier);
     capacityController.text = capacity.toString();
     super.initState();
   }
@@ -55,8 +50,8 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     capacity = ref.watch(newEventProvider).capacity;
-    isPrivate = ref.watch(newEventProvider).isPrivate!;
-    getValues();
+    isPrivate = ref.watch(newEventProvider).isPrivate;
+    capacityController.text = capacity.toString();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

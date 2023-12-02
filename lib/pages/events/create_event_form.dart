@@ -26,11 +26,11 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   late TextEditingController startTimeController;
   late TextEditingController endTimeController;
   DateTime date = DateTime.now();
-  late EventsController eventController;
+  late NewEvent newEvent;
 
   @override
   void initState() {
-    eventController = ref.read(eventsControllerProvider);
+    newEvent = ref.read(newEventProvider.notifier);
     nameController = TextEditingController();
     descriptionController = TextEditingController();
     dateController = TextEditingController();
@@ -52,19 +52,19 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void updateEventName(String value) {
-    eventController.updateName(value);
+    newEvent.updateName(value);
   }
 
   void updateCategory({String? category = 'Hiking'}) {
-    eventController.updateCategory(category!);
+    newEvent.updateCategory(category!);
   }
 
   void updateDescription(String value) {
-    eventController.updateDescription(value);
+    newEvent.updateDescription(value);
   }
 
   void updateLocation(String value) {
-    eventController.updateLocation(value);
+    newEvent.updateLocation(value);
   }
 
   void updateDate() async {
@@ -75,7 +75,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           lastDate: DateTime.utc(2026),
         ) ??
         DateTime.now();
-    eventController.updateDate(date.toString());
+    newEvent.updateDate(date.toString());
     dateController.text = DateFormat('d\'th\' MMMM (EEEE)').format(date);
     setState(() {});
   }
@@ -89,11 +89,11 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           time.hour, time.minute);
       final noon = tempTime.hour >= 12 ? true : false;
       if (isEnd!) {
-        eventController.updateTime(tempTime.toString(), isEnd: true);
+        newEvent.updateTime(tempTime.toUtc().toString(), isEnd: true);
         endTimeController.text =
             "${tempTime.hour >= 13 ? tempTime.hour - 12 : tempTime.hour}:${tempTime.minute} ${noon ? "PM" : "AM"}";
       } else {
-        eventController.updateTime(tempTime.toString());
+        newEvent.updateTime(tempTime.toUtc().toString());
         startTimeController.text =
             "${tempTime.hour >= 13 ? tempTime.hour - 12 : tempTime.hour}:${tempTime.minute} ${noon ? "PM" : "AM"}";
       }
@@ -102,7 +102,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void getNewEvent() {
-    final dummy = ref.read(newEventProvider);
+    final dummy = ref.watch(newEventProvider);
     nameController.text = dummy.title;
     descriptionController.text = dummy.about;
     date = DateTime.parse(dummy.date);
@@ -112,7 +112,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
 
   @override
   Widget build(BuildContext context) {
-    getNewEvent();
+    // getNewEvent();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

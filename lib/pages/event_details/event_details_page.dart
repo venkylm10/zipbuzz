@@ -1,10 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/event_model.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
@@ -14,7 +16,7 @@ import 'package:zipbuzz/widgets/event_details_page/event_details.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_hosts.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_qrcode.dart';
 
-class EventDetailsPage extends StatefulWidget {
+class EventDetailsPage extends ConsumerStatefulWidget {
   static const id = 'event/details';
   final EventModel event;
   final bool? isPreview;
@@ -22,10 +24,10 @@ class EventDetailsPage extends StatefulWidget {
       {super.key, required this.event, this.isPreview = false});
 
   @override
-  State<EventDetailsPage> createState() => _EventDetailsPageState();
+  ConsumerState<EventDetailsPage> createState() => _EventDetailsPageState();
 }
 
-class _EventDetailsPageState extends State<EventDetailsPage> {
+class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   Color dominantColor = Colors.white;
   Color eventColor = Colors.white;
   final bodyScrollController = ScrollController();
@@ -33,12 +35,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   double horizontalMargin = 16;
 
   Future<void> getDominantColor() async {
-    final image = AssetImage(widget.event.bannerPath);
-    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-      image,
-    );
-    dominantColor = generator.dominantColor!.color;
-    setState(() {});
+    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
+    if (!widget.isPreview!) {
+      final image = AssetImage(widget.event.bannerPath);
+      final PaletteGenerator generator =
+          await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      dominantColor = generator.dominantColor!.color;
+      setState(() {});
+    } else {
+      if (previewBanner != null) {
+        final PaletteGenerator generator =
+            await PaletteGenerator.fromImageProvider(
+          FileImage(previewBanner),
+        );
+        dominantColor = generator.dominantColor!.color;
+        setState(() {});
+      }
+    }
   }
 
   void getEventColor() {
@@ -111,16 +126,12 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Image.asset(
-                widget.event.bannerPath,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
+              buildBanner(),
               Transform.translate(
                 offset: const Offset(0, -40),
                 child: AnimatedPadding(
                   padding: EdgeInsets.symmetric(horizontal: horizontalMargin),
-                  duration: const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 100),
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     width: double.infinity,
@@ -153,7 +164,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                 const SizedBox(width: 10),
                                 AttendeeNumbers(
                                   attendees: widget.event.attendees,
-                                  total: widget.event.maxAttendees,
+                                  total: widget.event.capacity,
                                   backgroundColor:
                                       AppColors.greyColor.withOpacity(0.1),
                                 ),
@@ -191,7 +202,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                     .copyWith(color: AppColors.lightGreyColor),
                               ),
                               const SizedBox(height: 16),
-                              EventHosts(host: widget.event.host, coHosts: widget.event.coHosts,),
+                              EventHosts(
+                                host: widget.event.host,
+                                coHosts: widget.event.coHosts,
+                              ),
                               const SizedBox(height: 16),
                               Divider(
                                 color: AppColors.greyColor.withOpacity(0.2),
@@ -219,30 +233,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                               .copyWith(color: AppColors.lightGreyColor),
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: StaggeredGrid.count(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
-                            children: List.generate(
-                              7,
-                              (index) => StaggeredGridTile.count(
-                                crossAxisCellCount: index % 6 == 0 ? 2 : 1,
-                                mainAxisCellCount: 1,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.asset(
-                                    'assets/images/about/Image-$index.png',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        buildPhotos(widget.isPreview!, ref),
                       ],
                     ),
                   ),
@@ -257,5 +248,84 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       floatingActionButton:
           EventButtons(event: widget.event, isPreview: widget.isPreview),
     );
+  }
+
+  Widget buildBanner() {
+    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
+    if (!widget.isPreview!) {
+      return Image.asset(
+        widget.event.bannerPath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+      );
+    } else if (previewBanner == null) {
+      return Image.asset(
+        widget.event.bannerPath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+      );
+    } else {
+      return Container(
+        constraints: const BoxConstraints(maxHeight: 300),
+        child: Image.file(
+          previewBanner,
+          fit: BoxFit.cover,
+          width: double.infinity,
+        ),
+      );
+    }
+  }
+
+  Widget buildPhotos(bool isPreview, WidgetRef ref) {
+    final imageFiles = ref.watch(newEventProvider.notifier).selectedImages;
+    return isPreview
+        ? Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: StaggeredGrid.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              children: List.generate(
+                imageFiles.length,
+                (index) => StaggeredGridTile.count(
+                  crossAxisCellCount: index % 6 == 0 ? 2 : 1,
+                  mainAxisCellCount: 1,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      imageFiles[index],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        : Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: StaggeredGrid.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              children: List.generate(
+                7,
+                (index) => StaggeredGridTile.count(
+                  crossAxisCellCount: index % 6 == 0 ? 2 : 1,
+                  mainAxisCellCount: 1,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/images/about/Image-$index.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 }

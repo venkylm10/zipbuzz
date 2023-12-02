@@ -8,8 +8,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/services/image_picker.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class AddEventPhotos extends ConsumerStatefulWidget {
   const AddEventPhotos({super.key});
@@ -20,6 +20,7 @@ class AddEventPhotos extends ConsumerStatefulWidget {
 
 class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
   List<File> selectedImages = [];
+  int biggerCellIndex = 0;
 
   @override
   void initState() {
@@ -28,14 +29,20 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
 
   void removeImage({required File image}) {
     selectedImages.remove(image);
+    ref.read(newEventProvider.notifier).selectedImages.remove(image);
+    setState(() {});
   }
 
-  void addImage() async {
+  void addImages() async {
     File? image;
-    final pickedImage = await ref.read(imageServicesProvider).pickImage();
-    if (pickedImage != null) {
-      image = File(pickedImage.path);
-      selectedImages.add(image);
+    final pickedImages =
+        await ref.read(imageServicesProvider).pickMultipleImages();
+    if (pickedImages.isNotEmpty) {
+      pickedImages.map((pickedImage) {
+        image = File(pickedImage!.path);
+        selectedImages.add(image!);
+        ref.read(newEventProvider.notifier).selectedImages.add(image!);
+      }).toList();
       setState(() {});
     }
   }
@@ -57,7 +64,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         if (selectedImages.isEmpty) const SizedBox(height: 16),
         if (selectedImages.isEmpty)
           GestureDetector(
-            onTap: addImage,
+            onTap: addImages,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               decoration: BoxDecoration(
@@ -144,7 +151,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         if (selectedImages.isNotEmpty) const SizedBox(height: 16),
         if (selectedImages.isNotEmpty)
           GestureDetector(
-            onTap: addImage,
+            onTap: addImages,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               decoration: BoxDecoration(

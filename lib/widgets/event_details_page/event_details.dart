@@ -6,7 +6,7 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/models/event_model.dart';
 
-class EventDetails extends StatelessWidget {
+class EventDetails extends StatefulWidget {
   const EventDetails({
     super.key,
     required this.event,
@@ -15,8 +15,48 @@ class EventDetails extends StatelessWidget {
   final EventModel event;
 
   @override
+  State<EventDetails> createState() => _EventDetailsState();
+}
+
+class _EventDetailsState extends State<EventDetails> {
+  var startTime = "";
+  var endTime = "";
+
+  void getStartTime() {
+    if (widget.event.startTime.isNotEmpty) {
+      final start = DateTime.parse(widget.event.startTime).toLocal();
+      final noon = start.hour >= 12 ? true : false;
+      startTime =
+          "${start.hour >= 13 ? start.hour - 12 : start.hour}:${start.minute} ${noon ? "PM" : "AM"}";
+    }
+  }
+
+  void getEndTime() {
+    if (widget.event.endTime!.isNotEmpty) {
+      final end = DateTime.parse(widget.event.endTime!).toLocal();
+      final noon = end.hour >= 12 ? true : false;
+      endTime =
+          "${end.hour >= 13 ? end.hour - 12 : end.hour}:${end.minute} ${noon ? "PM" : "AM"}";
+    }
+  }
+
+  void initialiseTime() {
+    getStartTime();
+    if (widget.event.endTime != null) {
+      getEndTime();
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    initialiseTime();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final date = DateTime.parse(event.date);
+    final date = DateTime.parse(widget.event.date);
     return Column(
       children: [
         //date
@@ -42,7 +82,7 @@ class EventDetails extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  DateFormat.MMMM().format(date),
+                  "${DateFormat.MMMM().format(date)} ${date.day}",
                   style: AppStyles.h4.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -119,7 +159,7 @@ class EventDetails extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              "8:00 PM - 12:00 PM",
+              "$startTime - $endTime",
               style: AppStyles.h4.copyWith(
                 fontWeight: FontWeight.w500,
               ),

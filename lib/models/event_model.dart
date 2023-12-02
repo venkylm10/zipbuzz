@@ -1,6 +1,7 @@
 import 'package:zipbuzz/models/user_model.dart';
 
 class EventModel {
+  final String id;
   final String title;
   final String about;
   final UserModel? host;
@@ -10,16 +11,16 @@ class EventModel {
   final String startTime;
   final String? endTime;
   final int attendees;
-  final int maxAttendees;
   final String category;
   final bool favourite;
   final String bannerPath;
   final String iconPath;
-  final bool? isPrivate;
+  final bool isPrivate;
   final int capacity;
   const EventModel({
+    required this.id,
     required this.title,
-     this.host,
+    this.host,
     required this.coHosts,
     required this.location,
     required this.date,
@@ -31,12 +32,12 @@ class EventModel {
     required this.bannerPath,
     required this.iconPath,
     required this.about,
-    required this.maxAttendees,
-    this.isPrivate = false,
+    required this.isPrivate,
     required this.capacity,
   });
 
   EventModel copyWith({
+    String? id,
     String? title,
     String? about,
     UserModel? host,
@@ -46,7 +47,6 @@ class EventModel {
     String? startTime,
     String? endTime,
     int? attendees,
-    int? maxAttendees,
     String? category,
     bool? favourite,
     String? bannerPath,
@@ -55,6 +55,7 @@ class EventModel {
     int? capacity,
   }) {
     return EventModel(
+      id: id ?? this.id,
       title: title ?? this.title,
       about: about ?? this.about,
       host: host ?? this.host,
@@ -64,13 +65,57 @@ class EventModel {
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       attendees: attendees ?? this.attendees,
-      maxAttendees: maxAttendees ?? this.maxAttendees,
       category: category ?? this.category,
       favourite: favourite ?? this.favourite,
       bannerPath: bannerPath ?? this.bannerPath,
       iconPath: iconPath ?? this.iconPath,
       isPrivate: isPrivate ?? this.isPrivate,
       capacity: capacity ?? this.capacity,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'title': title,
+      'about': about,
+      'host': host?.toMap(),
+      'coHosts': coHosts.map((x) => x.toMap()).toList(),
+      'location': location,
+      'date': date,
+      'startTime': startTime,
+      'endTime': endTime,
+      'attendees': attendees,
+      'category': category,
+      'favourite': favourite,
+      'bannerPath': bannerPath,
+      'iconPath': iconPath,
+      'isPrivate': isPrivate,
+      'capacity': capacity,
+    };
+  }
+
+  factory EventModel.fromMap(Map<String, dynamic> map) {
+    return EventModel(
+      id: map['id'] as String,
+      title: map['title'] as String,
+      about: map['about'] as String,
+      host: map['host'] != null
+          ? UserModel.fromMap(map['host'] as Map<String, dynamic>)
+          : null,
+      coHosts: ((map['coHosts'] as List<int>).map<UserModel>(
+        (x) => UserModel.fromMap(x as Map<String, dynamic>),
+      )).toList(),
+      location: map['location'] as String,
+      date: map['date'] as String,
+      startTime: map['startTime'] as String,
+      endTime: map['endTime'] != null ? map['endTime'] as String : null,
+      attendees: map['attendees'] as int,
+      category: map['category'] as String,
+      favourite: map['favourite'] as bool,
+      bannerPath: map['bannerPath'] as String,
+      iconPath: map['iconPath'] as String,
+      isPrivate: map['isPrivate'] as bool,
+      capacity: map['capacity'] as int,
     );
   }
 }

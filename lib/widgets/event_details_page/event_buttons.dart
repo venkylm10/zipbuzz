@@ -51,7 +51,7 @@ class EventButtons extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "(${event.attendees}/${event.maxAttendees})",
+                                "(${event.attendees}/${event.capacity})",
                                 style: AppStyles.h4
                                     .copyWith(color: AppColors.lightGreyColor),
                               )

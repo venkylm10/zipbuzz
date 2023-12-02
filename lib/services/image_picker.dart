@@ -7,8 +7,14 @@ class ImageServices {
   final imagePicker = ImagePicker();
 
   Future<XFile?> pickImage() async {
-    final pickedImage =
-        await imagePicker.pickImage(source: ImageSource.gallery);
+    final pickedImage = await imagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
     return pickedImage;
+  }
+
+  Future<List<XFile?>> pickMultipleImages() async {
+    final pickedImages =
+        await imagePicker.pickMultiImage(imageQuality: 50, maxWidth: 1920);
+    return pickedImages;
   }
 }
