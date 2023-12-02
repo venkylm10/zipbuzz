@@ -1,10 +1,7 @@
 import 'dart:ui';
-import 'package:country_dial_code/country_dial_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:location/location.dart' as geo;
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
@@ -28,14 +25,11 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   var selectedInterests = <String>[];
 
-  var city = "";
   var country = "";
   var countryDialCode = "";
   var zipcode = "";
   bool loading = true;
   bool isMounted = true;
-
-  var location = geo.Location();
 
   void updateInterests(String interest) {
     if (selectedInterests.contains(interest)) {
@@ -49,63 +43,38 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   void updateUser() async {
     final check = validate();
     if (check) {
-      final auth = ref.read(authProvider);
-      final currentUser = ref.read(userProvider)!.copyWith(
-            mobileNumber: "$countryDialCode${mobileController.text.trim()}",
-            interests: selectedInterests,
-            zipcode: zipcodeController.text.trim(),
-            city: city,
-            country: country,
-          );
-      Map<String, dynamic> updateMap = {
-        'mobileNumber': "$countryDialCode${mobileController.text.trim()}",
-        'interest': selectedInterests,
-        'zipcode': zipcodeController.text.trim(),
-        'city': city,
-        'country': country,
-      };
+      try {
+        final auth = ref.read(authProvider);
+        final currentUser = ref.read(userProvider)!.copyWith(
+              mobileNumber: "$countryDialCode${mobileController.text.trim()}",
+              interests: selectedInterests,
+              zipcode: zipcodeController.text.trim(),
+            );
+        Map<String, dynamic> updateMap = {
+          'mobileNumber': "$countryDialCode${mobileController.text.trim()}",
+          'interest': selectedInterests,
+          'zipcode': zipcodeController.text.trim(),
+        };
 
-      ref.read(userProvider.notifier).update((state) => currentUser);
-      await ref
-          .read(dbServicesProvider)
-          .updateUser(auth.currentUser!.uid, updateMap);
-    }
-  }
-
-  Future<void> getLocationInfo() async {
-    try {
-      geo.LocationData? currentLocation = await location.getLocation();
-
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          currentLocation.latitude!, currentLocation.longitude!);
-
-      if (placemarks.isNotEmpty) {
-        Placemark placemark = placemarks.first;
-        zipcode = placemark.postalCode ?? "";
-        zipcodeController.text = zipcode;
-        city = placemark.locality ?? "";
-        country = placemark.country ?? "";
-
-        if (placemark.isoCountryCode != null) {
-          countryDialCode =
-              CountryDialCode.fromCountryCode(placemark.isoCountryCode!)
-                  .dialCode;
-        }
+        await ref
+            .read(dbServicesProvider)
+            .updateUser(auth.currentUser!.uid, updateMap);
+        ref.read(userProvider.notifier).update((state) => currentUser);
+      } catch (e) {
+        debugPrint(e.toString());
       }
-    } catch (e) {
-      debugPrint("Error getting location: $e");
     }
   }
 
   void initialise() async {
-    await getLocationInfo();
-    if (isMounted) {
-      setState(() {
-        loading = false;
-        mobileController.text =
-            ref.read(authProvider).currentUser!.phoneNumber ?? "";
-      });
-    }
+    country = ref.read(userProvider)!.country;
+    countryDialCode = ref.read(userProvider)!.countryDialCode;
+    zipcode = ref.read(userProvider)!.zipcode;
+    zipcodeController.text = zipcode;
+    loading = false;
+    mobileController.text =
+        ref.read(authProvider).currentUser!.phoneNumber ?? "";
+    setState(() {});
   }
 
   bool validate() {
@@ -135,9 +104,9 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   @override
   void initState() {
-    initialise();
     zipcodeController = TextEditingController();
     mobileController = TextEditingController();
+    initialise();
     super.initState();
   }
 
@@ -151,6 +120,9 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final currentUser = ref.read(authProvider).currentUser!;
+    country = ref.watch(userProvider)!.country;
+    countryDialCode = ref.watch(userProvider)!.countryDialCode;
+    zipcode = ref.watch(userProvider)!.zipcode;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(

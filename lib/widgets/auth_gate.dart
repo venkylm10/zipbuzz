@@ -7,6 +7,7 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
+import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 
 class AuthGate extends ConsumerStatefulWidget {
@@ -23,6 +24,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   void getData(WidgetRef ref) async {
     userModel = await ref.read(authServicesProvider).getUserData().first;
     ref.read(userProvider.notifier).update((state) => userModel);
+    await ref.read(locationServicesProvider).getInitialInfo();
     setState(() {});
   }
 
@@ -42,7 +44,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
           if (user != null) {
             getData(ref);
             if (userModel != null) {
-              if (userModel!.zipcode.isEmpty) {
+              if (userModel!.mobileNumber.isEmpty ||
+                  userModel!.zipcode.isEmpty) {
                 return const PersonalisePage();
               } else {
                 return const Home();

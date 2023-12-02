@@ -20,6 +20,7 @@ class UserModel {
   final List<String>? pastEventUids;
   final String city;
   final String country;
+  final String countryDialCode;
 
   const UserModel({
     required this.uid,
@@ -36,6 +37,7 @@ class UserModel {
     required this.mobileNumber,
     required this.city,
     required this.country,
+    required this.countryDialCode,
     this.linkedinId,
     this.instagramId,
     this.twitterId,
@@ -64,6 +66,7 @@ class UserModel {
       'pastEventUids': pastEventUids,
       'city': city,
       'country': country,
+      'countryDialCode': countryDialCode,
     };
   }
 
@@ -76,7 +79,11 @@ class UserModel {
       position: map['position'] != null ? map['position'] as String : "",
       eventsHosted:
           map['eventsHosted'] != null ? map['eventsHosted'] as int : 0,
-      rating: map['rating'] != null ? (map['rating'].runtimeType == int ? map['rating'].toDouble() : map['rating']) : 0.0,
+      rating: map['rating'] != null
+          ? (map['rating'].runtimeType == int
+              ? map['rating'].toDouble()
+              : map['rating'])
+          : 0.0,
       imageUrl: map['imageUrl'] != null
           ? map['imageUrl'] as String
           : Assets.images.profile,
@@ -99,6 +106,8 @@ class UserModel {
           : <String>[],
       city: map['city'] != null ? map['city'] as String : "",
       country: map['country'] != null ? map['country'] as String : "",
+      countryDialCode:
+          map['countryDialCode'] != null ? map['countryDialCode'] as String : "",
     );
   }
 
@@ -122,6 +131,7 @@ class UserModel {
     List<String>? pastEventUids,
     String? city,
     String? country,
+    String? countryDialCode,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -143,6 +153,7 @@ class UserModel {
       pastEventUids: pastEventUids ?? this.pastEventUids,
       city: city ?? this.city,
       country: country ?? this.country,
+      countryDialCode: countryDialCode ?? this.countryDialCode,
     );
   }
 
@@ -173,4 +184,5 @@ final globalDummyUser = UserModel(
   pastEventUids: [],
   city: "",
   country: "",
+  countryDialCode: "",
 );

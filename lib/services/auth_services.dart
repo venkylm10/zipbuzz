@@ -56,6 +56,7 @@ class AuthServices {
             twitterId: "",
             city: "",
             country: '',
+            countryDialCode: '',
           );
           await _ref.read(dbServicesProvider).createUser(user: newUser);
         } else {
