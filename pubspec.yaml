@@ -53,7 +53,7 @@ dependencies:
   geolocator: ^10.1.0
   geocoding: ^2.1.1
   firebase_database: ^10.3.6
-  shared_preferences: ^2.2.2
+  country_dial_code: ^1.2.0
   
 
 dev_dependencies:

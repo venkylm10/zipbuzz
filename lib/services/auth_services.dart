@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 
 final authServicesProvider = Provider((ref) => AuthServices(
@@ -14,7 +17,7 @@ class AuthServices {
   final FirebaseAuth _auth;
   final Ref _ref;
   final GoogleSignIn _googleSignIn;
-  const AuthServices(
+  AuthServices(
       {required FirebaseAuth auth,
       required Ref ref,
       required GoogleSignIn googleSignIn})
@@ -29,7 +32,35 @@ class AuthServices {
         final googleAuth = await googleUser.authentication;
         final authCredential = GoogleAuthProvider.credential(
             idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-        await _auth.signInWithCredential(authCredential);
+        final credentials = await _auth.signInWithCredential(authCredential);
+        UserModel newUser;
+        if (credentials.additionalUserInfo!.isNewUser) {
+          newUser = UserModel(
+            uid: _auth.currentUser?.uid ?? '',
+            name: _auth.currentUser?.displayName ?? '',
+            mobileNumber: "",
+            email: _auth.currentUser?.email ?? '',
+            imageUrl: _auth.currentUser?.photoURL ?? '',
+            handle: "",
+            position: "",
+            about: "New to Zipbuzz",
+            eventsHosted: 0,
+            rating: 0.toDouble(),
+            zipcode: "",
+            interests: [],
+            eventUids: [],
+            pastEventUids: [],
+            instagramId: "",
+            linkedinId: "",
+            twitterId: "",
+            city: "",
+            country: '',
+          );
+          await _ref.read(dbServicesProvider).createUser(user: newUser);
+        } else {
+          newUser = (await getUserData().first)!;
+        }
+        _ref.read(userProvider.notifier).update((state) => newUser);
       }
     } catch (e) {}
   }
@@ -40,8 +71,22 @@ class AuthServices {
 
   Future<void> signOut() async {
     try {
-      await _auth.signOut();
       await _googleSignIn.signOut();
+      await _auth.signOut();
     } catch (e) {}
+  }
+
+  Stream<UserModel?> getUserData() {
+    return _ref.read(dbServicesProvider).getUser().map(
+      (event) {
+        if (event.snapshot.exists) {
+          final jsonString = jsonEncode(event.snapshot.value);
+          final userMap = jsonDecode(jsonString);
+          return UserModel.fromMap(userMap);
+        } else {
+          return null;
+        }
+      },
+    );
   }
 }

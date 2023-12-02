@@ -1,5 +1,5 @@
-class FirestoreConstants {
-  static const userCollection = 'users';
+class DatabaseConstants {
+  static const usersCollection = 'users';
   static const eventsCollection = 'events';
   static const chatRoomCollection = 'chatRooms';
   static const groupChatRoom = 'groupChatRooms';

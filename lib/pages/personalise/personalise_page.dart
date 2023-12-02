@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:country_dial_code/country_dial_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,10 +11,9 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
-import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
-import 'package:zipbuzz/services/local_storage.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class PersonalisePage extends ConsumerStatefulWidget {
@@ -33,8 +33,10 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   var city = "";
   var country = "";
+  var countryDialCode = "";
   var zipcode = "";
   var loading = true;
+  bool isMounted = true;
 
   void updateInterests(String interest) {
     if (selectedInterests.contains(interest)) {
@@ -45,34 +47,29 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     setState(() {});
   }
 
-  void updateUser() {
+  void updateUser() async {
     final check = validate();
     if (check) {
       final auth = ref.read(authProvider);
-      UserModel currentUser = UserModel(
-        uid: auth.currentUser?.uid ?? '',
-        name: auth.currentUser?.displayName ?? '',
-        mobileNumber: auth.currentUser?.phoneNumber ?? '',
-        email: mobileController.text.trim(),
-        imageUrl: auth.currentUser?.photoURL ?? '',
-        handle: "",
-        position: "",
-        about: "",
-        eventsHosted: 0,
-        rating: 0,
-        zipcode: zipcodeController.text.trim(),
-        interests: selectedInterests,
-        eventUids: [],
-        pastEventUids: [],
-        instagramId: "",
-        linkedinId: "",
-        twitterId: "",
-        city: city,
-        country: country,
-      );
+      final currentUser = ref.read(userProvider)!.copyWith(
+            mobileNumber: "$countryDialCode${mobileController.text.trim()}",
+            interests: selectedInterests,
+            zipcode: zipcodeController.text.trim(),
+            city: city,
+            country: country,
+          );
+      Map<String, dynamic> updateMap = {
+        'mobileNumber': "$countryDialCode${mobileController.text.trim()}",
+        'interest': selectedInterests,
+        'zipcode': zipcodeController.text.trim(),
+        'city': city,
+        'country': country,
+      };
 
       ref.read(userProvider.notifier).update((state) => currentUser);
-      ref.read(localDBProvider).saveUser(currentUser);
+      await ref
+          .read(dbServicesProvider)
+          .updateUser(auth.currentUser!.uid, updateMap);
     }
   }
 
@@ -115,16 +112,25 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     this.zipcode = zipcode;
     city = placemark.locality ?? "";
     country = placemark.country ?? "";
-    setState(() {
-      loading = false;
-    });
+    if (placemark.isoCountryCode != null) {
+      countryDialCode =
+          CountryDialCode.fromCountryCode(placemark.isoCountryCode!).dialCode;
+    }
+    if (isMounted) {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   void initialise() async {
     await handleLocationPermission();
-    mobileController.text =
-        ref.read(authProvider).currentUser!.phoneNumber ?? "";
-    setState(() {});
+    if (isMounted) {
+      setState(() {
+        mobileController.text =
+            ref.read(authProvider).currentUser!.phoneNumber ?? "";
+      });
+    }
   }
 
   bool validate() {
@@ -132,8 +138,17 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
       showSnackBar(message: "Please enter zipcode");
       return false;
     }
+
+    if (zipcodeController.text.length != 6) {
+      showSnackBar(message: "Please enter valid zipcode");
+      return false;
+    }
     if (mobileController.text.isEmpty) {
       showSnackBar(message: "Please enter mobile number");
+      return false;
+    }
+    if (mobileController.text.length != 10) {
+      showSnackBar(message: "Please enter valid mobile number");
       return false;
     }
     if (selectedInterests.length < 3) {
@@ -149,6 +164,12 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     zipcodeController = TextEditingController();
     mobileController = TextEditingController();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    isMounted = false;
+    super.dispose();
   }
 
   @override

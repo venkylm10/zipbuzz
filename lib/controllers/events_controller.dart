@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/models/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/models/user_model.dart';
 
 final eventsControllerProvider = Provider((ref) => EventsController(ref: ref));
 final newEventProvider = StateProvider(
@@ -29,7 +30,8 @@ class EventsController {
     iconPath: allInterests['Hiking']!,
     maxAttendees: 50,
     about: "",
-    hosts: [],
+    host: null,
+    coHosts: <UserModel>[],
     capacity: 10,
   );
 

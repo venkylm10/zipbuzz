@@ -15,6 +15,12 @@ class SignInSheet extends ConsumerWidget {
   static const id = '/sign_in';
   const SignInSheet({super.key});
 
+  void googleSignIn(WidgetRef ref) {
+    ref.read(authServicesProvider).signInWithGoogle();
+    navigatorKey.currentState!.pop();
+    ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ClipRRect(
@@ -51,11 +57,7 @@ class SignInSheet extends ConsumerWidget {
               SignInButton(
                 title: "Google",
                 iconPath: Assets.icons.google_logo,
-                onTap: () {
-                  ref.read(authServicesProvider).signInWithGoogle();
-                  navigatorKey.currentState!.pop();
-                  ref.read(homeTabControllerProvider.notifier).updateIndex(0);
-                },
+                onTap: () => googleSignIn(ref),
               ),
               const SizedBox(height: 8),
               SignInButton(

@@ -10,7 +10,7 @@ import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
-import 'package:zipbuzz/services/local_storage.dart';
+import 'package:zipbuzz/widgets/auth_gate.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
 import 'package:zipbuzz/widgets/profile/socials.dart';
@@ -31,17 +31,16 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   }
 
   void logOut() async {
-    ref.read(userProvider.notifier).update((state) => null);
-    ref.read(authServicesProvider).signOut();
-    ref.read(localDBProvider).deleteUser();
+    await ref.read(authServicesProvider).signOut();
     showSnackBar(message: "Logged out successfully!");
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider)!;
-    return WillPopScope(
-      onWillPop: () =>
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (value) =>
           ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
         appBar: AppBar(

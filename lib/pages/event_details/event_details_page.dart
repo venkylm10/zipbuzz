@@ -180,7 +180,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           color: AppColors.greyColor.withOpacity(0.2),
                           thickness: 0,
                         ),
-                        if (widget.event.hosts.isNotEmpty)
+                        if (widget.event.host != null)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -191,7 +191,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                                     .copyWith(color: AppColors.lightGreyColor),
                               ),
                               const SizedBox(height: 16),
-                              EventHosts(hosts: widget.event.hosts),
+                              EventHosts(host: widget.event.host, coHosts: widget.event.coHosts,),
                               const SizedBox(height: 16),
                               Divider(
                                 color: AppColors.greyColor.withOpacity(0.2),

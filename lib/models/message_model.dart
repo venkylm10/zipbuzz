@@ -1,4 +1,5 @@
 class Message {
+  final String id;
   final String senderId;
   final String receiverId;
   final String message;
@@ -7,6 +8,7 @@ class Message {
   final String timeStamp;
 
   const Message({
+    required this.id,
     required this.senderId,
     required this.receiverId,
     required this.message,
@@ -15,6 +17,7 @@ class Message {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'senderId': senderId,
       'receiverId': receiverId,
       'message': message,
@@ -24,6 +27,7 @@ class Message {
 
   factory Message.fromMap(Map<String, dynamic> map) {
     return Message(
+      id: map['id'] as String,
       senderId: map['senderId'] as String,
       receiverId: map['receiverId'] as String,
       message: map['message'] as String,

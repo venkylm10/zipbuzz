@@ -6,8 +6,9 @@ import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
-import 'package:zipbuzz/services/local_storage.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 
 class AuthGate extends ConsumerStatefulWidget {
   static const id = '/auth_gate';
@@ -18,30 +19,41 @@ class AuthGate extends ConsumerStatefulWidget {
 }
 
 class _AuthGateState extends ConsumerState<AuthGate> {
-  UserModel? currentUser;
-  void initialiseUser() async {
-    currentUser = await ref.read(localDBProvider).getUser();
-    ref.read(userProvider.notifier).update((state) => currentUser);
+  UserModel? userModel;
+
+  void getData(WidgetRef ref) async {
+    userModel = await ref.read(authServicesProvider).getUserData().first;
+    ref.read(userProvider.notifier).update((state) => userModel);
     setState(() {});
   }
 
   @override
   void initState() {
-    initialiseUser();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: ref.read(authProvider).authStateChanges(),
+    final auth = FirebaseAuth.instance;
+    return StreamBuilder(
+      stream: auth.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (ref.watch(userProvider) == null) {
-            return const PersonalisePage();
-          } else {
-            return const Home();
+          final user = snapshot.data;
+          if (user != null) {
+            getData(ref);
+            if (userModel != null) {
+              if (userModel!.zipcode.isEmpty) {
+                return const PersonalisePage();
+              } else {
+                return const Home();
+              }
+            }
           }
+          return const Loader();
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Loader();
         }
         return const WelcomePage();
       },

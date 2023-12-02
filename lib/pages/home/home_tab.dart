@@ -4,12 +4,8 @@ import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/events_controller.dart';
-import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/widgets/home/custom_appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
-
-final categoryPageKey = GlobalKey();
-final rowCategoryKey = GlobalKey();
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
@@ -23,6 +19,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   final rowScrollController = ScrollController();
   final bodyScrollController = ScrollController();
   final queryController = TextEditingController();
+  late GlobalKey categoryPageKey;
+  late GlobalKey rowCategoryKey;
   double topPadding = 0;
   bool _isSearching = true;
   int index = 0;
@@ -31,6 +29,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   @override
   void initState() {
+    categoryPageKey = GlobalKey();
+    rowCategoryKey = GlobalKey();
     pageScrollController.addListener(() {
       updateIndex(pageScrollController.offset);
     });

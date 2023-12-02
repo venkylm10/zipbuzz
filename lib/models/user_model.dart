@@ -70,33 +70,32 @@ class UserModel {
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'],
-      name: map['name'] != null ? map['name'] as String : "username",
+      name: map['name'] != null ? map['name'] as String : "",
       email: map['email'] != null ? map['email'] as String : "",
       handle: map['handle'] != null ? map['handle'] as String : "",
       position: map['position'] != null ? map['position'] as String : "",
       eventsHosted:
           map['eventsHosted'] != null ? map['eventsHosted'] as int : 0,
-      rating: map['rating'] != null ? map['rating'] as double : 0,
+      rating: map['rating'] != null ? (map['rating'].runtimeType == int ? map['rating'].toDouble() : map['rating']) : 0.0,
       imageUrl: map['imageUrl'] != null
           ? map['imageUrl'] as String
           : Assets.images.profile,
-      mobileNumber: map['mobileNumber'] != null
-          ? map['mobileNumber'] as String
-          : "9999999999",
-      zipcode: map['zipcode'] != null ? map['zipcode'] as String : "444444",
+      mobileNumber:
+          map['mobileNumber'] != null ? map['mobileNumber'] as String : "",
+      zipcode: map['zipcode'] != null ? map['zipcode'] as String : "",
       linkedinId: map['linkedinId'] != null ? map['linkedinId'] as String : "",
       instagramId:
           map['instagramId'] != null ? map['instagramId'] as String : null,
       twitterId: map['twitterId'] != null ? map['twitterId'] as String : null,
       interests: map['interests'] != null
-          ? List<String>.from((map['interests'] as List<String>))
+          ? (map['interests'] as List).map((e) => e.toString()).toList()
           : [],
       about: map['about'] != null ? map['about'] as String : "New to ZipBuzz",
       eventUids: map['eventUids'] != null
-          ? map['eventUids'] as List<String>
+          ? (map['eventUids'] as List).map((e) => e.toString()).toList()
           : <String>[],
       pastEventUids: map['pastEventUids'] != null
-          ? map['pastEventUids'] as List<String>
+          ? (map['pastEventUids'] as List).map((e) => e.toString()).toList()
           : <String>[],
       city: map['city'] != null ? map['city'] as String : "",
       country: map['country'] != null ? map['country'] as String : "",

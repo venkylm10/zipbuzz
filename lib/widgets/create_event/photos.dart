@@ -17,33 +17,15 @@ class AddEventPhotos extends StatefulWidget {
 }
 
 class _AddEventPhotosState extends State<AddEventPhotos> {
-  var defaultImagePaths = <String>[];
+  List<File> selectedImages = [];
 
   @override
   void initState() {
-    defaultImagePaths = [
-      "assets/images/about/Image-0.png",
-      "assets/images/about/Image-1.png",
-      "assets/images/about/Image-2.png",
-      "assets/images/about/Image-3.png",
-      "assets/images/about/Image-4.png",
-      "assets/images/about/Image-5.png",
-      "assets/images/about/Image-6.png",
-    ];
     super.initState();
   }
 
-  void removeImage({File? image, String? imagePath}) {
-    if (image != null) {
-      assert(imagePath == null);
-    } else if (imagePath != null) {
-      assert(image == null);
-      if (defaultImagePaths.contains(imagePath)) {
-        defaultImagePaths.remove(imagePath);
-        setState(() {});
-        return;
-      }
-    }
+  void removeImage({required File image}) {
+    selectedImages.remove(image);
   }
 
   @override
@@ -60,31 +42,32 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
           "You can add event photos to show user whats in store for them.",
           style: AppStyles.h4,
         ),
-        const SizedBox(height: 16),
-        GestureDetector(
-          onTap: showSnackBar,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.bgGrey,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.borderGrey),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(Assets.icons.add_circle),
-                const SizedBox(width: 8),
-                Text(
-                  "Add",
-                  style: AppStyles.h4.copyWith(
-                    color: AppColors.greyColor,
+        if (selectedImages.isEmpty) const SizedBox(height: 16),
+        if (selectedImages.isEmpty)
+          GestureDetector(
+            onTap: showSnackBar,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.bgGrey,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.borderGrey),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(Assets.icons.add_circle),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Add",
+                    style: AppStyles.h4.copyWith(
+                      color: AppColors.greyColor,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
@@ -95,7 +78,7 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             children: List.generate(
-              defaultImagePaths.length,
+              selectedImages.length,
               (index) => StaggeredGridTile.count(
                 crossAxisCellCount: index % 6 == 0 ? 2 : 1,
                 mainAxisCellCount: 1,
@@ -104,8 +87,8 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
                   child: Stack(
                     children: [
                       Positioned.fill(
-                        child: Image.asset(
-                          defaultImagePaths[index],
+                        child: Image.file(
+                          selectedImages[index],
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -113,7 +96,7 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
                         alignment: Alignment.center,
                         child: GestureDetector(
                           onTap: () =>
-                              removeImage(imagePath: defaultImagePaths[index]),
+                              removeImage(image: selectedImages[index]),
                           child: SizedBox(
                             height: 36,
                             width: 36,
@@ -146,31 +129,32 @@ class _AddEventPhotosState extends State<AddEventPhotos> {
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        GestureDetector(
-          onTap: showSnackBar,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.bgGrey,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.borderGrey),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(Assets.icons.add_circle),
-                const SizedBox(width: 8),
-                Text(
-                  "Add more",
-                  style: AppStyles.h4.copyWith(
-                    color: AppColors.greyColor,
+        if (selectedImages.isNotEmpty) const SizedBox(height: 16),
+        if (selectedImages.isNotEmpty)
+          GestureDetector(
+            onTap: showSnackBar,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.bgGrey,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.borderGrey),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(Assets.icons.add_circle),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Add more",
+                    style: AppStyles.h4.copyWith(
+                      color: AppColors.greyColor,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
       ],
     );
   }

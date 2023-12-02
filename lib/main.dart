@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/firebase_options.dart';
 import 'package:zipbuzz/routes.dart';
-import 'package:zipbuzz/services/local_storage.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
 
 void main() async {
@@ -21,9 +20,20 @@ void main() async {
 var navigatorKey = GlobalKey<NavigatorState>();
 var scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
+
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
