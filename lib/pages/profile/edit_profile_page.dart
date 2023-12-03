@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,7 +10,9 @@ import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -32,6 +36,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late TextEditingController linkedinIdControler;
   late TextEditingController instagramIdController;
   late TextEditingController twitterIdController;
+  File? image;
 
   void updateInterest(String interest) {
     if (userClone.interests.contains(interest)) {
@@ -41,6 +46,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     }
     userClone.interests.add(interest);
     setState(() {});
+  }
+
+  void pickImage() async {
+    final pickedImage = await ImageServices().pickImage();
+    if (pickedImage != null) {
+      setState(() {
+        image = File(pickedImage.path);
+      });
+    }
   }
 
   void initialise() {
@@ -62,11 +76,18 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       await ref
           .read(locationServicesProvider)
           .updateUserLocationFromZipcode(zipcodeController.text.trim());
+      String? newImageUrl;
+      if (image != null) {
+        newImageUrl = await ref
+            .read(storageServicesProvider)
+            .uploadProfilePic(uid: userClone.uid, file: image!);
+      }
 
       final updatedUser = ref.read(userProvider)!.copyWith(
             name: nameController.text.trim(),
             about: aboutController.text.trim(),
             mobileNumber: mobileController.text.trim(),
+            imageUrl: newImageUrl,
             handle: handleController.text.trim(),
             linkedinId: linkedinIdControler.text.trim(),
             instagramId: instagramIdController.text.trim(),
@@ -121,90 +142,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // TODO: add image picker for profile editing page
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      GestureDetector(
-                        onTap: showSnackBar,
-                        // add image picker for profile editing page
-                        child: SizedBox(
-                          height: 120,
-                          width: 120,
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(60),
-                                  child: Image.network(
-                                    userClone.imageUrl,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Container(
-                                  height: 32,
-                                  width: 32,
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.borderGrey,
-                                        blurRadius: 1,
-                                        spreadRadius: 2,
-                                      )
-                                    ],
-                                  ),
-                                  child: SvgPicture.asset(
-                                    Assets.icons.edit,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              Assets.icons.check,
-                              colorFilter: const ColorFilter.mode(
-                                AppColors.primaryColor,
-                                BlendMode.srcIn,
-                              ),
-                              height: 20,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              userClone.position,
-                              style: AppStyles.h5.copyWith(
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              buildProfilePic(),
               const SizedBox(height: 8),
               Text("Name:", style: AppStyles.h4),
               const SizedBox(height: 4),
@@ -363,6 +301,97 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildProfilePic() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          children: [
+            GestureDetector(
+              onTap: pickImage,
+              child: SizedBox(
+                height: 120,
+                width: 120,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(60),
+                        child: image != null
+                            ? Image.file(
+                                image!,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                userClone.imageUrl,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Container(
+                        height: 32,
+                        width: 32,
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.borderGrey,
+                              blurRadius: 1,
+                              spreadRadius: 2,
+                            )
+                          ],
+                        ),
+                        child: SvgPicture.asset(
+                          Assets.icons.edit,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SvgPicture.asset(
+                    Assets.icons.check,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.primaryColor,
+                      BlendMode.srcIn,
+                    ),
+                    height: 20,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    userClone.position,
+                    style: AppStyles.h5.copyWith(
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

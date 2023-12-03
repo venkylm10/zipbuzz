@@ -65,11 +65,11 @@ class LocationServices {
     }
   }
 
-  Future<void> updateUserLocationFromZipcode(String updatedZipcode) async {
+  Future<void> updateUserLocationFromZipcode(String newZipcode) async {
     try {
-      zipcode = updatedZipcode;
+      zipcode = newZipcode;
       debugPrint("updating location");
-      List<Location> locations = await locationFromAddress(updatedZipcode);
+      List<Location> locations = await locationFromAddress(newZipcode);
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
           locations.first.latitude, locations.first.longitude);
@@ -87,7 +87,7 @@ class LocationServices {
         'city': city,
         'country': country,
         'countryDialCode': countryDialCode,
-        'zipcode': updatedZipcode,
+        'zipcode': newZipcode,
       };
 
       debugPrint("updateMap: $updateMap");
@@ -97,7 +97,7 @@ class LocationServices {
           );
       ref.read(userProvider.notifier).update((state) {
         return state!.copyWith(
-          zipcode: updatedZipcode,
+          zipcode: newZipcode,
           city: city,
           country: country,
           countryDialCode: countryDialCode,
@@ -105,7 +105,7 @@ class LocationServices {
       });
       debugPrint("updated location successfully");
     } catch (e) {
-      debugPrint("Error updating location using zipcode $updatedZipcode: $e");
+      debugPrint("Error updating location using zipcode $newZipcode: $e");
     }
   }
 }

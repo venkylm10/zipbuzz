@@ -1,24 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class UserSocials extends ConsumerWidget {
   const UserSocials({super.key});
 
-  String getUserId(String profileLink) {
-    if (profileLink.isNotEmpty) {
-      final temp = profileLink.split('/');
-      if (profileLink[profileLink.length - 1] == '/') {
-        return temp[temp.length - 2];
+  String getTwitterId(String profileLink) {
+    try {
+      if (profileLink.isNotEmpty) {
+        final temp = profileLink.split('/');
+        return temp[3].split('?').first;
       }
-      return temp[temp.length - 1];
+    } catch (e) {
+      debugPrint(e.toString());
     }
     return "";
+  }
+
+  String getInstaId(String profileLink) {
+    return getTwitterId(profileLink);
+  }
+
+  String getLinkedInId(String profileLink) {
+    try {
+      if (profileLink.isNotEmpty) {
+        final temp = profileLink.split('/');
+        return temp[4].split('?').first;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return "";
+  }
+
+  void launchInstagramProfile(String url) async {
+    final id = getInstaId(url);
+    await launchUrlString("https://www.instagram.com/$id/");
+  }
+
+  void launchTwitterProfile(String url) async {
+    final id = getTwitterId(url);
+    await launchUrlString("https://twitter.com/$id");
+  }
+
+  void launchLinkedInProfile(String url) async {
+    final id = getLinkedInId(url);
+    await launchUrlString("https://www.linkedin.com/in/$id/");
   }
 
   @override
@@ -34,20 +66,33 @@ class UserSocials extends ConsumerWidget {
         const SizedBox(height: 16),
         if (user.linkedinId != null)
           buildHyperLink(
-              Assets.icons.linkedin, "LinkedIn", getUserId(user.linkedinId!)),
-        const SizedBox(height: 4),
-        if (user.instagramId != null)
-          buildHyperLink(Assets.icons.instagram, "Instagram",
-              getUserId(user.instagramId!)),
+            Assets.icons.linkedin,
+            "LinkedIn",
+            getLinkedInId(user.linkedinId!),
+            onTap: () => launchLinkedInProfile(user.linkedinId!),
+          ),
         const SizedBox(height: 4),
         if (user.instagramId != null)
           buildHyperLink(
-              Assets.icons.twitter, "Twitter", getUserId(user.twitterId!)),
+            Assets.icons.instagram,
+            "Instagram",
+            getInstaId(user.instagramId!),
+            onTap: () => launchInstagramProfile(user.instagramId!),
+          ),
+        const SizedBox(height: 4),
+        if (user.instagramId != null)
+          buildHyperLink(
+            Assets.icons.twitter,
+            "Twitter",
+            getTwitterId(user.twitterId!),
+            onTap: () => launchTwitterProfile(user.twitterId!),
+          ),
       ],
     );
   }
 
-  Row buildHyperLink(String iconPath, String label, String value) {
+  Row buildHyperLink(String iconPath, String label, String value,
+      {void Function()? onTap}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -62,7 +107,7 @@ class UserSocials extends ConsumerWidget {
         ),
         const Expanded(child: SizedBox()),
         GestureDetector(
-          onTap: showSnackBar,
+          onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(

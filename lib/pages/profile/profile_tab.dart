@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
@@ -23,11 +25,11 @@ class ProfileTab extends ConsumerStatefulWidget {
 }
 
 class _ProfileTabState extends ConsumerState<ProfileTab> {
-  var mounted = true;
+  var isMounted = true;
   void editProfile(UserModel user) async {
     await navigatorKey.currentState!
         .pushNamed(EditProfilePage.id, arguments: {"user": user});
-    if (mounted) {
+    if (isMounted) {
       setState(() {});
     }
   }
@@ -37,9 +39,10 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     showSnackBar(message: "Logged out successfully!");
   }
 
+
   @override
   void dispose() {
-    mounted = false;
+    isMounted = false;
     super.dispose();
   }
 
