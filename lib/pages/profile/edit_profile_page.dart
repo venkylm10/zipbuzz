@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -72,7 +71,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   void saveChanges() async {
     debugPrint("updating user");
     try {
-      print(zipcodeController.text.trim());
       await ref
           .read(locationServicesProvider)
           .updateUserLocationFromZipcode(zipcodeController.text.trim());
@@ -141,7 +139,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // TODO: add image picker for profile editing page
               buildProfilePic(),
               const SizedBox(height: 8),
               Text("Name:", style: AppStyles.h4),
@@ -172,9 +169,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
                 ),
                 maxLength: 6,
-                onChanged: (p0) {
-                  print(p0);
-                },
               ),
               const SizedBox(height: 8),
               Text("Mobile no:", style: AppStyles.h4),

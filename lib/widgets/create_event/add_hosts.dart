@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -14,7 +13,7 @@ class AddHosts extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
-    final newEvent = ref.watch(newEventProvider);
+    // final newEvent = ref.watch(newEventProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
