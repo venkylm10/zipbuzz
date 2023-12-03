@@ -15,7 +15,6 @@ class AddHosts extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
     final newEvent = ref.watch(newEventProvider);
-    if (newEvent.host == null) {}
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -66,79 +65,79 @@ class AddHosts extends ConsumerWidget {
             ],
           ),
         ),
-        ListView.builder(
-            itemCount: newEvent.coHosts.length,
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) {
-              final cohost = newEvent.coHosts[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                        color: AppColors.greyColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          height: 32,
-                          width: 32,
-                          decoration: BoxDecoration(
-                            color: AppColors.greyColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Image.network(
-                            cohost.imageUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      cohost.name,
-                      style: AppStyles.h5,
-                    ),
-                    const Expanded(child: SizedBox()),
-                    GestureDetector(
-                      onTap: showSnackBar,
-                      child: Container(
-                        height: 32,
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: AppColors.borderGrey,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Row(
-                            children: [
-                              Text(
-                                "Co-host",
-                                style: AppStyles.h5,
-                              ),
-                              const SizedBox(width: 8),
-                              SvgPicture.asset(
-                                Assets.icons.remove,
-                                colorFilter: const ColorFilter.mode(
-                                  AppColors.textColor,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+        // ListView.builder(
+        //     itemCount: newEvent.coHosts.length,
+        //     shrinkWrap: true,
+        //     scrollDirection: Axis.vertical,
+        //     itemBuilder: (context, index) {
+        //       final cohost = newEvent.coHosts[index];
+        //       return Padding(
+        //         padding: const EdgeInsets.only(bottom: 8.0),
+        //         child: Row(
+        //           crossAxisAlignment: CrossAxisAlignment.center,
+        //           children: [
+        //             Container(
+        //               height: 32,
+        //               width: 32,
+        //               decoration: BoxDecoration(
+        //                 color: AppColors.greyColor.withOpacity(0.1),
+        //                 borderRadius: BorderRadius.circular(16),
+        //               ),
+        //               child: ClipRRect(
+        //                 borderRadius: BorderRadius.circular(16),
+        //                 child: Container(
+        //                   height: 32,
+        //                   width: 32,
+        //                   decoration: BoxDecoration(
+        //                     color: AppColors.greyColor.withOpacity(0.1),
+        //                     borderRadius: BorderRadius.circular(16),
+        //                   ),
+        //                   child: Image.network(
+        //                     cohost.imageUrl,
+        //                     fit: BoxFit.cover,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             const SizedBox(width: 8),
+        //             Text(
+        //               cohost.name,
+        //               style: AppStyles.h5,
+        //             ),
+        //             const Expanded(child: SizedBox()),
+        //             GestureDetector(
+        //               onTap: showSnackBar,
+        //               child: Container(
+        //                 height: 32,
+        //                 padding: const EdgeInsets.symmetric(horizontal: 6),
+        //                 decoration: BoxDecoration(
+        //                   color: AppColors.borderGrey,
+        //                   borderRadius: BorderRadius.circular(8),
+        //                 ),
+        //                 child: Center(
+        //                   child: Row(
+        //                     children: [
+        //                       Text(
+        //                         "Co-host",
+        //                         style: AppStyles.h5,
+        //                       ),
+        //                       const SizedBox(width: 8),
+        //                       SvgPicture.asset(
+        //                         Assets.icons.remove,
+        //                         colorFilter: const ColorFilter.mode(
+        //                           AppColors.textColor,
+        //                           BlendMode.srcIn,
+        //                         ),
+        //                       ),
+        //                     ],
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       );
+        //     }),
         GestureDetector(
           onTap: showSnackBar,
           child: Container(

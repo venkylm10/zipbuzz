@@ -207,28 +207,27 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                           color: AppColors.greyColor.withOpacity(0.2),
                           thickness: 0,
                         ),
-                        if (widget.event.host != null)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 16),
-                              Text(
-                                "Hosts",
-                                style: AppStyles.h5
-                                    .copyWith(color: AppColors.lightGreyColor),
-                              ),
-                              const SizedBox(height: 16),
-                              EventHosts(
-                                host: widget.event.host,
-                                coHosts: widget.event.coHosts,
-                              ),
-                              const SizedBox(height: 16),
-                              Divider(
-                                color: AppColors.greyColor.withOpacity(0.2),
-                                thickness: 0,
-                              ),
-                            ],
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            Text(
+                              "Hosts",
+                              style: AppStyles.h5
+                                  .copyWith(color: AppColors.lightGreyColor),
+                            ),
+                            const SizedBox(height: 16),
+                            EventHosts(
+                              hostId: widget.event.hostId,
+                              coHostIds: widget.event.coHostIds,
+                            ),
+                            const SizedBox(height: 16),
+                            Divider(
+                              color: AppColors.greyColor.withOpacity(0.2),
+                              thickness: 0,
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           "About",
@@ -311,7 +310,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
               children: List.generate(
                 imageFiles.length,
                 (index) => StaggeredGridTile.count(
-                  crossAxisCellCount: index % (maxImages - 1) == 0 ? 2 : 1, // change this maxImages in newEventProvider
+                  crossAxisCellCount: index % (maxImages - 1) == 0
+                      ? 2
+                      : 1, // change this maxImages in newEventProvider
                   mainAxisCellCount: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),

@@ -68,10 +68,10 @@ class DBServices {
         .update(map);
   }
 
-  Stream<DatabaseEvent> getUser() {
+  Stream<DatabaseEvent> getUserData(String uid) {
     return _database
         .ref(DatabaseConstants.usersCollection)
-        .child(_ref.read(authProvider).currentUser!.uid)
+        .child(uid)
         .onValue;
   }
 }

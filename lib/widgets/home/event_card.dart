@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/constants/assets.dart';
@@ -6,20 +9,23 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/event_model.dart';
+import 'package:zipbuzz/models/user_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 
-class EventCard extends StatefulWidget {
+class EventCard extends ConsumerStatefulWidget {
   final EventModel event;
   final bool? focusedEvent;
   const EventCard({super.key, required this.event, this.focusedEvent = false});
 
   @override
-  State<EventCard> createState() => _EventCardState();
+  ConsumerState<EventCard> createState() => _EventCardState();
 }
 
-class _EventCardState extends State<EventCard> {
+class _EventCardState extends ConsumerState<EventCard> {
   Color eventColor = Colors.white;
+  UserModel? host;
 
   String getMonth(DateTime date) {
     final formatter = DateFormat.MMM();
@@ -42,6 +48,18 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
+  void getHost(String uid) async {
+    final event = await ref.read(dbServicesProvider).getUserData(uid).first;
+    if (event.snapshot.exists) {
+      final jsonString = jsonEncode(event.snapshot.value);
+      final userMap = jsonDecode(jsonString);
+      host = UserModel.fromMap(userMap);
+      setState(() {});
+    } else {
+      return null;
+    }
+  }
+
   void getEventColor() {
     eventColor = getInterestColor(widget.event.iconPath);
     setState(() {});
@@ -50,6 +68,7 @@ class _EventCardState extends State<EventCard> {
   @override
   void initState() {
     getEventColor();
+
     super.initState();
   }
 
@@ -109,7 +128,7 @@ class _EventCardState extends State<EventCard> {
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(20),
                             ),
-                            child: Image.asset(
+                            child: Image.network(
                               widget.event.bannerPath,
                               fit: BoxFit.cover,
                               width: double.infinity,
@@ -150,68 +169,10 @@ class _EventCardState extends State<EventCard> {
                         children: [
                           Row(
                             children: [
-                              if (widget.focusedEvent!)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: eventColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Image.asset(
-                                        widget.event.iconPath,
-                                        height: 16,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        widget.event.category,
-                                        style: AppStyles.h5
-                                            .copyWith(color: eventColor),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              if (widget.focusedEvent!) buildDateBox(),
                               if (widget.focusedEvent!)
                                 const SizedBox(width: 5),
-                              if (widget.event.host != null)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        AppColors.primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SvgPicture.asset(
-                                        Assets.icons.person_fill,
-                                        colorFilter: const ColorFilter.mode(
-                                          AppColors.primaryColor,
-                                          BlendMode.srcIn,
-                                        ),
-                                        height: 16,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        widget.event.host!.name,
-                                        style: AppStyles.h5.copyWith(
-                                          color: AppColors.primaryColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              if (host != null) buildHostChip(),
                             ],
                           ),
                           const SizedBox(height: 5),
@@ -275,6 +236,68 @@ class _EventCardState extends State<EventCard> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Container buildHostChip() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            Assets.icons.person_fill,
+            colorFilter: const ColorFilter.mode(
+              AppColors.primaryColor,
+              BlendMode.srcIn,
+            ),
+            height: 16,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            host!.name,
+            style: AppStyles.h5.copyWith(
+              color: AppColors.primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container buildDateBox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: eventColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            widget.event.iconPath,
+            height: 16,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            widget.event.category,
+            style: AppStyles.h5.copyWith(color: eventColor),
+          ),
+        ],
       ),
     );
   }

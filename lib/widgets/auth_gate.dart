@@ -7,6 +7,7 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
+import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 
@@ -22,7 +23,10 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   UserModel? userModel;
 
   void getData(WidgetRef ref) async {
-    userModel = await ref.read(authServicesProvider).getUserData().first;
+    userModel = await ref
+        .read(authServicesProvider)
+        .getUserData(ref.read(authProvider).currentUser!.uid)
+        .first;
     ref.read(userProvider.notifier).update((state) => userModel);
     if (ref.read(userProvider) != null) {
       if (ref.read(userProvider)!.zipcode.isEmpty) {

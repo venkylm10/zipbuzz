@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/controllers/events_controller.dart';
 
-class CreateEventGuestList extends StatefulWidget {
+class CreateEventGuestList extends ConsumerWidget {
   const CreateEventGuestList({super.key});
 
-  @override
-  State<CreateEventGuestList> createState() => _CreateEventGuestListState();
-}
-
-class _CreateEventGuestListState extends State<CreateEventGuestList> {
-  bool isPrivate = false;
-
-  void togglePrivacy() {
-    setState(() {
-      isPrivate = !isPrivate;
-    });
+  void togglePrivacy(WidgetRef ref) {
+    ref.read(newEventProvider.notifier).toggleGuestListPrivacy();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPrivate = ref.watch(newEventProvider).privateGuestList;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -29,7 +23,7 @@ class _CreateEventGuestListState extends State<CreateEventGuestList> {
         ),
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: togglePrivacy,
+          onTap: () => togglePrivacy(ref),
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -48,7 +42,7 @@ class _CreateEventGuestListState extends State<CreateEventGuestList> {
                   toggleable: true,
                   activeColor: AppColors.primaryColor,
                   onChanged: (value) {
-                    togglePrivacy();
+                    togglePrivacy(ref);
                   },
                 ),
                 Column(

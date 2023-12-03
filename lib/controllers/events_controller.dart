@@ -10,10 +10,12 @@ final eventsControllerProvider = Provider(
 );
 
 final newEventProvider =
-    StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent());
+    StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent(ref: ref));
 
 class NewEvent extends StateNotifier<EventModel> {
-  NewEvent()
+  final Ref ref;
+
+  NewEvent({required this.ref})
       : super(
           EventModel(
             id: "",
@@ -28,11 +30,13 @@ class NewEvent extends StateNotifier<EventModel> {
             bannerPath: "",
             iconPath: allInterests['Hiking']!,
             about: "",
-            host: null,
-            coHosts: <UserModel>[],
+            hostId: ref.read(userProvider)!.uid,
+            coHostIds: [],
+            guestIds: [],
             capacity: 10,
             isPrivate: false,
             imageUrls: [],
+            privateGuestList: false,
           ),
         );
 
@@ -40,6 +44,10 @@ class NewEvent extends StateNotifier<EventModel> {
   int maxImages = 7;
 
   File? bannerImage;
+
+  void toggleGuestListPrivacy() {
+    state = state.copyWith(privateGuestList: !state.privateGuestList);
+  }
 
   void updateBannerImage(File file) {
     bannerImage = file;

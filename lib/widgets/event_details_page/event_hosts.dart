@@ -1,27 +1,52 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/services/db_services.dart';
 
-class EventHosts extends StatelessWidget {
+class EventHosts extends ConsumerStatefulWidget {
   const EventHosts({
     super.key,
-    required this.host,
-    required this.coHosts,
+    required this.hostId,
+    required this.coHostIds,
   });
 
-  final UserModel? host;
-  final List<UserModel>? coHosts;
+  final String hostId;
+  final List<String> coHostIds;
+
+  @override
+  ConsumerState<EventHosts> createState() => _EventHostsState();
+}
+
+class _EventHostsState extends ConsumerState<EventHosts> {
+  UserModel? host;
+  void getHostData(String uid) async {
+    final dbEvent = await ref.read(dbServicesProvider).getUserData(uid).first;
+    if (dbEvent.snapshot.exists) {
+      final jsonString = jsonEncode(dbEvent.snapshot.value);
+      final userMap = jsonDecode(jsonString);
+      host = UserModel.fromMap(userMap);
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    getHostData(widget.hostId);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       //TODO: Update host and co-hosts
-      children: List.generate(
-        2,
-        (index) => host != null
+      children: [
+        host != null
             ? Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Row(
@@ -63,7 +88,7 @@ class EventHosts extends StatelessWidget {
                 ),
               )
             : const SizedBox(),
-      ),
+      ],
     );
   }
 }

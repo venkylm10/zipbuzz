@@ -1,11 +1,11 @@
-import 'package:zipbuzz/models/user_model.dart';
-
 class EventModel {
   final String id;
   final String title;
   final String about;
-  final UserModel? host;
-  final List<UserModel> coHosts;
+  final String hostId;
+  final List<String> coHostIds;
+  final List<String> guestIds;
+  final bool privateGuestList;
   final String location;
   final String date;
   final String startTime;
@@ -21,8 +21,9 @@ class EventModel {
   const EventModel({
     required this.id,
     required this.title,
-    this.host,
-    required this.coHosts,
+    required this.hostId,
+    required this.coHostIds,
+    required this.guestIds,
     required this.location,
     required this.date,
     required this.startTime,
@@ -36,14 +37,16 @@ class EventModel {
     required this.isPrivate,
     required this.capacity,
     required this.imageUrls,
+    required this.privateGuestList,
   });
 
   EventModel copyWith({
     String? id,
     String? title,
     String? about,
-    UserModel? host,
-    List<UserModel>? coHosts,
+    String? hostId,
+    List<String>? coHostIds,
+    List<String>? guestIds,
     String? location,
     String? date,
     String? startTime,
@@ -56,13 +59,14 @@ class EventModel {
     bool? isPrivate,
     int? capacity,
     List<String>? imageUrls,
+    bool? privateGuestList,
   }) {
     return EventModel(
       id: id ?? this.id,
       title: title ?? this.title,
       about: about ?? this.about,
-      host: host ?? this.host,
-      coHosts: coHosts ?? this.coHosts,
+      hostId: hostId ?? this.hostId,
+      coHostIds: coHostIds ?? this.coHostIds,
       location: location ?? this.location,
       date: date ?? this.date,
       startTime: startTime ?? this.startTime,
@@ -75,28 +79,9 @@ class EventModel {
       isPrivate: isPrivate ?? this.isPrivate,
       capacity: capacity ?? this.capacity,
       imageUrls: imageUrls ?? this.imageUrls,
+      guestIds: guestIds ?? this.guestIds,
+      privateGuestList: privateGuestList ?? this.privateGuestList,
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'title': title,
-      'about': about,
-      'host': host?.toMap(),
-      'coHosts': coHosts.map((x) => x.toMap()).toList(),
-      'location': location,
-      'date': date,
-      'startTime': startTime,
-      'endTime': endTime,
-      'attendees': attendees,
-      'category': category,
-      'favourite': favourite,
-      'bannerPath': bannerPath,
-      'iconPath': iconPath,
-      'isPrivate': isPrivate,
-      'capacity': capacity,
-      'imageUrls': imageUrls
-    };
   }
 
   factory EventModel.fromMap(Map<String, dynamic> map) {
@@ -104,12 +89,9 @@ class EventModel {
       id: map['id'] as String,
       title: map['title'] as String,
       about: map['about'] as String,
-      host: map['host'] != null
-          ? UserModel.fromMap(map['host'] as Map<String, dynamic>)
-          : null,
-      coHosts: ((map['coHosts'] as List).map(
-        (x) => UserModel.fromMap(x as Map<String, dynamic>),
-      )).toList(),
+      hostId: map['hostId'] as String,
+      coHostIds: (map['coHostIds'] as List).map((e) => e.toString()).toList(),
+      guestIds: (map['guestIds'] as List).map((e) => e.toString()).toList(),
       location: map['location'] as String,
       date: map['date'] as String,
       startTime: map['startTime'] as String,
@@ -121,8 +103,33 @@ class EventModel {
       iconPath: map['iconPath'] as String,
       isPrivate: map['isPrivate'] as bool,
       capacity: map['capacity'] as int,
-      imageUrls: (map['imageUrls'] as List).map((e) => e as String).toList(),
+      imageUrls: (map['imageUrls'] as List).map((e) => e.toString()).toList(),
+      privateGuestList: map['privateGuestList'] as bool,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'about': about,
+      'hostId': hostId,
+      'coHostIds': coHostIds,
+      'guestIds': guestIds,
+      'location': location,
+      'date': date,
+      'startTime': startTime,
+      'endTime': endTime,
+      'attendees': attendees,
+      'category': category,
+      'favourite': favourite,
+      'bannerPath': bannerPath,
+      'iconPath': iconPath,
+      'isPrivate': isPrivate,
+      'capacity': capacity,
+      'imageUrls': imageUrls,
+      'privateGuestList': privateGuestList,
+    };
   }
 }
 

@@ -60,7 +60,7 @@ class AuthServices {
           );
           await _ref.read(dbServicesProvider).createUser(user: newUser);
         } else {
-          newUser = (await getUserData().first)!;
+          newUser = (await getUserData(_ref.read(authProvider).currentUser!.uid).first)!;
         }
         _ref.read(userProvider.notifier).update((state) => newUser);
       }
@@ -82,8 +82,8 @@ class AuthServices {
     }
   }
 
-  Stream<UserModel?> getUserData() {
-    return _ref.read(dbServicesProvider).getUser().map(
+  Stream<UserModel?> getUserData(String uid) {
+    return _ref.read(dbServicesProvider).getUserData(uid).map(
       (event) {
         if (event.snapshot.exists) {
           final jsonString = jsonEncode(event.snapshot.value);
