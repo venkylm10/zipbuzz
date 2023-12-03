@@ -7,6 +7,8 @@ import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -21,7 +23,7 @@ class EditProfilePage extends ConsumerStatefulWidget {
 }
 
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
-  late UserModel user;
+  late UserModel userClone;
   late TextEditingController nameController;
   late TextEditingController aboutController;
   late TextEditingController zipcodeController;
@@ -32,30 +34,55 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late TextEditingController twitterIdController;
 
   void updateInterest(String interest) {
-    if (user.interests.contains(interest)) {
-      user.interests.remove(interest);
+    if (userClone.interests.contains(interest)) {
+      userClone.interests.remove(interest);
       setState(() {});
       return;
     }
-    user.interests.add(interest);
+    userClone.interests.add(interest);
     setState(() {});
   }
 
   void initialise() {
-    user = ref.read(userProvider)!.getClone();
-    nameController.text = user.name;
-    aboutController.text = user.about;
-    zipcodeController.text = user.zipcode;
-    mobileController.text = user.mobileNumber;
-    handleController.text = user.handle;
-    linkedinIdControler.text = "linkedin.com/in/${user.linkedinId ?? ""}/";
-    instagramIdController.text = "instagram.com/${user.instagramId ?? ""}";
-    twitterIdController.text = "twitter.com/${user.twitterId ?? ""}";
+    userClone = ref.read(userProvider)!.getClone();
+    nameController.text = userClone.name;
+    aboutController.text = userClone.about;
+    zipcodeController.text = userClone.zipcode;
+    mobileController.text = userClone.mobileNumber;
+    handleController.text = userClone.handle;
+    linkedinIdControler.text = userClone.linkedinId ?? "";
+    instagramIdController.text = userClone.instagramId ?? "";
+    twitterIdController.text = userClone.twitterId ?? "";
   }
 
-  void saveChanges() {
-    ref.read(userProvider.notifier).update((state) => user);
-    navigatorKey.currentState!.pop();
+  void saveChanges() async {
+    debugPrint("updating user");
+    try {
+      print(zipcodeController.text.trim());
+      await ref
+          .read(locationServicesProvider)
+          .updateUserLocationFromZipcode(zipcodeController.text.trim());
+
+      final updatedUser = ref.read(userProvider)!.copyWith(
+            name: nameController.text.trim(),
+            about: aboutController.text.trim(),
+            mobileNumber: mobileController.text.trim(),
+            handle: handleController.text.trim(),
+            linkedinId: linkedinIdControler.text.trim(),
+            instagramId: instagramIdController.text.trim(),
+            twitterId: twitterIdController.text.trim(),
+            interests: userClone.interests,
+          );
+      await ref
+          .read(dbServicesProvider)
+          .updateUser(updatedUser.uid, updatedUser.toMap());
+      ref.read(userProvider.notifier).update((state) => updatedUser);
+      navigatorKey.currentState!.pop();
+      showSnackBar(message: "Updated successfully");
+    } catch (e) {
+      debugPrint("Error updating user: $e");
+      showSnackBar(message: "Error updating user, try later..");
+    }
   }
 
   @override
@@ -93,6 +120,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // TODO: add image picker for profile editing page
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -110,7 +138,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(60),
                                   child: Image.network(
-                                    user.imageUrl,
+                                    userClone.imageUrl,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -165,7 +193,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              user.position,
+                              userClone.position,
                               style: AppStyles.h5.copyWith(
                                 color: AppColors.primaryColor,
                               ),
@@ -184,7 +212,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               const SizedBox(height: 8),
               Text("About me:", style: AppStyles.h4),
               const SizedBox(height: 4),
-              CustomTextField(controller: aboutController, maxLength: 550),
+              CustomTextField(
+                controller: aboutController,
+                maxLength: 550,
+                showCounter: true,
+              ),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
@@ -201,6 +233,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   padding: const EdgeInsets.only(left: 16),
                   child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
                 ),
+                maxLength: 6,
+                onChanged: (p0) {
+                  print(p0);
+                },
               ),
               const SizedBox(height: 8),
               Text("Mobile no:", style: AppStyles.h4),
@@ -300,7 +336,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
               InkWell(
-                onTap: saveChanges,
+                onTap: () => saveChanges(),
                 child: Ink(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -331,7 +367,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Wrap buildInterests() {
-    final myInterests = user.interests;
+    final myInterests = userClone.interests;
     return Wrap(
       spacing: 8,
       runSpacing: 8,

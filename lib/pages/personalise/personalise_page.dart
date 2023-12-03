@@ -8,6 +8,7 @@ import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
+import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class PersonalisePage extends ConsumerStatefulWidget {
@@ -52,7 +53,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
             );
         Map<String, dynamic> updateMap = {
           'mobileNumber': "$countryDialCode${mobileController.text.trim()}",
-          'interest': selectedInterests,
+          'interests': selectedInterests,
           'zipcode': zipcodeController.text.trim(),
         };
 
@@ -67,6 +68,9 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   }
 
   void initialise() async {
+    if (ref.read(userProvider)!.zipcode.isEmpty) {
+      await ref.read(locationServicesProvider).getInitialInfo();
+    }
     country = ref.read(userProvider)!.country;
     countryDialCode = ref.read(userProvider)!.countryDialCode;
     zipcode = ref.read(userProvider)!.zipcode;

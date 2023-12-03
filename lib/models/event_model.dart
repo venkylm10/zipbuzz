@@ -17,6 +17,7 @@ class EventModel {
   final String iconPath;
   final bool isPrivate;
   final int capacity;
+  final List<String> imageUrls;
   const EventModel({
     required this.id,
     required this.title,
@@ -34,6 +35,7 @@ class EventModel {
     required this.about,
     required this.isPrivate,
     required this.capacity,
+    required this.imageUrls,
   });
 
   EventModel copyWith({
@@ -53,6 +55,7 @@ class EventModel {
     String? iconPath,
     bool? isPrivate,
     int? capacity,
+    List<String>? imageUrls,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -71,6 +74,7 @@ class EventModel {
       iconPath: iconPath ?? this.iconPath,
       isPrivate: isPrivate ?? this.isPrivate,
       capacity: capacity ?? this.capacity,
+      imageUrls: imageUrls ?? this.imageUrls,
     );
   }
 
@@ -91,6 +95,7 @@ class EventModel {
       'iconPath': iconPath,
       'isPrivate': isPrivate,
       'capacity': capacity,
+      'imageUrls': imageUrls
     };
   }
 
@@ -102,7 +107,7 @@ class EventModel {
       host: map['host'] != null
           ? UserModel.fromMap(map['host'] as Map<String, dynamic>)
           : null,
-      coHosts: ((map['coHosts'] as List<int>).map<UserModel>(
+      coHosts: ((map['coHosts'] as List).map(
         (x) => UserModel.fromMap(x as Map<String, dynamic>),
       )).toList(),
       location: map['location'] as String,
@@ -116,6 +121,7 @@ class EventModel {
       iconPath: map['iconPath'] as String,
       isPrivate: map['isPrivate'] as bool,
       capacity: map['capacity'] as int,
+      imageUrls: (map['imageUrls'] as List).map((e) => e as String).toList(),
     );
   }
 }

@@ -24,7 +24,11 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   void getData(WidgetRef ref) async {
     userModel = await ref.read(authServicesProvider).getUserData().first;
     ref.read(userProvider.notifier).update((state) => userModel);
-    await ref.read(locationServicesProvider).getInitialInfo();
+    if (ref.read(userProvider) != null) {
+      if (ref.read(userProvider)!.zipcode.isEmpty) {
+        await ref.read(locationServicesProvider).getInitialInfo();
+      }
+    }
     setState(() {});
   }
 

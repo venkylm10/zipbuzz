@@ -10,6 +10,7 @@ class CustomTextField extends StatelessWidget {
   final String? hintText;
   final int? maxLines;
   final void Function(String)? onChanged;
+  final bool? showCounter;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -19,7 +20,22 @@ class CustomTextField extends StatelessWidget {
     this.hintText,
     this.maxLines,
     this.onChanged,
+    this.showCounter = false,
   });
+
+  Widget? buildCounter() {
+    if (maxLength != null) {
+      return Transform.translate(
+        offset: const Offset(0, -8),
+        child: Text(
+          "${controller.text.length}/$maxLength",
+          style: AppStyles.h6.copyWith(color: AppColors.lightGreyColor),
+        ),
+      );
+    } else {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +46,13 @@ class CustomTextField extends StatelessWidget {
         border: Border.all(color: AppColors.borderGrey),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (prefixIcon != null) prefixIcon!,
+          if (prefixIcon != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: prefixIcon!,
+            ),
           Expanded(
             child: TextField(
               controller: controller,
@@ -46,16 +67,7 @@ class CustomTextField extends StatelessWidget {
                 hintStyle:
                     AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
                 contentPadding: const EdgeInsets.all(8),
-                counter: maxLength != null
-                    ? Transform.translate(
-                        offset: const Offset(0, -8),
-                        child: Text(
-                          "${controller.text.length}/$maxLength",
-                          style: AppStyles.h6
-                              .copyWith(color: AppColors.lightGreyColor),
-                        ),
-                      )
-                    : null,
+                counter: buildCounter(),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
                 ),

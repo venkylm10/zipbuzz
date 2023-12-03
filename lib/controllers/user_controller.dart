@@ -18,4 +18,6 @@ class UserController {
     }
     updatedUser.interests.add(interest);
   }
+
+  
 }

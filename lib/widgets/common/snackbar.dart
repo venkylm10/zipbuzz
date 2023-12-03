@@ -3,14 +3,14 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/main.dart';
 
-void showSnackBar({String? message = "Yet to be implemented", int? duration = 1}) {
+void showSnackBar({String? message = "coming soon!", int? duration = 1}) {
   if (scaffoldMessengerKey.currentState != null) {
     scaffoldMessengerKey.currentState!.removeCurrentSnackBar();
     scaffoldMessengerKey.currentState!.showSnackBar(
       SnackBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        duration:  Duration(seconds: duration!),
+        duration: Duration(seconds: duration!),
         content: Container(
           padding: const EdgeInsets.all(8),
           constraints: const BoxConstraints(minHeight: 40),

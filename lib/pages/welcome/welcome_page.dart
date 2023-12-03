@@ -42,7 +42,9 @@ class _WelcomePageState extends State<WelcomePage> {
   void skip() async {
     await pageController.animateToPage(welcomeImages.length - 1,
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-    showSignInForm(navigatorKey.currentContext!);
+    if (await AppPermissions().getlocationPermission()) {
+      showSignInForm(navigatorKey.currentContext!);
+    }
   }
 
   void next() async {

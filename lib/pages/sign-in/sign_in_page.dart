@@ -7,7 +7,6 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/home_tab_controller.dart';
 import 'package:zipbuzz/main.dart';
-import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -67,8 +66,7 @@ class SignInSheet extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () =>
-                    navigatorKey.currentState!.pushNamed(PersonalisePage.id),
+                onTap: showSnackBar,
                 child: Container(
                   height: 56,
                   width: double.infinity,

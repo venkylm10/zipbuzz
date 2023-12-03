@@ -10,6 +10,7 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/services/image_picker.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class AddEventPhotos extends ConsumerStatefulWidget {
   const AddEventPhotos({super.key});
@@ -20,35 +21,46 @@ class AddEventPhotos extends ConsumerStatefulWidget {
 
 class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
   List<File> selectedImages = [];
-  int biggerCellIndex = 0;
+  int maxImages = 0;
 
   @override
   void initState() {
+    maxImages = ref.read(newEventProvider.notifier).maxImages;
+    selectedImages.clear();
+    ref.read(newEventProvider.notifier).selectedImages.clear();
     super.initState();
   }
 
   void removeImage({required File image}) {
-    selectedImages.remove(image);
     ref.read(newEventProvider.notifier).selectedImages.remove(image);
     setState(() {});
   }
 
   void addImages() async {
+    if (selectedImages.length >= maxImages) {
+      showSnackBar(message: "You can only add $maxImages images");
+      return;
+    }
     File? image;
-    final pickedImages =
+    var pickedImages =
         await ref.read(imageServicesProvider).pickMultipleImages();
     if (pickedImages.isNotEmpty) {
       pickedImages.map((pickedImage) {
+        if (selectedImages.length >= maxImages) {
+          showSnackBar(message: "You can only add $maxImages images");
+          setState(() {});
+          return;
+        }
         image = File(pickedImage!.path);
-        selectedImages.add(image!);
         ref.read(newEventProvider.notifier).selectedImages.add(image!);
       }).toList();
-      setState(() {});
     }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    selectedImages = ref.watch(newEventProvider.notifier).selectedImages;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -7,7 +7,8 @@ import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 
-final locationServicesProvider = StateProvider((ref) => LocationServices(ref: ref));
+final locationServicesProvider =
+    StateProvider((ref) => LocationServices(ref: ref));
 
 class LocationServices {
   String zipcode = "";
@@ -20,6 +21,7 @@ class LocationServices {
 
   Future<void> getInitialInfo() async {
     try {
+      debugPrint("updating location");
       geo.Location location = geo.Location();
       geo.LocationData? currentLocation = await location.getLocation();
 
@@ -36,23 +38,26 @@ class LocationServices {
           countryDialCode =
               CountryDialCode.fromCountryCode(placemark.isoCountryCode!)
                   .dialCode;
-          ref.read(userProvider.notifier).update((state) {
-            return state?.copyWith(
-              zipcode: zipcode,
-              city: city,
-              country: country,
-              countryDialCode: countryDialCode,
-            );
-          });
-
-          ref
-              .read(dbServicesProvider)
-              .updateUser(ref.read(authProvider).currentUser!.uid, {
-            "zipcode": zipcode,
-            "city": city,
-            "country": country,
-            "countryDialCode": countryDialCode,
-          });
+          ref.read(dbServicesProvider).updateUser(
+            ref.read(authProvider).currentUser!.uid,
+            {
+              "zipcode": zipcode,
+              "city": city,
+              "country": country,
+              "countryDialCode": countryDialCode,
+            },
+          );
+          ref.read(userProvider.notifier).update(
+            (state) {
+              return state?.copyWith(
+                zipcode: zipcode,
+                city: city,
+                country: country,
+                countryDialCode: countryDialCode,
+              );
+            },
+          );
+          debugPrint("Update location successfully");
         }
       }
     } catch (e) {
@@ -60,5 +65,47 @@ class LocationServices {
     }
   }
 
-  
+  Future<void> updateUserLocationFromZipcode(String updatedZipcode) async {
+    try {
+      zipcode = updatedZipcode;
+      debugPrint("updating location");
+      List<Location> locations = await locationFromAddress(updatedZipcode);
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          locations.first.latitude, locations.first.longitude);
+
+      final placemark = placemarks.first;
+      city = placemarks
+          .firstWhere((placemark) => placemark.locality != null)
+          .locality!;
+      country = placemark.country ?? "";
+      if (placemark.isoCountryCode != null) {
+        countryDialCode =
+            CountryDialCode.fromCountryCode(placemark.isoCountryCode!).dialCode;
+      }
+      final updateMap = {
+        'city': city,
+        'country': country,
+        'countryDialCode': countryDialCode,
+        'zipcode': updatedZipcode,
+      };
+
+      debugPrint("updateMap: $updateMap");
+      ref.read(dbServicesProvider).updateUser(
+            ref.read(authProvider).currentUser!.uid,
+            updateMap,
+          );
+      ref.read(userProvider.notifier).update((state) {
+        return state!.copyWith(
+          zipcode: updatedZipcode,
+          city: city,
+          country: country,
+          countryDialCode: countryDialCode,
+        );
+      });
+      debugPrint("updated location successfully");
+    } catch (e) {
+      debugPrint("Error updating location using zipcode $updatedZipcode: $e");
+    }
+  }
 }

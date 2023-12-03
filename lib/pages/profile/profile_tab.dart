@@ -23,15 +23,24 @@ class ProfileTab extends ConsumerStatefulWidget {
 }
 
 class _ProfileTabState extends ConsumerState<ProfileTab> {
+  var mounted = true;
   void editProfile(UserModel user) async {
     await navigatorKey.currentState!
         .pushNamed(EditProfilePage.id, arguments: {"user": user});
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void logOut() async {
     await ref.read(authServicesProvider).signOut();
     showSnackBar(message: "Logged out successfully!");
+  }
+
+  @override
+  void dispose() {
+    mounted = false;
+    super.dispose();
   }
 
   @override
@@ -173,7 +182,10 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 Divider(
                     color: AppColors.borderGrey.withOpacity(0.5), height: 1),
                 const SizedBox(height: 24),
+
+                // User social links
                 const UserSocials(),
+
                 const SizedBox(height: 24),
                 Divider(
                     color: AppColors.borderGrey.withOpacity(0.5), height: 1),

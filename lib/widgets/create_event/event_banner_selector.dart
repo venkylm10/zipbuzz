@@ -14,7 +14,8 @@ class EventBannerSelector extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<EventBannerSelector> createState() => _EventBannerSelectorState();
+  ConsumerState<EventBannerSelector> createState() =>
+      _EventBannerSelectorState();
 }
 
 class _EventBannerSelectorState extends ConsumerState<EventBannerSelector> {
@@ -28,6 +29,12 @@ class _EventBannerSelectorState extends ConsumerState<EventBannerSelector> {
         ref.read(newEventProvider.notifier).updateBannerImage(image!);
       });
     }
+  }
+
+  @override
+  void initState() {
+    ref.read(newEventProvider.notifier).bannerImage = null;
+    super.initState();
   }
 
   @override

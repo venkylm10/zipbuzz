@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
+import 'package:zipbuzz/constants/defaults.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/events_controller.dart';
 import 'package:zipbuzz/main.dart';
@@ -33,11 +35,23 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   final bodyScrollController = ScrollController();
   String dummyText = '';
   double horizontalMargin = 16;
+  List<String> defaultBanners = [];
+  int rand = 0;
+  int maxImages = 0;
 
   Future<void> getDominantColor() async {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    if (!widget.isPreview!) {
-      final image = AssetImage(widget.event.bannerPath);
+    if (widget.isPreview!) {
+      if (previewBanner != null) {
+        final image = AssetImage(widget.event.bannerPath);
+        final PaletteGenerator generator =
+            await PaletteGenerator.fromImageProvider(
+          image,
+        );
+        dominantColor = generator.dominantColor!.color;
+        setState(() {});
+      }
+      final image = AssetImage(defaultBanners[rand]);
       final PaletteGenerator generator =
           await PaletteGenerator.fromImageProvider(
         image,
@@ -45,14 +59,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       dominantColor = generator.dominantColor!.color;
       setState(() {});
     } else {
-      if (previewBanner != null) {
-        final PaletteGenerator generator =
-            await PaletteGenerator.fromImageProvider(
-          FileImage(previewBanner),
-        );
-        dominantColor = generator.dominantColor!.color;
-        setState(() {});
-      }
+      final PaletteGenerator generator =
+          await PaletteGenerator.fromImageProvider(
+        NetworkImage(widget.event.bannerPath),
+      );
+      dominantColor = generator.dominantColor!.color;
+      setState(() {});
     }
   }
 
@@ -74,6 +86,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   @override
   void initState() {
+    maxImages = ref.read(newEventProvider.notifier).maxImages;
+    Random random = Random();
+    defaultBanners = ref.read(defaultsProvider).defaultBannerPaths;
+    rand = random.nextInt(defaultBanners.length);
     getDominantColor();
     getEventColor();
     super.initState();
@@ -252,23 +268,28 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   Widget buildBanner() {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    if (!widget.isPreview!) {
+    if (widget.isPreview!) {
+      if (previewBanner != null) {
+        return Container(
+          constraints: const BoxConstraints(maxHeight: 300),
+          child: Image.file(
+            previewBanner,
+            fit: BoxFit.cover,
+            width: double.infinity,
+          ),
+        );
+      }
+
       return Image.asset(
-        widget.event.bannerPath,
-        fit: BoxFit.cover,
-        width: double.infinity,
-      );
-    } else if (previewBanner == null) {
-      return Image.asset(
-        widget.event.bannerPath,
+        defaultBanners[rand],
         fit: BoxFit.cover,
         width: double.infinity,
       );
     } else {
       return Container(
         constraints: const BoxConstraints(maxHeight: 300),
-        child: Image.file(
-          previewBanner,
+        child: Image.network(
+          widget.event.bannerPath,
           fit: BoxFit.cover,
           width: double.infinity,
         ),
@@ -290,7 +311,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
               children: List.generate(
                 imageFiles.length,
                 (index) => StaggeredGridTile.count(
-                  crossAxisCellCount: index % 6 == 0 ? 2 : 1,
+                  crossAxisCellCount: index % (maxImages - 1) == 0 ? 2 : 1, // change this maxImages in newEventProvider
                   mainAxisCellCount: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -314,7 +335,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
               children: List.generate(
                 7,
                 (index) => StaggeredGridTile.count(
-                  crossAxisCellCount: index % 6 == 0 ? 2 : 1,
+                  crossAxisCellCount: index % (maxImages - 1) == 0 ? 2 : 1,
                   mainAxisCellCount: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),

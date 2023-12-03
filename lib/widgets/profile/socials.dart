@@ -10,6 +10,17 @@ import 'package:zipbuzz/widgets/common/snackbar.dart';
 class UserSocials extends ConsumerWidget {
   const UserSocials({super.key});
 
+  String getUserId(String profileLink) {
+    if (profileLink.isNotEmpty) {
+      final temp = profileLink.split('/');
+      if (profileLink[profileLink.length - 1] == '/') {
+        return temp[temp.length - 2];
+      }
+      return temp[temp.length - 1];
+    }
+    return "";
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
@@ -22,14 +33,16 @@ class UserSocials extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
         if (user.linkedinId != null)
-          buildHyperLink(Assets.icons.linkedin, "LinkedIn", user.linkedinId!),
+          buildHyperLink(
+              Assets.icons.linkedin, "LinkedIn", getUserId(user.linkedinId!)),
+        const SizedBox(height: 4),
+        if (user.instagramId != null)
+          buildHyperLink(Assets.icons.instagram, "Instagram",
+              getUserId(user.instagramId!)),
         const SizedBox(height: 4),
         if (user.instagramId != null)
           buildHyperLink(
-              Assets.icons.instagram, "Instagram", user.instagramId!),
-        const SizedBox(height: 4),
-        if (user.instagramId != null)
-          buildHyperLink(Assets.icons.twitter, "Twitter", user.twitterId!),
+              Assets.icons.twitter, "Twitter", getUserId(user.twitterId!)),
       ],
     );
   }

@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/controllers/user_controller.dart';
 import 'package:zipbuzz/models/event_model.dart';
@@ -10,31 +8,36 @@ import 'package:zipbuzz/models/user_model.dart';
 final eventsControllerProvider = Provider(
   (ref) => EventsController(ref: ref, user: ref.watch(userProvider)),
 );
+
 final newEventProvider =
     StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent());
 
 class NewEvent extends StateNotifier<EventModel> {
   NewEvent()
-      : super(EventModel(
-          id: "",
-          title: "",
-          location: "",
-          date: DateTime.now().toString(),
-          startTime: DateTime.now().toUtc().toString(),
-          endTime: DateTime.now().toUtc().toString(),
-          attendees: 0,
-          category: "Hiking",
-          favourite: false,
-          bannerPath: Assets.images.nature,
-          iconPath: allInterests['Hiking']!,
-          about: "",
-          host: null,
-          coHosts: <UserModel>[],
-          capacity: 10,
-          isPrivate: false,
-        ));
+      : super(
+          EventModel(
+            id: "",
+            title: "",
+            location: "",
+            date: DateTime.now().toString(),
+            startTime: DateTime.now().toUtc().toString(),
+            endTime: DateTime.now().toUtc().toString(),
+            attendees: 0,
+            category: "Hiking",
+            favourite: false,
+            bannerPath: "",
+            iconPath: allInterests['Hiking']!,
+            about: "",
+            host: null,
+            coHosts: <UserModel>[],
+            capacity: 10,
+            isPrivate: false,
+            imageUrls: [],
+          ),
+        );
 
   List<File> selectedImages = [];
+  int maxImages = 7;
 
   File? bannerImage;
 
@@ -102,6 +105,8 @@ class NewEvent extends StateNotifier<EventModel> {
       state = state.copyWith(startTime: time);
     }
   }
+
+  void publishEvent() {}
 }
 
 class EventsController {
@@ -155,6 +160,4 @@ class EventsController {
   void selectCategory({String? category = ''}) {
     selectedCategory = category ?? '';
   }
-
-  // new event methods
 }
