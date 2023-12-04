@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/events_controller.dart';
+import 'package:zipbuzz/controllers/new_event_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/create_event_form.dart';
@@ -26,10 +26,16 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
   String category = allInterests.entries.first.key;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
+
+  void updateCoHosts() async {
+    await ref.read(newEventProvider.notifier).updateCoHosts();
+  }
+
   @override
   void initState() {
     nameController = TextEditingController();
     descriptionController = TextEditingController();
+    updateCoHosts();
     super.initState();
   }
 
@@ -62,7 +68,10 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           InkWell(
             onTap: () {
               navigatorKey.currentState!.pushNamed(EventDetailsPage.id,
-                  arguments: {'event': ref.read(newEventProvider), 'isPreview': true});
+                  arguments: {
+                    'event': ref.read(newEventProvider),
+                    'isPreview': true
+                  });
             },
             child: Ink(
               padding: const EdgeInsets.all(12),

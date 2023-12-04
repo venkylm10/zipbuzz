@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -9,8 +10,11 @@ import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/defaults.dart';
 import 'package:zipbuzz/constants/styles.dart';
 import 'package:zipbuzz/controllers/events_controller.dart';
+import 'package:zipbuzz/controllers/new_event_controller.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/models/event_model.dart';
+import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 import 'package:zipbuzz/widgets/common/event_chip.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_buttons.dart';
@@ -30,20 +34,22 @@ class EventDetailsPage extends ConsumerStatefulWidget {
 }
 
 class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
+  final bodyScrollController = ScrollController();
   Color dominantColor = Colors.white;
   Color eventColor = Colors.white;
-  final bodyScrollController = ScrollController();
   String dummyText = '';
   double horizontalMargin = 16;
   List<String> defaultBanners = [];
   int rand = 0;
   int maxImages = 0;
+  UserModel? host;
+  List<UserModel> coHosts = [];
 
   Future<void> getDominantColor() async {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
     if (widget.isPreview!) {
       if (previewBanner != null) {
-        final image = AssetImage(widget.event.bannerPath);
+        final image = FileImage(previewBanner);
         final PaletteGenerator generator =
             await PaletteGenerator.fromImageProvider(
           image,
@@ -84,12 +90,29 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     return true;
   }
 
+  void getHostData(String uid) async {
+    host = await ref
+        .read(eventsControllerProvider)
+        .getHostData(widget.event.hostId);
+    setState(() {});
+  }
+
+  void getCoHosts(List<String> coHostIds) async {
+    coHosts = await ref
+        .read(eventsControllerProvider)
+        .getCoHosts(widget.event.coHostIds);
+    setState(() {});
+  }
+
   @override
   void initState() {
+    getHostData(widget.event.hostId);
+    getCoHosts(widget.event.coHostIds);
     maxImages = ref.read(newEventProvider.notifier).maxImages;
     Random random = Random();
     defaultBanners = ref.read(defaultsProvider).defaultBannerPaths;
     rand = random.nextInt(defaultBanners.length);
+    getHostData(widget.event.hostId);
     getDominantColor();
     getEventColor();
     super.initState();
@@ -217,15 +240,21 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                   .copyWith(color: AppColors.lightGreyColor),
                             ),
                             const SizedBox(height: 16),
-                            EventHosts(
-                              hostId: widget.event.hostId,
-                              coHostIds: widget.event.coHostIds,
-                            ),
-                            const SizedBox(height: 16),
-                            Divider(
-                              color: AppColors.greyColor.withOpacity(0.2),
-                              thickness: 0,
-                            ),
+                            if (host != null)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  EventHosts(
+                                    host: host!,
+                                    coHosts: coHosts,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Divider(
+                                    color: AppColors.greyColor.withOpacity(0.2),
+                                    thickness: 0,
+                                  ),
+                                ],
+                              )
                           ],
                         ),
                         const SizedBox(height: 16),

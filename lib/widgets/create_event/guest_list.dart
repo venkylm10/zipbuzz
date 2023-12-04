@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/events_controller.dart';
+import 'package:zipbuzz/controllers/new_event_controller.dart';
 
 class CreateEventGuestList extends ConsumerWidget {
   const CreateEventGuestList({super.key});

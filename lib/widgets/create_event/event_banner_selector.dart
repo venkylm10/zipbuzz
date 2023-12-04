@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/constants/assets.dart';
 import 'package:zipbuzz/constants/colors.dart';
 import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/events_controller.dart';
+import 'package:zipbuzz/controllers/new_event_controller.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 
 class EventBannerSelector extends ConsumerStatefulWidget {
