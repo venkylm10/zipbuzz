@@ -1,10 +1,7 @@
-import 'dart:convert';
-
-import 'package:zipbuzz/controllers/user_controller.dart';
-import 'package:zipbuzz/models/event_model.dart';
+import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/models/user_model.dart';
-import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/models/user_model/user_model.dart';
 
 final eventsControllerProvider = Provider(
   (ref) => EventsController(ref: ref, user: ref.watch(userProvider)),
@@ -63,26 +60,26 @@ class EventsController {
   }
 
   Future<UserModel?> getHostData(String uid) async {
-    final dbEvent = await ref.read(dbServicesProvider).getUserData(uid).first;
-    if (dbEvent.snapshot.exists) {
-      final jsonString = jsonEncode(dbEvent.snapshot.value);
-      final userMap = jsonDecode(jsonString);
-      final host = UserModel.fromMap(userMap);
-      return host;
-    }
+    // final dbEvent = await ref.read(dbServicesProvider).getUserData(uid).first;
+    // if (dbEvent.snapshot.exists) {
+    //   final jsonString = jsonEncode(dbEvent.snapshot.value);
+    //   final userMap = jsonDecode(jsonString);
+    //   final host = UserModel.fromJson(userMap);
+    //   return host;
+    // }
     return null;
   }
 
   Future<List<UserModel>> getCoHosts(List<String> coHostIds) async {
     List<UserModel> coHosts = [];
-    for (final uid in coHostIds) {
-      final dbEvent = await ref.read(dbServicesProvider).getUserData(uid).first;
-      if (dbEvent.snapshot.exists) {
-        final jsonString = jsonEncode(dbEvent.snapshot.value);
-        final userMap = jsonDecode(jsonString);
-        coHosts.add(UserModel.fromMap(userMap));
-      }
-    }
+    // for (final uid in coHostIds) {
+    //   final dbEvent = await ref.read(dbServicesProvider).getUserData(uid).first;
+    //   if (dbEvent.snapshot.exists) {
+    //     final jsonString = jsonEncode(dbEvent.snapshot.value);
+    //     final userMap = jsonDecode(jsonString);
+    //     coHosts.add(UserModel.fromJson(userMap));
+    //   }
+    // }
     return coHosts;
   }
 }

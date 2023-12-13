@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/models/event_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/widgets/home/event_card.dart';
-import 'package:zipbuzz/controllers/events_controller.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 
 class CustomCalendar extends ConsumerStatefulWidget {
   const CustomCalendar({super.key});

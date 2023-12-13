@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/constants/styles.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
 
 class EventChip extends StatelessWidget {
   const EventChip({

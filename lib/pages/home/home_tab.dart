@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/events_controller.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/widgets/home/custom_appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
 
@@ -65,17 +65,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     );
   }
 
-  // void scrollToSelectedCategory() {
-  //   final RenderBox renderBox =
-  //       rowCategoryKey.currentContext!.findRenderObject() as RenderBox;
-  //   final position = renderBox.localToGlobal(Offset.zero);
-  //   rowScrollController.animateTo(
-  //     position.dx,
-  //     duration: const Duration(milliseconds: 300),
-  //     curve: Curves.easeInOut,
-  //   );
-  // }
-
   void onTapRowCategory(String interest) {
     if (selectedCategory != interest) {
       ref.read(eventsControllerProvider).selectCategory(category: interest);
@@ -95,6 +84,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
     selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(

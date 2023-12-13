@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
 
 class Loader extends StatelessWidget {
   const Loader({super.key});

@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/user_controller.dart';
-import 'package:zipbuzz/main.dart';
-import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/models/user_model/user_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -57,7 +57,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   void initialise() {
-    userClone = ref.read(userProvider)!.getClone();
+    userClone = ref.read(userProvider).getClone();
     nameController.text = userClone.name;
     aboutController.text = userClone.about;
     zipcodeController.text = userClone.zipcode;
@@ -72,8 +72,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     debugPrint("updating user");
     try {
       await ref
-          .read(locationServicesProvider)
-          .updateUserLocationFromZipcode(zipcodeController.text.trim());
+          .read(userLocationProvider.notifier)
+          .updatestateFromZipcode(zipcodeController.text.trim());
       String? newImageUrl;
       if (image != null) {
         newImageUrl = await ref
@@ -81,7 +81,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             .uploadProfilePic(uid: userClone.uid, file: image!);
       }
 
-      final updatedUser = ref.read(userProvider)!.copyWith(
+      final updatedUser = ref.read(userProvider).copyWith(
             name: nameController.text.trim(),
             about: aboutController.text.trim(),
             mobileNumber: mobileController.text.trim(),
@@ -94,7 +94,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           );
       await ref
           .read(dbServicesProvider)
-          .updateUser(updatedUser.uid, updatedUser.toMap());
+          .updateUser(updatedUser.uid, updatedUser.toJson());
       ref.read(userProvider.notifier).update((state) => updatedUser);
       navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");
@@ -352,37 +352,38 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
             ),
             const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 6,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.asset(
-                    Assets.icons.check,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.primaryColor,
-                      BlendMode.srcIn,
+            if (userClone.isAmbassador)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset(
+                      Assets.icons.check,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.primaryColor,
+                        BlendMode.srcIn,
+                      ),
+                      height: 20,
                     ),
-                    height: 20,
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    userClone.position,
-                    style: AppStyles.h5.copyWith(
-                      color: AppColors.primaryColor,
+                    const SizedBox(width: 5),
+                    Text(
+                      "Brand Ambassador",
+                      style: AppStyles.h5.copyWith(
+                        color: AppColors.primaryColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ],

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/new_event_controller.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
@@ -26,11 +25,11 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   late TextEditingController startTimeController;
   late TextEditingController endTimeController;
   DateTime date = DateTime.now();
-  late NewEvent newEvent;
+  late NewEvent newEventController;
 
   @override
   void initState() {
-    newEvent = ref.read(newEventProvider.notifier);
+    newEventController = ref.read(newEventProvider.notifier);
     nameController = TextEditingController();
     descriptionController = TextEditingController();
     dateController = TextEditingController();
@@ -52,19 +51,19 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void updateEventName(String value) {
-    newEvent.updateName(value);
+    newEventController.updateName(value);
   }
 
   void updateCategory({String? category = 'Hiking'}) {
-    newEvent.updateCategory(category!);
+    newEventController.updateCategory(category!);
   }
 
   void updateDescription(String value) {
-    newEvent.updateDescription(value);
+    newEventController.updateDescription(value);
   }
 
   void updateLocation(String value) {
-    newEvent.updateLocation(value);
+    newEventController.updateLocation(value);
   }
 
   void updateDate() async {
@@ -75,8 +74,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           lastDate: DateTime.utc(2026),
         ) ??
         DateTime.now();
-    newEvent.updateDate(date.toString());
-    dateController.text = DateFormat('d\'th\' MMMM (EEEE)').format(date);
+    newEventController.updateDate(date);
+    dateController.text = newEventController.getDateFromDateTime(date);
     setState(() {});
   }
 
@@ -84,18 +83,12 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     final time =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (time != null) {
-      var eventDate = DateTime.parse(ref.read(newEventProvider).date);
-      final tempTime = DateTime(eventDate.year, eventDate.month, eventDate.day,
-          time.hour, time.minute);
-      final noon = tempTime.hour >= 12 ? true : false;
+      newEventController.updateTime(time, isEnd: isEnd);
+      final formatedTime = newEventController.getTimeFromTimeOfDay(time);
       if (isEnd!) {
-        newEvent.updateTime(tempTime.toUtc().toString(), isEnd: true);
-        endTimeController.text =
-            "${tempTime.hour >= 13 ? tempTime.hour - 12 : tempTime.hour}:${tempTime.minute} ${noon ? "PM" : "AM"}";
+        endTimeController.text = formatedTime;
       } else {
-        newEvent.updateTime(tempTime.toUtc().toString());
-        startTimeController.text =
-            "${tempTime.hour >= 13 ? tempTime.hour - 12 : tempTime.hour}:${tempTime.minute} ${noon ? "PM" : "AM"}";
+        startTimeController.text = formatedTime;
       }
       setState(() {});
     }

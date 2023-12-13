@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
 
 class Assets {
   static const icons = AppIcons();

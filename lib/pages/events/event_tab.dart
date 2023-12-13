@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/events_tab_controler.dart';
-import 'package:zipbuzz/controllers/home_tab_controller.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 
 class EventsTab extends ConsumerWidget {
   const EventsTab({super.key});

@@ -1,11 +1,11 @@
-import 'package:zipbuzz/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 
 class UserModel {
   final String uid;
   final String name;
   final String email;
   final String handle;
-  final String position;
+  final bool isAmbassador;
   final int eventsHosted;
   final double rating;
   final String imageUrl;
@@ -27,7 +27,7 @@ class UserModel {
     required this.name,
     required this.email,
     required this.handle,
-    required this.position,
+    required this.isAmbassador,
     required this.eventsHosted,
     required this.rating,
     required this.zipcode,
@@ -45,13 +45,13 @@ class UserModel {
     this.pastEventUids,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'uid': uid,
       'name': name,
       'email': email,
       'handle': handle,
-      'position': position,
+      'is_ambassador': isAmbassador,
       'eventsHosted': eventsHosted,
       'rating': rating,
       'imageUrl': imageUrl,
@@ -70,13 +70,13 @@ class UserModel {
     };
   }
 
-  factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
       uid: map['uid'],
       name: map['name'] != null ? map['name'] as String : "",
       email: map['email'] != null ? map['email'] as String : "",
       handle: map['handle'] != null ? map['handle'] as String : "",
-      position: map['position'] != null ? map['position'] as String : "",
+      isAmbassador: map['is_ambassador'] != null ? map['is_ambassador'] as bool : false,
       eventsHosted:
           map['eventsHosted'] != null ? map['eventsHosted'] as int : 0,
       rating: map['rating'] != null
@@ -106,8 +106,9 @@ class UserModel {
           : <String>[],
       city: map['city'] != null ? map['city'] as String : "",
       country: map['country'] != null ? map['country'] as String : "",
-      countryDialCode:
-          map['countryDialCode'] != null ? map['countryDialCode'] as String : "",
+      countryDialCode: map['countryDialCode'] != null
+          ? map['countryDialCode'] as String
+          : "",
     );
   }
 
@@ -117,7 +118,7 @@ class UserModel {
     String? email,
     String? handle,
     String? about,
-    String? position,
+    bool? isAmbassador,
     int? eventsHosted,
     double? rating,
     String? imageUrl,
@@ -138,7 +139,7 @@ class UserModel {
       name: name ?? this.name,
       email: email ?? this.email,
       handle: handle ?? this.handle,
-      position: position ?? this.position,
+      isAmbassador: isAmbassador ?? this.isAmbassador,
       eventsHosted: eventsHosted ?? this.eventsHosted,
       rating: rating ?? this.rating,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -158,8 +159,8 @@ class UserModel {
   }
 
   UserModel getClone() {
-    final map = toMap();
-    return UserModel.fromMap(map);
+    final map = toJson();
+    return UserModel.fromJson(map);
   }
 }
 
@@ -169,7 +170,7 @@ final globalDummyUser = UserModel(
   email: "example@gmail.com",
   handle: "bealexlee",
   imageUrl: Assets.images.profile,
-  position: "Brand Ambassadar",
+  isAmbassador: true,
   eventsHosted: 8,
   rating: 4.5,
   zipcode: "",

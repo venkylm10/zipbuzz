@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/user_controller.dart';
+import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class CustomAppBar extends ConsumerStatefulWidget
@@ -43,7 +43,8 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar>
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.read(userProvider)!;
+    // final user = ref.read(userProvider)!;
+    final userLocation = ref.read(userLocationProvider);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: widget.preferredSize.height,
@@ -76,11 +77,11 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${user.city}, ${user.country}",
+                    "${userLocation.city}, ${userLocation.country}",
                     style: AppStyles.h5.copyWith(color: Colors.white),
                   ),
                   Text(
-                    ref.read(userProvider)!.zipcode,
+                    userLocation.zipcode,
                     style: AppStyles.h5.copyWith(
                       color: Colors.white.withOpacity(0.5),
                     ),

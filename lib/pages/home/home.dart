@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/home_tab_controller.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 
-class Home extends ConsumerWidget {
+class Home extends ConsumerStatefulWidget {
   static const id = '/home';
   const Home({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Home> createState() => _HomeState();
+}
+
+class _HomeState extends ConsumerState<Home> {
+  @override
+  Widget build(BuildContext context) {
     final selectedTab = ref.watch(homeTabControllerProvider);
     final tabs = ref.read(homeTabControllerProvider.notifier).tabs;
     return Scaffold(
@@ -35,9 +40,7 @@ class Home extends ConsumerWidget {
             icon: SvgPicture.asset(
               Assets.icons.home,
               colorFilter: ColorFilter.mode(
-                selectedTab == 0
-                    ? AppColors.primaryColor
-                    : AppColors.greyColor,
+                selectedTab == 0 ? AppColors.primaryColor : AppColors.greyColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -47,9 +50,7 @@ class Home extends ConsumerWidget {
             icon: SvgPicture.asset(
               Assets.icons.events,
               colorFilter: ColorFilter.mode(
-                selectedTab == 1
-                    ? AppColors.primaryColor
-                    : AppColors.greyColor,
+                selectedTab == 1 ? AppColors.primaryColor : AppColors.greyColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -59,9 +60,7 @@ class Home extends ConsumerWidget {
             icon: SvgPicture.asset(
               Assets.icons.map,
               colorFilter: ColorFilter.mode(
-                selectedTab == 2
-                    ? AppColors.primaryColor
-                    : AppColors.greyColor,
+                selectedTab == 2 ? AppColors.primaryColor : AppColors.greyColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -71,9 +70,7 @@ class Home extends ConsumerWidget {
             icon: SvgPicture.asset(
               Assets.icons.person,
               colorFilter: ColorFilter.mode(
-                selectedTab == 3
-                    ? AppColors.primaryColor
-                    : AppColors.greyColor,
+                selectedTab == 3 ? AppColors.primaryColor : AppColors.greyColor,
                 BlendMode.srcIn,
               ),
             ),

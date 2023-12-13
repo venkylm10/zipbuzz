@@ -84,7 +84,7 @@ class EventModel {
     );
   }
 
-  factory EventModel.fromMap(Map<String, dynamic> map) {
+  factory EventModel.fromJson(Map<String, dynamic> map) {
     return EventModel(
       id: map['id'] as String,
       title: map['title'] as String,
@@ -108,7 +108,7 @@ class EventModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
       'title': title,

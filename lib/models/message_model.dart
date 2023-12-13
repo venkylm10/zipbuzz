@@ -15,7 +15,7 @@ class Message {
     required this.timeStamp,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
       'senderId': senderId,
@@ -25,7 +25,7 @@ class Message {
     };
   }
 
-  factory Message.fromMap(Map<String, dynamic> map) {
+  factory Message.fromJson(Map<String, dynamic> map) {
     return Message(
       id: map['id'] as String,
       senderId: map['senderId'] as String,

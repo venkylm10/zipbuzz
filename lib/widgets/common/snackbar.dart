@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/main.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
 
 void showSnackBar({String? message = "coming soon!", int? duration = 1}) {
   if (scaffoldMessengerKey.currentState != null) {

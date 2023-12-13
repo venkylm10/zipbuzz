@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/new_event_controller.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -76,7 +75,10 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         if (selectedImages.isEmpty) const SizedBox(height: 16),
         if (selectedImages.isEmpty)
           GestureDetector(
-            onTap: addImages,
+            onTap: () {
+              showSnackBar();
+              // addImages();
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               decoration: BoxDecoration(
@@ -163,7 +165,11 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         if (selectedImages.isNotEmpty) const SizedBox(height: 16),
         if (selectedImages.isNotEmpty)
           GestureDetector(
-            onTap: addImages,
+            onTap: () {
+              showSnackBar();
+              // TODO: Adding images to events
+              // addImages();
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               decoration: BoxDecoration(

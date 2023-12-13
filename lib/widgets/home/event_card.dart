@@ -1,17 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/main.dart';
-import 'package:zipbuzz/models/event_model.dart';
-import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/models/user_model/user_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
-import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 
 class EventCard extends ConsumerStatefulWidget {
@@ -49,15 +46,16 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   void getHost(String uid) async {
-    final event = await ref.read(dbServicesProvider).getUserData(uid).first;
-    if (event.snapshot.exists) {
-      final jsonString = jsonEncode(event.snapshot.value);
-      final userMap = jsonDecode(jsonString);
-      host = UserModel.fromMap(userMap);
-      setState(() {});
-    } else {
-      return null;
-    }
+    // final event = await ref.read(dbServicesProvider).getUserData(uid).first;
+    // if (event.snapshot.exists) {
+    //   final jsonString = jsonEncode(event.snapshot.value);
+    //   final userMap = jsonDecode(jsonString);
+    //   host = UserModel.fromJson(userMap);
+    //   setState(() {});
+    // } else {
+    //   return null;
+    // }
+    return null;
   }
 
   void getEventColor() {

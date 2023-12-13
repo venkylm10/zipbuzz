@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 
 final defaultsProvider = Provider((ref) => Defaults());
 
 class Defaults {
-  final defaultBannerPaths = [
+  final profilePictureUrl =
+      "https://firebasestorage.googleapis.com/v0/b/zipbuzz-prod.appspot.com/o/defaults%2Fprofile_image%2Fprofile_image.jpg?alt=media&token=1fc0ee5d-f610-4dd6-b774-1d6f2fb5b801";
+  final bannerPaths = [
     Assets.images.art_museum,
     Assets.images.band_music,
     Assets.images.evermore,
@@ -12,7 +14,7 @@ class Defaults {
     Assets.images.nature,
   ];
 
-  final defaultBannerUrls = {
+  final bannerUrls = {
     Assets.images.art_museum:
         "https://firebasestorage.googleapis.com/v0/b/zipbuzz-prod.appspot.com/o/defaults%2Fevent_banners%2Fart_museum.png?alt=media&token=0dfc6060-806d-4332-b74c-1217d06a7a10",
     Assets.images.band_music:

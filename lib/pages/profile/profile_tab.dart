@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/home_tab_controller.dart';
-import 'package:zipbuzz/controllers/user_controller.dart';
-import 'package:zipbuzz/main.dart';
-import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/models/user_model/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -37,7 +37,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     showSnackBar(message: "Logged out successfully!");
   }
 
-
   @override
   void dispose() {
     isMounted = false;
@@ -46,7 +45,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider)!;
+    final user = ref.watch(userProvider);
     return PopScope(
       canPop: false,
       onPopInvoked: (value) =>
@@ -116,37 +115,38 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                               AppStyles.h4.copyWith(color: AppColors.greyColor),
                         ),
                         const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(
-                                Assets.icons.check,
-                                colorFilter: const ColorFilter.mode(
-                                  AppColors.primaryColor,
-                                  BlendMode.srcIn,
+                        if (user.isAmbassador)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(
+                                  Assets.icons.check,
+                                  colorFilter: const ColorFilter.mode(
+                                    AppColors.primaryColor,
+                                    BlendMode.srcIn,
+                                  ),
+                                  height: 20,
                                 ),
-                                height: 20,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                user.position,
-                                style: AppStyles.h5.copyWith(
-                                  color: AppColors.primaryColor,
+                                const SizedBox(width: 5),
+                                Text(
+                                  "Brand Ambassador",
+                                  style: AppStyles.h5.copyWith(
+                                    color: AppColors.primaryColor,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     ClipRRect(
@@ -242,7 +242,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   }
 
   Wrap buildInterests(UserModel user, WidgetRef ref) {
-    final interests = ref.watch(userProvider)!.interests;
+    final interests = ref.watch(userProvider).interests;
     return Wrap(
       spacing: 8,
       runSpacing: 8,

@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/controllers/events_controller.dart';
-import 'package:zipbuzz/controllers/user_controller.dart';
-import 'package:zipbuzz/models/event_model.dart';
-import 'package:zipbuzz/models/user_model.dart';
+import 'package:intl/intl.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
+import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/models/user_model/user_model.dart';
 
 final newEventProvider =
     StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent(ref: ref));
@@ -28,7 +30,7 @@ class NewEvent extends StateNotifier<EventModel> {
             bannerPath: "",
             iconPath: allInterests['Hiking']!,
             about: "",
-            hostId: ref.read(userProvider)!.uid,
+            hostId: ref.read(userProvider).uid,
             coHostIds: ["CxZ5Ioll70XxdKMUhJQdRiFaUR82"],
             guestIds: [],
             capacity: 10,
@@ -100,15 +102,17 @@ class NewEvent extends StateNotifier<EventModel> {
     }
   }
 
-  void updateDate(String date) {
-    state = state.copyWith(date: date);
+  void updateDate(DateTime date) {
+    final formatedDate = getDateFromDateTime(date);
+    state = state.copyWith(date: formatedDate);
   }
 
-  void updateTime(String time, {bool? isEnd = false}) {
+  void updateTime(TimeOfDay time, {bool? isEnd = false}) {
+    final formatedTime = getTimeFromTimeOfDay(time);
     if (isEnd!) {
-      state = state.copyWith(endTime: time);
+      state = state.copyWith(endTime: formatedTime);
     } else {
-      state = state.copyWith(startTime: time);
+      state = state.copyWith(startTime: formatedTime);
     }
   }
 
@@ -119,6 +123,14 @@ class NewEvent extends StateNotifier<EventModel> {
   Future<void> updateCoHosts() async {
     final coHostIds = state.coHostIds;
     coHosts = await ref.read(eventsControllerProvider).getCoHosts(coHostIds);
+  }
+
+  String getDateFromDateTime(DateTime dateTime) {
+    return DateFormat('yyyy-MM-dd').format(dateTime);
+  }
+
+  String getTimeFromTimeOfDay(TimeOfDay timeOfDay) {
+    return '${timeOfDay.hourOfPeriod}:${timeOfDay.minute} ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
   }
 
   void publishEvent() {}

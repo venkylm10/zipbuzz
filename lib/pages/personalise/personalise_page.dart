@@ -2,14 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/user_controller.dart';
-import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
-import 'package:zipbuzz/services/location_services.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class PersonalisePage extends ConsumerStatefulWidget {
   static const id = '/welcome/personalise';
@@ -21,97 +18,18 @@ class PersonalisePage extends ConsumerStatefulWidget {
 }
 
 class _PersonalisePageState extends ConsumerState<PersonalisePage> {
-  late final TextEditingController zipcodeController;
-  late final TextEditingController mobileController;
-
-  var selectedInterests = <String>[];
-
-  var country = "";
-  var countryDialCode = "";
-  var zipcode = "";
-  bool loading = true;
-  bool isMounted = true;
-
-  void updateInterests(String interest) {
-    if (selectedInterests.contains(interest)) {
-      selectedInterests.remove(interest);
-    } else {
-      selectedInterests.add(interest);
-    }
-    setState(() {});
-  }
-
-  void updateUser() async {
-    final check = validate();
-    if (check) {
-      try {
-        final auth = ref.read(authProvider);
-        final currentUser = ref.read(userProvider)!.copyWith(
-              mobileNumber: "$countryDialCode${mobileController.text.trim()}",
-              interests: selectedInterests,
-              zipcode: zipcodeController.text.trim(),
-            );
-        Map<String, dynamic> updateMap = {
-          'mobileNumber': "$countryDialCode${mobileController.text.trim()}",
-          'interests': selectedInterests,
-          'zipcode': zipcodeController.text.trim(),
-        };
-
-        await ref
-            .read(dbServicesProvider)
-            .updateUser(auth.currentUser!.uid, updateMap);
-        ref.read(userProvider.notifier).update((state) => currentUser);
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
+  var isMounted = true;
+  @override
+  void initState() {
+    super.initState();
+    initialise();
   }
 
   void initialise() async {
-    if (ref.read(userProvider)!.zipcode.isEmpty) {
-      await ref.read(locationServicesProvider).getInitialInfo();
+    await ref.read(personaliseControllerProvider).initialise();
+    if (isMounted) {
+      setState(() {});
     }
-    country = ref.read(userProvider)!.country;
-    countryDialCode = ref.read(userProvider)!.countryDialCode;
-    zipcode = ref.read(userProvider)!.zipcode;
-    zipcodeController.text = zipcode;
-    loading = false;
-    mobileController.text =
-        ref.read(authProvider).currentUser!.phoneNumber ?? "";
-    setState(() {});
-  }
-
-  bool validate() {
-    if (zipcodeController.text.isEmpty) {
-      showSnackBar(message: "Please enter zipcode");
-      return false;
-    }
-
-    if (zipcodeController.text.length != 6) {
-      showSnackBar(message: "Please enter valid zipcode");
-      return false;
-    }
-    if (mobileController.text.isEmpty) {
-      showSnackBar(message: "Please enter mobile number");
-      return false;
-    }
-    if (mobileController.text.length != 10) {
-      showSnackBar(message: "Please enter valid mobile number");
-      return false;
-    }
-    if (selectedInterests.length < 3) {
-      showSnackBar(message: "Please select at least 3 interests");
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  void initState() {
-    zipcodeController = TextEditingController();
-    mobileController = TextEditingController();
-    initialise();
-    super.initState();
   }
 
   @override
@@ -124,9 +42,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final currentUser = ref.read(authProvider).currentUser!;
-    country = ref.watch(userProvider)!.country;
-    countryDialCode = ref.watch(userProvider)!.countryDialCode;
-    zipcode = ref.watch(userProvider)!.zipcode;
+    final personaliseState = ref.watch(personaliseControllerProvider);
+    final personaliseController = ref.watch(personaliseControllerProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -186,7 +103,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                   buildTextField(
                     Assets.icons.geo,
                     "Zipcode",
-                    zipcodeController,
+                    personaliseState.zipcodeController,
                     "444444",
                     keyboardType: TextInputType.number,
                     maxLength: 6,
@@ -195,7 +112,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                   buildTextField(
                     Assets.icons.telephone_filled,
                     "Mobile no",
-                    mobileController,
+                    personaliseState.mobileController,
                     "4004445555",
                     keyboardType: TextInputType.phone,
                     maxLength: 10,
@@ -209,7 +126,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  buildInterests(),
+                  buildInterests(ref),
                   const SizedBox(height: 40),
                 ],
               ),
@@ -221,7 +138,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               padding: const EdgeInsets.symmetric(horizontal: 24)
                   .copyWith(bottom: 8),
               child: InkWell(
-                onTap: () => updateUser(),
+                onTap: () => personaliseController.sumbitInterests(),
                 borderRadius: BorderRadius.circular(24),
                 child: Ink(
                   height: 48,
@@ -243,7 +160,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               ),
             ),
           ),
-          if (loading)
+          if (personaliseState.loading)
             Align(
               alignment: Alignment.center,
               child: Expanded(
@@ -260,7 +177,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     );
   }
 
-  Wrap buildInterests() {
+  Widget buildInterests(WidgetRef ref) {
+    final personaliseController = ref.watch(personaliseControllerProvider);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -268,25 +186,29 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
         (e) {
           final name = e.key;
           return GestureDetector(
-            onTap: () => updateInterests(name),
+            onTap: () {
+              personaliseController.updateInterests(name);
+              setState(() {});
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: AppColors.primaryColor),
-                color: selectedInterests.contains(name)
+                color: personaliseController.selectedInterests.contains(name)
                     ? AppColors.primaryColor
                     : Colors.white,
               ),
               child: Text(
                 name,
                 style: AppStyles.h5.copyWith(
-                  color: selectedInterests.contains(name)
+                  color: personaliseController.selectedInterests.contains(name)
                       ? Colors.white
                       : AppColors.primaryColor,
-                  fontWeight: selectedInterests.contains(name)
-                      ? FontWeight.w600
-                      : FontWeight.normal,
+                  fontWeight:
+                      personaliseController.selectedInterests.contains(name)
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                 ),
               ),
             ),

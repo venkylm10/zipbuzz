@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/main.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 
 GestureDetector backButton({void Function()? onTap}) {
   return GestureDetector(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/colors.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/controllers/new_event_controller.dart';
-import 'package:zipbuzz/controllers/user_controller.dart';
-import 'package:zipbuzz/models/user_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/models/user_model/user_model.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class AddHosts extends ConsumerStatefulWidget {
@@ -19,7 +19,7 @@ class AddHosts extends ConsumerStatefulWidget {
 class _AddHostsState extends ConsumerState<AddHosts> {
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider)!;
+    final user = ref.watch(userProvider);
     final coHosts = ref.watch(newEventProvider.notifier).coHosts;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

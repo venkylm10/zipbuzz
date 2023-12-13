@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/constants/assets.dart';
-import 'package:zipbuzz/constants/styles.dart';
-import 'package:zipbuzz/main.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
 

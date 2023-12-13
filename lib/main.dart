@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/constants/colors.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/firebase_options.dart';
 import 'package:zipbuzz/routes.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
 
 void main() async {
@@ -14,11 +16,9 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await GetStorage.init();
   runApp(const ProviderScope(child: MyApp()));
 }
-
-var navigatorKey = GlobalKey<NavigatorState>();
-var scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});

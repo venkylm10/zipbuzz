@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
 
 Column broadDivider({double? gap = 32}) {
   return Column(

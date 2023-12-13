@@ -42,7 +42,7 @@ class ChatServices {
     await _dbServices.sendMessage(
         chatRoomId: chatRoomId,
         messageId: messageId,
-        message: newMessage.toMap());
+        message: newMessage.toJson());
   }
 
   Stream<DatabaseEvent> getMessages({required String receiverId}) {
