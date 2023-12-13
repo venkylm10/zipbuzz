@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -75,7 +76,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         ) ??
         DateTime.now();
     newEventController.updateDate(date);
-    dateController.text = newEventController.getDateFromDateTime(date);
+    dateController.text = DateFormat('d\'th,\' MMMM (EEEE)').format(date);
     setState(() {});
   }
 
@@ -213,6 +214,9 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
           ),
           enabled: true,
+          onChanged: (value) {
+            updateLocation(value);
+          },
         ),
         const SizedBox(height: 16),
         Row(

@@ -25,7 +25,6 @@ class PersonaliseController {
   final Ref ref;
   PersonaliseController({required this.ref});
   var loading = true;
-  var isMounted = true;
   final zipcodeController = TextEditingController();
   final mobileController = TextEditingController();
   var selectedInterests = <String>[];
@@ -81,7 +80,7 @@ class PersonaliseController {
         final auth = ref.read(authProvider);
         final location = ref.read(userLocationProvider);
         UserModel newUser = UserModel(
-          uid: auth.currentUser?.uid ?? '',
+          id: 1,
           name: auth.currentUser?.displayName ?? '',
           mobileNumber: "$countryDialCode${mobileController.text.trim()}",
           email: auth.currentUser?.email ?? '',
@@ -104,6 +103,8 @@ class PersonaliseController {
         );
         ref.read(userProvider.notifier).update((state) => newUser);
         await ref.read(dbServicesProvider).createUser(user: newUser);
+        
+        // Reading id after id is being updated in createUser method
         final id = GetStorage().read('id');
         final userInterestPostModel =
             UserInterestPostModel(userId: id, interests: selectedInterests);

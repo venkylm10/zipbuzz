@@ -1,7 +1,7 @@
 import 'package:zipbuzz/utils/constants/assets.dart';
 
 class UserModel {
-  final String uid;
+  final int id;
   final String name;
   final String email;
   final String handle;
@@ -23,7 +23,7 @@ class UserModel {
   final String countryDialCode;
 
   const UserModel({
-    required this.uid,
+    required this.id,
     required this.name,
     required this.email,
     required this.handle,
@@ -47,7 +47,7 @@ class UserModel {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'uid': uid,
+      'id': id,
       'name': name,
       'email': email,
       'handle': handle,
@@ -72,11 +72,12 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'],
+      id: map['id'] as int,
       name: map['name'] != null ? map['name'] as String : "",
       email: map['email'] != null ? map['email'] as String : "",
       handle: map['handle'] != null ? map['handle'] as String : "",
-      isAmbassador: map['is_ambassador'] != null ? map['is_ambassador'] as bool : false,
+      isAmbassador:
+          map['is_ambassador'] != null ? map['is_ambassador'] as bool : false,
       eventsHosted:
           map['eventsHosted'] != null ? map['eventsHosted'] as int : 0,
       rating: map['rating'] != null
@@ -113,7 +114,7 @@ class UserModel {
   }
 
   UserModel copyWith({
-    String? uid,
+    int? id,
     String? name,
     String? email,
     String? handle,
@@ -135,7 +136,7 @@ class UserModel {
     String? countryDialCode,
   }) {
     return UserModel(
-      uid: uid ?? this.uid,
+      id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
       handle: handle ?? this.handle,
@@ -165,7 +166,7 @@ class UserModel {
 }
 
 final globalDummyUser = UserModel(
-  uid: 'dummyUser',
+  id: 1,
   name: "Alex Lee",
   email: "example@gmail.com",
   handle: "bealexlee",

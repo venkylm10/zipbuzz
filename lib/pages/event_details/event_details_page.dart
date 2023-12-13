@@ -40,7 +40,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   List<String> defaultBanners = [];
   int rand = 0;
   int maxImages = 0;
-  UserModel? host;
   List<UserModel> coHosts = [];
 
   Future<void> getDominantColor() async {
@@ -88,13 +87,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     return true;
   }
 
-  void getHostData(String uid) async {
-    host = await ref
-        .read(eventsControllerProvider)
-        .getHostData(widget.event.hostId);
-    setState(() {});
-  }
-
   void getCoHosts(List<String> coHostIds) async {
     coHosts = await ref
         .read(eventsControllerProvider)
@@ -104,13 +96,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   @override
   void initState() {
-    getHostData(widget.event.hostId);
-    getCoHosts(widget.event.coHostIds);
+    //TODO: getting cohost details
+    // getCoHosts(widget.event.coHostIds);
     maxImages = ref.read(newEventProvider.notifier).maxImages;
     Random random = Random();
     defaultBanners = ref.read(defaultsProvider).bannerPaths;
     rand = random.nextInt(defaultBanners.length);
-    getHostData(widget.event.hostId);
     getDominantColor();
     getEventColor();
     super.initState();
@@ -238,21 +229,22 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                   .copyWith(color: AppColors.lightGreyColor),
                             ),
                             const SizedBox(height: 16),
-                            if (host != null)
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  EventHosts(
-                                    host: host!,
-                                    coHosts: coHosts,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Divider(
-                                    color: AppColors.greyColor.withOpacity(0.2),
-                                    thickness: 0,
-                                  ),
-                                ],
-                              )
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                EventHosts(
+                                  hostId: widget.event.hostId,
+                                  hostName: widget.event.hostName,
+                                  hostPic: widget.event.hostPic,
+                                  coHosts: coHosts,
+                                ),
+                                const SizedBox(height: 16),
+                                Divider(
+                                  color: AppColors.greyColor.withOpacity(0.2),
+                                  thickness: 0,
+                                ),
+                              ],
+                            )
                           ],
                         ),
                         const SizedBox(height: 16),

@@ -1,8 +1,10 @@
 class EventModel {
-  final String id;
+  final int id;
   final String title;
   final String about;
-  final String hostId;
+  final int hostId;
+  final String hostName;
+  final String hostPic;
   final List<String> coHostIds;
   final List<String> guestIds;
   final bool privateGuestList;
@@ -38,13 +40,17 @@ class EventModel {
     required this.capacity,
     required this.imageUrls,
     required this.privateGuestList,
+    required this.hostName,
+    required this.hostPic,
   });
 
   EventModel copyWith({
-    String? id,
+    int? id,
     String? title,
     String? about,
-    String? hostId,
+    int? hostId,
+    String? hostName,
+    String? hostPic,
     List<String>? coHostIds,
     List<String>? guestIds,
     String? location,
@@ -81,15 +87,19 @@ class EventModel {
       imageUrls: imageUrls ?? this.imageUrls,
       guestIds: guestIds ?? this.guestIds,
       privateGuestList: privateGuestList ?? this.privateGuestList,
+      hostName: hostName ?? this.hostName,
+      hostPic: hostPic ?? this.hostPic,
     );
   }
 
   factory EventModel.fromJson(Map<String, dynamic> map) {
     return EventModel(
-      id: map['id'] as String,
+      id: map['id'] as int,
       title: map['title'] as String,
       about: map['about'] as String,
-      hostId: map['hostId'] as String,
+      hostId: map['hostId'] as int,
+      hostName: map['hostName'] as String,
+      hostPic: map['hostPic'] as String,
       coHostIds: (map['coHostIds'] as List).map((e) => e.toString()).toList(),
       guestIds: (map['guestIds'] as List).map((e) => e.toString()).toList(),
       location: map['location'] as String,

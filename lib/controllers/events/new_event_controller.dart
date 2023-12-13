@@ -1,13 +1,18 @@
 import 'dart:io';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/user/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user_model/user_model.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final newEventProvider =
     StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent(ref: ref));
@@ -18,7 +23,7 @@ class NewEvent extends StateNotifier<EventModel> {
   NewEvent({required this.ref})
       : super(
           EventModel(
-            id: "",
+            id: ref.read(userProvider).id,
             title: "",
             location: "",
             date: DateTime.now().toString(),
@@ -30,8 +35,10 @@ class NewEvent extends StateNotifier<EventModel> {
             bannerPath: "",
             iconPath: allInterests['Hiking']!,
             about: "",
-            hostId: ref.read(userProvider).uid,
-            coHostIds: ["CxZ5Ioll70XxdKMUhJQdRiFaUR82"],
+            hostId: ref.read(userProvider).id,
+            hostName: ref.read(userProvider).name,
+            hostPic: ref.read(userProvider).imageUrl,
+            coHostIds: [],
             guestIds: [],
             capacity: 10,
             isPrivate: false,
@@ -39,7 +46,6 @@ class NewEvent extends StateNotifier<EventModel> {
             privateGuestList: false,
           ),
         );
-
   List<File> selectedImages = [];
   int maxImages = 7;
   File? bannerImage;
@@ -133,5 +139,63 @@ class NewEvent extends StateNotifier<EventModel> {
     return '${timeOfDay.hourOfPeriod}:${timeOfDay.minute} ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
   }
 
-  void publishEvent() {}
+  Future<void> publishEvent() async {
+    try {
+      var bannerUrl = "";
+      if (bannerImage != null) {
+        bannerUrl = await ref.read(storageServicesProvider).uploadEventBanner(
+                id: ref.read(userProvider).id, file: bannerImage!) ??
+            "";
+      } else {
+        final defaults = ref.read(defaultsProvider);
+        final rand = Random().nextInt(defaults.bannerUrls.length);
+        bannerUrl = defaults.bannerUrls[defaults.bannerPaths[rand]]!;
+      }
+      print(state.toJson());
+      final eventPostModel = EventPostModel(
+        banner: bannerUrl,
+        category: state.category,
+        name: state.title,
+        description: state.about,
+        date: state.date,
+        venue: state.location,
+        startTime: state.startTime,
+        endTime: state.endTime ?? "null",
+        hostId: state.hostId,
+        hostName: state.hostName,
+        hostPic: state.hostPic,
+        eventType: state.isPrivate,
+        capacity: state.capacity,
+        filledCapacity: state.attendees,
+      );
+      await ref.read(dbServicesProvider).createEvent(eventPostModel);
+      showSnackBar(message: "Event created successfully");
+      state = EventModel(
+        id: ref.read(userProvider).id,
+        title: "",
+        location: "",
+        date: DateTime.now().toString(),
+        startTime: DateTime.now().toUtc().toString(),
+        endTime: DateTime.now().toUtc().toString(),
+        attendees: 0,
+        category: "Hiking",
+        favourite: false,
+        bannerPath: "",
+        iconPath: allInterests['Hiking']!,
+        about: "",
+        hostId: ref.read(userProvider).id,
+        hostName: ref.read(userProvider).name,
+        hostPic: ref.read(userProvider).imageUrl,
+        coHostIds: [],
+        guestIds: [],
+        capacity: 10,
+        isPrivate: false,
+        imageUrls: [],
+        privateGuestList: false,
+      );
+      bannerImage = null;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }

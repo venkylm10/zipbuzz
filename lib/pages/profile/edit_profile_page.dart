@@ -8,7 +8,6 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/user/user_controller.dart';
 import 'package:zipbuzz/models/user_model/user_model.dart';
-import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
@@ -78,7 +77,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       if (image != null) {
         newImageUrl = await ref
             .read(storageServicesProvider)
-            .uploadProfilePic(uid: userClone.uid, file: image!);
+            .uploadProfilePic(uid: userClone.id.toString(), file: image!);
       }
 
       final updatedUser = ref.read(userProvider).copyWith(
@@ -92,9 +91,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             twitterId: twitterIdController.text.trim(),
             interests: userClone.interests,
           );
-      await ref
-          .read(dbServicesProvider)
-          .updateUser(updatedUser.uid, updatedUser.toJson());
+
+      //TODO: UPDATE USER
+      // await ref
+      //     .read(dbServicesProvider)
+      //     .updateUser(updatedUser.id, updatedUser.toJson());
       ref.read(userProvider.notifier).update((state) => updatedUser);
       navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");

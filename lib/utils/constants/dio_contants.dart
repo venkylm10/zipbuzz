@@ -7,4 +7,7 @@ class DioConstants {
   static const String postUserInterests = "/users/user_interest/";
   static const String getUserInterests = "/users/user_interest/";
   static const String postEvent = "/events/create_event/";
+
+  static const String status = "status";
+  static const String success = "success";
 }

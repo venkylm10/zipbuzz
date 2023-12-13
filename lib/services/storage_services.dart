@@ -93,25 +93,23 @@ class StorageSerives {
     }
   }
 
-  Future<String?> uploadEventBanner({
-    required String uid,
-    required String eventId,
-    required File file,
-  }) async {
-    final filename = "eventBanner_${eventId}_${file.path.split('/').last}";
+  Future<String?> uploadEventBanner(
+      {required int id, required File file}) async {
+    debugPrint("UPLOADING EVENT BANNER");
+    final filename = "eventBanner_${file.path.split('/').last}";
     try {
       final ref = _storage
           .ref()
           .child(StorageConstants.userData)
-          .child(uid)
+          .child(id.toString())
           .child(StorageConstants.eventBannersFolder)
-          .child(eventId)
-          .child(StorageConstants.eventBanner)
           .child(filename);
       UploadTask uploadTask = ref.putFile(file);
       final snapshot = await uploadTask;
+      debugPrint("UPLOADING EVENT BANNER SUCCESS");
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
+      debugPrint("UPLOADING EVENT BANNER FAILED");
       debugPrint(e.toString());
       return null;
     }

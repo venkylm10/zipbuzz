@@ -46,7 +46,7 @@ class AuthServices {
         UserModel newUser;
         final location = _ref.read(userLocationProvider);
         newUser = UserModel(
-          uid: _auth.currentUser?.uid ?? '',
+          id: 1,
           name: _auth.currentUser?.displayName ?? '',
           mobileNumber: _auth.currentUser?.phoneNumber ??
               '${location.countryDialCode}9999999999',
@@ -73,14 +73,26 @@ class AuthServices {
           NavigationController.routeOff(route: PersonalisePage.id);
           return;
         } else {
-          _ref.read(userProvider.notifier).update((state) => newUser);
+          // getting id
           final id = await _ref
               .read(dbServicesProvider)
               .getUserId(UserIdRequestModel(email: newUser.email));
+
+          // storing id
+          box.write('id', id);
+
+          // updating user locally
+          _ref
+              .read(userProvider.notifier)
+              .update((state) => newUser.copyWith(id: id));
+
+          // getting userdata
           await _ref
               .read(dbServicesProvider)
               .getUserData(UserDetailsRequestModel(userId: id));
           box.write("login", true);
+
+          // user details updated successfully, navigate to Home
           NavigationController.routeOff(route: Home.id);
           return;
         }

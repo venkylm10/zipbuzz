@@ -7,11 +7,14 @@ import 'package:zipbuzz/models/user_model/user_model.dart';
 class EventHosts extends ConsumerStatefulWidget {
   const EventHosts({
     super.key,
-    required this.host,
+    required this.hostId,
+    required this.hostName,
+    required this.hostPic,
     required this.coHosts,
   });
-
-  final UserModel host;
+  final int hostId;
+  final String hostName;
+  final String hostPic;
   final List<UserModel> coHosts;
 
   @override
@@ -29,13 +32,13 @@ class _EventHostsState extends ConsumerState<EventHosts> {
     return Column(
       //TODO: Update host and co-hosts
       children: [
-        buildHost(widget.host),
+        buildHost(widget.hostId, widget.hostName, widget.hostPic),
         Column(
           children: List.generate(
             widget.coHosts.length,
             (index) {
               final coHost = widget.coHosts[index];
-              return buildHost(coHost);
+              return buildHost(coHost.id, coHost.name, coHost.imageUrl);
             },
           ),
         )
@@ -43,7 +46,7 @@ class _EventHostsState extends ConsumerState<EventHosts> {
     );
   }
 
-  Padding buildHost(UserModel user) {
+  Padding buildHost(int hostId, String hostName, String hostPic) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
@@ -65,7 +68,7 @@ class _EventHostsState extends ConsumerState<EventHosts> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Image.network(
-                  user.imageUrl,
+                  hostPic,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -73,7 +76,7 @@ class _EventHostsState extends ConsumerState<EventHosts> {
           ),
           const SizedBox(width: 8),
           Text(
-            user.name,
+            hostName,
             style: AppStyles.h5,
           ),
           const Expanded(child: SizedBox()),

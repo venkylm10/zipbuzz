@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/user_model/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user_model/requests/user_id_request_model.dart';
@@ -54,15 +55,19 @@ class DBServices {
         .onValue;
   }
 
-  Future<void> createEvent(
-      {required String eventId,
-      required String zipcode,
-      required Map<String, dynamic> event}) async {
-    await _database
-        .ref(DatabaseConstants.eventsCollection)
-        .child(zipcode)
-        .child(eventId)
-        .set(event);
+  // Future<void> createEvent(
+  //     {required String eventId,
+  //     required String zipcode,
+  //     required Map<String, dynamic> event}) async {
+  //   await _database
+  //       .ref(DatabaseConstants.eventsCollection)
+  //       .child(zipcode)
+  //       .child(eventId)
+  //       .set(event);
+  // }
+
+  Future<void> createEvent(EventPostModel eventPostModel) async {
+    await _dioServices.postEvent(eventPostModel);
   }
 
   Stream<DatabaseEvent> getEvents({required String zipcode}) {
@@ -100,7 +105,7 @@ class DBServices {
       if (res['status'] == "success") {
         _ref
             .read(userProvider.notifier)
-            .update((state) => state.copyWith(uid: res['id'].toString()));
+            .update((state) => state.copyWith(id: res['id']));
         final box = GetStorage();
         box.write("login", true);
         box.write("id", res['id']);
@@ -133,6 +138,7 @@ class DBServices {
         final interests =
             (res['interests'] as List).map((e) => e.toString()).toList();
         final updatedUser = _ref.read(userProvider).copyWith(
+              id: userDetailsRequestModel.userId,
               name: userDetails.username,
               mobileNumber: userDetails.phoneNumber,
               email: userDetails.email,

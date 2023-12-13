@@ -1,14 +1,17 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-class EventButtons extends StatelessWidget {
+class EventButtons extends ConsumerWidget {
   const EventButtons({
     required this.event,
     this.isPreview = false,
@@ -18,8 +21,13 @@ class EventButtons extends StatelessWidget {
   final EventModel event;
   final bool? isPreview;
 
+  void publishEvent(WidgetRef ref) async {
+    await ref.read(newEventProvider.notifier).publishEvent();
+    navigatorKey.currentState!.pop();
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return !isPreview!
         ? Container(
             width: double.infinity,
@@ -198,7 +206,9 @@ class EventButtons extends StatelessWidget {
                   const SizedBox(height: 8),
                   Expanded(
                     child: GestureDetector(
-                      onTap: showSnackBar,
+                      onTap: () {
+                        ref.read(newEventProvider.notifier).publishEvent();
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColors.primaryColor,

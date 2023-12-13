@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
+import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -21,8 +22,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   var isMounted = true;
   @override
   void initState() {
-    super.initState();
     initialise();
+    super.initState();
   }
 
   void initialise() async {
@@ -42,8 +43,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final currentUser = ref.read(authProvider).currentUser!;
-    final personaliseState = ref.watch(personaliseControllerProvider);
     final personaliseController = ref.watch(personaliseControllerProvider);
+    final userLocation = ref.watch(userLocationProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -103,8 +104,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                   buildTextField(
                     Assets.icons.geo,
                     "Zipcode",
-                    personaliseState.zipcodeController,
-                    "444444",
+                    personaliseController.zipcodeController,
+                    userLocation.zipcode,
                     keyboardType: TextInputType.number,
                     maxLength: 6,
                   ),
@@ -112,8 +113,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                   buildTextField(
                     Assets.icons.telephone_filled,
                     "Mobile no",
-                    personaliseState.mobileController,
-                    "4004445555",
+                    personaliseController.mobileController,
+                    currentUser.phoneNumber ?? "",
                     keyboardType: TextInputType.phone,
                     maxLength: 10,
                   ),
@@ -160,7 +161,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               ),
             ),
           ),
-          if (personaliseState.loading)
+          if (personaliseController.loading)
             Align(
               alignment: Alignment.center,
               child: Expanded(

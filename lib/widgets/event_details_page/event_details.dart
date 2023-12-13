@@ -22,28 +22,10 @@ class _EventDetailsState extends State<EventDetails> {
   var startTime = "";
   var endTime = "";
 
-  void getStartTime() {
-    if (widget.event.startTime.isNotEmpty) {
-      final start = DateTime.parse(widget.event.startTime).toLocal();
-      final noon = start.hour >= 12 ? true : false;
-      startTime =
-          "${start.hour >= 13 ? start.hour - 12 : start.hour}:${start.minute} ${noon ? "PM" : "AM"}";
-    }
-  }
-
-  void getEndTime() {
-    if (widget.event.endTime!.isNotEmpty) {
-      final end = DateTime.parse(widget.event.endTime!).toLocal();
-      final noon = end.hour >= 12 ? true : false;
-      endTime =
-          "${end.hour >= 13 ? end.hour - 12 : end.hour}:${end.minute} ${noon ? "PM" : "AM"}";
-    }
-  }
-
   void initialiseTime() {
-    getStartTime();
+    startTime = widget.event.startTime;
     if (widget.event.endTime != null) {
-      getEndTime();
+      endTime = widget.event.endTime!;
     }
     setState(() {});
   }

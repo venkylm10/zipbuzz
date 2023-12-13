@@ -59,7 +59,7 @@ class DioServices {
         "user_id": id,
       });
 
-      if (response.data['status'] == 'success') {
+      if (response.data[DioConstants.status] == DioConstants.success) {
         return UserInterestPostModel.fromJson(response.data).interests;
       } else {
         return [];
@@ -74,7 +74,7 @@ class DioServices {
     try {
       final response = await dio.get(DioConstants.getUserId,
           data: userIdRequestModel.toMap());
-      if (response.data['status'] == 'success') {
+      if (response.data[DioConstants.status] == DioConstants.success) {
         return response.data['user_id'];
       } else {
         throw response.data['message'];
@@ -101,9 +101,11 @@ class DioServices {
   Future<void> postEvent(EventPostModel eventPostModel) async {
     debugPrint("POSTING EVENT");
     try {
+      print(eventPostModel.toJson());
+
       final response =
           await dio.post(DioConstants.postEvent, data: eventPostModel.toJson());
-      if (response.data['status'] == "sucess") {
+      if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("POSTING EVENT SUCESSFULL");
       } else {
         debugPrint("POSTING EVENT FAILED");
