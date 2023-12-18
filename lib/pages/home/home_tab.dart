@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -15,57 +16,23 @@ class HomeTab extends ConsumerStatefulWidget {
 }
 
 class _HomeTabState extends ConsumerState<HomeTab> {
-  final pageScrollController = ScrollController();
-  final rowScrollController = ScrollController();
-  final bodyScrollController = ScrollController();
-  final queryController = TextEditingController();
-  late GlobalKey categoryPageKey;
-  late GlobalKey rowCategoryKey;
   double topPadding = 0;
-  bool _isSearching = true;
-  int index = 0;
-  double previousOffset = 0;
-  String selectedCategory = '';
 
   @override
   void initState() {
-    categoryPageKey = GlobalKey();
-    rowCategoryKey = GlobalKey();
-    pageScrollController.addListener(() {
-      updateIndex(pageScrollController.offset);
+    ref.read(homeTabControllerProvider.notifier).pageScrollController.addListener(() {
+      ref.read(homeTabControllerProvider.notifier).updatePageIndex(context);
+      setState(() {});
     });
-    bodyScrollController.addListener(() {
-      if (bodyScrollController.offset > 120 && _isSearching) {
-        setState(() {
-          _isSearching = false;
-        });
-      } else if (bodyScrollController.offset < 120 && !_isSearching) {
-        setState(() {
-          _isSearching = true;
-        });
-      }
-      previousOffset = bodyScrollController.offset;
+    ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(() {
+      ref.read(homeTabControllerProvider.notifier).updateBodyScrollController();
+      setState(() {});
     });
     super.initState();
   }
 
-  void updateIndex(double offset) {
-    index = ((offset + 100) / MediaQuery.of(context).size.width).floor();
-    setState(() {});
-  }
-
-  void scrollDownInterests() {
-    final RenderBox renderBox =
-        categoryPageKey.currentContext!.findRenderObject() as RenderBox;
-    final containerHeight = renderBox.size.height;
-    bodyScrollController.animateTo(
-      containerHeight - 50,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
   void onTapRowCategory(String interest) {
+    final selectedCategory = ref.read(eventsControllerProvider).selectedCategory;
     if (selectedCategory != interest) {
       ref.read(eventsControllerProvider).selectCategory(category: interest);
       setState(() {});
@@ -78,24 +45,34 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   void onTapGridCategory(String interest) {
     scrollDownInterests();
     ref.read(eventsControllerProvider).selectCategory(category: interest);
+    setState(() {});
+  }
+
+  void scrollDownInterests() {
+    final categoryPageKey = ref.read(homeTabControllerProvider.notifier).categoryPageKey;
+    final RenderBox renderBox = categoryPageKey.currentContext!.findRenderObject() as RenderBox;
+    final containerHeight = renderBox.size.height;
+    ref.read(homeTabControllerProvider.notifier).bodyScrollController.animateTo(
+          containerHeight - 50,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
-    selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
-    
+    final homeTabController = ref.watch(homeTabControllerProvider.notifier);
+    var isSearching = homeTabController.isSearching;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        isSearching: _isSearching,
-        searchController: queryController,
-        onSearch: (query) {
-          FocusScope.of(context).nextFocus();
-        },
+        isSearching: isSearching,
+        searchController: homeTabController.queryController,
+        onSearch: (query) => FocusScope.of(context).nextFocus(),
         toggleSearching: () {
           setState(() {
-            _isSearching = !_isSearching;
+            isSearching = !isSearching;
           });
         },
         topPadding: topPadding,
@@ -104,7 +81,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            controller: bodyScrollController,
+            controller: homeTabController.bodyScrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -130,14 +107,17 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildCategoryRow() {
+    final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
+    final index = ref.watch(homeTabControllerProvider.notifier).index;
+    final selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
-      child: !_isSearching
+      child: !isSearching
           ? Container(
               width: double.infinity,
               color: Colors.white,
               child: SingleChildScrollView(
-                controller: rowScrollController,
+                controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 child: Row(
@@ -148,7 +128,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                       return GestureDetector(
                         onTap: () => onTapRowCategory(name),
                         child: Container(
-                          key: selectedCategory == name ? rowCategoryKey : null,
+                          key: selectedCategory == name
+                              ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
+                              : null,
                           margin: EdgeInsets.only(
                             top: 5,
                             left: index == 0 ? 12 : 2,
@@ -157,21 +139,13 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                           ),
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: ref
-                                        .watch(eventsControllerProvider)
-                                        .selectedCategory ==
-                                    name
+                            color: ref.watch(eventsControllerProvider).selectedCategory == name
                                 ? Colors.green.withOpacity(0.15)
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Opacity(
-                            opacity: ref
-                                        .watch(eventsControllerProvider)
-                                        .selectedCategory ==
-                                    name
-                                ? 1
-                                : 0.5,
+                            opacity: ref.watch(eventsControllerProvider).selectedCategory == name ? 1 : 0.5,
                             child: Image.asset(
                               iconPath,
                               height: 30,
@@ -187,16 +161,15 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildInterests(BuildContext context) {
+    final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
     return AnimatedOpacity(
-      key: categoryPageKey,
+      key: ref.read(homeTabControllerProvider.notifier).categoryPageKey,
       duration: const Duration(milliseconds: 500),
-      opacity: _isSearching ? 1 : 0,
+      opacity: isSearching ? 1 : 0,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        physics: _isSearching
-            ? const PageScrollPhysics()
-            : const BouncingScrollPhysics(),
-        controller: pageScrollController,
+        physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
+        controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,9 +183,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildPageIndicator() {
+    final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
+    final index = ref.watch(homeTabControllerProvider.notifier).index;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 500),
-      opacity: _isSearching ? 1 : 0,
+      opacity: isSearching ? 1 : 0,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -223,9 +198,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             width: 6,
             margin: const EdgeInsets.symmetric(horizontal: 2),
             decoration: BoxDecoration(
-              color: index == pageIndex
-                  ? AppColors.primaryColor
-                  : Colors.grey[350],
+              color: index == pageIndex ? AppColors.primaryColor : Colors.grey[350],
               borderRadius: BorderRadius.circular(3),
             ),
           ),
@@ -238,11 +211,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     final subInterests = allInterests.entries
         .map((e) => e.key)
         .toList()
-        .sublist(
-            pageIndex * 8,
-            (pageIndex + 1) * 8 > allInterests.length
-                ? allInterests.length
-                : (pageIndex + 1) * 8);
+        .sublist(pageIndex * 8, (pageIndex + 1) * 8 > allInterests.length ? allInterests.length : (pageIndex + 1) * 8);
     final width = MediaQuery.of(context).size.width;
     return Container(
       width: width,

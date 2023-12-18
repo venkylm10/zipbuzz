@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:location/location.dart' as geo;
-import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';

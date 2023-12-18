@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 
 class UserSocials extends ConsumerWidget {
   const UserSocials({super.key});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user_model/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';

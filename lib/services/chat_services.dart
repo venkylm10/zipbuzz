@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/controllers/user/user_controller.dart';
-import 'package:zipbuzz/models/message_model.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/message_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
 
 final chatServicesProvider = Provider(
