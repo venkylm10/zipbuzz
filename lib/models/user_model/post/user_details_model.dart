@@ -16,7 +16,7 @@ class UserDetailsModel {
   late final String username;
   late final bool isAmbassador;
 
-  UserDetailsModel.fromJson(Map<String, dynamic> json) {
+  UserDetailsModel.fromMap(Map<String, dynamic> json) {
     phoneNumber = json['phone_number'];
     zipcode = json['zipcode'];
     email = json['email'];
@@ -26,7 +26,7 @@ class UserDetailsModel {
     isAmbassador = json['is_ambassador'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
     data['phone_number'] = phoneNumber;
     data['zipcode'] = zipcode;
@@ -38,4 +38,3 @@ class UserDetailsModel {
     return data;
   }
 }
-

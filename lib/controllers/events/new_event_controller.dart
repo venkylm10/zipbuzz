@@ -1,10 +1,14 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
@@ -12,10 +16,10 @@ import 'package:zipbuzz/controllers/user/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user_model/user_model.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-final newEventProvider =
-    StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent(ref: ref));
+final newEventProvider = StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent(ref: ref));
 
 class NewEvent extends StateNotifier<EventModel> {
   final Ref ref;
@@ -27,8 +31,8 @@ class NewEvent extends StateNotifier<EventModel> {
             title: "",
             location: "",
             date: DateTime.now().toString(),
-            startTime: DateTime.now().toUtc().toString(),
-            endTime: DateTime.now().toUtc().toString(),
+            startTime: "",
+            endTime: "",
             attendees: 0,
             category: "Hiking",
             favourite: false,
@@ -50,6 +54,9 @@ class NewEvent extends StateNotifier<EventModel> {
   int maxImages = 7;
   File? bannerImage;
   List<UserModel> coHosts = [];
+  List<Contact> eventInvites = [];
+  List<Contact> allContacts = [];
+  List<Contact> contactSearchResult = [];
 
   void toggleGuestListPrivacy() {
     state = state.copyWith(privateGuestList: !state.privateGuestList);
@@ -122,6 +129,44 @@ class NewEvent extends StateNotifier<EventModel> {
     }
   }
 
+  void updateAllContacts(List<Contact> contacts) {
+    allContacts = contacts;
+  }
+
+  void updateInvites(List<Contact> contacts) {
+    eventInvites = contacts;
+  }
+
+  void resetContactSearch() {
+    contactSearchResult = allContacts;
+  }
+
+  void updateSelectedContact(Contact contact) {
+    if (!eventInvites.contains(contact)) {
+      if (state.attendees >= state.capacity) {
+        state = state.copyWith(capacity: state.capacity + 1);
+      }
+      eventInvites.add(contact);
+      state = state.copyWith(attendees: state.attendees + 1);
+      return;
+    }
+    eventInvites.remove(contact);
+    state = state.copyWith(attendees: state.attendees - 1);
+  }
+
+  void updateContactSearchResult(String query) {
+    contactSearchResult = allContacts.where(
+      (element) {
+        var name = element.displayName.toLowerCase().contains(query);
+        var number = false;
+        if (element.phones.isNotEmpty) {
+          number = element.phones.first.normalizedNumber.contains(query);
+        }
+        return name || number;
+      },
+    ).toList();
+  }
+
   void addToCoHost(String uid) {
     state = state.copyWith(coHostIds: state.coHostIds..add(uid));
   }
@@ -139,25 +184,49 @@ class NewEvent extends StateNotifier<EventModel> {
     return '${timeOfDay.hourOfPeriod}:${timeOfDay.minute} ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
   }
 
+  bool vaidateNewEvent() {
+    if (state.title.isEmpty) {
+      showSnackBar(message: "Please enter event title");
+      return false;
+    }
+    if (state.about.isEmpty) {
+      showSnackBar(message: "Please enter event description");
+      return false;
+    }
+    if (state.location.isEmpty) {
+      showSnackBar(message: "Please enter event location");
+      return false;
+    }
+    if (state.startTime.isEmpty) {
+      showSnackBar(message: "Please enter event start time");
+      return false;
+    }
+    return true;
+  }
+
   Future<void> publishEvent() async {
+    final check = vaidateNewEvent();
+    if (!check) return;
     try {
       var bannerUrl = "";
       if (bannerImage != null) {
-        bannerUrl = await ref.read(storageServicesProvider).uploadEventBanner(
-                id: ref.read(userProvider).id, file: bannerImage!) ??
+        bannerUrl = await ref
+                .read(storageServicesProvider)
+                .uploadEventBanner(id: ref.read(userProvider).id, file: bannerImage!) ??
             "";
       } else {
         final defaults = ref.read(defaultsProvider);
         final rand = Random().nextInt(defaults.bannerUrls.length);
         bannerUrl = defaults.bannerUrls[defaults.bannerPaths[rand]]!;
       }
-      print(state.toJson());
+      debugPrint("New Event: ${state.toMap()}");
+      final date = DateTime.parse(state.date);
       final eventPostModel = EventPostModel(
         banner: bannerUrl,
         category: state.category,
         name: state.title,
         description: state.about,
-        date: state.date,
+        date: DateTime(date.year, date.month, date.day).toString(),
         venue: state.location,
         startTime: state.startTime,
         endTime: state.endTime ?? "null",
@@ -169,14 +238,32 @@ class NewEvent extends StateNotifier<EventModel> {
         filledCapacity: state.attendees,
       );
       await ref.read(dbServicesProvider).createEvent(eventPostModel);
+
+      var eventDateTime = DateTime.parse(state.date);
+      var formattedDate = formatWithSuffix(eventDateTime);
+
+      final eventInvitePostModel = EventInvitePostModel(
+        phoneNumbers: eventInvites.map((e) {
+          return e.phones.first.normalizedNumber;
+        }).toList(),
+        senderName: ref.read(userProvider).name,
+        eventName: eventPostModel.name,
+        eventDate: formattedDate,
+        eventLocation: eventPostModel.venue,
+        eventStart: eventPostModel.startTime,
+        eventEnd: eventPostModel.endTime,
+      );
+
+      await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       showSnackBar(message: "Event created successfully");
+      eventInvites = [];
       state = EventModel(
         id: ref.read(userProvider).id,
         title: "",
         location: "",
         date: DateTime.now().toString(),
-        startTime: DateTime.now().toUtc().toString(),
-        endTime: DateTime.now().toUtc().toString(),
+        startTime: "",
+        endTime: "",
         attendees: 0,
         category: "Hiking",
         favourite: false,
@@ -194,8 +281,26 @@ class NewEvent extends StateNotifier<EventModel> {
         privateGuestList: false,
       );
       bannerImage = null;
+      navigatorKey.currentState!.pop();
+      ref.read(eventsControllerProvider).updatedFocusedDay(eventDateTime);
+      ref.read(homeTabControllerProvider.notifier).updateIndex(0);
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  String formatWithSuffix(DateTime date) {
+    String dayOfMonth = DateFormat('d').format(date);
+    String suffix;
+    if (dayOfMonth.endsWith('1') && dayOfMonth != '11') {
+      suffix = 'st';
+    } else if (dayOfMonth.endsWith('2') && dayOfMonth != '12') {
+      suffix = 'nd';
+    } else if (dayOfMonth.endsWith('3') && dayOfMonth != '13') {
+      suffix = 'rd';
+    } else {
+      suffix = 'th';
+    }
+    return DateFormat('d\'$suffix\' MMMM, y').format(date);
   }
 }

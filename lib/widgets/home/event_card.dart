@@ -7,7 +7,6 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/models/user_model/user_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 
@@ -22,7 +21,6 @@ class EventCard extends ConsumerStatefulWidget {
 
 class _EventCardState extends ConsumerState<EventCard> {
   Color eventColor = Colors.white;
-  UserModel? host;
 
   String getMonth(DateTime date) {
     final formatter = DateFormat.MMM();
@@ -33,29 +31,12 @@ class _EventCardState extends ConsumerState<EventCard> {
     return DateFormat.EEEE().format(date).substring(0, 3);
   }
 
-  String getTime(DateTime dateTime) {
-    return DateFormat('h:mm a').format(dateTime);
-  }
-
   void navigateToEventDetails() {
     navigatorKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => EventDetailsPage(event: widget.event),
       ),
     );
-  }
-
-  void getHost(String uid) async {
-    // final event = await ref.read(dbServicesProvider).getUserData(uid).first;
-    // if (event.snapshot.exists) {
-    //   final jsonString = jsonEncode(event.snapshot.value);
-    //   final userMap = jsonDecode(jsonString);
-    //   host = UserModel.fromJson(userMap);
-    //   setState(() {});
-    // } else {
-    //   return null;
-    // }
-    return null;
   }
 
   void getEventColor() {
@@ -66,7 +47,6 @@ class _EventCardState extends ConsumerState<EventCard> {
   @override
   void initState() {
     getEventColor();
-
     super.initState();
   }
 
@@ -170,7 +150,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                               if (widget.focusedEvent!) buildDateBox(),
                               if (widget.focusedEvent!)
                                 const SizedBox(width: 5),
-                              if (host != null) buildHostChip(),
+                              buildHostChip(),
                             ],
                           ),
                           const SizedBox(height: 5),
@@ -218,7 +198,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                getTime(date),
+                                "${widget.event.startTime} - ${widget.event.endTime ?? ''}",
                                 style: AppStyles.h5.copyWith(
                                   color: AppColors.lightGreyColor,
                                 ),
@@ -240,29 +220,28 @@ class _EventCardState extends ConsumerState<EventCard> {
 
   Container buildHostChip() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2)
+          .copyWith(left: 2),
       decoration: BoxDecoration(
         color: AppColors.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.primaryColor),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            Assets.icons.person_fill,
-            colorFilter: const ColorFilter.mode(
-              AppColors.primaryColor,
-              BlendMode.srcIn,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(
+              widget.event.hostPic,
+              height: 22,
+              fit: BoxFit.cover,
             ),
-            height: 16,
           ),
           const SizedBox(width: 5),
           Text(
-            host!.name,
+            widget.event.hostName,
             style: AppStyles.h5.copyWith(
               color: AppColors.primaryColor,
             ),

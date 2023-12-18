@@ -1,56 +1,62 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/user/user_controller.dart';
 import 'package:zipbuzz/models/message_model.dart';
-import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/db_services.dart';
 
 final chatServicesProvider = Provider(
   (ref) => ChatServices(
-    auth: ref.read(authProvider),
+    ref: ref,
     dbServices: ref.read(dbServicesProvider),
   ),
 );
 
 class ChatServices {
-  final FirebaseAuth _auth;
+  final Ref _ref;
   final DBServices _dbServices;
-  const ChatServices(
-      {required FirebaseAuth auth, required DBServices dbServices})
-      : _auth = auth,
+  const ChatServices({required Ref ref, required DBServices dbServices})
+      : _ref = ref,
         _dbServices = dbServices;
 
   Future<void> sendMessage(
-      {required String receiverId, required String message}) async {
-    final senderId = _auth.currentUser!.uid;
-    final users = [senderId, receiverId];
-
-    // unique chat room for two users
-    users.sort();
-    final chatRoomId = users.join('_');
-
+      {required int eventId, required String message}) async {
+    debugPrint("SENDING MESSAGE");
+    final currentUser = _ref.read(userProvider);
+    final senderId = currentUser.id;
     final messageId = DateTime.now().microsecondsSinceEpoch.toString();
-
     final newMessage = Message(
-      id: messageId,
-      senderId: senderId,
-      receiverId: receiverId,
-      message: message,
-      timeStamp: DateTime.now().toUtc().toString(),
-    );
-
+        id: messageId,
+        senderId: senderId,
+        senderName: currentUser.name,
+        senderPic: currentUser.imageUrl,
+        eventId: eventId,
+        message: message,
+        timeStamp: DateTime.now().toUtc().toString());
     await _dbServices.sendMessage(
-        chatRoomId: chatRoomId,
-        messageId: messageId,
-        message: newMessage.toJson());
+        eventId: eventId, messageId: messageId, message: newMessage.toMap());
+    debugPrint("MESSAGE SENT");
   }
 
-  Stream<DatabaseEvent> getMessages({required String receiverId}) {
-    final currentUserId = _auth.currentUser!.uid;
-    final users = [currentUserId, receiverId];
-    users.sort();
-    final chatRoomId = users.join('_');
+  Stream<List<Message>> getMessages({required int eventId}) {
+    try {
+      return _dbServices.getMessages(eventId: eventId).map((event) {
+        if (event.snapshot.value != null) {
+          final data = event.snapshot.value as Map;
+          List<Message> messages = data.entries
+              .map((entry) =>
+                  Message.fromMap(Map<String, dynamic>.from(entry.value)))
+              .toList();
 
-    return _dbServices.getMessages(chatRoomId: chatRoomId);
+          // Sending in reverse order so that the latest message is at the bottom
+          messages.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
+          return messages;
+        } else {
+          return [];
+        }
+      });
+    } catch (e) {
+      debugPrint("Error getting messages: $e");
+      rethrow;
+    }
   }
 }

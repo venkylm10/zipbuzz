@@ -107,7 +107,7 @@ class AuthServices {
       await _googleSignIn.signOut();
       await _auth.signOut();
       final box = GetStorage();
-      box.write("login", false);
+      box.remove('login');
       NavigationController.routeOff(route: WelcomePage.id);
     } catch (e) {
       debugPrint(e.toString());

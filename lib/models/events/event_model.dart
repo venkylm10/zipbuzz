@@ -92,7 +92,7 @@ class EventModel {
     );
   }
 
-  factory EventModel.fromJson(Map<String, dynamic> map) {
+  factory EventModel.fromMap(Map<String, dynamic> map) {
     return EventModel(
       id: map['id'] as int,
       title: map['title'] as String,
@@ -118,7 +118,7 @@ class EventModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'title': title,
@@ -146,6 +146,3 @@ class EventModel {
 const dummyAbout =
     "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year! We're throwing a bash that's bursting with life and vivacity, and the only rule is to dress like a walking, talking rainbow.\nAs you step through the front door, you'll be transported into a world where the vivid and the vivacious collide! The walls are adorned with neon graffiti, and the dance floor is a glowing tapestry of pulsating lights that'll make you feel like you've walked into a real-life disco fever dream.\nGet Ready to Groove:\nWe're turning up the music, dimming the lights, and transforming our space into a dance paradise\nA community of passionate dance enthusiasts ready to bust moves all night\nFrom salsa to hip-hop, there's something for everyone to enjoy and explore.\nShow off your dance skills in our dance-off competitions, and you could win some fantastic prizes.\nLeave your worries at the door and come dance in a safe, judgment-free zone.";
 
-final dummyEvents = [];
-
-Map<DateTime, List<EventModel>> events = {};

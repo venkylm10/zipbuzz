@@ -67,11 +67,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           broadDivider(),
           InkWell(
             onTap: () {
-              navigatorKey.currentState!.pushNamed(EventDetailsPage.id,
-                  arguments: {
-                    'event': ref.read(newEventProvider),
-                    'isPreview': true
-                  });
+              showPreview();
             },
             child: Ink(
               padding: const EdgeInsets.all(12),
@@ -98,6 +94,16 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           const SizedBox(height: 16),
         ],
       ),
+    );
+  }
+
+  void showPreview() async {
+    navigatorKey.currentState!.pushNamed(
+      EventDetailsPage.id,
+      arguments: {
+        'event': ref.read(newEventProvider),
+        'isPreview': true,
+      },
     );
   }
 }

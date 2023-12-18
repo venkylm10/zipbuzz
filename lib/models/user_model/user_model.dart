@@ -45,7 +45,7 @@ class UserModel {
     this.pastEventUids,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'name': name,
@@ -70,7 +70,7 @@ class UserModel {
     };
   }
 
-  factory UserModel.fromJson(Map<String, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] as int,
       name: map['name'] != null ? map['name'] as String : "",
@@ -160,8 +160,8 @@ class UserModel {
   }
 
   UserModel getClone() {
-    final map = toJson();
-    return UserModel.fromJson(map);
+    final map = toMap();
+    return UserModel.fromMap(map);
   }
 }
 
@@ -170,7 +170,8 @@ final globalDummyUser = UserModel(
   name: "Alex Lee",
   email: "example@gmail.com",
   handle: "bealexlee",
-  imageUrl: Assets.images.profile,
+  imageUrl:
+      "https://firebasestorage.googleapis.com/v0/b/zipbuzz-prod.appspot.com/o/defaults%2Fprofile_image%2Fprofile_image.jpg?alt=media&token=1fc0ee5d-f610-4dd6-b774-1d6f2fb5b801",
   isAmbassador: true,
   eventsHosted: 8,
   rating: 4.5,

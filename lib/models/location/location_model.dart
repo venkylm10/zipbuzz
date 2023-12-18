@@ -10,14 +10,14 @@ class LocationModel {
   late final String countryDialCode;
   late final String zipcode;
 
-  LocationModel.fromJson(Map<String, dynamic> json) {
+  LocationModel.fromMap(Map<String, dynamic> json) {
     country = json['country'];
     countryDialCode = json['countryDialCode'];
     zipcode = json['zipcode'];
     city = json['city'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
     data['country'] = country;
     data['countryDialCode'] = countryDialCode;

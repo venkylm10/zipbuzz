@@ -6,6 +6,7 @@ import 'package:zipbuzz/controllers/user/user_controller.dart';
 import 'package:zipbuzz/models/user_model/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
@@ -45,6 +46,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
               countryDialCode: location.countryDialCode,
             ),
           );
+      await ref.read(contactsServicesProvider).updateAllContacts();
       NavigationController.routeOff(
         route: Home.id,
       );

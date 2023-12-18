@@ -24,6 +24,7 @@ class PersonoliseControllerProvider
 class PersonaliseController {
   final Ref ref;
   PersonaliseController({required this.ref});
+  final box = GetStorage();
   var loading = true;
   final zipcodeController = TextEditingController();
   final mobileController = TextEditingController();
@@ -33,9 +34,10 @@ class PersonaliseController {
 
   Future<void> initialise() async {
     await ref.read(userLocationProvider.notifier).getCurrentLocation();
+    userLocation = ref.read(userLocationProvider);
     zipcodeController.text = userLocation.zipcode;
     mobileController.text =
-        ref.read(authProvider).currentUser!.phoneNumber ?? "";
+        ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
     loading = false;
   }
 
@@ -102,15 +104,20 @@ class PersonaliseController {
           countryDialCode: location.countryDialCode,
         );
         ref.read(userProvider.notifier).update((state) => newUser);
+
+        // creating new user
         await ref.read(dbServicesProvider).createUser(user: newUser);
-        
+
         // Reading id after id is being updated in createUser method
         final id = GetStorage().read('id');
         final userInterestPostModel =
             UserInterestPostModel(userId: id, interests: selectedInterests);
+
+        // posting users interests
         await ref
             .read(dbServicesProvider)
             .postUserInterests(userInterestPostModel);
+        box.write('user_interests', newUser.interests);
         debugPrint("USER CREATED SUCCESSFULLY");
       } catch (e) {
         debugPrint("Error crearting user in personalise page: $e");

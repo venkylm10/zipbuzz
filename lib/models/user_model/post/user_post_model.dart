@@ -9,15 +9,15 @@ class UserPostModel {
   late final UserDetailsModel userDetails;
   late final UserSocialsModel userSocials;
 
-  UserPostModel.fromJson(Map<String, dynamic> json) {
-    userDetails = UserDetailsModel.fromJson(json['user_details']);
-    userSocials = UserSocialsModel.fromJson(json['user_socials']);
+  UserPostModel.fromMap(Map<String, dynamic> json) {
+    userDetails = UserDetailsModel.fromMap(json['user_details']);
+    userSocials = UserSocialsModel.fromMap(json['user_socials']);
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
-    data['user_details'] = userDetails.toJson();
-    data['user_socials'] = userSocials.toJson();
+    data['user_details'] = userDetails.toMap();
+    data['user_socials'] = userSocials.toMap();
     return data;
   }
 }

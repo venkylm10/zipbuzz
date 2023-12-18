@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
@@ -13,14 +14,18 @@ final routes = {
   WelcomePage.id: (context) => const WelcomePage(),
   SignInSheet.id: (context) => const SignInSheet(),
   PersonalisePage.id: (context) => const PersonalisePage(),
-  Home.id: (context) =>  const Home(),
+  Home.id: (context) => const Home(),
   EventDetailsPage.id: (context) {
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final event = args['event'];
     final isPreview = args['isPreview'] ?? false;
     return EventDetailsPage(event: event, isPreview: isPreview);
   },
   EditProfilePage.id: (context) => const EditProfilePage(),
   FAQsPage.id: (context) => const FAQsPage(),
+  ChatPage.id: (context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final event = args['event'];
+    return ChatPage(event: event);
+  },
 };

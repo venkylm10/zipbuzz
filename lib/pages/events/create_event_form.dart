@@ -106,7 +106,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
 
   @override
   Widget build(BuildContext context) {
-    // getNewEvent();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

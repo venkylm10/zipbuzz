@@ -1,7 +1,9 @@
 class Message {
   final String id;
-  final String senderId;
-  final String receiverId;
+  final int senderId;
+  final String senderPic;
+  final String senderName;
+  final int eventId;
   final String message;
 
   /// DateTime utc timestamp, convert it to local in UI
@@ -10,26 +12,32 @@ class Message {
   const Message({
     required this.id,
     required this.senderId,
-    required this.receiverId,
+    required this.senderPic,
+    required this.senderName,
+    required this.eventId,
     required this.message,
     required this.timeStamp,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'senderId': senderId,
-      'receiverId': receiverId,
+      'senderPic': senderPic,
+      'senderName': senderName,
+      'eventId': eventId,
       'message': message,
       'timeStamp': timeStamp,
     };
   }
 
-  factory Message.fromJson(Map<String, dynamic> map) {
+  factory Message.fromMap(Map<String, dynamic> map) {
     return Message(
       id: map['id'] as String,
-      senderId: map['senderId'] as String,
-      receiverId: map['receiverId'] as String,
+      senderId: map['senderId'] as int,
+      senderPic: map['senderPic'] as String,
+      senderName: map['senderName'] as String,
+      eventId: map['eventId'] as int,
       message: map['message'] as String,
       timeStamp: map['timeStamp'] as String,
     );

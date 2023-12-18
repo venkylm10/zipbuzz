@@ -4,12 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/user/user_controller.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
+import 'package:zipbuzz/models/events/responses/event_response_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/user_model/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user_model/requests/user_id_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/models/user_model/post/user_details_model.dart';
 import 'package:zipbuzz/models/user_model/post/user_post_model.dart';
@@ -29,7 +33,7 @@ class DBServices {
   final FirebaseDatabase _database;
   final DioServices _dioServices;
   final Ref _ref;
-  const DBServices(
+  DBServices(
       {required FirebaseDatabase database,
       required Ref ref,
       required DioServices dioServices})
@@ -37,34 +41,29 @@ class DBServices {
         _dioServices = dioServices,
         _ref = ref;
 
+  final box = GetStorage();
+
   Future<void> sendMessage(
-      {required String chatRoomId,
+      {required int eventId,
       required String messageId,
       required Map<String, dynamic> message}) async {
-    await _database
-        .ref(DatabaseConstants.chatRoomCollection)
-        .child(chatRoomId)
-        .child(messageId)
-        .set(message);
+    try {
+      await _database
+          .ref(DatabaseConstants.chatRoomCollection)
+          .child(eventId.toString())
+          .child(messageId)
+          .set(message);
+    } catch (e) {
+      debugPrint("Error sending message: $e");
+    }
   }
 
-  Stream<DatabaseEvent> getMessages({required String chatRoomId}) {
+  Stream<DatabaseEvent> getMessages({required int eventId}) {
     return _database
         .ref(DatabaseConstants.chatRoomCollection)
-        .child(chatRoomId)
+        .child(eventId.toString())
         .onValue;
   }
-
-  // Future<void> createEvent(
-  //     {required String eventId,
-  //     required String zipcode,
-  //     required Map<String, dynamic> event}) async {
-  //   await _database
-  //       .ref(DatabaseConstants.eventsCollection)
-  //       .child(zipcode)
-  //       .child(eventId)
-  //       .set(event);
-  // }
 
   Future<void> createEvent(EventPostModel eventPostModel) async {
     await _dioServices.postEvent(eventPostModel);
@@ -79,7 +78,6 @@ class DBServices {
 
   Future<void> createUser({required UserModel user}) async {
     try {
-      final box = GetStorage();
       debugPrint("CREATING NEW USER");
 
       final userDetails = UserDetailsModel(
@@ -91,7 +89,6 @@ class DBServices {
         username: user.name,
         isAmbassador: false,
       );
-      box.write('user_details', userDetails.toJson());
 
       final userSocials = UserSocialsModel(
         instagram: user.instagramId ?? "null",
@@ -103,10 +100,12 @@ class DBServices {
           UserPostModel(userDetails: userDetails, userSocials: userSocials);
       final res = await _dioServices.createUser(userPostModel);
       if (res['status'] == "success") {
+        final box = GetStorage();
+        box.write('user_details', userDetails.toMap());
+
         _ref
             .read(userProvider.notifier)
             .update((state) => state.copyWith(id: res['id']));
-        final box = GetStorage();
         box.write("login", true);
         box.write("id", res['id']);
         NavigationController.routeOff(route: PersonalisePage.id);
@@ -134,7 +133,7 @@ class DBServices {
     try {
       final res = await _dioServices.getUserData(userDetailsRequestModel);
       if (res['status'] == "success") {
-        final userDetails = UserDetailsModel.fromJson(res['data']);
+        final userDetails = UserDetailsModel.fromMap(res['data']);
         final interests =
             (res['interests'] as List).map((e) => e.toString()).toList();
         final updatedUser = _ref.read(userProvider).copyWith(
@@ -150,6 +149,8 @@ class DBServices {
             );
 
         _ref.read(userProvider.notifier).update((state) => updatedUser);
+        box.write('user_details', userDetails.toMap());
+        box.write('user_interests', updatedUser.interests);
       } else {
         showSnackBar(message: "Failed to get userdata");
       }
@@ -161,16 +162,54 @@ class DBServices {
   Future<void> postUserInterests(
       UserInterestPostModel userInterestPostModel) async {
     try {
+      debugPrint("POSTING USER INTERESTS");
       final res = await _dioServices.postUserInterests(userInterestPostModel);
       if (res['status'] == "success") {
         _ref.read(userProvider.notifier).update((state) =>
             state.copyWith(interests: userInterestPostModel.interests));
         NavigationController.routeOff(route: Home.id);
+        debugPrint("POSTED USER INTERESTS SUCCESSFULLY");
       } else {
         showSnackBar(message: "Failed to post interests");
       }
     } catch (e) {
       debugPrint(e.toString());
+    }
+  }
+
+  Future<List<EventModel>> getUserEvents(
+      UserEventsRequestModel userEventsRequestModel) async {
+    try {
+      final list = await _dioServices.getUserEvents(userEventsRequestModel);
+      final events = list.map((e) {
+        final res = EventResponseModel.fromMap(e as Map<String, dynamic>);
+        final eventModel = EventModel(
+            id: res.id,
+            title: res.name,
+            hostId: res.hostId,
+            coHostIds: [],
+            guestIds: [],
+            location: res.venue,
+            date: res.date,
+            startTime: res.startTime,
+            attendees: res.filledCapacity,
+            category: res.category,
+            favourite: false,
+            bannerPath: res.banner,
+            iconPath: allInterests[res.category]!,
+            about: res.description,
+            isPrivate: res.eventType,
+            capacity: res.capacity,
+            imageUrls: [],
+            privateGuestList: true,
+            hostName: res.hostName,
+            hostPic: res.hostPic);
+        return eventModel;
+      }).toList();
+      return events;
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
     }
   }
 }

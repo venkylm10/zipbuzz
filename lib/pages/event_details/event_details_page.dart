@@ -233,10 +233,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 EventHosts(
-                                  hostId: widget.event.hostId,
-                                  hostName: widget.event.hostName,
-                                  hostPic: widget.event.hostPic,
-                                  coHosts: coHosts,
+                                  event: widget.event,
+                                  isPreview: widget.isPreview!,
                                 ),
                                 const SizedBox(height: 16),
                                 Divider(

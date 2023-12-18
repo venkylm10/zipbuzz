@@ -46,8 +46,8 @@ class LocationServices extends StateNotifier<LocationModel> {
                   CountryDialCode.fromCountryCode(placemark.isoCountryCode!)
                       .dialCode);
         }
-        debugPrint("updated user location : ${state.toJson()}");
-        GetStorage().write('location', state.toJson());
+        debugPrint("updated user location : ${state.toMap()}");
+        GetStorage().write('location', state.toMap());
         ref.read(userProvider.notifier).update(
           (currentUser) {
             return currentUser.copyWith(
@@ -65,7 +65,7 @@ class LocationServices extends StateNotifier<LocationModel> {
       final box = GetStorage();
       if (box.hasData('location')) {
         final location = box.read('location');
-        state = LocationModel.fromJson(location);
+        state = LocationModel.fromMap(location);
         ref.read(userProvider.notifier).update(
           (currentUser) {
             return currentUser.copyWith(

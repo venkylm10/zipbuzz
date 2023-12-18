@@ -17,21 +17,49 @@ class CustomCalendar extends ConsumerStatefulWidget {
 }
 
 class _CustomCalendarState extends ConsumerState<CustomCalendar> {
+  bool isMounted = true;
   DateTime focusedDay = DateTime.now();
   List<EventModel> upcomingEvents = [];
   List<EventModel> focusedEvents = [];
 
   void onDaySelected(DateTime day, DateTime focusedDay) {
-    ref.read(eventsControllerProvider).updatedFocusedDay(focusedDay);
+    ref.read(eventsControllerProvider).updatedFocusedDay(focusedDay.toLocal());
     ref.read(eventsControllerProvider).updateFocusedEvents();
     setState(() {});
   }
 
   @override
   void initState() {
-    ref.read(eventsControllerProvider).updateUpcomingEvents();
-    ref.read(eventsControllerProvider).updateFocusedEvents();
+    getUserEvents();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    isMounted = false;
+    super.dispose();
+  }
+
+  void getUserEvents() async {
+    if (isMounted) await ref.read(eventsControllerProvider).getUserEvents();
+    if (isMounted) ref.read(eventsControllerProvider).updateUpcomingEvents();
+    if (isMounted) ref.read(eventsControllerProvider).updateFocusedEvents();
+    if (isMounted) setState(() {});
+  }
+
+  String formatWithSuffix(DateTime date) {
+    String dayOfMonth = DateFormat('d').format(date);
+    String suffix;
+    if (dayOfMonth.endsWith('1') && dayOfMonth != '11') {
+      suffix = 'st';
+    } else if (dayOfMonth.endsWith('2') && dayOfMonth != '12') {
+      suffix = 'nd';
+    } else if (dayOfMonth.endsWith('3') && dayOfMonth != '13') {
+      suffix = 'rd';
+    } else {
+      suffix = 'th';
+    }
+    return DateFormat('d\'$suffix\' MMM').format(date);
   }
 
   @override
@@ -39,6 +67,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
     upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
     focusedDay = ref.watch(eventsControllerProvider).focusedDay;
     focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
+    final eventsMap = ref.watch(eventsControllerProvider).eventsMap;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -64,7 +93,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             rowHeight: 48,
             availableGestures: AvailableGestures.horizontalSwipe,
             calendarBuilders: customCalendarBuilders(),
-            eventLoader: (day) => events[day] ?? [],
+            eventLoader: (day) => eventsMap[day] ?? [],
           ),
         ),
         AnimatedSwitcher(
@@ -74,7 +103,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      DateFormat('d\'th\' MMM').format(focusedDay),
+                      formatWithSuffix(focusedDay),
                       style: AppStyles.h4.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -95,9 +124,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
           duration: const Duration(milliseconds: 300),
           child: focusedEvents.isNotEmpty
               ? Column(
-                  children: focusedEvents
-                      .map((e) => EventCard(event: e, focusedEvent: true))
-                      .toList(),
+                  children: focusedEvents.map((e) => EventCard(event: e, focusedEvent: true)).toList(),
                 )
               : const SizedBox(),
         ),
@@ -117,6 +144,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   }
 
   CalendarBuilders<dynamic> customCalendarBuilders() {
+    final eventMaps = ref.watch(eventsControllerProvider).eventsMap;
     return CalendarBuilders(
       dowBuilder: (context, day) {
         return Text(
@@ -143,9 +171,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
                     day.day.toString(),
                     textAlign: TextAlign.center,
                     style: AppStyles.h4.copyWith(
-                      fontWeight: focusedDay == DateTime.now()
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                      fontWeight: focusedDay == DateTime.now() ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -166,10 +192,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   stops: const [0.2, 0.85],
-                  colors: [
-                    AppColors.primaryColor.withOpacity(0.2),
-                    Colors.transparent
-                  ],
+                  colors: [AppColors.primaryColor.withOpacity(0.2), Colors.transparent],
                 ),
               ),
               child: Text(
@@ -214,17 +237,19 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
         );
       },
       markerBuilder: (context, day, events) {
-        final dayEvents = (events.length > 6 ? events.sublist(0, 6) : events);
+        final formatedDay = DateTime(day.year, day.month, day.day);
+        final dayEvents = eventMaps[formatedDay] ?? [];
+        final formatedEvents = (dayEvents.length > 6 ? dayEvents.sublist(0, 6) : dayEvents);
         return SizedBox(
           height: 6,
           width: 36,
           child: Row(
             children: List.generate(
-              dayEvents.length,
+              formatedEvents.length,
               (index) => buildEventIndicator(
-                dayEvents[index],
+                formatedEvents[index],
                 index,
-                dayEvents.length,
+                formatedEvents.length,
               ),
             ),
           ),

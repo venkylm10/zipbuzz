@@ -30,7 +30,7 @@ class EventPostModel {
   late final int capacity;
   late final int filledCapacity;
 
-  EventPostModel.fromJson(Map<String, dynamic> json) {
+  EventPostModel.fromMap(Map<String, dynamic> json) {
     banner = json['banner'];
     category = json['category'];
     name = json['name'];
@@ -47,7 +47,7 @@ class EventPostModel {
     filledCapacity = json['filled_capacity'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
     data['banner'] = banner;
     data['category'] = category;

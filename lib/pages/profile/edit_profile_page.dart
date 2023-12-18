@@ -92,10 +92,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             interests: userClone.interests,
           );
 
-      //TODO: UPDATE USER
+      // TODO: UPDATE USER
       // await ref
       //     .read(dbServicesProvider)
-      //     .updateUser(updatedUser.id, updatedUser.toJson());
+      //     .updateUser(updatedUser.id, updatedUser.toMap());
       ref.read(userProvider.notifier).update((state) => updatedUser);
       navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");

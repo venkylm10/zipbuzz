@@ -7,7 +7,6 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/user/user_controller.dart';
 import 'package:zipbuzz/models/user_model/user_model.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class AddHosts extends ConsumerStatefulWidget {
   const AddHosts({super.key});
@@ -36,32 +35,34 @@ class _AddHostsState extends ConsumerState<AddHosts> {
             itemBuilder: (context, index) {
               return buildHost(coHosts[index], true);
             }),
-        GestureDetector(
-          onTap: showSnackBar,
-          child: Container(
-            height: 44,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.bgGrey,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.borderGrey),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SvgPicture.asset(Assets.icons.add_circle, height: 20),
-                const SizedBox(width: 8),
-                Text(
-                  "Add Co-host",
-                  style: AppStyles.h4.copyWith(
-                    color: AppColors.greyColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+
+        // TODO: Add CO-Hosts
+        // GestureDetector(
+        //   onTap: showSnackBar,
+        //   child: Container(
+        //     height: 44,
+        //     width: double.infinity,
+        //     decoration: BoxDecoration(
+        //       color: AppColors.bgGrey,
+        //       borderRadius: BorderRadius.circular(12),
+        //       border: Border.all(color: AppColors.borderGrey),
+        //     ),
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       crossAxisAlignment: CrossAxisAlignment.center,
+        //       children: [
+        //         SvgPicture.asset(Assets.icons.add_circle, height: 20),
+        //         const SizedBox(width: 8),
+        //         Text(
+        //           "Add Co-host",
+        //           style: AppStyles.h4.copyWith(
+        //             color: AppColors.greyColor,
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

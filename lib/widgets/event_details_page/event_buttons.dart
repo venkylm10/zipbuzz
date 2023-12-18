@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/pages/event_details/event_invite.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -48,8 +49,7 @@ class EventButtons extends ConsumerWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SvgPicture.asset(Assets.icons.add_fill,
-                                  height: 20),
+                              SvgPicture.asset(Assets.icons.add_fill, height: 20),
                               const SizedBox(width: 8),
                               Text(
                                 "Join ",
@@ -60,8 +60,7 @@ class EventButtons extends ConsumerWidget {
                               ),
                               Text(
                                 "(${event.attendees}/${event.capacity})",
-                                style: AppStyles.h4
-                                    .copyWith(color: AppColors.lightGreyColor),
+                                style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
                               ),
                             ],
                           ),
@@ -156,8 +155,7 @@ class EventButtons extends ConsumerWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SvgPicture.asset(Assets.icons.link,
-                                      height: 20),
+                                  SvgPicture.asset(Assets.icons.link, height: 20),
                                   const SizedBox(width: 8),
                                   Text(
                                     "Event link",
@@ -174,7 +172,7 @@ class EventButtons extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: GestureDetector(
-                          onTap: showSnackBar,
+                          onTap: inviteContacts,
                           child: Container(
                             height: 48,
                             decoration: BoxDecoration(
@@ -186,8 +184,7 @@ class EventButtons extends ConsumerWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SvgPicture.asset(Assets.icons.people,
-                                      height: 20),
+                                  SvgPicture.asset(Assets.icons.people, height: 20),
                                   const SizedBox(width: 8),
                                   Text(
                                     "Invite people",
@@ -230,5 +227,19 @@ class EventButtons extends ConsumerWidget {
               ),
             ),
           );
+  }
+
+  void inviteContacts() async {
+    await showModalBottomSheet(
+      context: navigatorKey.currentContext!,
+      isScrollControlled: true,
+      enableDrag: true,
+      builder: (context) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: const EventInvite(),
+        );
+      },
+    );
   }
 }

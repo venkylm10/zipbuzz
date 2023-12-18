@@ -27,8 +27,7 @@ class _HomeState extends ConsumerState<Home> {
         showUnselectedLabels: true,
         showSelectedLabels: true,
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle:
-            AppStyles.h5.copyWith(color: AppColors.primaryColor),
+        selectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.primaryColor),
         unselectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.greyColor),
         fixedColor: AppColors.primaryColor,
         onTap: (value) {

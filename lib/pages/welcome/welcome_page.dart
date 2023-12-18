@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
 
-class WelcomePage extends StatefulWidget {
+class WelcomePage extends ConsumerStatefulWidget {
   static const id = '/welcome';
   const WelcomePage({super.key});
 
   @override
-  State<WelcomePage> createState() => _WelcomePageState();
+  ConsumerState<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
+class _WelcomePageState extends ConsumerState<WelcomePage> {
   var currentPage = 0;
   late PageController pageController;
   final welcomeImages = [
@@ -42,7 +44,8 @@ class _WelcomePageState extends State<WelcomePage> {
   void skip() async {
     await pageController.animateToPage(welcomeImages.length - 1,
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-    if (await AppPermissions().getlocationPermission()) {
+    if (await AppPermissions().getlocationPermission() && await AppPermissions().getContactsPermission()) {
+      ref.read(contactsServicesProvider).updateAllContacts();
       showSignInForm(navigatorKey.currentContext!);
     }
   }
@@ -54,7 +57,8 @@ class _WelcomePageState extends State<WelcomePage> {
         curve: Curves.easeInOut,
       );
     } else {
-      if (await AppPermissions().getlocationPermission()) {
+      if (await AppPermissions().getlocationPermission() && await AppPermissions().getContactsPermission()) {
+        ref.read(contactsServicesProvider).updateAllContacts();
         showSignInForm(navigatorKey.currentContext!);
       }
     }
@@ -171,8 +175,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       margin: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(3),
-                        color:
-                            index == currentPage ? Colors.white : Colors.grey,
+                        color: index == currentPage ? Colors.white : Colors.grey,
                       ),
                     ),
                   ),
