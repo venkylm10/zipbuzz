@@ -11,13 +11,13 @@ class UserSocials extends ConsumerWidget {
   const UserSocials({super.key});
 
   String getTwitterId(String profileLink) {
-    try {
-      if (profileLink.isNotEmpty) {
-        final temp = profileLink.split('/');
+    if (profileLink.isNotEmpty) {
+      final temp = profileLink.split('/');
+      if (temp.length >= 4) {
         return temp[3].split('?').first;
+      } else {
+        return "";
       }
-    } catch (e) {
-      debugPrint(e.toString());
     }
     return "";
   }
@@ -27,13 +27,13 @@ class UserSocials extends ConsumerWidget {
   }
 
   String getLinkedInId(String profileLink) {
-    try {
-      if (profileLink.isNotEmpty) {
-        final temp = profileLink.split('/');
+    if (profileLink.isNotEmpty) {
+      final temp = profileLink.split('/');
+      if (temp.length >= 5) {
         return temp[4].split('?').first;
+      } else {
+        return "";
       }
-    } catch (e) {
-      debugPrint(e.toString());
     }
     return "";
   }
@@ -91,8 +91,7 @@ class UserSocials extends ConsumerWidget {
     );
   }
 
-  Row buildHyperLink(String iconPath, String label, String value,
-      {void Function()? onTap}) {
+  Row buildHyperLink(String iconPath, String label, String value, {void Function()? onTap}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

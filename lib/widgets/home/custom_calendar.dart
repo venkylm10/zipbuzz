@@ -81,7 +81,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
           child: TableCalendar(
             focusedDay: focusedDay,
             firstDay: DateTime.utc(2022),
-            lastDay: DateTime.utc(2024),
+            lastDay: DateTime.now().add(const Duration(days: 365 * 2)),
             headerStyle: HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
