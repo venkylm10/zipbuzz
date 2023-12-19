@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,14 +23,20 @@ class ChatPage extends ConsumerStatefulWidget {
 }
 
 class _ChatPageState extends ConsumerState<ChatPage> {
-  late TextEditingController messageController;
+  TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
+  var bufferChats = <Message>[];
+  int? maxLines;
+  final _defaultColors = [
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.purple,
+    Colors.orange,
+    Colors.pink,
+  ];
 
-  @override
-  void initState() {
-    messageController = TextEditingController();
-    super.initState();
-  }
+  Map<int, MaterialColor> senderColors = {};
 
   void scrollToBottom() async {
     scrollController.animateTo(
@@ -39,13 +47,16 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   }
 
   void sendMessage() async {
-    await ref.read(chatServicesProvider).sendMessage(
-          eventId: widget.event.id,
-          message: messageController.text.trim(),
-        );
-    messageController.clear();
-    scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 100), curve: Curves.easeInOut);
+    if (messageController.text.trim().isNotEmpty) {
+      await ref.read(chatServicesProvider).sendMessage(
+            eventId: widget.event.id,
+            message: messageController.text.trim(),
+          );
+      messageController.clear();
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 100), curve: Curves.easeInOut);
+      updateMaxLines(messageController.text);
+    }
   }
 
   void updateMaxLines(String value) {
@@ -56,20 +67,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     }
     setState(() {});
   }
-
-  String getTimeFromDateTime(DateTime dateTime) {
-    return DateFormat('hh:mm a').format(dateTime);
-  }
-
-  String formatDateTime(String dateTime) {
-    final date = DateTime.parse(dateTime).toLocal();
-    return DateFormat('EEEE (d MMM)').format(date);
-  }
-
-  var bufferChats = <Message>[];
-  int? maxLines;
-  String chatDate = '';
-  bool firstFetch = true;
 
   @override
   Widget build(BuildContext context) {
@@ -97,60 +94,14 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             ],
           ),
           titleSpacing: -10,
+          elevation: 1,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16).copyWith(top: 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              StreamBuilder(
-                stream: ref
-                    .watch(chatServicesProvider)
-                    .getMessages(eventId: widget.event.id),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        itemCount: bufferChats.length,
-                        reverse: true,
-                        itemBuilder: (context, index) {
-                          return buildMessage(bufferChats[index]);
-                        },
-                      ),
-                    );
-                  }
-
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-
-                  if (snapshot.hasData) {
-                    var messages = snapshot.data!;
-                    bufferChats = messages;
-                    return Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        itemCount: messages.length,
-                        reverse: true,
-                        itemBuilder: (context, index) {
-                          return buildMessage(messages[index]);
-                        },
-                      ),
-                    );
-                  }
-                  return Expanded(
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: bufferChats.length,
-                      reverse: true,
-                      itemBuilder: (context, index) {
-                        return buildMessage(bufferChats[index]);
-                      },
-                    ),
-                  );
-                },
-              ),
+              buildChat(),
               buildSendTextField(),
             ],
           ),
@@ -159,21 +110,121 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
-  Widget buildMessage(Message messageModel) {
-    final userId = ref.read(userProvider).id;
-    return userId == messageModel.senderId
-        ? buildCurrentUserMessage(messageModel)
-        : buildOthersMessage(messageModel);
+  MaterialColor getSenderColor(int senderId) {
+    if (senderColors.containsKey(senderId)) {
+      return senderColors[senderId]!;
+    }
+    int rand = Random().nextInt(_defaultColors.length);
+    senderColors[senderId] = _defaultColors[rand];
+    return senderColors[senderId]!;
   }
 
-  Widget buildCurrentUserMessage(Message messageModel) {
+  StreamBuilder<List<Message>> buildChat() {
+    return StreamBuilder(
+      stream: ref.watch(chatServicesProvider).getMessages(eventId: widget.event.id),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Something went wrong: ${snapshot.error}'));
+        }
+
+        if (snapshot.hasData) {
+          var messages = snapshot.data!;
+          bufferChats = messages;
+
+          return Expanded(
+            child: ListView.builder(
+              controller: scrollController,
+              itemCount: messages.length,
+              reverse: true,
+              itemBuilder: (context, index) {
+                bool showProfilePic = true;
+                bool showDate = true;
+                if (index != messages.length - 1) {
+                  showProfilePic = messages[index + 1].senderId != messages[index].senderId;
+                  showDate = messages[index].timeStamp.substring(0, 10) !=
+                      messages[index + 1].timeStamp.substring(0, 10);
+                }
+                return buildMessage(messages[index], showProfilePic, showDate);
+              },
+            ),
+          );
+        }
+        return buildBufferChat();
+      },
+    );
+  }
+
+  String getTimeFromDateTime(DateTime dateTime) {
+    return DateFormat('hh:mm a').format(dateTime);
+  }
+
+  Widget buildDate(String dateTime) {
+    final date = DateTime.parse(dateTime).toLocal();
+    DateFormat('EEEE (d MMM)').format(date);
+    final weeekDay = DateFormat('EEEE').format(date);
+    final messageDate = DateFormat('d MMM').format(date);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          weeekDay,
+          style: AppStyles.h6.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Text(
+          "($messageDate)",
+          style: AppStyles.h6.copyWith(
+            color: AppColors.lightGreyColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Expanded buildBufferChat() {
+    return Expanded(
+      child: ListView.builder(
+        controller: scrollController,
+        itemCount: bufferChats.length,
+        reverse: true,
+        itemBuilder: (context, index) {
+          bool showProfilePic = true;
+          bool showDate = true;
+          if (index != bufferChats.length - 1) {
+            showProfilePic = bufferChats[index + 1].senderId != bufferChats[index].senderId;
+            showDate = bufferChats[index].timeStamp.substring(0, 10) !=
+                bufferChats[index + 1].timeStamp.substring(0, 10);
+          }
+          return buildMessage(bufferChats[index], showProfilePic, showDate);
+        },
+      ),
+    );
+  }
+
+  Widget buildMessage(Message messageModel, bool showInfo, bool showDate) {
+    final userId = ref.read(userProvider).id;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (showDate) const SizedBox(height: 16),
+        if (showDate) buildDate(messageModel.timeStamp),
+        if (showDate) const SizedBox(height: 16),
+        userId == messageModel.senderId
+            ? buildCurrentUserMessage(messageModel, showInfo)
+            : buildOthersMessage(messageModel, showInfo)
+      ],
+    );
+  }
+
+  Widget buildCurrentUserMessage(Message messageModel, bool showInfo) {
     double borderRadius = 8;
     final dateTime = DateTime.parse(messageModel.timeStamp).toLocal();
     final time = getTimeFromDateTime(dateTime);
 
     return Container(
-      width: MediaQuery.of(context).size.width - 32,
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      width: MediaQuery.of(context).size.width - 40,
+      margin: EdgeInsets.only(bottom: 8, top: showInfo ? 8 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -185,12 +236,15 @@ class _ChatPageState extends ConsumerState<ChatPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    messageModel.senderName,
-                    style: AppStyles.h6.copyWith(
-                      fontWeight: FontWeight.w500,
+                  if (showInfo)
+                    Text(
+                      messageModel.senderName,
+                      style: AppStyles.h6.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: getSenderColor(messageModel.senderId),
+                      ),
                     ),
-                  ),
+                  if (showInfo) const SizedBox(height: 4),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
@@ -199,7 +253,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       const SizedBox(width: 4),
                       Container(
                         constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.6,
+                          maxWidth: MediaQuery.of(context).size.width * 0.65,
                         ),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -222,15 +276,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 ],
               ),
               const SizedBox(width: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  messageModel.senderPic,
-                  height: 32,
-                  width: 32,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              buildSenderImage(showInfo, messageModel),
             ],
           ),
         ],
@@ -238,13 +284,13 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
-  Widget buildOthersMessage(Message messageModel) {
+  Widget buildOthersMessage(Message messageModel, bool showInfo) {
     double borderRadius = 8;
     final dateTime = DateTime.parse(messageModel.timeStamp).toLocal();
     final time = getTimeFromDateTime(dateTime);
     return Container(
       width: MediaQuery.of(context).size.width - 32,
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: EdgeInsets.only(bottom: 8, top: showInfo ? 8 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -252,26 +298,20 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  messageModel.senderPic,
-                  height: 32,
-                  width: 32,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              buildSenderImage(showInfo, messageModel),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    messageModel.senderName,
-                    softWrap: true,
-                    style: AppStyles.h6.copyWith(
-                      fontWeight: FontWeight.w500,
+                  if (showInfo)
+                    Text(
+                      messageModel.senderName,
+                      style: AppStyles.h6.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: getSenderColor(messageModel.senderId),
+                      ),
                     ),
-                  ),
+                  if (showInfo) const SizedBox(height: 4),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
@@ -309,6 +349,20 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     );
   }
 
+  ClipRRect buildSenderImage(bool showInfo, Message messageModel) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: showInfo
+          ? Image.network(
+              messageModel.senderPic,
+              height: 32,
+              width: 32,
+              fit: BoxFit.cover,
+            )
+          : const SizedBox(height: 32, width: 32),
+    );
+  }
+
   Row buildSendTextField() {
     return Row(
       children: [
@@ -319,18 +373,20 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             suffixIcon: GestureDetector(
               onTap: () => sendMessage(),
               child: Padding(
-                padding: EdgeInsets.only(
-                    right: 16, bottom: maxLines == null ? 8 : 16),
+                padding: EdgeInsets.only(right: 16, bottom: maxLines == null ? 8 : 16),
                 child: SvgPicture.asset(
                   Assets.icons.send_fill,
                   height: 30,
-                  colorFilter:
-                      ColorFilter.mode(Colors.grey.shade600, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(
+                      messageController.text.trim().isEmpty
+                          ? Colors.grey.shade600
+                          : AppColors.primaryColor,
+                      BlendMode.srcIn),
                 ),
               ),
             ),
             maxLines: maxLines,
-            borderRadius: 40,
+            borderRadius: maxLines != null ? 10 : 40,
             crossAxisAlignment: CrossAxisAlignment.end,
             onChanged: updateMaxLines,
           ),
@@ -339,8 +395,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
         SvgPicture.asset(
           Assets.icons.add_circle,
           height: 40,
-          colorFilter:
-              const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
         ),
       ],
     );

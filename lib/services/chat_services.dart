@@ -18,8 +18,7 @@ class ChatServices {
       : _ref = ref,
         _dbServices = dbServices;
 
-  Future<void> sendMessage(
-      {required int eventId, required String message}) async {
+  Future<void> sendMessage({required int eventId, required String message}) async {
     debugPrint("SENDING MESSAGE");
     final currentUser = _ref.read(userProvider);
     final senderId = currentUser.id;
@@ -43,8 +42,7 @@ class ChatServices {
         if (event.snapshot.value != null) {
           final data = event.snapshot.value as Map;
           List<Message> messages = data.entries
-              .map((entry) =>
-                  Message.fromMap(Map<String, dynamic>.from(entry.value)))
+              .map((entry) => Message.fromMap(Map<String, dynamic>.from(entry.value)))
               .toList();
 
           // Sending in reverse order so that the latest message is at the bottom
