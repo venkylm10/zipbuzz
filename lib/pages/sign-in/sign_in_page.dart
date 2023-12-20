@@ -2,8 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
@@ -18,6 +22,13 @@ class SignInSheet extends ConsumerWidget {
     ref.read(authServicesProvider).signInWithGoogle();
     navigatorKey.currentState!.pop();
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+  }
+
+  void signInGuestUser(WidgetRef ref) {
+    GetStorage().write(BoxConstants.login, true);
+    GetStorage().write(BoxConstants.guestUser, true);
+    ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+    NavigationController.routeOff(route: Home.id);
   }
 
   @override
@@ -66,7 +77,7 @@ class SignInSheet extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: showSnackBar,
+                onTap: () => signInGuestUser(ref),
                 child: Container(
                   height: 56,
                   width: double.infinity,

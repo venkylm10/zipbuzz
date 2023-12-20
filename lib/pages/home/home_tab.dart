@@ -17,18 +17,30 @@ class HomeTab extends ConsumerStatefulWidget {
 
 class _HomeTabState extends ConsumerState<HomeTab> {
   double topPadding = 0;
+  bool isMounted = true;
 
+  
   @override
   void initState() {
-    ref.read(homeTabControllerProvider.notifier).pageScrollController.addListener(() {
-      ref.read(homeTabControllerProvider.notifier).updatePageIndex(context);
-      setState(() {});
-    });
-    ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(() {
-      ref.read(homeTabControllerProvider.notifier).updateBodyScrollController();
-      setState(() {});
-    });
+    if (isMounted) {
+      ref.read(homeTabControllerProvider.notifier).pageScrollController.addListener(() {
+        if (isMounted) ref.read(homeTabControllerProvider.notifier).updatePageIndex(context);
+        if (isMounted) setState(() {});
+      });
+    }
+    if (isMounted) {
+      ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(() {
+        if (isMounted) ref.read(homeTabControllerProvider.notifier).updateBodyScrollController();
+        if (isMounted) setState(() {});
+      });
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    isMounted = false;
+    super.dispose();
   }
 
   void onTapRowCategory(String interest) {
@@ -145,7 +157,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Opacity(
-                            opacity: ref.watch(eventsControllerProvider).selectedCategory == name ? 1 : 0.5,
+                            opacity: ref.watch(eventsControllerProvider).selectedCategory == name
+                                ? 1
+                                : 0.5,
                             child: Image.asset(
                               iconPath,
                               height: 30,
@@ -208,10 +222,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildCategoryPage(int pageIndex, BuildContext context) {
-    final subInterests = allInterests.entries
-        .map((e) => e.key)
-        .toList()
-        .sublist(pageIndex * 8, (pageIndex + 1) * 8 > allInterests.length ? allInterests.length : (pageIndex + 1) * 8);
+    final subInterests = allInterests.entries.map((e) => e.key).toList().sublist(pageIndex * 8,
+        (pageIndex + 1) * 8 > allInterests.length ? allInterests.length : (pageIndex + 1) * 8);
     final width = MediaQuery.of(context).size.width;
     return Container(
       width: width,

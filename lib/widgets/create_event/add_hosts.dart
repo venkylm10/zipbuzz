@@ -6,7 +6,7 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/models/user_model/user_model.dart';
+import 'package:zipbuzz/models/user/user_model.dart';
 
 class AddHosts extends ConsumerStatefulWidget {
   const AddHosts({super.key});

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -21,6 +22,7 @@ class EventCard extends ConsumerStatefulWidget {
 
 class _EventCardState extends ConsumerState<EventCard> {
   Color eventColor = Colors.white;
+  int randInt = 0;
 
   String getMonth(DateTime date) {
     final formatter = DateFormat.MMM();
@@ -31,12 +33,23 @@ class _EventCardState extends ConsumerState<EventCard> {
     return DateFormat.EEEE().format(date).substring(0, 3);
   }
 
-  void navigateToEventDetails() {
+  void navigateToEventDetails() async {
+    final dominantColor = await getDominantColor();
     navigatorKey.currentState!.push(
       MaterialPageRoute(
-        builder: (context) => EventDetailsPage(event: widget.event),
+        builder: (context) => EventDetailsPage(event: widget.event, dominantColor: dominantColor,),
       ),
     );
+  }
+
+  Future<Color> getDominantColor() async {
+    Color dominantColor = Colors.green;
+    final image = NetworkImage(widget.event.bannerPath);
+    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+      image,
+    );
+    dominantColor = generator.dominantColor!.color;
+    return dominantColor;
   }
 
   void getEventColor() {
@@ -123,9 +136,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                               ),
                               child: Icon(
                                 Icons.favorite_rounded,
-                                color: widget.event.favourite
-                                    ? Colors.pink[400]
-                                    : Colors.grey[300],
+                                color: widget.event.favourite ? Colors.pink[400] : Colors.grey[300],
                               ),
                             ),
                           ),
@@ -148,8 +159,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                           Row(
                             children: [
                               if (widget.focusedEvent!) buildDateBox(),
-                              if (widget.focusedEvent!)
-                                const SizedBox(width: 5),
+                              if (widget.focusedEvent!) const SizedBox(width: 5),
                               buildHostChip(),
                             ],
                           ),
@@ -172,8 +182,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                                 color: AppColors.lightGreyColor,
                               ),
                             ),
-                          if (widget.event.about.isNotEmpty)
-                            const SizedBox(height: 10),
+                          if (widget.event.about.isNotEmpty) const SizedBox(height: 10),
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -220,8 +229,7 @@ class _EventCardState extends ConsumerState<EventCard> {
 
   Container buildHostChip() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2)
-          .copyWith(left: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2).copyWith(left: 2),
       decoration: BoxDecoration(
         color: AppColors.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
@@ -306,13 +314,13 @@ class _EventCardState extends ConsumerState<EventCard> {
           ),
           Text(
             date.day.toString(),
-            style: AppStyles.h2,
+            style: AppStyles.h2.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           Text(
             getWeekDay(date),
-            style: AppStyles.h4.copyWith(
-              color: AppColors.greyColor,
-            ),
+            style: AppStyles.h4.copyWith(color: AppColors.greyColor),
           )
         ],
       ),

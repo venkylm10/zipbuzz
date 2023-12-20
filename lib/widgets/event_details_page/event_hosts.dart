@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class EventHosts extends ConsumerStatefulWidget {
   const EventHosts({
@@ -20,16 +24,24 @@ class EventHosts extends ConsumerStatefulWidget {
 }
 
 class _EventHostsState extends ConsumerState<EventHosts> {
-  void navigateToChatPage() {
+  void navigateToChatPage() async {
     if (widget.isPreview) return;
+    if (GetStorage().read(BoxConstants.guestUser) != null) {
+      showSnackBar(message: "You need to be signed in send messages to anyone", duration: 2);
+      await Future.delayed(const Duration(seconds: 2));
+      ref.read(newEventProvider.notifier).showSignInForm();
+      return;
+    }
     NavigationController.routeTo(
-        route: ChatPage.id, arguments: {"event": widget.event});
+      route: ChatPage.id,
+      arguments: {"event": widget.event},
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      //TODO: Update host and co-hosts
+      // TODO: Update Co-Hosts
       children: [
         buildHost(widget.event.hostId, widget.event.hostName, widget.event.hostPic),
         // Column(

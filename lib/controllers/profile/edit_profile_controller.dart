@@ -1,15 +1,21 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/models/user_model/user_model.dart';
+import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
+import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
+import 'package:zipbuzz/models/user/user_model.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-final editEventControllerProvider = StateProvider((ref) => EditProfileController(ref: ref));
+final editEventControllerProvider =
+    StateProvider.autoDispose((ref) => EditProfileController(ref: ref));
 
 class EditProfileController {
   final Ref ref;
@@ -48,13 +54,27 @@ class EditProfileController {
   }
 
   Future<void> saveChanges() async {
+    if (GetStorage().read(BoxConstants.guestUser) != null) {
+      showSnackBar(message: "You need to be signed in to edit profile", duration: 2);
+      await Future.delayed(const Duration(seconds: 2));
+      navigatorKey.currentState!.pop();
+      ref.read(newEventProvider.notifier).showSignInForm();
+      return;
+    }
+
     debugPrint("updating user");
     try {
-      await ref.read(userLocationProvider.notifier).updatestateFromZipcode(zipcodeController.text.trim());
+      if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
+        await ref
+            .read(userLocationProvider.notifier)
+            .updatestateFromZipcode(zipcodeController.text.trim());
+      }
+
       String? newImageUrl;
       if (image != null) {
-        newImageUrl =
-            await ref.read(storageServicesProvider).uploadProfilePic(uid: userClone.id.toString(), file: image!);
+        newImageUrl = await ref
+            .read(storageServicesProvider)
+            .uploadProfilePic(id: userClone.id, file: image!);
       }
 
       final updatedUser = ref.read(userProvider).copyWith(
@@ -69,11 +89,24 @@ class EditProfileController {
             interests: userClone.interests,
           );
 
-      // TODO: UPDATE USER
-      // await ref
-      //     .read(dbServicesProvider)
-      //     .updateUser(updatedUser.id, updatedUser.toMap());
-      ref.read(userProvider.notifier).update((state) => updatedUser);
+      final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
+        id: updatedUser.id,
+        phoneNumber: updatedUser.mobileNumber,
+        zipcode: updatedUser.zipcode,
+        email: updatedUser.email,
+        profilePicture: updatedUser.imageUrl,
+        description: updatedUser.about,
+        username: updatedUser.name,
+        isAmbassador: updatedUser.isAmbassador,
+        instagram: updatedUser.instagramId ?? "",
+        linkedin: updatedUser.linkedinId ?? "",
+        twitter: updatedUser.twitterId ?? "",
+      );
+
+      await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
+      await ref
+          .read(dbServicesProvider)
+          .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
       navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");
     } catch (e) {

@@ -124,7 +124,8 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
           duration: const Duration(milliseconds: 300),
           child: focusedEvents.isNotEmpty
               ? Column(
-                  children: focusedEvents.map((e) => EventCard(event: e, focusedEvent: true)).toList(),
+                  children:
+                      focusedEvents.map((e) => EventCard(event: e, focusedEvent: true)).toList(),
                 )
               : const SizedBox(),
         ),
@@ -133,7 +134,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
             child: Text(
               "Upcoming Events",
-              style: AppStyles.h2,
+              style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         Column(
@@ -171,7 +172,8 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
                     day.day.toString(),
                     textAlign: TextAlign.center,
                     style: AppStyles.h4.copyWith(
-                      fontWeight: focusedDay == DateTime.now() ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          focusedDay == DateTime.now() ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ),

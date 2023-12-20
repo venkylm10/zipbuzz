@@ -1,9 +1,7 @@
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
@@ -12,7 +10,7 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/models/user_model/user_model.dart';
+import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 import 'package:zipbuzz/widgets/common/event_chip.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_buttons.dart';
@@ -24,8 +22,15 @@ class EventDetailsPage extends ConsumerStatefulWidget {
   static const id = 'event/details';
   final EventModel event;
   final bool? isPreview;
-  const EventDetailsPage(
-      {super.key, required this.event, this.isPreview = false});
+  final int? randInt;
+  final Color dominantColor;
+  const EventDetailsPage({
+    super.key,
+    required this.event,
+    this.isPreview = false,
+    this.randInt = 0,
+    required this.dominantColor,
+  });
 
   @override
   ConsumerState<EventDetailsPage> createState() => _EventDetailsPageState();
@@ -33,43 +38,11 @@ class EventDetailsPage extends ConsumerStatefulWidget {
 
 class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   final bodyScrollController = ScrollController();
-  Color dominantColor = Colors.white;
   Color eventColor = Colors.white;
-  String dummyText = '';
   double horizontalMargin = 16;
   List<String> defaultBanners = [];
-  int rand = 0;
   int maxImages = 0;
   List<UserModel> coHosts = [];
-
-  Future<void> getDominantColor() async {
-    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    if (widget.isPreview!) {
-      if (previewBanner != null) {
-        final image = FileImage(previewBanner);
-        final PaletteGenerator generator =
-            await PaletteGenerator.fromImageProvider(
-          image,
-        );
-        dominantColor = generator.dominantColor!.color;
-        setState(() {});
-      }
-      final image = AssetImage(defaultBanners[rand]);
-      final PaletteGenerator generator =
-          await PaletteGenerator.fromImageProvider(
-        image,
-      );
-      dominantColor = generator.dominantColor!.color;
-      setState(() {});
-    } else {
-      final PaletteGenerator generator =
-          await PaletteGenerator.fromImageProvider(
-        NetworkImage(widget.event.bannerPath),
-      );
-      dominantColor = generator.dominantColor!.color;
-      setState(() {});
-    }
-  }
 
   void getEventColor() {
     eventColor = getInterestColor(widget.event.iconPath);
@@ -88,64 +61,29 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   }
 
   void getCoHosts(List<String> coHostIds) async {
-    coHosts = await ref
-        .read(eventsControllerProvider)
-        .getCoHosts(widget.event.coHostIds);
+    coHosts = await ref.read(eventsControllerProvider).getCoHosts(widget.event.coHostIds);
     setState(() {});
+  }
+
+  void initialise() async {
+    maxImages = ref.read(newEventProvider.notifier).maxImages;
+    defaultBanners = ref.read(defaultsProvider).bannerPaths;
+    getEventColor();
   }
 
   @override
   void initState() {
-    //TODO: getting cohost details
+    // TODO: getting cohost details
     // getCoHosts(widget.event.coHostIds);
-    maxImages = ref.read(newEventProvider.notifier).maxImages;
-    Random random = Random();
-    defaultBanners = ref.read(defaultsProvider).bannerPaths;
-    rand = random.nextInt(defaultBanners.length);
-    getDominantColor();
-    getEventColor();
+    initialise();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: dominantColor,
-      appBar: AppBar(
-        shadowColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        leadingWidth: 0,
-        leading: const SizedBox(),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: GestureDetector(
-              onTap: () => navigatorKey.currentState!.pop(),
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                    child: Center(
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: dominantColor,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const Expanded(child: SizedBox()),
-        ],
-      ),
+      backgroundColor: widget.dominantColor,
+      appBar: buildAppBar(),
       extendBodyBehindAppBar: true,
       body: NotificationListener<ScrollUpdateNotification>(
         onNotification: (notification) => animateMargin(),
@@ -174,8 +112,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                       children: [
                         Text(
                           widget.event.title,
-                          style: AppStyles.h2
-                              .copyWith(fontWeight: FontWeight.w600),
+                          style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
                           softWrap: true,
                         ),
                         const SizedBox(height: 10),
@@ -193,8 +130,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                 AttendeeNumbers(
                                   attendees: widget.event.attendees,
                                   total: widget.event.capacity,
-                                  backgroundColor:
-                                      AppColors.greyColor.withOpacity(0.1),
+                                  backgroundColor: AppColors.greyColor.withOpacity(0.1),
                                 ),
                               ],
                             ),
@@ -209,8 +145,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                         const SizedBox(height: 16),
                         Text(
                           "Event details",
-                          style: AppStyles.h5
-                              .copyWith(color: AppColors.lightGreyColor),
+                          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                         ),
                         const SizedBox(height: 16),
                         EventDetails(event: widget.event),
@@ -225,8 +160,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                             const SizedBox(height: 16),
                             Text(
                               "Hosts",
-                              style: AppStyles.h5
-                                  .copyWith(color: AppColors.lightGreyColor),
+                              style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                             ),
                             const SizedBox(height: 16),
                             Column(
@@ -248,8 +182,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                         const SizedBox(height: 16),
                         Text(
                           "About",
-                          style: AppStyles.h5
-                              .copyWith(color: AppColors.lightGreyColor),
+                          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                         ),
                         const SizedBox(height: 16),
                         Text(widget.event.about, style: AppStyles.h4),
@@ -261,8 +194,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                         const SizedBox(height: 16),
                         Text(
                           "Sneak peaks",
-                          style: AppStyles.h5
-                              .copyWith(color: AppColors.lightGreyColor),
+                          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                         ),
                         const SizedBox(height: 16),
                         buildPhotos(widget.isPreview!, ref),
@@ -277,8 +209,45 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton:
-          EventButtons(event: widget.event, isPreview: widget.isPreview),
+      floatingActionButton: EventButtons(event: widget.event, isPreview: widget.isPreview),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      shadowColor: Colors.transparent,
+      backgroundColor: Colors.transparent,
+      leadingWidth: 0,
+      leading: const SizedBox(),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: GestureDetector(
+            onTap: () => navigatorKey.currentState!.pop(),
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                  child: Center(
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: widget.dominantColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const Expanded(child: SizedBox()),
+      ],
     );
   }
 
@@ -286,31 +255,73 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
     if (widget.isPreview!) {
       if (previewBanner != null) {
-        return Container(
-          constraints: const BoxConstraints(maxHeight: 300),
-          child: Image.file(
-            previewBanner,
-            fit: BoxFit.cover,
-            width: double.infinity,
+        return SizedBox(
+          height: 300,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.file(
+                  previewBanner,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              buildBannerGradient(),
+            ],
           ),
         );
       }
 
-      return Image.asset(
-        defaultBanners[rand],
-        fit: BoxFit.cover,
-        width: double.infinity,
+      return SizedBox(
+        height: 300,
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                defaultBanners[widget.randInt!],
+                fit: BoxFit.cover,
+              ),
+            ),
+            buildBannerGradient(),
+          ],
+        ),
       );
     } else {
-      return Container(
-        constraints: const BoxConstraints(maxHeight: 300),
-        child: Image.network(
-          widget.event.bannerPath,
-          fit: BoxFit.cover,
-          width: double.infinity,
+      return SizedBox(
+        height: 300,
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.network(
+                widget.event.bannerPath,
+                fit: BoxFit.cover,
+              ),
+            ),
+            buildBannerGradient(),
+          ],
         ),
       );
     }
+  }
+
+  Positioned buildBannerGradient() {
+    return Positioned(
+      bottom: -10,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: 300,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.transparent, widget.dominantColor],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0.2, 1],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildPhotos(bool isPreview, WidgetRef ref) {

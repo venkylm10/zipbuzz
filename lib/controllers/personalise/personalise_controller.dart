@@ -1,10 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
-import 'package:zipbuzz/models/user_model/user_model.dart';
+import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -15,31 +16,27 @@ final personaliseControllerProvider =
     StateNotifierProvider<PersonoliseControllerProvider, PersonaliseController>(
         (ref) => PersonoliseControllerProvider(ref: ref));
 
-class PersonoliseControllerProvider
-    extends StateNotifier<PersonaliseController> {
-  PersonoliseControllerProvider({required Ref ref})
-      : super(PersonaliseController(ref: ref));
+class PersonoliseControllerProvider extends StateNotifier<PersonaliseController> {
+  PersonoliseControllerProvider({required Ref ref}) : super(PersonaliseController(ref: ref));
 }
 
 class PersonaliseController {
   final Ref ref;
   PersonaliseController({required this.ref});
   final box = GetStorage();
-  var loading = true;
   final zipcodeController = TextEditingController();
   final mobileController = TextEditingController();
   var selectedInterests = <String>[];
-  var userLocation =
-      LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
+  var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
 
-  Future<void> initialise() async {
-    await ref.read(userLocationProvider.notifier).getCurrentLocation();
-    userLocation = ref.read(userLocationProvider);
-    zipcodeController.text = userLocation.zipcode;
-    mobileController.text =
-        ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
-    loading = false;
-  }
+  // TODO: fix location services
+
+  // Future<void> initialise() async {
+  //   await ref.read(userLocationProvider.notifier).getCurrentLocation();
+  //   userLocation = ref.read(userLocationProvider);
+  //   zipcodeController.text = userLocation.zipcode;
+  //   mobileController.text = ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
+  // }
 
   void updateInterests(String interest) {
     if (selectedInterests.contains(interest)) {
@@ -103,20 +100,22 @@ class PersonaliseController {
           country: location.country,
           countryDialCode: location.countryDialCode,
         );
-        ref.read(userProvider.notifier).update((state) => newUser);
 
         // creating new user
         await ref.read(dbServicesProvider).createUser(user: newUser);
 
         // Reading id after id is being updated in createUser method
         final id = GetStorage().read('id');
+        ref.read(userProvider.notifier).update((state) => newUser.copyWith(id: id));
         final userInterestPostModel =
             UserInterestPostModel(userId: id, interests: selectedInterests);
 
+        ref.read(newEventProvider.notifier).updateHostId(id);
+        ref.read(newEventProvider.notifier).updateHostName(newUser.name);
+        ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
+
         // posting users interests
-        await ref
-            .read(dbServicesProvider)
-            .postUserInterests(userInterestPostModel);
+        await ref.read(dbServicesProvider).postUserInterests(userInterestPostModel);
         box.write('user_interests', newUser.interests);
         debugPrint("USER CREATED SUCCESSFULLY");
       } catch (e) {

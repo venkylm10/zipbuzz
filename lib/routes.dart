@@ -19,7 +19,14 @@ final routes = {
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final event = args['event'];
     final isPreview = args['isPreview'] ?? false;
-    return EventDetailsPage(event: event, isPreview: isPreview);
+    final dominantColor = args['dominantColor'] as Color;
+    final randInt = args['randInt'] as int?;
+    return EventDetailsPage(
+      event: event,
+      isPreview: isPreview,
+      dominantColor: dominantColor,
+      randInt: randInt,
+    );
   },
   EditProfilePage.id: (context) => const EditProfilePage(),
   FAQsPage.id: (context) => const FAQsPage(),

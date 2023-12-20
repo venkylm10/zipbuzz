@@ -5,3 +5,11 @@ class DatabaseConstants {
   static const groupChatRoom = 'groupChatRooms';
   static const messageCollection = 'messages';
 }
+
+class BoxConstants {
+  static const login = 'login';
+  static const guestUser = 'guest_user';
+  static const userDetails = 'user_details';
+  static const userInterests = 'user_interests';
+  static const userSocials = 'user_socials';
+}

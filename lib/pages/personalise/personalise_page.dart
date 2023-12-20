@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,24 +13,23 @@ class PersonalisePage extends ConsumerStatefulWidget {
   const PersonalisePage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _PersonalisePageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _PersonalisePageState();
 }
 
 class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   var isMounted = true;
   @override
   void initState() {
-    initialise();
+    // initialise();
     super.initState();
   }
 
-  void initialise() async {
-    await ref.read(personaliseControllerProvider).initialise();
-    if (isMounted) {
-      setState(() {});
-    }
-  }
+  // void initialise() async {
+  //   await ref.read(personaliseControllerProvider).initialise();
+  //   if (isMounted) {
+  //     setState(() {});
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -136,8 +134,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24)
-                  .copyWith(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 8),
               child: InkWell(
                 onTap: () => personaliseController.sumbitInterests(),
                 borderRadius: BorderRadius.circular(24),
@@ -161,18 +158,18 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               ),
             ),
           ),
-          if (personaliseController.loading)
-            Align(
-              alignment: Alignment.center,
-              child: Expanded(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                  child: const CircularProgressIndicator(
-                    color: AppColors.primaryColor,
-                  ),
-                ),
-              ),
-            ),
+          // if (personaliseController.loading)
+          //   Align(
+          //     alignment: Alignment.center,
+          //     child: Expanded(
+          //       child: BackdropFilter(
+          //         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          //         child: const CircularProgressIndicator(
+          //           color: AppColors.primaryColor,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
         ],
       ),
     );
@@ -206,10 +203,9 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                   color: personaliseController.selectedInterests.contains(name)
                       ? Colors.white
                       : AppColors.primaryColor,
-                  fontWeight:
-                      personaliseController.selectedInterests.contains(name)
-                          ? FontWeight.w600
-                          : FontWeight.normal,
+                  fontWeight: personaliseController.selectedInterests.contains(name)
+                      ? FontWeight.w600
+                      : FontWeight.normal,
                 ),
               ),
             ),
@@ -219,8 +215,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     );
   }
 
-  Row buildTextField(String iconPath, String label,
-      TextEditingController controller, String hintText,
+  Row buildTextField(
+      String iconPath, String label, TextEditingController controller, String hintText,
       {TextInputType? keyboardType, int? maxLength}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,8 +224,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
         SvgPicture.asset(
           iconPath,
           height: 32,
-          colorFilter:
-              const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
         ),
         const SizedBox(width: 8),
         Expanded(

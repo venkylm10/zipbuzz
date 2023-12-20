@@ -34,11 +34,10 @@ class StorageSerives {
     }
   }
 
-  Future<String?> uploadProfilePic(
-      {required String uid, required File file}) async {
+  Future<String?> uploadProfilePic({required int id, required File file}) async {
     final filename = "profilePic_${file.path.split('/').last}";
     try {
-      await deleteProfilePic(uid: uid);
+      await deleteProfilePic(uid: id.toString());
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -47,7 +46,7 @@ class StorageSerives {
       final ref = _storage
           .ref()
           .child(StorageConstants.userData)
-          .child(uid)
+          .child(id.toString())
           .child(StorageConstants.profilePic)
           .child(filename);
       UploadTask uploadTask = ref.putFile(file);
@@ -93,8 +92,7 @@ class StorageSerives {
     }
   }
 
-  Future<String?> uploadEventBanner(
-      {required int id, required File file}) async {
+  Future<String?> uploadEventBanner({required int id, required File file}) async {
     debugPrint("UPLOADING EVENT BANNER");
     final filename = "eventBanner_${file.path.split('/').last}";
     try {
@@ -116,9 +114,7 @@ class StorageSerives {
   }
 
   Future<List<String>> uploadEventImages(
-      {required String uid,
-      required String eventId,
-      required List<File> images}) async {
+      {required String uid, required String eventId, required List<File> images}) async {
     List<String> downloadUrls = [];
     for (final file in images) {
       final filename = "eventBanner_${eventId}_${file.path.split('/').last}";

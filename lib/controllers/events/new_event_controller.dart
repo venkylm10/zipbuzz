@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
@@ -14,7 +16,8 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/models/user_model/user_model.dart';
+import 'package:zipbuzz/models/user/user_model.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -58,6 +61,18 @@ class NewEvent extends StateNotifier<EventModel> {
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
 
+  void updateHostId(int id) {
+    state = state.copyWith(hostId: id);
+  }
+
+  void updateHostPic(String url) {
+    state = state.copyWith(hostPic: url);
+  }
+
+  void updateHostName(String name) {
+    state = state.copyWith(hostName: name);
+  }
+
   void toggleGuestListPrivacy() {
     state = state.copyWith(privateGuestList: !state.privateGuestList);
   }
@@ -79,7 +94,7 @@ class NewEvent extends StateNotifier<EventModel> {
   }
 
   void updateCategory(String category) {
-    state = state.copyWith(category: category);
+    state = state.copyWith(category: category, iconPath: allInterests[category]!);
   }
 
   void onChangeCapacity(String value) {
@@ -204,7 +219,30 @@ class NewEvent extends StateNotifier<EventModel> {
     return true;
   }
 
+  void showSignInForm() {
+    showModalBottomSheet(
+      context: navigatorKey.currentContext!,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      barrierColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(32),
+        ),
+      ),
+      builder: (context) {
+        return const SignInSheet();
+      },
+    );
+  }
+
   Future<void> publishEvent() async {
+    if (GetStorage().read(BoxConstants.guestUser) != null) {
+      showSnackBar(message: "You need to be Signed In to create an event!", duration: 2);
+      await Future.delayed(const Duration(seconds: 2));
+      showSignInForm();
+      return;
+    }
     final check = vaidateNewEvent();
     if (!check) return;
     try {

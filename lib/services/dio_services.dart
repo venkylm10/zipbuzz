@@ -6,10 +6,12 @@ import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
-import 'package:zipbuzz/models/user_model/requests/user_details_request_model.dart';
-import 'package:zipbuzz/models/user_model/requests/user_id_request_model.dart';
+import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
+import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
+import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
+import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
-import 'package:zipbuzz/models/user_model/post/user_post_model.dart';
+import 'package:zipbuzz/models/user/post/user_post_model.dart';
 
 final dioServicesProvider = Provider((ref) => DioServices());
 
@@ -45,9 +47,11 @@ class DioServices {
     }
   }
 
-  Future<Map<String, dynamic>> postUserInterests(UserInterestPostModel userInterestPostModel) async {
+  Future<Map<String, dynamic>> postUserInterests(
+      UserInterestPostModel userInterestPostModel) async {
     try {
-      final response = await dio.post(DioConstants.postUserInterests, data: userInterestPostModel.toMap());
+      final response =
+          await dio.post(DioConstants.postUserInterests, data: userInterestPostModel.toMap());
       return response.data as Map<String, dynamic>;
     } catch (error) {
       debugPrint('Error in postUserInterests: $error');
@@ -90,8 +94,12 @@ class DioServices {
     debugPrint("GETTING USER DATA");
 
     try {
-      final response = await dio.get(DioConstants.getUserDetails, data: userDetailsRequestModel.toMap());
+      final response =
+          await dio.get(DioConstants.getUserDetails, data: userDetailsRequestModel.toMap());
       debugPrint("GETTING USER DATA COMPLETE");
+      box.write('user_details', response.data['data']);
+      box.write('user_interests', response.data['interests']);
+      box.write('user_socials', response.data['socials']);
       return response.data as Map<String, dynamic>;
     } catch (error) {
       debugPrint("GETTING USER DATA FAILED");
@@ -100,10 +108,12 @@ class DioServices {
         debugPrint("LOADING USER DATA FROM LOCAL STORAGE");
         final details = box.read('user_details') as Map<String, dynamic>;
         final interests = box.read('user_interests') as List;
+        final socials = box.read('user_socials') as Map<String, dynamic>;
         final res = {
           "status": "success",
           "data": details,
           "interests": interests.map((e) => e.toString()).toList(),
+          "socials": socials,
         };
         return res;
       } else {
@@ -130,7 +140,8 @@ class DioServices {
   Future<List> getUserEvents(UserEventsRequestModel userEventsRequestModel) async {
     try {
       debugPrint("GETTING USER EVENTS");
-      final response = await dio.get(DioConstants.getUserEvents, data: userEventsRequestModel.toMap());
+      final response =
+          await dio.get(DioConstants.getUserEvents, data: userEventsRequestModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
         debugPrint("GETTING USER EVENTS SUCCESSFULL");
@@ -145,11 +156,48 @@ class DioServices {
   }
 
   Future<void> sendEventInvite(EventInvitePostModel eventInvitePostModel) async {
+    if (eventInvitePostModel.phoneNumbers.isNotEmpty) {
+      try {
+        debugPrint("SENDING EVENT INVITE");
+        await dio.post(DioConstants.sendInvitation, data: eventInvitePostModel.toMap());
+      } catch (e) {
+        debugPrint("ERROR SENDING EVENT INVITE: $e");
+      }
+    }
+  }
+
+  Future<void> updateUserDetails(
+      UserDetailsUpdateRequestModel userDetailsUpdateRequestModel) async {
     try {
-      debugPrint("SENDING EVENT INVITE");
-      await dio.post(DioConstants.sendInvitation, data: eventInvitePostModel.toMap());
+      debugPrint("UPDATING USER DETAILS");
+      final res = await dio.put(DioConstants.updateUserDetails,
+          data: userDetailsUpdateRequestModel.toMap());
+      if (res.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("UPDATING USER DETAILS SUCCESSFULL");
+      } else {
+        debugPrint("UPDATING USER DETAILS FAILED");
+      }
     } catch (e) {
-      debugPrint("ERROR SENDING EVENT INVITE: $e");
+      debugPrint("UPDATING USER DETAILS FAILED");
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> updateUserInterests(UserInterestsUpdateModel userInterestsUpdateModel) async {
+    try {
+      debugPrint("UPDATING USER INTERESTS");
+      final res = await dio.put(
+        DioConstants.updateUserInterests,
+        data: userInterestsUpdateModel.toMap(),
+      );
+      if (res.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("UPDATING USER INTERESTS SUCCESSFULL");
+      } else {
+        debugPrint("UPDATING USER INTERESTS FAILED");
+      }
+    } catch (e) {
+      debugPrint("UPDATING USER INTERESTS FAILED");
+      debugPrint(e.toString());
     }
   }
 }

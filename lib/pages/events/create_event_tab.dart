@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -26,6 +30,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
   String category = allInterests.entries.first.key;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
+  int randInt = 0;
 
   void updateCoHosts() async {
     await ref.read(newEventProvider.notifier).updateCoHosts();
@@ -97,12 +102,36 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
     );
   }
 
+  Future<Color> getDominantColor() async {
+    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
+    final defaultBanners = ref.read(defaultsProvider).bannerPaths;
+    randInt = Random().nextInt(defaultBanners.length);
+    Color dominantColor = Colors.green;
+    if (previewBanner != null) {
+      final image = FileImage(previewBanner);
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      dominantColor = generator.dominantColor!.color;
+    } else {
+      final image = AssetImage(defaultBanners[randInt]);
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      dominantColor = generator.dominantColor!.color;
+    }
+    return dominantColor;
+  }
+
   void showPreview() async {
+    final dominantColor = await getDominantColor();
     navigatorKey.currentState!.pushNamed(
       EventDetailsPage.id,
       arguments: {
         'event': ref.read(newEventProvider),
         'isPreview': true,
+        'dominantColor': dominantColor,
+        'randInt': randInt,
       },
     );
   }

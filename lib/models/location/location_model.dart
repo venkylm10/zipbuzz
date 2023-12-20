@@ -5,26 +5,30 @@ class LocationModel {
     required this.countryDialCode,
     required this.zipcode,
   });
-  late final String city;
-  late final String country;
-  late final String countryDialCode;
-  late final String zipcode;
+  final String city;
+  final String country;
+  final String countryDialCode;
+  final String zipcode;
 
-  LocationModel.fromMap(Map<String, dynamic> json) {
-    country = json['country'];
-    countryDialCode = json['countryDialCode'];
-    zipcode = json['zipcode'];
-    city = json['city'];
-  }
 
   Map<String, dynamic> toMap() {
-    final data = <String, dynamic>{};
-    data['country'] = country;
-    data['countryDialCode'] = countryDialCode;
-    data['zipcode'] = zipcode;
-    data['city'] = city;
-    return data;
+    return <String, dynamic>{
+      'city': city,
+      'country': country,
+      'countryDialCode': countryDialCode,
+      'zipcode': zipcode,
+    };
   }
+
+  factory LocationModel.fromMap(Map<String, dynamic> map) {
+    return LocationModel(
+      city: map['city'] as String,
+      country: map['country'] as String,
+      countryDialCode: map['countryDialCode'] as String,
+      zipcode: map['zipcode'] as String,
+    );
+  }
+
 
   LocationModel copyWith({
     String? city,

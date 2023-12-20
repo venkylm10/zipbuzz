@@ -1,5 +1,5 @@
-import 'package:zipbuzz/models/user_model/post/user_details_model.dart';
-import 'package:zipbuzz/models/user_model/post/user_socials_model.dart';
+import 'package:zipbuzz/models/user/post/user_details_model.dart';
+import 'package:zipbuzz/models/user/post/user_socials_model.dart';
 
 class UserPostModel {
   UserPostModel({

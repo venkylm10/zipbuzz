@@ -10,26 +10,23 @@ import 'package:zipbuzz/services/permission_handler.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final userLocationProvider =
-    StateNotifierProvider<LocationServices, LocationModel>(
-        (ref) => LocationServices(ref: ref));
+    StateNotifierProvider<LocationServices, LocationModel>((ref) => LocationServices(ref: ref));
 
 class LocationServices extends StateNotifier<LocationModel> {
   final Ref ref;
   LocationServices({required this.ref})
-      : super(LocationModel(
-            city: "", country: "", countryDialCode: "", zipcode: "444444"));
+      : super(LocationModel(city: "", country: "", countryDialCode: "", zipcode: "444444"));
 
   Future<void> getCurrentLocation() async {
     try {
-      final permission =
-          await ref.read(appPermissionsProvider).getlocationPermission();
+      final permission = await ref.read(appPermissionsProvider).getlocationPermission();
       if (!permission) return;
       debugPrint("updating location");
       geo.Location location = geo.Location();
       geo.LocationData? currentLocation = await location.getLocation();
 
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          currentLocation.latitude!, currentLocation.longitude!);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(currentLocation.latitude!, currentLocation.longitude!);
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks.first;
@@ -42,9 +39,7 @@ class LocationServices extends StateNotifier<LocationModel> {
 
         if (placemark.isoCountryCode != null) {
           state = state.copyWith(
-              countryDialCode:
-                  CountryDialCode.fromCountryCode(placemark.isoCountryCode!)
-                      .dialCode);
+              countryDialCode: CountryDialCode.fromCountryCode(placemark.isoCountryCode!).dialCode);
         }
         debugPrint("updated user location : ${state.toMap()}");
         GetStorage().write('location', state.toMap());
@@ -83,21 +78,19 @@ class LocationServices extends StateNotifier<LocationModel> {
 
   Future<void> updatestateFromZipcode(String newZipcode) async {
     try {
-      final state = ref.read(userLocationProvider);
-      state.zipcode = newZipcode;
+      state = state.copyWith(zipcode: newZipcode);
       List<Location> locations = await locationFromAddress(newZipcode);
 
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          locations.first.latitude, locations.first.longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(locations.first.latitude, locations.first.longitude);
 
       final placemark = placemarks.first;
-      state.city = placemarks
-          .firstWhere((placemark) => placemark.locality != null)
-          .locality!;
-      state.country = placemark.country ?? "";
+      state = state.copyWith(
+          city: placemarks.firstWhere((placemark) => placemark.locality != null).locality!);
+      state = state.copyWith(country: placemark.country ?? "");
       if (placemark.isoCountryCode != null) {
-        state.countryDialCode =
-            CountryDialCode.fromCountryCode(placemark.isoCountryCode!).dialCode;
+        state = state.copyWith(
+            countryDialCode: CountryDialCode.fromCountryCode(placemark.isoCountryCode!).dialCode);
       }
       ref.read(userProvider.notifier).update((state) {
         return state.copyWith(

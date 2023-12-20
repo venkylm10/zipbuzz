@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
-import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
@@ -46,7 +45,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     if (await AppPermissions().getlocationPermission() && await AppPermissions().getContactsPermission()) {
       ref.read(contactsServicesProvider).updateAllContacts();
-      showSignInForm(navigatorKey.currentContext!);
+      showSignInForm();
     }
   }
 
@@ -59,12 +58,12 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
     } else {
       if (await AppPermissions().getlocationPermission() && await AppPermissions().getContactsPermission()) {
         ref.read(contactsServicesProvider).updateAllContacts();
-        showSignInForm(navigatorKey.currentContext!);
+        showSignInForm();
       }
     }
   }
 
-  Future<dynamic> showSignInForm(BuildContext context) {
+  Future<dynamic> showSignInForm() {
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

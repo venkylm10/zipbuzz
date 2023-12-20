@@ -99,23 +99,23 @@ class _EventDetailsState extends State<EventDetails> {
             ),
             const SizedBox(width: 8),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  "Gala Convention Center",
+                  widget.event.location,
                   softWrap: true,
                   style: AppStyles.h4.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Text(
-                  "420 Gala St, San Jose 95125",
-                  softWrap: true,
-                  style: AppStyles.h5.copyWith(
-                    color: AppColors.lightGreyColor,
-                  ),
-                ),
+                // Text(
+                //   "420 Gala St, San Jose 95125",
+                //   softWrap: true,
+                //   style: AppStyles.h5.copyWith(
+                //     color: AppColors.lightGreyColor,
+                //   ),
+                // ),
               ],
             )
           ],
