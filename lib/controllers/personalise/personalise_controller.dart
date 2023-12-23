@@ -6,10 +6,13 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
+import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final personaliseControllerProvider =
@@ -29,14 +32,16 @@ class PersonaliseController {
   var selectedInterests = <String>[];
   var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
 
-  // TODO: fix location services
-
-  // Future<void> initialise() async {
-  //   await ref.read(userLocationProvider.notifier).getCurrentLocation();
-  //   userLocation = ref.read(userLocationProvider);
-  //   zipcodeController.text = userLocation.zipcode;
-  //   mobileController.text = ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
-  // }
+  Future<void> initialise() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your location...");
+    await ref.read(userLocationProvider.notifier).getCurrentLocation();
+    ref.read(loadingTextProvider.notifier).updateLoadingText(null);
+    userLocation = ref.read(userLocationProvider);
+    zipcodeController.text = userLocation.zipcode;
+    mobileController.text = ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
+    return;
+  }
 
   void updateInterests(String interest) {
     if (selectedInterests.contains(interest)) {
@@ -52,7 +57,7 @@ class PersonaliseController {
       return false;
     }
 
-    if (zipcodeController.text.length != 6) {
+    if (zipcodeController.text.length <= 5) {
       showSnackBar(message: "Please enter valid zipcode");
       return false;
     }
@@ -76,8 +81,15 @@ class PersonaliseController {
     final countryDialCode = userLocation.countryDialCode;
     if (check) {
       try {
+        var location = ref.read(userLocationProvider);
+        if (location.zipcode != zipcodeController.text.trim()) {
+          ref.read(loadingTextProvider.notifier).updateLoadingText("Udating your location...");
+          await ref
+              .read(userLocationProvider.notifier)
+              .updateLocationFromZipcode(zipcodeController.text.trim());
+        }
+        location = ref.read(userLocationProvider);
         final auth = ref.read(authProvider);
-        final location = ref.read(userLocationProvider);
         UserModel newUser = UserModel(
           id: 1,
           name: auth.currentUser?.displayName ?? '',
@@ -102,6 +114,7 @@ class PersonaliseController {
         );
 
         // creating new user
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Setting up your data...");
         await ref.read(dbServicesProvider).createUser(user: newUser);
 
         // Reading id after id is being updated in createUser method
@@ -115,9 +128,11 @@ class PersonaliseController {
         ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
 
         // posting users interests
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Personalising the app...");
         await ref.read(dbServicesProvider).postUserInterests(userInterestPostModel);
         box.write('user_interests', newUser.interests);
         debugPrint("USER CREATED SUCCESSFULLY");
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
       } catch (e) {
         debugPrint("Error crearting user in personalise page: $e");
       }

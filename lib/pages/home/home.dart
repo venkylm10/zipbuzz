@@ -6,17 +6,12 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 
-class Home extends ConsumerStatefulWidget {
+class Home extends ConsumerWidget {
   static const id = '/home';
   const Home({super.key});
 
   @override
-  ConsumerState<Home> createState() => _HomeState();
-}
-
-class _HomeState extends ConsumerState<Home> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedTab = ref.watch(homeTabControllerProvider);
     final tabs = ref.read(homeTabControllerProvider.notifier).tabs;
     return Scaffold(

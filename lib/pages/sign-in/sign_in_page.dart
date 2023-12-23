@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/app_entries/guest_entry.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -19,16 +19,15 @@ class SignInSheet extends ConsumerWidget {
   const SignInSheet({super.key});
 
   void googleSignIn(WidgetRef ref) {
-    ref.read(authServicesProvider).signInWithGoogle();
-    navigatorKey.currentState!.pop();
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+    ref.read(authServicesProvider).signInWithGoogle();
   }
 
   void signInGuestUser(WidgetRef ref) {
     GetStorage().write(BoxConstants.login, true);
     GetStorage().write(BoxConstants.guestUser, true);
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
-    NavigationController.routeOff(route: Home.id);
+    NavigationController.routeOff(route: GuestEntry.id);
   }
 
   @override

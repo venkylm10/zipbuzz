@@ -12,6 +12,7 @@ import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final editEventControllerProvider =
@@ -54,6 +55,7 @@ class EditProfileController {
   }
 
   Future<void> saveChanges() async {
+    ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
       showSnackBar(message: "You need to be signed in to edit profile", duration: 2);
       await Future.delayed(const Duration(seconds: 2));
@@ -65,13 +67,15 @@ class EditProfileController {
     debugPrint("updating user");
     try {
       if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Updating Location..");
         await ref
             .read(userLocationProvider.notifier)
-            .updatestateFromZipcode(zipcodeController.text.trim());
+            .updateLocationFromZipcode(zipcodeController.text.trim());
       }
 
       String? newImageUrl;
       if (image != null) {
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading profile pic...");
         newImageUrl = await ref
             .read(storageServicesProvider)
             .uploadProfilePic(id: userClone.id, file: image!);
@@ -102,11 +106,12 @@ class EditProfileController {
         linkedin: updatedUser.linkedinId ?? "",
         twitter: updatedUser.twitterId ?? "",
       );
-
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Updating user data...");
       await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
       await ref
           .read(dbServicesProvider)
           .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
+      ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");
     } catch (e) {

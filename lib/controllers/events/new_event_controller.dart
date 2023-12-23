@@ -20,6 +20,7 @@ import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final newEventProvider = StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent(ref: ref));
@@ -237,6 +238,7 @@ class NewEvent extends StateNotifier<EventModel> {
   }
 
   Future<void> publishEvent() async {
+    ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
       showSnackBar(message: "You need to be Signed In to create an event!", duration: 2);
       await Future.delayed(const Duration(seconds: 2));
@@ -248,6 +250,7 @@ class NewEvent extends StateNotifier<EventModel> {
     try {
       var bannerUrl = "";
       if (bannerImage != null) {
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading banner image...");
         bannerUrl = await ref
                 .read(storageServicesProvider)
                 .uploadEventBanner(id: ref.read(userProvider).id, file: bannerImage!) ??
@@ -275,6 +278,7 @@ class NewEvent extends StateNotifier<EventModel> {
         capacity: state.capacity,
         filledCapacity: state.attendees,
       );
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
       await ref.read(dbServicesProvider).createEvent(eventPostModel);
 
       var eventDateTime = DateTime.parse(state.date);
@@ -291,7 +295,7 @@ class NewEvent extends StateNotifier<EventModel> {
         eventStart: eventPostModel.startTime,
         eventEnd: eventPostModel.endTime,
       );
-
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       showSnackBar(message: "Event created successfully");
       eventInvites = [];
@@ -318,10 +322,11 @@ class NewEvent extends StateNotifier<EventModel> {
         imageUrls: [],
         privateGuestList: false,
       );
+      ref.read(loadingTextProvider.notifier).reset();
       bannerImage = null;
-      navigatorKey.currentState!.pop();
       ref.read(eventsControllerProvider).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+      navigatorKey.currentState!.pop();
     } catch (e) {
       debugPrint(e.toString());
     }

@@ -7,6 +7,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 
 class PersonalisePage extends ConsumerStatefulWidget {
   static const id = '/welcome/personalise';
@@ -18,18 +19,6 @@ class PersonalisePage extends ConsumerStatefulWidget {
 
 class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   var isMounted = true;
-  @override
-  void initState() {
-    // initialise();
-    super.initState();
-  }
-
-  // void initialise() async {
-  //   await ref.read(personaliseControllerProvider).initialise();
-  //   if (isMounted) {
-  //     setState(() {});
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -41,12 +30,12 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final currentUser = ref.read(authProvider).currentUser!;
-    final personaliseController = ref.watch(personaliseControllerProvider);
-    final userLocation = ref.watch(userLocationProvider);
+    final personaliseController = ref.read(personaliseControllerProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          // Background Gradients
           Container(
             height: size.height,
             width: size.width,
@@ -77,6 +66,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               ),
             ),
           ),
+          // Form
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -99,14 +89,17 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                     style: AppStyles.h2,
                   ),
                   const SizedBox(height: 24),
-                  buildTextField(
-                    Assets.icons.geo,
-                    "Zipcode",
-                    personaliseController.zipcodeController,
-                    userLocation.zipcode,
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                  ),
+                  Consumer(builder: (context, subRef, child) {
+                    final userLocation = subRef.watch(userLocationProvider);
+                    return buildTextField(
+                      Assets.icons.geo,
+                      "Zipcode",
+                      personaliseController.zipcodeController,
+                      userLocation.zipcode,
+                      keyboardType: TextInputType.number,
+                      maxLength: 10,
+                    );
+                  }),
                   const SizedBox(height: 24),
                   buildTextField(
                     Assets.icons.telephone_filled,
@@ -131,47 +124,54 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 8),
-              child: InkWell(
-                onTap: () => personaliseController.sumbitInterests(),
+          buildSubmitButton(personaliseController),
+        ],
+      ),
+    );
+  }
+
+  Align buildSubmitButton(PersonaliseController personaliseController) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Consumer(builder: (context, subRef, child) {
+        final loadingText = subRef.watch(loadingTextProvider);
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 8),
+          child: InkWell(
+            onTap: () {
+              if (loadingText == null) {
+                personaliseController.sumbitInterests();
+              }
+            },
+            borderRadius: BorderRadius.circular(24),
+            child: Ink(
+              height: 48,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(24),
-                child: Ink(
-                  height: 48,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Confirm & Personalize",
-                      style: AppStyles.h3.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+              ),
+              child: Center(
+                child: loadingText == null
+                    ? Text(
+                        "Confirm & Personalize",
+                        style: AppStyles.h3.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    : Text(
+                        loadingText,
+                        style: AppStyles.h4.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ),
-          // if (personaliseController.loading)
-          //   Align(
-          //     alignment: Alignment.center,
-          //     child: Expanded(
-          //       child: BackdropFilter(
-          //         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-          //         child: const CircularProgressIndicator(
-          //           color: AppColors.primaryColor,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-        ],
-      ),
+        );
+      }),
     );
   }
 

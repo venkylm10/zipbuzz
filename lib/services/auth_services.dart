@@ -5,19 +5,18 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
-import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/app_entries/sign_up_entry.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
-import 'package:zipbuzz/pages/welcome/welcome_page.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/widgets/auth_gate.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 
 final authServicesProvider = Provider((ref) => AuthServices(
     auth: ref.read(authProvider), ref: ref, googleSignIn: ref.read(googleSignInProvider)));
@@ -69,7 +68,8 @@ class AuthServices {
         );
 
         if (credentials.additionalUserInfo!.isNewUser) {
-          NavigationController.routeOff(route: PersonalisePage.id);
+          _ref.read(loadingTextProvider.notifier).reset();
+          NavigationController.routeOff(route: SignUpEntry.id);
           return;
         } else {
           // getting id
@@ -78,30 +78,14 @@ class AuthServices {
               .getUserId(UserIdRequestModel(email: newUser.email));
           // storing id
           box.write('id', id);
+          box.write(BoxConstants.login, true);
           _ref.read(newEventProvider.notifier).updateHostId(id);
           _ref.read(newEventProvider.notifier).updateHostName(newUser.name);
           _ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
 
-          // updating user locally
-          _ref.read(userProvider.notifier).update((state) => newUser.copyWith(id: id));
+          // Back to AuthGate
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
 
-          // getting userdata
-          await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id));
-          box.write(BoxConstants.login, true);
-          await _ref.read(userLocationProvider.notifier).getCurrentLocation();
-          final location = _ref.read(userLocationProvider);
-          _ref.read(userProvider.notifier).update(
-                (state) => state.copyWith(
-                  zipcode: location.zipcode,
-                  city: location.city,
-                  country: location.country,
-                  countryDialCode: location.countryDialCode,
-                ),
-              );
-          await _ref.read(contactsServicesProvider).updateAllContacts();
-
-          // user details updated successfully, navigate to Home
-          NavigationController.routeOff(route: Home.id);
           return;
         }
       }
@@ -117,7 +101,7 @@ class AuthServices {
       final box = GetStorage();
       box.remove(BoxConstants.login);
       box.remove(BoxConstants.guestUser);
-      NavigationController.routeOff(route: WelcomePage.id);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
     } catch (e) {
       debugPrint(e.toString());
     }

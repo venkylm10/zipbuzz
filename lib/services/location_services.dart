@@ -15,7 +15,7 @@ final userLocationProvider =
 class LocationServices extends StateNotifier<LocationModel> {
   final Ref ref;
   LocationServices({required this.ref})
-      : super(LocationModel(city: "", country: "", countryDialCode: "", zipcode: "444444"));
+      : super(LocationModel(city: "", country: "", countryDialCode: "", zipcode: "95120"));
 
   Future<void> getCurrentLocation() async {
     try {
@@ -76,7 +76,7 @@ class LocationServices extends StateNotifier<LocationModel> {
     }
   }
 
-  Future<void> updatestateFromZipcode(String newZipcode) async {
+  Future<void> updateLocationFromZipcode(String newZipcode) async {
     try {
       state = state.copyWith(zipcode: newZipcode);
       List<Location> locations = await locationFromAddress(newZipcode);

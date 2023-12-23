@@ -9,6 +9,7 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
@@ -49,6 +50,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     editProfileController = ref.watch(editEventControllerProvider);
+    final loadingText = ref.watch(loadingTextProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -199,27 +201,44 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
               InkWell(
-                onTap: () => saveChanges(),
+                onTap: () {
+                  if (loadingText == null) {
+                    saveChanges();
+                  }
+                },
                 child: Ink(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(24),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(Assets.icons.save),
-                      const SizedBox(width: 8),
-                      Text(
-                        "Save Changes",
-                        style: AppStyles.h3.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                  child: loadingText == null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(Assets.icons.save),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Save Changes",
+                              style: AppStyles.h3.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              loadingText,
+                              style: AppStyles.h3.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],

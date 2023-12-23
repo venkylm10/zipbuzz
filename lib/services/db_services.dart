@@ -157,7 +157,7 @@ class DBServices {
         _ref
             .read(userProvider.notifier)
             .update((state) => state.copyWith(interests: userInterestPostModel.interests));
-        NavigationController.routeOff(route: Home.id);
+        
         debugPrint("POSTED USER INTERESTS SUCCESSFULLY");
       } else {
         showSnackBar(message: "Failed to post interests");

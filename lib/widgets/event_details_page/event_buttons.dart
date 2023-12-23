@@ -10,9 +10,10 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-class EventButtons extends ConsumerWidget {
+class EventButtons extends StatelessWidget {
   const EventButtons({
     required this.event,
     this.isPreview = false,
@@ -28,7 +29,7 @@ class EventButtons extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return !isPreview!
         ? Container(
             width: double.infinity,
@@ -141,6 +142,7 @@ class EventButtons extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
+                      // Event Link button
                       Expanded(
                         child: GestureDetector(
                           onTap: showSnackBar,
@@ -170,6 +172,7 @@ class EventButtons extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
+                      // Event Invite button
                       Expanded(
                         child: GestureDetector(
                           onTap: inviteContacts,
@@ -201,26 +204,42 @@ class EventButtons extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
+                  // Publish button
                   Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        ref.read(newEventProvider.notifier).publishEvent();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Publish",
-                            style: AppStyles.h3.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final loadingText = ref.watch(loadingTextProvider);
+                        return GestureDetector(
+                          onTap: () {
+                            if (loadingText == null) {
+                              ref.read(newEventProvider.notifier).publishEvent();
+                            }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            child: Center(
+                              child: loadingText == null
+                                  ? Text(
+                                      "Publish",
+                                      style: AppStyles.h3.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  : Text(
+                                      loadingText,
+                                      style: AppStyles.h4.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ],

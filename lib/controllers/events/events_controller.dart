@@ -139,7 +139,7 @@ final guestEventsList = <EventModel>[
     capacity: 20,
     imageUrls: [],
     privateGuestList: false,
-    hostName: "Venkatesh M",
+    hostName: "Zipbuzz User",
     hostPic: Defaults().profilePictureUrl,
   ),
   EventModel(
@@ -163,7 +163,7 @@ final guestEventsList = <EventModel>[
     capacity: 20,
     imageUrls: [],
     privateGuestList: false,
-    hostName: "Venkatesh M",
+    hostName: "Zipbuzz User",
     hostPic: Defaults().profilePictureUrl,
   ),
   EventModel(
@@ -187,7 +187,7 @@ final guestEventsList = <EventModel>[
     capacity: 20,
     imageUrls: [],
     privateGuestList: false,
-    hostName: "Venkatesh M",
+    hostName: "Zipbuzz User",
     hostPic: Defaults().profilePictureUrl,
   ),
   EventModel(
@@ -211,7 +211,7 @@ final guestEventsList = <EventModel>[
     capacity: 20,
     imageUrls: [],
     privateGuestList: false,
-    hostName: "Venkatesh M",
+    hostName: "Zipbuzz User",
     hostPic: Defaults().profilePictureUrl,
   ),
   EventModel(
@@ -235,7 +235,7 @@ final guestEventsList = <EventModel>[
     capacity: 20,
     imageUrls: [],
     privateGuestList: false,
-    hostName: "Venkatesh M",
+    hostName: "Zipbuzz User",
     hostPic: Defaults().profilePictureUrl,
   ),
   EventModel(
@@ -259,7 +259,7 @@ final guestEventsList = <EventModel>[
     capacity: 20,
     imageUrls: [],
     privateGuestList: false,
-    hostName: "Venkatesh M",
+    hostName: "Zipbuzz User",
     hostPic: Defaults().profilePictureUrl,
   ),
   EventModel(
@@ -283,7 +283,7 @@ final guestEventsList = <EventModel>[
     capacity: 20,
     imageUrls: [],
     privateGuestList: false,
-    hostName: "Venkatesh M",
+    hostName: "Zipbuzz User",
     hostPic: Defaults().profilePictureUrl,
   ),
 ];
