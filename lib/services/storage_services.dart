@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 
 final storageServicesProvider =
     Provider((ref) => StorageSerives(storage: ref.read(storageProvider)));
@@ -12,6 +14,7 @@ class StorageConstants {
   static const String eventBannersFolder = 'eventBanners';
   static const String eventBanner = 'eventBanner';
   static const String profilePic = 'profilePic';
+  static const String inviteePics = 'inviteePics';
 }
 
 class StorageSerives {
@@ -133,6 +136,36 @@ class StorageSerives {
         downloadUrls.add(url);
       } catch (e) {
         debugPrint(e.toString());
+      }
+    }
+    return downloadUrls;
+  }
+
+  Future<List<String>> uploadInviteePics(
+      {required int hostId, required int eventId, required List<Contact> contacts}) async {
+    List<String> downloadUrls = [];
+    for (final contact in contacts) {
+      if (contact.photo != null) {
+        final filename = contact.phones.first.toString();
+        try {
+          final ref = _storage
+              .ref()
+              .child(StorageConstants.userData)
+              .child(hostId.toString())
+              .child(StorageConstants.eventBannersFolder)
+              .child(eventId.toString())
+              .child(StorageConstants.inviteePics)
+              .child(filename);
+          UploadTask uploadTask = ref.putData(contact.photo!);
+          final snapshot = await uploadTask;
+          final url = await snapshot.ref.getDownloadURL();
+          downloadUrls.add(url);
+        } catch (e) {
+          downloadUrls.add(Defaults().contactAvatarUrl);
+          debugPrint(e.toString());
+        }
+      } else {
+        downloadUrls.add(Defaults().contactAvatarUrl);
       }
     }
     return downloadUrls;

@@ -8,13 +8,13 @@ import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
-import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -63,8 +63,8 @@ class DBServices {
     return _database.ref(DatabaseConstants.chatRoomCollection).child(eventId.toString()).onValue;
   }
 
-  Future<void> createEvent(EventPostModel eventPostModel) async {
-    await _dioServices.postEvent(eventPostModel);
+  Future<int> createEvent(EventPostModel eventPostModel) async {
+    return await _dioServices.postEvent(eventPostModel);
   }
 
   Future<void> createUser({required UserModel user}) async {
@@ -117,7 +117,6 @@ class DBServices {
     try {
       final res = await _dioServices.getUserData(userDetailsRequestModel);
       if (res['status'] == "success") {
-        debugPrint("USERDATA RESPONSE $res");
         final userDetails = UserDetailsModel.fromMap(res['data']);
         final interests = (res['interests'] as List).map((e) => e.toString()).toList();
         final userSocials = UserSocialsModel.fromMap(res['socials']);
@@ -157,7 +156,7 @@ class DBServices {
         _ref
             .read(userProvider.notifier)
             .update((state) => state.copyWith(interests: userInterestPostModel.interests));
-        
+
         debugPrint("POSTED USER INTERESTS SUCCESSFULLY");
       } else {
         showSnackBar(message: "Failed to post interests");
@@ -171,33 +170,37 @@ class DBServices {
     if (box.read(BoxConstants.guestUser) == null) {
       try {
         final list = await _dioServices.getUserEvents(userEventsRequestModel);
-        final events = list.map((e) {
+        final events = list.map((e) async {
           final res = EventResponseModel.fromMap(e as Map<String, dynamic>);
+          final members =
+              await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.id));
+          if (members.isNotEmpty) debugPrint(members.first.name);
           final eventModel = EventModel(
-              id: res.id,
-              title: res.name,
-              hostId: res.hostId,
-              coHostIds: [],
-              guestIds: [],
-              location: res.venue,
-              date: res.date,
-              startTime: res.startTime,
-              endTime: res.endTime,
-              attendees: res.filledCapacity,
-              category: res.category,
-              favourite: false,
-              bannerPath: res.banner,
-              iconPath: allInterests[res.category] ?? allInterests['Hiking']!,
-              about: res.description,
-              isPrivate: res.eventType,
-              capacity: res.capacity,
-              imageUrls: [],
-              privateGuestList: true,
-              hostName: res.hostName,
-              hostPic: res.hostPic);
+            id: res.id,
+            title: res.name,
+            hostId: res.hostId,
+            coHostIds: [],
+            location: res.venue,
+            date: res.date,
+            startTime: res.startTime,
+            endTime: res.endTime,
+            attendees: res.filledCapacity,
+            category: res.category,
+            favourite: false,
+            bannerPath: res.banner,
+            iconPath: allInterests[res.category] ?? allInterests['Hiking']!,
+            about: res.description,
+            isPrivate: res.eventType,
+            capacity: res.capacity,
+            imageUrls: [],
+            privateGuestList: true,
+            hostName: res.hostName,
+            hostPic: res.hostPic,
+            eventMembers: members,
+          );
           return eventModel;
         }).toList();
-        return events;
+        return await Future.wait(events);
       } catch (e) {
         debugPrint(e.toString());
         return [];

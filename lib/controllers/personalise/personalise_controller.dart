@@ -2,11 +2,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -36,10 +38,14 @@ class PersonaliseController {
     await Future.delayed(const Duration(milliseconds: 500));
     ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your location...");
     await ref.read(userLocationProvider.notifier).getCurrentLocation();
+    ref.read(loadingTextProvider.notifier).updateLoadingText("Fetching contacts...");
+    await ref.read(contactsServicesProvider).updateAllContacts();
     ref.read(loadingTextProvider.notifier).updateLoadingText(null);
     userLocation = ref.read(userLocationProvider);
     zipcodeController.text = userLocation.zipcode;
     mobileController.text = ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
+    ref.read(newEventProvider.notifier).resetNewEvent();
+    ref.read(homeTabControllerProvider.notifier).isSearching = true;
     return;
   }
 

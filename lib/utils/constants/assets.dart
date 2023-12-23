@@ -74,6 +74,7 @@ class AppIcons {
   final checkbox_checked = 'assets/icons/checkbox_checked.svg';
   final checkbox_unchecked = 'assets/icons/checkbox_unchecked.svg';
   final people_outline = 'assets/icons/people_outline.svg';
+  final group_chat = 'assets/icons/group_chat.svg';
 }
 
 class WelcomeImage {
@@ -92,6 +93,7 @@ class Images {
   final evermore = 'assets/images/events/dazzling_of_evermore.png';
   final art_museum = 'assets/images/events/art_museum.png';
   final no_events = 'assets/images/events/no_events.png';
+  final default_contact_avatar = 'assets/images/events/default_contact_avatar.png';
 
   // profile
   final profile = 'assets/images/profile.png';

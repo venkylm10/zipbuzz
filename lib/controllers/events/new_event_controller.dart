@@ -47,11 +47,11 @@ class NewEvent extends StateNotifier<EventModel> {
             hostName: ref.read(userProvider).name,
             hostPic: ref.read(userProvider).imageUrl,
             coHostIds: [],
-            guestIds: [],
             capacity: 10,
             isPrivate: false,
             imageUrls: [],
             privateGuestList: false,
+            eventMembers: [],
           ),
         );
   List<File> selectedImages = [];
@@ -217,6 +217,10 @@ class NewEvent extends StateNotifier<EventModel> {
       showSnackBar(message: "Please enter event start time");
       return false;
     }
+    if (state.endTime.isEmpty) {
+      showSnackBar(message: "Please enter event end time");
+      return false;
+    }
     return true;
   }
 
@@ -270,23 +274,33 @@ class NewEvent extends StateNotifier<EventModel> {
         date: DateTime(date.year, date.month, date.day).toString(),
         venue: state.location,
         startTime: state.startTime,
-        endTime: state.endTime ?? "null",
+        endTime: state.endTime,
         hostId: state.hostId,
         hostName: state.hostName,
         hostPic: state.hostPic,
         eventType: state.isPrivate,
         capacity: state.capacity,
-        filledCapacity: state.attendees,
+        filledCapacity: eventInvites.length,
       );
+
       ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
-      await ref.read(dbServicesProvider).createEvent(eventPostModel);
+      final eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
 
       var eventDateTime = DateTime.parse(state.date);
       var formattedDate = formatWithSuffix(eventDateTime);
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
+
+      final inviteePicUrls = await ref
+          .read(storageServicesProvider)
+          .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
 
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: eventInvites.map((e) {
           return e.phones.first.normalizedNumber;
+        }).toList(),
+        images: inviteePicUrls,
+        names: eventInvites.map((e) {
+          return e.displayName;
         }).toList(),
         senderName: ref.read(userProvider).name,
         eventName: eventPostModel.name,
@@ -294,38 +308,15 @@ class NewEvent extends StateNotifier<EventModel> {
         eventLocation: eventPostModel.venue,
         eventStart: eventPostModel.startTime,
         eventEnd: eventPostModel.endTime,
+        eventId: eventId,
       );
-      ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       showSnackBar(message: "Event created successfully");
-      eventInvites = [];
-      state = EventModel(
-        id: ref.read(userProvider).id,
-        title: "",
-        location: "",
-        date: DateTime.now().toString(),
-        startTime: "",
-        endTime: "",
-        attendees: 0,
-        category: "Hiking",
-        favourite: false,
-        bannerPath: "",
-        iconPath: allInterests['Hiking']!,
-        about: "",
-        hostId: ref.read(userProvider).id,
-        hostName: ref.read(userProvider).name,
-        hostPic: ref.read(userProvider).imageUrl,
-        coHostIds: [],
-        guestIds: [],
-        capacity: 10,
-        isPrivate: false,
-        imageUrls: [],
-        privateGuestList: false,
-      );
+      resetNewEvent();
       ref.read(loadingTextProvider.notifier).reset();
-      bannerImage = null;
       ref.read(eventsControllerProvider).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+
       navigatorKey.currentState!.pop();
     } catch (e) {
       debugPrint(e.toString());
@@ -345,5 +336,33 @@ class NewEvent extends StateNotifier<EventModel> {
       suffix = 'th';
     }
     return DateFormat('d\'$suffix\' MMMM, y').format(date);
+  }
+
+  void resetNewEvent() {
+    state = EventModel(
+      id: ref.read(userProvider).id,
+      title: "",
+      location: "",
+      date: DateTime.now().toString(),
+      startTime: "",
+      endTime: "",
+      attendees: 0,
+      category: "Hiking",
+      favourite: false,
+      bannerPath: "",
+      iconPath: allInterests['Hiking']!,
+      about: "",
+      hostId: ref.read(userProvider).id,
+      hostName: ref.read(userProvider).name,
+      hostPic: ref.read(userProvider).imageUrl,
+      coHostIds: [],
+      capacity: 10,
+      isPrivate: false,
+      imageUrls: [],
+      privateGuestList: false,
+      eventMembers: [],
+    );
+    eventInvites = [];
+    bannerImage = null;
   }
 }

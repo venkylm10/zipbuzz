@@ -8,7 +8,6 @@ import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/app_entries/sign_up_entry.dart';
-import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';

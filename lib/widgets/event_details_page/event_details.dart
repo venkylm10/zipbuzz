@@ -24,9 +24,8 @@ class _EventDetailsState extends State<EventDetails> {
 
   void initialiseTime() {
     startTime = widget.event.startTime;
-    if (widget.event.endTime != null) {
-      endTime = widget.event.endTime!;
-    }
+      endTime = widget.event.endTime;
+    
     setState(() {});
   }
 

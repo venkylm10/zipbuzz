@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -41,18 +43,34 @@ class _EventHostsState extends ConsumerState<EventHosts> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      // TODO: Update Co-Hosts
       children: [
         buildHost(widget.event.hostId, widget.event.hostName, widget.event.hostPic),
-        // Column(
-        //   children: List.generate(
-        //     widget.event.coHosts.length,
-        //     (index) {
-        //       final coHost = widget.coHosts[index];
-        //       return buildHost(coHost.id, coHost.name, coHost.imageUrl);
-        //     },
-        //   ),
-        // )
+        const SizedBox(height: 12),
+        GestureDetector(
+          onTap: () => navigateToChatPage(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              border: Border.all(color: AppColors.primaryColor),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                SvgPicture.asset(Assets.icons.group_chat, height: 16),
+                const SizedBox(width: 8),
+                Text(
+                  "Group Chat",
+                  style: AppStyles.h5.copyWith(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }
@@ -61,6 +79,7 @@ class _EventHostsState extends ConsumerState<EventHosts> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             height: 32,
@@ -90,24 +109,6 @@ class _EventHostsState extends ConsumerState<EventHosts> {
             hostName,
             style: AppStyles.h5,
           ),
-          const Expanded(child: SizedBox()),
-          GestureDetector(
-            onTap: () => navigateToChatPage(),
-            child: Container(
-              height: 32,
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  "Message",
-                  style: AppStyles.h4.copyWith(color: AppColors.primaryColor),
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );

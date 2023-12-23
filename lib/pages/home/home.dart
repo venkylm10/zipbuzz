@@ -27,6 +27,9 @@ class Home extends ConsumerWidget {
         fixedColor: AppColors.primaryColor,
         onTap: (value) {
           ref.read(homeTabControllerProvider.notifier).updateIndex(value);
+          if (value == 0) {
+            ref.read(homeTabControllerProvider.notifier).isSearching = true;
+          }
         },
         items: [
           BottomNavigationBarItem(

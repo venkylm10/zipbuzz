@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:zipbuzz/pages/event_details/friends_registered_box.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
@@ -17,6 +18,7 @@ import 'package:zipbuzz/widgets/event_details_page/event_buttons.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_details.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_hosts.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_qrcode.dart';
+import 'package:zipbuzz/widgets/event_details_page/guest_list.dart';
 
 class EventDetailsPage extends ConsumerStatefulWidget {
   static const id = 'event/details';
@@ -73,8 +75,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   @override
   void initState() {
-    // TODO: getting cohost details
-    // getCoHosts(widget.event.coHostIds);
     initialise();
     super.initState();
   }
@@ -98,108 +98,133 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                 child: AnimatedPadding(
                   padding: EdgeInsets.symmetric(horizontal: horizontalMargin),
                   duration: const Duration(milliseconds: 100),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          widget.event.title,
-                          style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-                          softWrap: true,
+                  child: Stack(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
+                            Text(
+                              widget.event.title,
+                              style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+                              softWrap: true,
+                            ),
+                            const SizedBox(height: 10),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                EventChip(
-                                  eventColor: eventColor,
-                                  interest: widget.event.category,
-                                  iconPath: widget.event.iconPath,
+                                Row(
+                                  children: [
+                                    EventChip(
+                                      eventColor: eventColor,
+                                      interest: widget.event.category,
+                                      iconPath: widget.event.iconPath,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Consumer(builder: (context, ref, child) {
+                                      final attendees = ref.watch(newEventProvider).attendees;
+                                      final total = ref.watch(newEventProvider).capacity;
+                                      return AttendeeNumbers(
+                                        attendees:
+                                            widget.isPreview! ? attendees : widget.event.attendees,
+                                        total: widget.isPreview! ? total : widget.event.capacity,
+                                        backgroundColor: AppColors.greyColor.withOpacity(0.1),
+                                      );
+                                    }),
+                                  ],
                                 ),
-                                const SizedBox(width: 10),
-                                AttendeeNumbers(
-                                  attendees: widget.event.attendees,
-                                  total: widget.event.capacity,
-                                  backgroundColor: AppColors.greyColor.withOpacity(0.1),
-                                ),
+                                const EventQRCode(),
                               ],
                             ),
-                            const EventQRCode(),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Divider(
-                          color: AppColors.greyColor.withOpacity(0.2),
-                          thickness: 0,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Event details",
-                          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                        ),
-                        const SizedBox(height: 16),
-                        EventDetails(event: widget.event),
-                        const SizedBox(height: 16),
-                        Divider(
-                          color: AppColors.greyColor.withOpacity(0.2),
-                          thickness: 0,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                            const SizedBox(height: 16),
+                            Divider(
+                              color: AppColors.greyColor.withOpacity(0.2),
+                              thickness: 0,
+                            ),
                             const SizedBox(height: 16),
                             Text(
-                              "Hosts",
+                              "Event details",
                               style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                             ),
                             const SizedBox(height: 16),
+                            EventDetails(event: widget.event),
+                            const SizedBox(height: 16),
+                            Divider(
+                              color: AppColors.greyColor.withOpacity(0.2),
+                              thickness: 0,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "About",
+                              style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(widget.event.about, style: AppStyles.h4),
+                            const SizedBox(height: 16),
+                            Divider(
+                              color: AppColors.greyColor.withOpacity(0.2),
+                              thickness: 0,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "Sneak peaks",
+                              style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                            ),
+                            const SizedBox(height: 16),
+                            buildPhotos(widget.isPreview!, ref),
+                            const SizedBox(height: 16),
+                            Divider(
+                              color: AppColors.greyColor.withOpacity(0.2),
+                              thickness: 0,
+                            ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                EventHosts(
-                                  event: widget.event,
-                                  isPreview: widget.isPreview!,
+                                const SizedBox(height: 16),
+                                Text(
+                                  "Hosts",
+                                  style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                                 ),
                                 const SizedBox(height: 16),
-                                Divider(
-                                  color: AppColors.greyColor.withOpacity(0.2),
-                                  thickness: 0,
-                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    EventHosts(
+                                      event: widget.event,
+                                      isPreview: widget.isPreview!,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Divider(
+                                      color: AppColors.greyColor.withOpacity(0.2),
+                                      thickness: 0,
+                                    ),
+                                  ],
+                                )
                               ],
-                            )
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "Guest list (${widget.event.eventMembers.length})",
+                              style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                            ),
+                            const SizedBox(height: 16),
+                            EventGuestList(
+                              guests: widget.event.eventMembers,
+                            ),
+                            const SizedBox(height: 16),
                           ],
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "About",
-                          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(widget.event.about, style: AppStyles.h4),
-                        const SizedBox(height: 16),
-                        Divider(
-                          color: AppColors.greyColor.withOpacity(0.2),
-                          thickness: 0,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Sneak peaks",
-                          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                        ),
-                        const SizedBox(height: 16),
-                        buildPhotos(widget.isPreview!, ref),
-                      ],
-                    ),
+                      ),
+                      const FriendsRegisteredBox()
+                    ],
                   ),
                 ),
               ),

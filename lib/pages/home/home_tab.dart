@@ -19,7 +19,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   double topPadding = 0;
   bool isMounted = true;
 
-  
   @override
   void initState() {
     if (isMounted) {
@@ -179,7 +178,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     return AnimatedOpacity(
       key: ref.read(homeTabControllerProvider.notifier).categoryPageKey,
       duration: const Duration(milliseconds: 500),
-      opacity: isSearching ? 1 : 0,
+      opacity: isSearching ? 1 : 0.5,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),

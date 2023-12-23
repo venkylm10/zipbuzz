@@ -2,9 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/models/events/event_member_model.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
+import 'package:zipbuzz/models/events/responses/event_resonse_modal_class.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -122,18 +125,22 @@ class DioServices {
     }
   }
 
-  Future<void> postEvent(EventPostModel eventPostModel) async {
+  Future<int> postEvent(EventPostModel eventPostModel) async {
     debugPrint("POSTING EVENT");
+    debugPrint(eventPostModel.toMap().toString());
     try {
       final response = await dio.post(DioConstants.postEvent, data: eventPostModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("POSTING EVENT SUCESSFULL");
+        print(response.data['id']);
+        return response.data['id'] as int;
       } else {
-        debugPrint("POSTING EVENT FAILED");
+        throw "POSTING EVENT FAILED";
       }
     } catch (e) {
       debugPrint("POSTING EVENT FAILED");
       debugPrint(e.toString());
+      throw "POSTING EVENT FAILED";
     }
   }
 
@@ -160,6 +167,7 @@ class DioServices {
       try {
         debugPrint("SENDING EVENT INVITE");
         await dio.post(DioConstants.sendInvitation, data: eventInvitePostModel.toMap());
+        debugPrint("SENDING EVENT INVITE SUCCESSFULL");
       } catch (e) {
         debugPrint("ERROR SENDING EVENT INVITE: $e");
       }
@@ -198,6 +206,22 @@ class DioServices {
     } catch (e) {
       debugPrint("UPDATING USER INTERESTS FAILED");
       debugPrint(e.toString());
+    }
+  }
+
+  Future<List<EventMemberModel>> getEventMembers(
+      EventMembersRequestModel eventMembersRequestModel) async {
+    try {
+      final res =
+          await dio.get(DioConstants.getEventMembers, data: eventMembersRequestModel.toMap());
+      if (res.data[DioConstants.status] == DioConstants.success) {
+        return EventResponseModalClass.fromMap(res.data).eventMembers;
+      } else {
+        throw Exception("Failed to get event members");
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception("Failed to get event members");
     }
   }
 }

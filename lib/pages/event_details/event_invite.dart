@@ -3,7 +3,6 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -23,16 +22,12 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   @override
   void initState() {
     searchController = TextEditingController();
-    updateContacts();
+    resetContacts();
     super.initState();
   }
 
-  void updateContacts() async {
+  void resetContacts() async {
     ref.read(newEventProvider.notifier).resetContactSearch();
-    if (ref.read(newEventProvider.notifier).allContacts.isEmpty) {
-      await ref.read(contactsServicesProvider).updateAllContacts();
-      setState(() {});
-    }
   }
 
   @override
@@ -212,6 +207,8 @@ class _EventInviteState extends ConsumerState<EventInvite> {
         ),
         child: Row(
           children: [
+            buildAvatar(contact),
+            const SizedBox(width: 12),
             Text(
               contact.displayName,
               style: AppStyles.h4.copyWith(
@@ -228,5 +225,33 @@ class _EventInviteState extends ConsumerState<EventInvite> {
         ),
       ),
     );
+  }
+
+  Widget buildAvatar(Contact contact) {
+    if (contact.photo != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Image.memory(contact.photo!, fit: BoxFit.cover),
+        ),
+      );
+    } else {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Image.asset(Assets.images.default_contact_avatar),
+        ),
+      );
+    }
   }
 }

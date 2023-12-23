@@ -37,7 +37,10 @@ class _EventCardState extends ConsumerState<EventCard> {
     final dominantColor = await getDominantColor();
     navigatorKey.currentState!.push(
       MaterialPageRoute(
-        builder: (context) => EventDetailsPage(event: widget.event, dominantColor: dominantColor,),
+        builder: (context) => EventDetailsPage(
+          event: widget.event,
+          dominantColor: dominantColor,
+        ),
       ),
     );
   }
@@ -140,10 +143,13 @@ class _EventCardState extends ConsumerState<EventCard> {
                               ),
                             ),
                           ),
-                          const Positioned(
+                          Positioned(
                             bottom: 8,
                             right: 8,
-                            child: AttendeeNumbers(attendees: 8, total: 10),
+                            child: AttendeeNumbers(
+                              attendees: widget.event.attendees,
+                              total: widget.event.capacity,
+                            ),
                           ),
                         ],
                       ),
@@ -207,7 +213,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                "${widget.event.startTime} - ${widget.event.endTime ?? ''}",
+                                "${widget.event.startTime} - ${widget.event.endTime}",
                                 style: AppStyles.h5.copyWith(
                                   color: AppColors.lightGreyColor,
                                 ),
