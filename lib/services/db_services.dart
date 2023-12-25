@@ -8,6 +8,7 @@ import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
@@ -25,6 +26,7 @@ import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
 final dbServicesProvider = Provider((ref) => DBServices(
       database: ref.read(databaseProvider),
@@ -65,6 +67,10 @@ class DBServices {
 
   Future<int> createEvent(EventPostModel eventPostModel) async {
     return await _dioServices.postEvent(eventPostModel);
+  }
+
+  Future<void> editEvent(EditEventRequestModel editEventRequestModel) async {
+    return await _dioServices.editEvent(editEventRequestModel);
   }
 
   Future<void> createUser({required UserModel user}) async {
@@ -136,7 +142,7 @@ class DBServices {
             );
         _ref.read(newEventProvider.notifier).updateHostId(userDetailsRequestModel.userId);
         _ref.read(userProvider.notifier).update((state) => updatedUser);
-        debugPrint("UPDATED USER DATA${_ref.read(userProvider).toMap()}");
+        debugPrint("CURRENT USER DATA${_ref.read(userProvider).toMap()}");
         box.write('user_details', userDetails.toMap());
         box.write('user_interests', updatedUser.interests);
       } else {
@@ -174,7 +180,6 @@ class DBServices {
           final res = EventResponseModel.fromMap(e as Map<String, dynamic>);
           final members =
               await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.id));
-          if (members.isNotEmpty) debugPrint(members.first.name);
           final eventModel = EventModel(
             id: res.id,
             title: res.name,
@@ -207,5 +212,10 @@ class DBServices {
       }
     }
     return guestEventsList;
+  }
+
+  Future<void> getEventRequestMembers(int eventId) async {
+    final requests = await _dioServices.getEventRequestMembers(eventId);
+    _ref.read(eventRequestMembersProvider.notifier).update((state) => requests);
   }
 }

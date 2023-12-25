@@ -1,25 +1,20 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/pages/events/edit_event_form.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
-import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
-import 'package:zipbuzz/widgets/create_event/event_banner_selector.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
 import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 import 'package:zipbuzz/widgets/create_event/photos.dart';
+import 'package:zipbuzz/widgets/edit_event/event_banner.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
 class EditEventPage extends ConsumerStatefulWidget {
@@ -73,19 +68,19 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const EventBannerSelector(),
+              const EditEventBannerSelector(),
               const SizedBox(height: 16),
               const EditEventForm(),
               broadDivider(),
               const AddHosts(),
               broadDivider(),
-              const EventTypeAndCapacity(),
+              const EventTypeAndCapacity(rePublish: true),
               broadDivider(),
               const AddEventPhotos(),
               broadDivider(),
               const CreateEventGuestListType(),
               const SizedBox(height: 32),
-              EventHostGuestList(guests: ref.watch(editEventControllerProvider).eventMembers),
+              EventHostGuestList(guests: ref.watch(editEventControllerProvider).eventMembers, eventId: ref.watch(editEventControllerProvider).id),
               broadDivider(),
               const SizedBox(height: 16),
             ],
@@ -122,9 +117,7 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
   }
 
   Future<Color> getDominantColor() async {
-    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    final defaultBanners = ref.read(defaultsProvider).bannerPaths;
-    randInt = Random().nextInt(defaultBanners.length);
+    final previewBanner = ref.read(editEventControllerProvider.notifier).bannerImage;
     Color dominantColor = Colors.green;
     if (previewBanner != null) {
       final image = FileImage(previewBanner);
@@ -133,12 +126,11 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
       );
       dominantColor = generator.dominantColor!.color;
     } else {
-      final image = AssetImage(defaultBanners[randInt]);
-      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-        image,
-      );
+      final image = NetworkImage(ref.read(editEventControllerProvider).bannerPath);
+      final generator = await PaletteGenerator.fromImageProvider(image);
       dominantColor = generator.dominantColor!.color;
     }
+
     return dominantColor;
   }
 
@@ -148,7 +140,7 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
       EventDetailsPage.id,
       arguments: {
         'event': ref.read(editEventControllerProvider),
-        'isPreview': true,
+        'rePublish': true,
         'dominantColor': dominantColor,
         'randInt': randInt,
       },

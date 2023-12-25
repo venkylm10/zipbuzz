@@ -1,57 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 
 class EventTypeAndCapacity extends ConsumerStatefulWidget {
-  const EventTypeAndCapacity({super.key});
+  const EventTypeAndCapacity({super.key, this.rePublish = false});
+  final bool? rePublish;
 
   @override
-  ConsumerState<EventTypeAndCapacity> createState() =>
-      _EventTypeAndCapacityState();
+  ConsumerState<EventTypeAndCapacity> createState() => _EventTypeAndCapacityState();
 }
 
 class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
-  int capacity = 10;
-  var isPrivate = false;
+  int newCapacity = 10;
+  var newIsPrivate = false;
   final capacityController = TextEditingController();
   late NewEvent newEvent;
+  late EditEventController editEventController;
 
   void updateEventType(bool value) {
+    if (widget.rePublish!) {
+      editEventController.updateEventType(value);
+      return;
+    }
     newEvent.updateEventType(value);
   }
 
   void increaseCapacity() {
+    if (widget.rePublish!) {
+      editEventController.increaseCapacity();
+    }
     newEvent.increaseCapacity();
   }
 
   void decreaseCapacity() {
+    if (widget.rePublish!) {
+      editEventController.decreaseCapacity();
+    }
     newEvent.decreaseCapacity();
   }
 
   void onChange(String value) {
-    newEvent.onChangeCapacity(value);
     if (value.isEmpty) {
       capacityController.text = 0.toString();
     } else {
-      capacityController.text = capacity.toString();
+      capacityController.text = newCapacity.toString();
     }
+    if (widget.rePublish!) {
+      editEventController.onChangeCapacity(value);
+    }
+    newEvent.onChangeCapacity(value);
   }
 
   @override
   void initState() {
+    editEventController = ref.read(editEventControllerProvider.notifier);
     newEvent = ref.read(newEventProvider.notifier);
-    capacityController.text = capacity.toString();
+    capacityController.text = newCapacity.toString();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    capacity = ref.watch(newEventProvider).capacity;
-    isPrivate = ref.watch(newEventProvider).isPrivate;
-    capacityController.text = capacity.toString();
+    newCapacity = widget.rePublish!
+        ? ref.watch(editEventControllerProvider).capacity
+        : ref.watch(newEventProvider).capacity;
+    newIsPrivate = widget.rePublish!
+        ? ref.watch(editEventControllerProvider).isPrivate
+        : ref.watch(newEventProvider).isPrivate;
+    capacityController.text = newCapacity.toString();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,16 +87,14 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: AppColors.bgGrey,
-              border: Border.all(
-                  color: isPrivate
-                      ? AppColors.borderGrey
-                      : AppColors.primaryColor),
+              border:
+                  Border.all(color: newIsPrivate ? AppColors.borderGrey : AppColors.primaryColor),
             ),
             child: Row(
               children: [
                 Radio(
                   value: false,
-                  groupValue: isPrivate,
+                  groupValue: newIsPrivate,
                   activeColor: AppColors.primaryColor,
                   onChanged: (value) {
                     updateEventType(false);
@@ -110,15 +128,14 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
               borderRadius: BorderRadius.circular(12),
               color: AppColors.bgGrey,
               border: Border.all(
-                color:
-                    !isPrivate ? AppColors.borderGrey : AppColors.primaryColor,
+                color: !newIsPrivate ? AppColors.borderGrey : AppColors.primaryColor,
               ),
             ),
             child: Row(
               children: [
                 Radio(
                   value: true,
-                  groupValue: isPrivate,
+                  groupValue: newIsPrivate,
                   activeColor: AppColors.primaryColor,
                   onChanged: (value) {
                     updateEventType(true);
@@ -133,8 +150,7 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
                       child: Text(
                         "Only people whom you invite can join this event",
                         softWrap: true,
-                        style: AppStyles.h5
-                            .copyWith(color: AppColors.lightGreyColor),
+                        style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                       ),
                     ),
                   ],

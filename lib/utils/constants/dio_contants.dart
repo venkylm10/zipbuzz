@@ -10,8 +10,11 @@ class DioConstants {
   static const String getUserInterests = "/users/user_interest/";
   static const String updateUserInterests = "/users/user_interest/";
   static const String postEvent = "/events/create_event/";
+  static const String editEvent = '/events/edit_event/';
   static const String sendInvitation = "/users/invite_user/";
   static const String getEventMembers = "/events/event_members/";
+  static const String getEventRequests = "/events/event_request/";
+  static const String editUserStatus = "/events/event_request/";
 
   static const String status = "status";
   static const String success = "success";

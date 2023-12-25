@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/pages/events/edit_event_form.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_invite.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -21,11 +20,13 @@ class EventButtons extends StatelessWidget {
   const EventButtons({
     required this.event,
     this.isPreview = false,
+    this.rePublish = false,
     super.key,
   });
 
   final EventModel event;
   final bool? isPreview;
+  final bool? rePublish;
 
   void publishEvent(WidgetRef ref) async {
     await ref.read(newEventProvider.notifier).publishEvent();
@@ -154,11 +155,62 @@ class EventButtons extends StatelessWidget {
   }
 
   Widget eventDetailsButtons() {
-    final userId = GetStorage().read('user_id');
+    final userId = GetStorage().read('id');
     if (userId == event.hostId) {
+      if (rePublish!) {
+        return eventRePublishButtons();
+      }
       return editShareButtonss();
     }
     return eventJoinButton();
+  }
+
+  Widget eventRePublishButtons() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final loadingText = ref.watch(loadingTextProvider);
+        return GestureDetector(
+          onTap: () {
+            if (loadingText == null) {
+              ref.read(editEventControllerProvider.notifier).rePublishEvent();
+            }
+          },
+          child: Container(
+            height: 48,
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Center(
+              child: loadingText == null
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(Assets.icons.arrow_repeat, height: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Re-Publish",
+                          style: AppStyles.h3.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Text(
+                      loadingText,
+                      style: AppStyles.h4.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget eventJoinButton() {
@@ -278,6 +330,7 @@ class EventButtons extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
+                    ref.read(editEventControllerProvider.notifier).eventId = event.id;
                     ref.read(editEventControllerProvider.notifier).updateEvent(event);
                     navigatorKey.currentState!.pushNamed(EditEventPage.id);
                   },

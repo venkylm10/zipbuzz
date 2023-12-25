@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/models/events/event_member_model.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
@@ -65,8 +65,6 @@ class EventsController {
     selectedCategory = category ?? '';
   }
 
-
-
   Future<void> getUserEvents() async {
     final userEventsRequestModel =
         UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
@@ -103,21 +101,26 @@ final guestEventsList = <EventModel>[
     hostId: 1,
     coHostIds: [],
     eventMembers: [
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
     ],
     location: "420 Gala St, San Jose 95125",
     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
@@ -143,21 +146,26 @@ final guestEventsList = <EventModel>[
     hostId: 1,
     coHostIds: [],
     eventMembers: [
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
     ],
     location: "420 Gala St, San Jose 95125",
     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
@@ -183,21 +191,26 @@ final guestEventsList = <EventModel>[
     hostId: 1,
     coHostIds: [],
     eventMembers: [
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
     ],
     location: "420 Gala St, San Jose 95125",
     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
@@ -223,21 +236,26 @@ final guestEventsList = <EventModel>[
     hostId: 1,
     coHostIds: [],
     eventMembers: [
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
     ],
     location: "420 Gala St, San Jose 95125",
     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: 1))),
@@ -263,21 +281,26 @@ final guestEventsList = <EventModel>[
     hostId: 1,
     coHostIds: [],
     eventMembers: [
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
     ],
     location: "420 Gala St, San Jose 95125",
     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: 1))),
@@ -303,21 +326,26 @@ final guestEventsList = <EventModel>[
     hostId: 1,
     coHostIds: [],
     eventMembers: [
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
     ],
     location: "420 Gala St, San Jose 95125",
     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -1))),
@@ -343,21 +371,26 @@ final guestEventsList = <EventModel>[
     hostId: 1,
     coHostIds: [],
     eventMembers: [
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-      EventMemberModel(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
+      EventInviteMember(
+          image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
+      EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
     ],
     location: "420 Gala St, San Jose 95125",
     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -1))),

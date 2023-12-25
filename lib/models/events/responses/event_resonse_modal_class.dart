@@ -1,21 +1,21 @@
-import 'package:zipbuzz/models/events/event_member_model.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 
-class EventResponseModalClass {
+class EventMembersResponseModel {
   String status;
-  List<EventMemberModel> eventMembers;
+  List<EventInviteMember> eventMembers;
 
-  EventResponseModalClass({
+  EventMembersResponseModel({
     required this.status,
     required this.eventMembers,
   });
 
-  factory EventResponseModalClass.fromMap(Map<String, dynamic> map) {
-    return EventResponseModalClass(
+  factory EventMembersResponseModel.fromMap(Map<String, dynamic> map) {
+    return EventMembersResponseModel(
       status: map['status'],
-      eventMembers: List<EventMemberModel>.from(
+      eventMembers: List<EventInviteMember>.from(
         (map['event_members'] as List)
             .map(
-              (member) => EventMemberModel.fromMap(member),
+              (member) => EventInviteMember.fromMap(member),
             )
             .toList(),
       ),

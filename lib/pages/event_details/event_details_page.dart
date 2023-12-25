@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 import 'package:zipbuzz/widgets/event_details_page/friends_registered_box.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -10,7 +13,6 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
@@ -25,14 +27,16 @@ import 'package:zipbuzz/widgets/event_details_page/guest_list.dart';
 class EventDetailsPage extends ConsumerStatefulWidget {
   static const id = 'event/details';
   final EventModel event;
-  final bool? isPreview;
   final int? randInt;
+  final bool? isPreview;
+  final bool? rePublish;
   final Color dominantColor;
   const EventDetailsPage({
     super.key,
     required this.event,
-    this.isPreview = false,
     this.randInt = 0,
+    this.isPreview = false,
+    this.rePublish = false,
     required this.dominantColor,
   });
 
@@ -67,6 +71,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   void initialise() async {
     maxImages = ref.read(newEventProvider.notifier).maxImages;
     defaultBanners = ref.read(defaultsProvider).bannerPaths;
+    await ref.read(dbServicesProvider).getEventRequestMembers(widget.event.id);
     getEventColor();
   }
 
@@ -127,12 +132,28 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     ),
                                     const SizedBox(width: 10),
                                     Consumer(builder: (context, ref, child) {
-                                      final attendees = ref.watch(newEventProvider).attendees;
-                                      final total = ref.watch(newEventProvider).capacity;
+                                      var attendees = 1;
+                                      if (widget.isPreview!) {
+                                        attendees = ref.watch(newEventProvider).attendees;
+                                      } else if (widget.rePublish!) {
+                                        attendees =
+                                            ref.watch(editEventControllerProvider).attendees;
+                                      } else {
+                                        attendees = widget.event.attendees;
+                                      }
+
+                                      var total = 1;
+
+                                      if (widget.isPreview!) {
+                                        total = ref.watch(newEventProvider).capacity;
+                                      } else if (widget.rePublish!) {
+                                        total = ref.watch(editEventControllerProvider).capacity;
+                                      } else {
+                                        total = widget.event.capacity;
+                                      }
                                       return AttendeeNumbers(
-                                        attendees:
-                                            widget.isPreview! ? attendees : widget.event.attendees,
-                                        total: widget.isPreview! ? total : widget.event.capacity,
+                                        attendees: attendees,
+                                        total: total,
                                         backgroundColor: AppColors.greyColor.withOpacity(0.1),
                                       );
                                     }),
@@ -229,12 +250,16 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: EventButtons(event: widget.event, isPreview: widget.isPreview),
+      floatingActionButton: EventButtons(
+        event: widget.event,
+        isPreview: widget.isPreview,
+        rePublish: widget.rePublish,
+      ),
     );
   }
 
   Widget buildGuestList() {
-    final userId = GetStorage().read('user_id');
+    final userId = GetStorage().read(BoxConstants.userId);
     if (widget.event.hostId != userId) {
       return EventGuestList(
         guests: widget.event.eventMembers,
@@ -242,6 +267,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     }
     return EventHostGuestList(
       guests: widget.event.eventMembers,
+      eventId: widget.event.id,
     );
   }
 
@@ -285,6 +311,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   Widget buildBanner() {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
+
     if (widget.isPreview!) {
       if (previewBanner != null) {
         return SizedBox(

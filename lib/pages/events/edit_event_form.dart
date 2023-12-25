@@ -26,9 +26,11 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
   late TextEditingController startTimeController;
   late TextEditingController endTimeController;
   DateTime date = DateTime.now();
+  late EditEventController editEventController;
 
   @override
   void initState() {
+    editEventController = ref.read(editEventControllerProvider.notifier);
     nameController = TextEditingController();
     descriptionController = TextEditingController();
     dateController = TextEditingController();
@@ -75,9 +77,12 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     }
   }
 
-  // String getDateFromDateTime(DateTime dateTime) {
-  //   return DateFormat('yyyy-MM-dd').format(dateTime);
-  // }
+  void convertDateString() {
+    DateTime date = DateTime.parse(ref.read(editEventControllerProvider).date);
+    final DateFormat formatter = DateFormat('d\'th,\' MMMM (EEEE)');
+    String formattedDate = formatter.format(date);
+    dateController.text = formattedDate;
+  }
 
   String getTimeFromTimeOfDay(TimeOfDay timeOfDay) {
     return '${timeOfDay.hourOfPeriod}:${timeOfDay.minute} ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
@@ -90,6 +95,9 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     date = DateTime.parse(event.date);
     locationController.text = event.location;
     category = ref.read(editEventControllerProvider).category;
+    startTimeController.text = event.startTime;
+    endTimeController.text = event.endTime;
+    convertDateString();
   }
 
   @override
@@ -132,6 +140,9 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
         CustomTextField(
           controller: nameController,
           hintText: "eg: A madcap house party",
+          onChanged: (value) {
+            editEventController.updateName(value);
+          },
         ),
         const SizedBox(height: 16),
         Row(
@@ -149,6 +160,9 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           hintText: "Event description",
           maxLines: 5,
           maxLength: 100,
+          onChanged: (value) {
+            editEventController.updateDescription(value);
+          },
         ),
         broadDivider(),
         Text(
@@ -199,6 +213,9 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
             child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
           ),
           enabled: true,
+          onChanged: (value) {
+            editEventController.updateLocation(value);
+          },
         ),
         const SizedBox(height: 16),
         Row(
@@ -310,6 +327,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
                 onTap: () {
                   setState(() {
                     category = e.key;
+                    ref.read(editEventControllerProvider.notifier).updateCategory(category);
                   });
                 },
                 value: e.key,
@@ -355,11 +373,5 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
         ],
       ),
     );
-  }
-
-  void getEventColor() {
-    final event = ref.read(editEventControllerProvider);
-    eventColor = getInterestColor(event.iconPath);
-    setState(() {});
   }
 }

@@ -1,4 +1,4 @@
-import 'package:zipbuzz/models/events/event_member_model.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 
 class EventModel {
   final int id;
@@ -21,7 +21,7 @@ class EventModel {
   final bool isPrivate;
   final int capacity;
   final List<String> imageUrls;
-  final List<EventMemberModel> eventMembers;
+  final List<EventInviteMember> eventMembers;
   const EventModel({
     required this.id,
     required this.title,
@@ -54,7 +54,7 @@ class EventModel {
     String? hostName,
     String? hostPic,
     List<String>? coHostIds,
-    List<EventMemberModel>? eventMembers,
+    List<EventInviteMember>? eventMembers,
     String? location,
     String? date,
     String? startTime,
@@ -91,7 +91,6 @@ class EventModel {
       hostName: hostName ?? this.hostName,
       hostPic: hostPic ?? this.hostPic,
       eventMembers: eventMembers ?? this.eventMembers,
-
     );
   }
 
@@ -117,7 +116,9 @@ class EventModel {
       capacity: map['capacity'] as int,
       imageUrls: (map['imageUrls'] as List).map((e) => e.toString()).toList(),
       privateGuestList: map['privateGuestList'] as bool,
-      eventMembers: (map['eventMembers'] as List).map((e) => EventMemberModel.fromMap(e as Map<String, dynamic>)).toList(),
+      eventMembers: (map['eventMembers'] as List)
+          .map((e) => EventInviteMember.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 

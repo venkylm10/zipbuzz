@@ -10,6 +10,7 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
 class EventCard extends ConsumerStatefulWidget {
   final EventModel event;
@@ -35,6 +36,7 @@ class _EventCardState extends ConsumerState<EventCard> {
 
   void navigateToEventDetails() async {
     final dominantColor = await getDominantColor();
+    ref.read(guestListTagProvider.notifier).update((state) => "All");
     navigatorKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => EventDetailsPage(

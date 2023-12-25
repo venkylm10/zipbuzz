@@ -21,7 +21,7 @@ class LocationServices extends StateNotifier<LocationModel> {
     try {
       final permission = await ref.read(appPermissionsProvider).getlocationPermission();
       if (!permission) return;
-      debugPrint("updating location");
+      debugPrint("UPDATING LOCATION");
       geo.Location location = geo.Location();
       geo.LocationData? currentLocation = await location.getLocation();
 
@@ -41,7 +41,7 @@ class LocationServices extends StateNotifier<LocationModel> {
           state = state.copyWith(
               countryDialCode: CountryDialCode.fromCountryCode(placemark.isoCountryCode!).dialCode);
         }
-        debugPrint("updated user location : ${state.toMap()}");
+        debugPrint("UPDATED USER LOCATION : ${state.toMap()}");
         GetStorage().write('location', state.toMap());
         ref.read(userProvider.notifier).update(
           (currentUser) {
@@ -53,10 +53,10 @@ class LocationServices extends StateNotifier<LocationModel> {
             );
           },
         );
-        debugPrint("Updated location successfully");
+        debugPrint("UPDATED LOCATION SUCCESSFULLY");
       }
     } catch (e) {
-      showSnackBar(message: "Error fetching location");
+      showSnackBar(message: "ERROR FETCHING LOCATION");
       final box = GetStorage();
       if (box.hasData('location')) {
         final location = box.read('location');

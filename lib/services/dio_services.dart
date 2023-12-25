@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:zipbuzz/models/events/event_member_model.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_resonse_modal_class.dart';
@@ -27,7 +29,6 @@ class DioServices {
       headers: {'Content-Type': 'application/json'},
     ),
   );
-
   final box = GetStorage();
 
   Future<Map<String, dynamic>> createUser(UserPostModel userPostModel) async {
@@ -132,7 +133,6 @@ class DioServices {
       final response = await dio.post(DioConstants.postEvent, data: eventPostModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("POSTING EVENT SUCESSFULL");
-        print(response.data['id']);
         return response.data['id'] as int;
       } else {
         throw "POSTING EVENT FAILED";
@@ -141,6 +141,23 @@ class DioServices {
       debugPrint("POSTING EVENT FAILED");
       debugPrint(e.toString());
       throw "POSTING EVENT FAILED";
+    }
+  }
+
+  Future<void> editEvent(EditEventRequestModel editEventRequestModel) async {
+    debugPrint("EDITING EVENT");
+    debugPrint(editEventRequestModel.toMap().toString());
+    try {
+      final response = await dio.put(DioConstants.editEvent, data: editEventRequestModel.toMap());
+      if (response.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("POSTING UPDATED EVENT SUCESSFULL");
+      } else {
+        throw "EDITING EVENT FAILED";
+      }
+    } catch (e) {
+      debugPrint("EDITING EVENT FAILED");
+      debugPrint(e.toString());
+      throw "EDITING EVENT FAILED";
     }
   }
 
@@ -209,19 +226,45 @@ class DioServices {
     }
   }
 
-  Future<List<EventMemberModel>> getEventMembers(
+  Future<List<EventInviteMember>> getEventMembers(
       EventMembersRequestModel eventMembersRequestModel) async {
     try {
       final res =
           await dio.get(DioConstants.getEventMembers, data: eventMembersRequestModel.toMap());
       if (res.data[DioConstants.status] == DioConstants.success) {
-        return EventResponseModalClass.fromMap(res.data).eventMembers;
+        return EventMembersResponseModel.fromMap(res.data).eventMembers;
       } else {
         throw Exception("Failed to get event members");
       }
     } catch (e) {
       debugPrint(e.toString());
       throw Exception("Failed to get event members");
+    }
+  }
+
+  Future<List<EventRequestMember>> getEventRequestMembers(int eventId) async {
+    try {
+      final res = await dio.get(DioConstants.getEventRequests, data: {"event_id": eventId});
+      if (res.data[DioConstants.status] == DioConstants.success) {
+        final list = res.data['event_members'] as List;
+        final requests = list.map((e) => EventRequestMember.fromMap(e)).toList();
+        return requests;
+      } else {
+        throw Exception("Failed to get event requests");
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception("Failed to get event requests");
+    }
+  }
+
+  Future<void> editUserStatus(int id, String status) async {
+    try {
+      await dio.put(DioConstants.editUserStatus, data: {"user_event_id": id, "status": status});
+      debugPrint("Updated user status");
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception("Failed to get event requests");
     }
   }
 }

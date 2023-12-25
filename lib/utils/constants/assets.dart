@@ -75,6 +75,7 @@ class AppIcons {
   final checkbox_unchecked = 'assets/icons/checkbox_unchecked.svg';
   final people_outline = 'assets/icons/people_outline.svg';
   final group_chat = 'assets/icons/group_chat.svg';
+  final arrow_repeat = 'assets/icons/arrow_repeat.svg';
 }
 
 class WelcomeImage {

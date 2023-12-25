@@ -23,7 +23,7 @@ class GuestEntry extends ConsumerWidget {
     ref.read(newEventProvider.notifier).resetNewEvent();
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
-    GetStorage().write('user_id', 1);
+    GetStorage().write('id', 1);
     return;
   }
 

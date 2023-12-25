@@ -1,14 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/models/events/event_member_model.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
 class EventGuestList extends StatefulWidget {
   const EventGuestList({super.key, required this.guests});
 
-  final List<EventMemberModel> guests;
+  final List<EventInviteMember> guests;
 
   @override
   State<EventGuestList> createState() => _EventGuestListState();

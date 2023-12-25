@@ -1,16 +1,13 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
-import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
-import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
-import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
@@ -18,12 +15,12 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
-import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-final editEventControllerProvider = StateNotifierProvider<EditEventController, EventModel>((ref) => EditEventController(ref: ref));
+final editEventControllerProvider =
+    StateNotifierProvider<EditEventController, EventModel>((ref) => EditEventController(ref: ref));
 
 class EditEventController extends StateNotifier<EventModel> {
   final Ref ref;
@@ -54,6 +51,7 @@ class EditEventController extends StateNotifier<EventModel> {
             eventMembers: [],
           ),
         );
+  int eventId = 1;
   List<File> selectedImages = [];
   int maxImages = 7;
   File? bannerImage;
@@ -191,8 +189,6 @@ class EditEventController extends StateNotifier<EventModel> {
     state = state.copyWith(coHostIds: state.coHostIds..add(uid));
   }
 
-
-
   String getDateFromDateTime(DateTime dateTime) {
     return DateFormat('yyyy-MM-dd').format(dateTime);
   }
@@ -242,10 +238,10 @@ class EditEventController extends StateNotifier<EventModel> {
     );
   }
 
-  Future<void> publishEvent() async {
+  Future<void> rePublishEvent() async {
     ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
-      showSnackBar(message: "You need to be Signed In to create an event!", duration: 2);
+      showSnackBar(message: "You need to be Signed In!", duration: 2);
       await Future.delayed(const Duration(seconds: 2));
       showSignInForm();
       return;
@@ -253,21 +249,18 @@ class EditEventController extends StateNotifier<EventModel> {
     final check = vaidateNewEvent();
     if (!check) return;
     try {
-      var bannerUrl = "";
+      var bannerUrl = state.bannerPath;
       if (bannerImage != null) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading banner image...");
         bannerUrl = await ref
                 .read(storageServicesProvider)
                 .uploadEventBanner(id: ref.read(userProvider).id, file: bannerImage!) ??
-            "";
-      } else {
-        final defaults = ref.read(defaultsProvider);
-        final rand = Random().nextInt(defaults.bannerUrls.length);
-        bannerUrl = defaults.bannerUrls[defaults.bannerPaths[rand]]!;
+            state.bannerPath;
       }
-      debugPrint("New Event: ${state.toMap()}");
+      debugPrint("Updated Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
-      final eventPostModel = EventPostModel(
+      final eventPostModel = EditEventRequestModel(
+        eventId: eventId,
         banner: bannerUrl,
         category: state.category,
         name: state.title,
@@ -281,43 +274,19 @@ class EditEventController extends StateNotifier<EventModel> {
         hostPic: state.hostPic,
         eventType: state.isPrivate,
         capacity: state.capacity,
-        filledCapacity: eventInvites.length,
+        filledCapacity: state.attendees,
       );
 
-      ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
-      final eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
-
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Editing Event...");
+      await ref.read(dbServicesProvider).editEvent(eventPostModel);
       var eventDateTime = DateTime.parse(state.date);
-      var formattedDate = formatWithSuffix(eventDateTime);
-      ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
-
-      final inviteePicUrls = await ref
-          .read(storageServicesProvider)
-          .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
-
-      final eventInvitePostModel = EventInvitePostModel(
-        phoneNumbers: eventInvites.map((e) {
-          return e.phones.first.normalizedNumber;
-        }).toList(),
-        images: inviteePicUrls,
-        names: eventInvites.map((e) {
-          return e.displayName;
-        }).toList(),
-        senderName: ref.read(userProvider).name,
-        eventName: eventPostModel.name,
-        eventDate: formattedDate,
-        eventLocation: eventPostModel.venue,
-        eventStart: eventPostModel.startTime,
-        eventEnd: eventPostModel.endTime,
-        eventId: eventId,
-      );
-      await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
-      showSnackBar(message: "Event created successfully");
-      resetNewEvent();
       ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider).updatedFocusedDay(eventDateTime);
-      ref.read(homeTabControllerProvider.notifier).updateIndex(0);
-
+      ref.read(homeTabControllerProvider.notifier).updateIndex(1);
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Getting Updated Events..");
+      showSnackBar(message: "Event edited successfully");
+      navigatorKey.currentState!.pop();
+      navigatorKey.currentState!.pop();
       navigatorKey.currentState!.pop();
     } catch (e) {
       debugPrint(e.toString());
@@ -337,33 +306,5 @@ class EditEventController extends StateNotifier<EventModel> {
       suffix = 'th';
     }
     return DateFormat('d\'$suffix\' MMMM, y').format(date);
-  }
-
-  void resetNewEvent() {
-    state = EventModel(
-      id: ref.read(userProvider).id,
-      title: "",
-      location: "",
-      date: DateTime.now().toString(),
-      startTime: "",
-      endTime: "",
-      attendees: 0,
-      category: "Hiking",
-      favourite: false,
-      bannerPath: "",
-      iconPath: allInterests['Hiking']!,
-      about: "",
-      hostId: ref.read(userProvider).id,
-      hostName: ref.read(userProvider).name,
-      hostPic: ref.read(userProvider).imageUrl,
-      coHostIds: [],
-      capacity: 10,
-      isPrivate: false,
-      imageUrls: [],
-      privateGuestList: false,
-      eventMembers: [],
-    );
-    eventInvites = [];
-    bannerImage = null;
   }
 }

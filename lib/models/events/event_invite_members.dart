@@ -1,16 +1,16 @@
-class EventMemberModel {
-  final String image;
-  final String phone;
-  final String name;
+class EventInviteMember {
+  String image;
+  String phone;
+  String name;
 
-  EventMemberModel({
+  EventInviteMember({
     required this.image,
     required this.phone,
     required this.name,
   });
 
-  factory EventMemberModel.fromMap(Map<String, dynamic> map) {
-    return EventMemberModel(
+  factory EventInviteMember.fromMap(Map<String, dynamic> map) {
+    return EventInviteMember(
       image: map['image'] as String,
       phone: map['phone'] as String,
       name: map['name'] as String,
