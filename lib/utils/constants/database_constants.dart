@@ -8,6 +8,7 @@ class DatabaseConstants {
 
 class BoxConstants {
   static const login = 'login';
+  static const userId = 'user_id';
   static const guestUser = 'guest_user';
   static const userDetails = 'user_details';
   static const userInterests = 'user_interests';

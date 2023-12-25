@@ -2,7 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:zipbuzz/pages/event_details/friends_registered_box.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
+import 'package:zipbuzz/widgets/event_details_page/friends_registered_box.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
@@ -60,11 +62,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       setState(() {});
     }
     return true;
-  }
-
-  void getCoHosts(List<String> coHostIds) async {
-    coHosts = await ref.read(eventsControllerProvider).getCoHosts(widget.event.coHostIds);
-    setState(() {});
   }
 
   void initialise() async {
@@ -216,9 +213,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                             ),
                             const SizedBox(height: 16),
-                            EventGuestList(
-                              guests: widget.event.eventMembers,
-                            ),
+                            buildGuestList(),
                             const SizedBox(height: 16),
                           ],
                         ),
@@ -235,6 +230,18 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: EventButtons(event: widget.event, isPreview: widget.isPreview),
+    );
+  }
+
+  Widget buildGuestList() {
+    final userId = GetStorage().read('user_id');
+    if (widget.event.hostId != userId) {
+      return EventGuestList(
+        guests: widget.event.eventMembers,
+      );
+    }
+    return EventHostGuestList(
+      guests: widget.event.eventMembers,
     );
   }
 

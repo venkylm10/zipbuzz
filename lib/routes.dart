@@ -4,6 +4,7 @@ import 'package:zipbuzz/pages/app_entries/sign_up_entry.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/app_entries/guest_entry.dart';
+import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
@@ -38,6 +39,7 @@ final routes = {
     final event = args['event'];
     return ChatPage(event: event);
   },
+  EditEventPage.id: (context) => const EditEventPage(),
   GuestEntry.id: (context) => const GuestEntry(),
   LoggedInEntry.id: (context) => const LoggedInEntry(),
   SignUpEntry.id: (context) => const SignUpEntry(),

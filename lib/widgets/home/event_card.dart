@@ -164,7 +164,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                         children: [
                           Row(
                             children: [
-                              if (widget.focusedEvent!) buildDateBox(),
+                              if (widget.focusedEvent!) buildCategoryChip(),
                               if (widget.focusedEvent!) const SizedBox(width: 5),
                               buildHostChip(),
                             ],
@@ -265,7 +265,7 @@ class _EventCardState extends ConsumerState<EventCard> {
     );
   }
 
-  Container buildDateBox() {
+  Container buildCategoryChip() {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 10,

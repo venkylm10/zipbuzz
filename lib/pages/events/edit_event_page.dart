@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/pages/events/edit_event_form.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
@@ -11,22 +13,24 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
-import 'package:zipbuzz/pages/events/create_event_form.dart';
+import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
 import 'package:zipbuzz/widgets/create_event/event_banner_selector.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
 import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 import 'package:zipbuzz/widgets/create_event/photos.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
-class CreateEvent extends ConsumerStatefulWidget {
-  const CreateEvent({super.key});
+class EditEventPage extends ConsumerStatefulWidget {
+  static const id = '/edit_event_page';
+  const EditEventPage({super.key});
 
   @override
-  ConsumerState<CreateEvent> createState() => _CreateEventState();
+  ConsumerState<EditEventPage> createState() => _CreateEventState();
 }
 
-class _CreateEventState extends ConsumerState<CreateEvent> {
+class _CreateEventState extends ConsumerState<EditEventPage> {
   String category = allInterests.entries.first.key;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
@@ -48,51 +52,71 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const EventBannerSelector(),
-          const SizedBox(height: 16),
-          const CreateEventForm(),
-          broadDivider(),
-          const AddHosts(),
-          broadDivider(),
-          const EventTypeAndCapacity(),
-          broadDivider(),
-          const CreateEventGuestListType(),
-          broadDivider(),
-          const AddEventPhotos(),
-          broadDivider(),
-          InkWell(
-            onTap: () {
-              showPreview();
-            },
-            child: Ink(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(Assets.icons.save_event),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Save & Preview",
-                    style: AppStyles.h3.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        leading: backButton(),
+        title: Text(
+          "Editing Event",
+          style: AppStyles.h2.copyWith(
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        forceMaterialTransparency: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const EventBannerSelector(),
+              const SizedBox(height: 16),
+              const EditEventForm(),
+              broadDivider(),
+              const AddHosts(),
+              broadDivider(),
+              const EventTypeAndCapacity(),
+              broadDivider(),
+              const AddEventPhotos(),
+              broadDivider(),
+              const CreateEventGuestListType(),
+              const SizedBox(height: 32),
+              EventHostGuestList(guests: ref.watch(editEventControllerProvider).eventMembers),
+              broadDivider(),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(12).copyWith(top: 0),
+        child: InkWell(
+          onTap: () {
+            showPreview();
+          },
+          child: Ink(
+            height: 50,
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Center(
+              child: Text(
+                "Save",
+                style: AppStyles.h3.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
-        ],
+        ),
       ),
     );
   }
@@ -123,7 +147,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
     navigatorKey.currentState!.pushNamed(
       EventDetailsPage.id,
       arguments: {
-        'event': ref.read(newEventProvider),
+        'event': ref.read(editEventControllerProvider),
         'isPreview': true,
         'dominantColor': dominantColor,
         'randInt': randInt,

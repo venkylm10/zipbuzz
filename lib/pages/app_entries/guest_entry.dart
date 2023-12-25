@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
@@ -22,6 +23,7 @@ class GuestEntry extends ConsumerWidget {
     ref.read(newEventProvider.notifier).resetNewEvent();
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
+    GetStorage().write('user_id', 1);
     return;
   }
 

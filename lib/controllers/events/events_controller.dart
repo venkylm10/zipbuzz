@@ -65,29 +65,7 @@ class EventsController {
     selectedCategory = category ?? '';
   }
 
-  Future<UserModel?> getHostData(String uid) async {
-    // final dbEvent = await ref.read(dbServicesProvider).getUserData(uid).first;
-    // if (dbEvent.snapshot.exists) {
-    //   final jsonString = jsonEncode(dbEvent.snapshot.value);
-    //   final userMap = jsonDecode(jsonString);
-    //   final host = UserModel.fromMap(userMap);
-    //   return host;
-    // }
-    return null;
-  }
 
-  Future<List<UserModel>> getCoHosts(List<String> coHostIds) async {
-    List<UserModel> coHosts = [];
-    // for (final uid in coHostIds) {
-    //   final dbEvent = await ref.read(dbServicesProvider).getUserData(uid).first;
-    //   if (dbEvent.snapshot.exists) {
-    //     final jsonString = jsonEncode(dbEvent.snapshot.value);
-    //     final userMap = jsonDecode(jsonString);
-    //     coHosts.add(UserModel.fromMap(userMap));
-    //   }
-    // }
-    return coHosts;
-  }
 
   Future<void> getUserEvents() async {
     final userEventsRequestModel =

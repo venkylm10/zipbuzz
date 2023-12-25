@@ -23,12 +23,12 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-final newEventProvider = StateNotifierProvider<NewEvent, EventModel>((ref) => NewEvent(ref: ref));
+final editEventControllerProvider = StateNotifierProvider<EditEventController, EventModel>((ref) => EditEventController(ref: ref));
 
-class NewEvent extends StateNotifier<EventModel> {
+class EditEventController extends StateNotifier<EventModel> {
   final Ref ref;
 
-  NewEvent({required this.ref})
+  EditEventController({required this.ref})
       : super(
           EventModel(
             id: ref.read(userProvider).id,
@@ -61,6 +61,10 @@ class NewEvent extends StateNotifier<EventModel> {
   List<Contact> eventInvites = [];
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
+
+  void updateEvent(EventModel event) {
+    state = event;
+  }
 
   void updateHostId(int id) {
     state = state.copyWith(hostId: id);

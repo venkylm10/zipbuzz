@@ -4,8 +4,8 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 
-class CreateEventGuestList extends ConsumerWidget {
-  const CreateEventGuestList({super.key});
+class CreateEventGuestListType extends ConsumerWidget {
+  const CreateEventGuestListType({super.key});
 
   void togglePrivacy(WidgetRef ref) {
     ref.read(newEventProvider.notifier).toggleGuestListPrivacy();
@@ -30,8 +30,7 @@ class CreateEventGuestList extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
               color: AppColors.bgGrey,
               border: Border.all(
-                color:
-                    !isPrivate ? AppColors.borderGrey : AppColors.primaryColor,
+                color: !isPrivate ? AppColors.borderGrey : AppColors.primaryColor,
               ),
             ),
             child: Row(
@@ -51,8 +50,7 @@ class CreateEventGuestList extends ConsumerWidget {
                     Text("Make guest list public", style: AppStyles.h4),
                     Text(
                       "Anyone can view the guest list",
-                      style: AppStyles.h5
-                          .copyWith(color: AppColors.lightGreyColor),
+                      style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                     ),
                   ],
                 ),

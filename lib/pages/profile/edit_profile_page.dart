@@ -43,13 +43,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   @override
   void initState() {
-    editProfileController = ref.read(editEventControllerProvider);
+    editProfileController = ref.read(editProfileControllerProvider);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    editProfileController = ref.watch(editEventControllerProvider);
+    editProfileController = ref.watch(editProfileControllerProvider);
     final loadingText = ref.watch(loadingTextProvider);
     return Scaffold(
       appBar: AppBar(

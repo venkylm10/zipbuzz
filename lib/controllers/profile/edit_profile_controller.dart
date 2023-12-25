@@ -15,7 +15,7 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-final editEventControllerProvider =
+final editProfileControllerProvider =
     StateProvider.autoDispose((ref) => EditProfileController(ref: ref));
 
 class EditProfileController {
