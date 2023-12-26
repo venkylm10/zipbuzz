@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
-import 'package:zipbuzz/pages/personalise/personalise_page.dart';
+import 'package:zipbuzz/pages/sign-in/sign_up_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -67,7 +67,7 @@ class AuthServices {
 
         if (credentials.additionalUserInfo!.isNewUser) {
           _ref.read(loadingTextProvider.notifier).reset();
-          navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(SignUpPage.id, (route) => false);
           return;
         } else {
           // getting id

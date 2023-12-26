@@ -40,7 +40,7 @@ class PersonaliseController {
     await ref.read(userLocationProvider.notifier).getCurrentLocation();
     ref.read(loadingTextProvider.notifier).updateLoadingText("Fetching contacts...");
     await ref.read(contactsServicesProvider).updateAllContacts();
-    ref.read(loadingTextProvider.notifier).updateLoadingText(null);
+    ref.read(loadingTextProvider.notifier).reset();
     userLocation = ref.read(userLocationProvider);
     zipcodeController.text = userLocation.zipcode;
     mobileController.text = ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
@@ -120,7 +120,7 @@ class PersonaliseController {
         );
 
         // creating new user
-        ref.read(loadingTextProvider.notifier).updateLoadingText("Setting up your data...");
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
         await ref.read(dbServicesProvider).createUser(user: newUser);
 
         // Reading id after id is being updated in createUser method
@@ -138,6 +138,7 @@ class PersonaliseController {
         await ref.read(dbServicesProvider).postUserInterests(userInterestPostModel);
         box.write('user_interests', newUser.interests);
         debugPrint("USER CREATED SUCCESSFULLY");
+        ref.read(loadingTextProvider.notifier).reset();
         navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
       } catch (e) {
         debugPrint("Error crearting user in personalise page: $e");
