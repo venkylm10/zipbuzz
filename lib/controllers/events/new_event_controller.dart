@@ -187,17 +187,23 @@ class NewEvent extends StateNotifier<EventModel> {
     state = state.copyWith(coHostIds: state.coHostIds..add(uid));
   }
 
-
-
   String getDateFromDateTime(DateTime dateTime) {
     return DateFormat('yyyy-MM-dd').format(dateTime);
   }
 
   String getTimeFromTimeOfDay(TimeOfDay timeOfDay) {
-    return '${timeOfDay.hourOfPeriod}:${timeOfDay.minute} ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
+    final hr = timeOfDay.hourOfPeriod.toString().length == 1
+        ? '0${timeOfDay.hourOfPeriod}'
+        : timeOfDay.hourOfPeriod;
+    final min = timeOfDay.minute.toString().length == 1 ? '0${timeOfDay.minute}' : timeOfDay.minute;
+    return '$hr:$min ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
   }
 
-  bool vaidateNewEvent() {
+  bool validateNewEvent() {
+    if (bannerImage == null) {
+      showSnackBar(message: "Please select a banner image");
+      return false;
+    }
     if (state.title.isEmpty) {
       showSnackBar(message: "Please enter event title");
       return false;
@@ -246,7 +252,7 @@ class NewEvent extends StateNotifier<EventModel> {
       showSignInForm();
       return;
     }
-    final check = vaidateNewEvent();
+    final check = validateNewEvent();
     if (!check) return;
     try {
       var bannerUrl = "";

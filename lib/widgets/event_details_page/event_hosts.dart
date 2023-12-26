@@ -27,7 +27,10 @@ class EventHosts extends ConsumerStatefulWidget {
 
 class _EventHostsState extends ConsumerState<EventHosts> {
   void navigateToChatPage() async {
-    if (widget.isPreview) return;
+    if (widget.isPreview) {
+      showSnackBar(message: "Only for published events", duration: 2);
+      return;
+    }
     if (GetStorage().read(BoxConstants.guestUser) != null) {
       showSnackBar(message: "You need to be signed in send messages to anyone", duration: 2);
       await Future.delayed(const Duration(seconds: 2));

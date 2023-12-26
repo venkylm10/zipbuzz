@@ -3,11 +3,15 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+
+
+final newInvitesProvider = StateProvider<List<EventInviteMember>>((ref) => []);
 
 class EventInvite extends ConsumerStatefulWidget {
   static const id = "/invite";

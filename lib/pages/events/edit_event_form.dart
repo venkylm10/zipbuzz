@@ -67,7 +67,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
   void updateTime({bool? isEnd = false}) async {
     final time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (time != null) {
-      final formatedTime = getTimeFromTimeOfDay(time);
+      final formatedTime = editEventController.getTimeFromTimeOfDay(time);
       if (isEnd!) {
         endTimeController.text = formatedTime;
       } else {
@@ -84,9 +84,6 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     dateController.text = formattedDate;
   }
 
-  String getTimeFromTimeOfDay(TimeOfDay timeOfDay) {
-    return '${timeOfDay.hourOfPeriod}:${timeOfDay.minute} ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
-  }
 
   void getEventDetails() {
     final event = ref.read(editEventControllerProvider);

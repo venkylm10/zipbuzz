@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/pages/app_entries/logged_in_entry.dart';
-import 'package:zipbuzz/pages/app_entries/sign_up_entry.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
-import 'package:zipbuzz/pages/app_entries/guest_entry.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
@@ -14,7 +11,7 @@ import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
 
 final routes = {
-  AuthGate.id: (context) => AuthGate(),
+  AuthGate.id: (context) => const AuthGate(),
   WelcomePage.id: (context) => const WelcomePage(),
   SignInSheet.id: (context) => const SignInSheet(),
   PersonalisePage.id: (context) => const PersonalisePage(),
@@ -42,7 +39,4 @@ final routes = {
     return ChatPage(event: event);
   },
   EditEventPage.id: (context) => const EditEventPage(),
-  GuestEntry.id: (context) => const GuestEntry(),
-  LoggedInEntry.id: (context) => const LoggedInEntry(),
-  SignUpEntry.id: (context) => const SignUpEntry(),
 };

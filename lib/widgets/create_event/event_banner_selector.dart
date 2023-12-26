@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -25,6 +26,7 @@ class _EventBannerSelectorState extends ConsumerState<EventBannerSelector> {
     if (pickedImage != null) {
       setState(() {
         image = File(pickedImage.path);
+        ref.read(newEventProvider.notifier).updateBannerImage(image!);
         ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
       });
     }
@@ -32,6 +34,7 @@ class _EventBannerSelectorState extends ConsumerState<EventBannerSelector> {
 
   @override
   void initState() {
+    ref.read(newEventProvider.notifier).bannerImage = null;
     ref.read(editEventControllerProvider.notifier).bannerImage = null;
     super.initState();
   }

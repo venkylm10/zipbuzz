@@ -119,15 +119,17 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
   }
 
   void showPreview() async {
-    final dominantColor = await getDominantColor();
-    navigatorKey.currentState!.pushNamed(
-      EventDetailsPage.id,
-      arguments: {
-        'event': ref.read(newEventProvider),
-        'isPreview': true,
-        'dominantColor': dominantColor,
-        'randInt': randInt,
-      },
-    );
+    if (ref.read(newEventProvider.notifier).validateNewEvent()) {
+      final dominantColor = await getDominantColor();
+      navigatorKey.currentState!.pushNamed(
+        EventDetailsPage.id,
+        arguments: {
+          'event': ref.read(newEventProvider),
+          'isPreview': true,
+          'dominantColor': dominantColor,
+          'randInt': randInt,
+        },
+      );
+    }
   }
 }

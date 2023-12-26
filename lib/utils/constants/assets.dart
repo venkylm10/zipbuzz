@@ -70,7 +70,7 @@ class AppIcons {
   final heart_fill = 'assets/icons/heart_fill.svg';
   final gallery_add = 'assets/icons/gallery_add.svg';
   final link = 'assets/icons/link.svg';
-  final starts = 'assets/icons/stars.svg';
+  final stars = 'assets/icons/stars.svg';
   final checkbox_checked = 'assets/icons/checkbox_checked.svg';
   final checkbox_unchecked = 'assets/icons/checkbox_unchecked.svg';
   final people_outline = 'assets/icons/people_outline.svg';

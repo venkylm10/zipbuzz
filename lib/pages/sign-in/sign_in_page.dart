@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/pages/app_entries/guest_entry.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/services/auth_services.dart';
+import 'package:zipbuzz/widgets/auth_gate.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class SignInSheet extends ConsumerWidget {
@@ -23,11 +23,10 @@ class SignInSheet extends ConsumerWidget {
   }
 
   void signInGuestUser(WidgetRef ref) {
-    GetStorage().write(BoxConstants.login, true);
     GetStorage().write(BoxConstants.guestUser, true);
     GetStorage().write(BoxConstants.userId, 1);
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
-    NavigationController.routeOff(route: GuestEntry.id);
+    NavigationController.routeOff(route: AuthGate.id);
   }
 
   @override

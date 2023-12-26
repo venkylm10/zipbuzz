@@ -18,9 +18,6 @@ class CustomCalendar extends ConsumerStatefulWidget {
 
 class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   bool isMounted = true;
-  DateTime focusedDay = DateTime.now();
-  List<EventModel> upcomingEvents = [];
-  List<EventModel> focusedEvents = [];
 
   void onDaySelected(DateTime day, DateTime focusedDay) {
     ref.read(eventsControllerProvider).updatedFocusedDay(focusedDay.toLocal());
@@ -64,10 +61,6 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
-    focusedDay = ref.watch(eventsControllerProvider).focusedDay;
-    focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
-    final eventsMap = ref.watch(eventsControllerProvider).eventsMap;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -78,68 +71,90 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             color: AppColors.calenderBg,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: TableCalendar(
-            focusedDay: focusedDay,
-            firstDay: DateTime.utc(2022),
-            lastDay: DateTime.now().add(const Duration(days: 365 * 2)),
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: AppStyles.h2,
-            ),
-            selectedDayPredicate: (day) => isSameDay(day, focusedDay),
-            onDaySelected: onDaySelected,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            rowHeight: 48,
-            availableGestures: AvailableGestures.horizontalSwipe,
-            calendarBuilders: customCalendarBuilders(),
-            eventLoader: (day) => eventsMap[day] ?? [],
-          ),
+          child: Consumer(builder: (context, ref, child) {
+            final eventsMap = ref.watch(eventsControllerProvider).eventsMap;
+            final focusedDay = ref.watch(eventsControllerProvider).focusedDay;
+            return TableCalendar(
+              focusedDay: focusedDay,
+              firstDay: DateTime.utc(2022),
+              lastDay: DateTime.now().add(const Duration(days: 365 * 2)),
+              headerStyle: HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+                titleTextStyle: AppStyles.h2,
+              ),
+              selectedDayPredicate: (day) => isSameDay(day, focusedDay),
+              onDaySelected: onDaySelected,
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              rowHeight: 48,
+              availableGestures: AvailableGestures.horizontalSwipe,
+              calendarBuilders: customCalendarBuilders(),
+              eventLoader: (day) => eventsMap[day] ?? [],
+            );
+          }),
         ),
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
-          child: focusedEvents.isNotEmpty
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      formatWithSuffix(focusedDay),
-                      style: AppStyles.h4.copyWith(
-                        fontWeight: FontWeight.w600,
+        Consumer(builder: (context, ref, child) {
+          final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
+          final focusedDay = ref.watch(eventsControllerProvider).focusedDay;
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: focusedEvents.isNotEmpty
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        formatWithSuffix(focusedDay),
+                        style: AppStyles.h4.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      " (${DateFormat('EEEE').format(focusedDay)})",
-                      style: AppStyles.h4.copyWith(
-                        color: AppColors.lightGreyColor,
-                        fontWeight: FontWeight.w600,
+                      Text(
+                        " (${DateFormat('EEEE').format(focusedDay)})",
+                        style: AppStyles.h4.copyWith(
+                          color: AppColors.lightGreyColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
-                )
-              : const SizedBox(),
-        ),
+                    ],
+                  )
+                : const SizedBox(),
+          );
+        }),
         const SizedBox(height: 15),
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: focusedEvents.isNotEmpty
-              ? Column(
-                  children:
-                      focusedEvents.map((e) => EventCard(event: e, focusedEvent: true)).toList(),
+        Consumer(builder: (context, ref, child) {
+          final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: focusedEvents.isNotEmpty
+                ? Consumer(builder: (context, ref, child) {
+                    final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
+                    return Column(
+                      children: focusedEvents
+                          .map((e) => EventCard(event: e, focusedEvent: true))
+                          .toList(),
+                    );
+                  })
+                : const SizedBox(),
+          );
+        }),
+        Consumer(builder: (context, ref, child) {
+          final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
+          return upcomingEvents.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
+                  child: Text(
+                    "Upcoming Events",
+                    style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+                  ),
                 )
-              : const SizedBox(),
-        ),
-        if (upcomingEvents.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
-            child: Text(
-              "Upcoming Events",
-              style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-        Column(
-          children: upcomingEvents.map((e) => EventCard(event: e)).toList(),
-        ),
+              : const SizedBox();
+        }),
+        Consumer(builder: (context, ref, child) {
+          final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
+          return Column(
+            children: upcomingEvents.map((e) => EventCard(event: e)).toList(),
+          );
+        }),
       ],
     );
   }

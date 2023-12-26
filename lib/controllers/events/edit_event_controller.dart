@@ -80,7 +80,7 @@ class EditEventController extends StateNotifier<EventModel> {
     state = state.copyWith(privateGuestList: !state.privateGuestList);
   }
 
-  void updateBannerImage(File file) {
+  void updateBannerImage(File? file) {
     bannerImage = file;
   }
 
@@ -194,10 +194,14 @@ class EditEventController extends StateNotifier<EventModel> {
   }
 
   String getTimeFromTimeOfDay(TimeOfDay timeOfDay) {
-    return '${timeOfDay.hourOfPeriod}:${timeOfDay.minute} ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
+    final hr = timeOfDay.hourOfPeriod.toString().length == 1
+        ? '0${timeOfDay.hourOfPeriod}'
+        : timeOfDay.hourOfPeriod;
+    final min = timeOfDay.minute.toString().length == 1 ? '0${timeOfDay.minute}' : timeOfDay.minute;
+    return '$hr:$min ${timeOfDay.period == DayPeriod.am ? 'AM' : 'PM'}';
   }
 
-  bool vaidateNewEvent() {
+  bool validateEventForm() {
     if (state.title.isEmpty) {
       showSnackBar(message: "Please enter event title");
       return false;
@@ -246,7 +250,7 @@ class EditEventController extends StateNotifier<EventModel> {
       showSignInForm();
       return;
     }
-    final check = vaidateNewEvent();
+    final check = validateEventForm();
     if (!check) return;
     try {
       var bannerUrl = state.bannerPath;
@@ -280,10 +284,12 @@ class EditEventController extends StateNotifier<EventModel> {
       ref.read(loadingTextProvider.notifier).updateLoadingText("Editing Event...");
       await ref.read(dbServicesProvider).editEvent(eventPostModel);
       var eventDateTime = DateTime.parse(state.date);
-      ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-      ref.read(loadingTextProvider.notifier).updateLoadingText("Getting Updated Events..");
+      await ref.read(eventsControllerProvider).getUserEvents();
+      ref.read(eventsControllerProvider).updateUpcomingEvents();
+      ref.read(eventsControllerProvider).updateFocusedEvents();
+      ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Event edited successfully");
       navigatorKey.currentState!.pop();
       navigatorKey.currentState!.pop();

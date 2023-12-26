@@ -329,10 +329,11 @@ class EventButtons extends StatelessWidget {
             children: [
               Expanded(
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     ref.read(editEventControllerProvider.notifier).eventId = event.id;
                     ref.read(editEventControllerProvider.notifier).updateEvent(event);
-                    navigatorKey.currentState!.pushNamed(EditEventPage.id);
+                    await navigatorKey.currentState!.pushNamed(EditEventPage.id);
+                    ref.read(editEventControllerProvider.notifier).updateBannerImage(null);
                   },
                   child: Container(
                     decoration: BoxDecoration(

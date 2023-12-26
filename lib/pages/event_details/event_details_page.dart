@@ -260,6 +260,11 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   Widget buildGuestList() {
     final userId = GetStorage().read(BoxConstants.userId);
+    if (widget.isPreview!) {
+      return EventGuestList(
+        guests: widget.event.eventMembers,
+      );
+    }
     if (widget.event.hostId != userId) {
       return EventGuestList(
         guests: widget.event.eventMembers,
@@ -347,21 +352,40 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         ),
       );
     } else {
-      return SizedBox(
-        height: 300,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network(
-                widget.event.bannerPath,
-                fit: BoxFit.cover,
+      final newBanner = ref.read(editEventControllerProvider.notifier).bannerImage;
+      if (newBanner == null) {
+        return SizedBox(
+          height: 300,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.network(
+                  widget.event.bannerPath,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            buildBannerGradient(),
-          ],
-        ),
-      );
+              buildBannerGradient(),
+            ],
+          ),
+        );
+      } else {
+        return SizedBox(
+          height: 300,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.file(
+                  newBanner,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              buildBannerGradient(),
+            ],
+          ),
+        );
+      }
     }
   }
 

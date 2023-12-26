@@ -4,10 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
-import 'package:zipbuzz/pages/app_entries/sign_up_entry.dart';
+import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -68,7 +67,7 @@ class AuthServices {
 
         if (credentials.additionalUserInfo!.isNewUser) {
           _ref.read(loadingTextProvider.notifier).reset();
-          NavigationController.routeOff(route: SignUpEntry.id);
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
           // getting id

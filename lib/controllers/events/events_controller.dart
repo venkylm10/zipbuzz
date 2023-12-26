@@ -98,7 +98,7 @@ final guestEventsList = <EventModel>[
   EventModel(
     id: 1,
     title: "A Madcap House Party Extravaganza",
-    hostId: 1,
+    hostId: 2,
     coHostIds: [],
     eventMembers: [
       EventInviteMember(
@@ -233,7 +233,7 @@ final guestEventsList = <EventModel>[
   EventModel(
     id: 1,
     title: "A Madcap House Party Extravaganza",
-    hostId: 1,
+    hostId: 2,
     coHostIds: [],
     eventMembers: [
       EventInviteMember(
