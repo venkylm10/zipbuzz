@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -111,6 +112,10 @@ class EditProfileController {
       await ref
           .read(dbServicesProvider)
           .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
+
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Getting new events...");
+      await ref.read(eventsControllerProvider).getUserEvents();
+      ref.read(eventsControllerProvider).updateUpcomingEvents();
       ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");

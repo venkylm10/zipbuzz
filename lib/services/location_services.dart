@@ -2,8 +2,8 @@ import 'package:country_dial_code/country_dial_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:location/location.dart' as geo;
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
@@ -22,11 +22,11 @@ class LocationServices extends StateNotifier<LocationModel> {
       final permission = await ref.read(appPermissionsProvider).getlocationPermission();
       if (!permission) return;
       debugPrint("UPDATING LOCATION");
-      geo.Location location = geo.Location();
-      geo.LocationData? currentLocation = await location.getLocation();
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
       List<Placemark> placemarks =
-          await placemarkFromCoordinates(currentLocation.latitude!, currentLocation.longitude!);
+          await placemarkFromCoordinates(position.latitude, position.longitude);
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks.first;

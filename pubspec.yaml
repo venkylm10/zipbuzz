@@ -52,19 +52,22 @@ dependencies:
   google_sign_in: ^6.1.6
 
   # location services
-  geocoding: ^2.1.1
   location: ^5.0.3
+  geolocator: ^10.1.0
+  geocoding: ^2.1.1
   country_dial_code: ^1.2.0
 
 
   # firebase storage
   firebase_storage: ^11.5.3
   firebase_database: ^10.3.6
+
   url_launcher: ^6.2.1
   dio: ^5.4.0
   get_storage: ^2.1.1
   get: ^4.6.6
   flutter_contacts: ^1.1.7+1
+  firebase_dynamic_links: ^5.4.8
   
 
 dev_dependencies:
