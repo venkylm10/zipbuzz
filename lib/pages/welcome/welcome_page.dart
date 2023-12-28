@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
-import 'package:zipbuzz/services/permission_handler.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
   static const id = '/welcome';
@@ -43,10 +41,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   void skip() async {
     await pageController.animateToPage(welcomeImages.length - 1,
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-    if (await AppPermissions().getlocationPermission() && await AppPermissions().getContactsPermission()) {
-      ref.read(contactsServicesProvider).updateAllContacts();
-      showSignInForm();
-    }
+    showSignInForm();
   }
 
   void next() async {
@@ -56,10 +51,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
         curve: Curves.easeInOut,
       );
     } else {
-      if (await AppPermissions().getlocationPermission() && await AppPermissions().getContactsPermission()) {
-        ref.read(contactsServicesProvider).updateAllContacts();
-        showSignInForm();
-      }
+      showSignInForm();
     }
   }
 

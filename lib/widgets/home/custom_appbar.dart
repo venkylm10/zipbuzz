@@ -23,7 +23,8 @@ class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget
     required this.topPadding,
   });
   @override
-  Size get preferredSize => Size.fromHeight(AppBar().preferredSize.height + (isSearching ? 65 : 5) + topPadding);
+  Size get preferredSize =>
+      Size.fromHeight(AppBar().preferredSize.height + (isSearching ? 65 : 5) + topPadding);
 
   @override
   ConsumerState<CustomAppBar> createState() => _CustomAppBarState();
@@ -41,7 +42,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     // final user = ref.read(userProvider)!;
-    final userLocation = ref.read(userLocationProvider);
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: widget.preferredSize.height,
@@ -71,21 +72,24 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                 ),
               ),
               titleSpacing: -5,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${userLocation.city}, ${userLocation.country}",
-                    style: AppStyles.h5.copyWith(color: Colors.white),
-                  ),
-                  Text(
-                    userLocation.zipcode,
-                    style: AppStyles.h5.copyWith(
-                      color: Colors.white.withOpacity(0.5),
+              title: Consumer(builder: (context, ref, child) {
+                final userLocation = ref.watch(userLocationProvider);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${userLocation.city}, ${userLocation.country}",
+                      style: AppStyles.h5.copyWith(color: Colors.white),
                     ),
-                  )
-                ],
-              ),
+                    Text(
+                      userLocation.zipcode,
+                      style: AppStyles.h5.copyWith(
+                        color: Colors.white.withOpacity(0.5),
+                      ),
+                    )
+                  ],
+                );
+              }),
               actions: [
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),

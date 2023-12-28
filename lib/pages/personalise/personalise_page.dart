@@ -19,6 +19,17 @@ class PersonalisePage extends ConsumerStatefulWidget {
 
 class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   @override
+  void initState() {
+    initialise();
+    super.initState();
+  }
+
+  void initialise() {
+    ref.read(personaliseControllerProvider).initialise();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final currentUser = ref.read(authProvider).currentUser!;
@@ -97,7 +108,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                     Assets.icons.telephone_filled,
                     "Mobile no",
                     personaliseController.mobileController,
-                    currentUser.phoneNumber ?? "",
+                    currentUser.phoneNumber ?? "9998887776",
                     keyboardType: TextInputType.phone,
                     maxLength: 10,
                   ),

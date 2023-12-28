@@ -7,7 +7,6 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -27,13 +26,17 @@ class _AuthGateState extends ConsumerState<AuthGate> {
 
   Future<void> getLoggedInUserData() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your location...");
-    await ref.read(userLocationProvider.notifier).getCurrentLocation();
+    if (box.hasData(BoxConstants.location)) {
+      await ref
+          .read(userLocationProvider.notifier)
+          .getLocationFromZipcode(box.read(BoxConstants.location));
+    } else {
+      await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
+    }
     ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your Data...");
-    final id = GetStorage().read('id') as int;
+    final id = GetStorage().read(BoxConstants.id) as int;
     final requestModel = UserDetailsRequestModel(userId: id);
     await ref.read(dbServicesProvider).getUserData(requestModel);
-    ref.read(newEventProvider.notifier).resetNewEvent();
     ref.read(newEventProvider.notifier).updateHostId(id);
     ref.read(newEventProvider.notifier).updateHostName(ref.read(userProvider).name);
     final location = ref.read(userLocationProvider);
@@ -45,8 +48,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
             countryDialCode: location.countryDialCode,
           ),
         );
-    ref.read(loadingTextProvider.notifier).updateLoadingText("Fetching contacts...");
-    await ref.read(contactsServicesProvider).updateAllContacts();
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
@@ -55,14 +56,16 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   Future<void> setUpGuestData() async {
     await Future.delayed(const Duration(milliseconds: 500));
     ref.read(userProvider.notifier).update((state) => globalDummyUser);
-    ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your location...");
-    await ref.read(userLocationProvider.notifier).getCurrentLocation();
-    ref.read(loadingTextProvider.notifier).updateLoadingText("Fetching contacts...");
-    await ref.read(contactsServicesProvider).updateAllContacts();
-    ref.read(newEventProvider.notifier).resetNewEvent();
+    if (box.hasData(BoxConstants.location)) {
+      await ref
+          .read(userLocationProvider.notifier)
+          .getLocationFromZipcode(box.read(BoxConstants.location));
+    } else {
+      await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
+    }
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
-    GetStorage().write('id', 1);
+    GetStorage().write(BoxConstants.id, 1);
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 

@@ -22,6 +22,8 @@ class ContactsServices {
           withThumbnail: true,
           withPhoto: true,
         );
+        ref.read(newEventProvider.notifier).updateAllContacts(contacts);
+        ref.read(newEventProvider.notifier).resetContactSearch();
       } else {
         showSnackBar(message: "We need your permission to access your contacts");
         if (await ref.read(appPermissionsProvider).getContactsPermission()) {

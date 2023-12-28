@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
-
 
 final newInvitesProvider = StateProvider<List<EventInviteMember>>((ref) => []);
 
@@ -23,15 +23,23 @@ class EventInvite extends ConsumerStatefulWidget {
 
 class _EventInviteState extends ConsumerState<EventInvite> {
   late TextEditingController searchController;
+  bool isMounted = true;
   @override
   void initState() {
     searchController = TextEditingController();
-    resetContacts();
     super.initState();
+    resetContacts();
   }
 
   void resetContacts() async {
-    ref.read(newEventProvider.notifier).resetContactSearch();
+    if (isMounted) await ref.read(contactsServicesProvider).updateAllContacts();
+    if (isMounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    isMounted = false;
+    super.dispose();
   }
 
   @override

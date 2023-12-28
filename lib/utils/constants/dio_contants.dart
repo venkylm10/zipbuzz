@@ -15,6 +15,7 @@ class DioConstants {
   static const String getEventMembers = "/events/event_members/";
   static const String getEventRequests = "/events/event_request/";
   static const String editUserStatus = "/events/event_request/";
+  static const String getLocation = "/users/user_location/";
 
   static const String status = "status";
   static const String success = "success";

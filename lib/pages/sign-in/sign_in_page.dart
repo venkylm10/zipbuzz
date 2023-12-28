@@ -24,7 +24,7 @@ class SignInSheet extends ConsumerWidget {
 
   void signInGuestUser(WidgetRef ref) {
     GetStorage().write(BoxConstants.guestUser, true);
-    GetStorage().write(BoxConstants.userId, 1);
+    GetStorage().write(BoxConstants.id, 1);
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
     NavigationController.routeOff(route: AuthGate.id);
   }

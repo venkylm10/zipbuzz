@@ -259,7 +259,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   }
 
   Widget buildGuestList() {
-    final userId = GetStorage().read(BoxConstants.userId);
+    final userId = GetStorage().read(BoxConstants.id);
     if (widget.isPreview!) {
       return EventGuestList(
         guests: widget.event.eventMembers,

@@ -7,6 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_invite.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -155,7 +156,7 @@ class EventButtons extends StatelessWidget {
   }
 
   Widget eventDetailsButtons() {
-    final userId = GetStorage().read('id');
+    final userId = GetStorage().read(BoxConstants.id);
     if (userId == event.hostId) {
       if (rePublish!) {
         return eventRePublishButtons();

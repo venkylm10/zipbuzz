@@ -8,10 +8,10 @@ import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
@@ -34,19 +34,9 @@ class PersonaliseController {
   var selectedInterests = <String>[];
   var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
 
-  Future<void> initialise() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your location...");
-    await ref.read(userLocationProvider.notifier).getCurrentLocation();
-    ref.read(loadingTextProvider.notifier).updateLoadingText("Fetching contacts...");
-    await ref.read(contactsServicesProvider).updateAllContacts();
-    ref.read(loadingTextProvider.notifier).reset();
+  void initialise() {
     userLocation = ref.read(userLocationProvider);
-    zipcodeController.text = userLocation.zipcode;
-    mobileController.text = ref.read(authProvider).currentUser!.phoneNumber ?? "9998887779";
-    ref.read(newEventProvider.notifier).resetNewEvent();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
-    return;
   }
 
   void updateInterests(String interest) {
@@ -63,7 +53,7 @@ class PersonaliseController {
       return false;
     }
 
-    if (zipcodeController.text.length <= 5) {
+    if (zipcodeController.text.length < 5) {
       showSnackBar(message: "Please enter valid zipcode");
       return false;
     }
@@ -92,7 +82,7 @@ class PersonaliseController {
           ref.read(loadingTextProvider.notifier).updateLoadingText("Udating your location...");
           await ref
               .read(userLocationProvider.notifier)
-              .updateLocationFromZipcode(zipcodeController.text.trim());
+              .getLocationFromZipcode(zipcodeController.text.trim());
         }
         location = ref.read(userLocationProvider);
         final auth = ref.read(authProvider);
@@ -124,7 +114,7 @@ class PersonaliseController {
         await ref.read(dbServicesProvider).createUser(user: newUser);
 
         // Reading id after id is being updated in createUser method
-        final id = GetStorage().read('id');
+        final id = GetStorage().read(BoxConstants.id);
         ref.read(userProvider.notifier).update((state) => newUser.copyWith(id: id));
         final userInterestPostModel =
             UserInterestPostModel(userId: id, interests: selectedInterests);

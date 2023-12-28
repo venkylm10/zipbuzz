@@ -13,10 +13,12 @@ import 'package:zipbuzz/models/events/requests/event_members_request_model.dart'
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
+import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
+import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/models/user/post/user_details_model.dart';
@@ -101,7 +103,7 @@ class DBServices {
 
         _ref.read(userProvider.notifier).update((state) => state.copyWith(id: res['id']));
         box.write(BoxConstants.login, true);
-        box.write("id", res['id'] as int);
+        box.write(BoxConstants.id, res['id'] as int);
         NavigationController.routeOff(route: PersonalisePage.id);
       } else {
         throw "FAILED TO CREATE USER";
@@ -143,6 +145,14 @@ class DBServices {
         _ref.read(newEventProvider.notifier).updateHostId(userDetailsRequestModel.userId);
         _ref.read(userProvider.notifier).update((state) => updatedUser);
         debugPrint("CURRENT USER DATA${_ref.read(userProvider).toMap()}");
+        _ref.read(userLocationProvider.notifier).updateState(
+              LocationModel(
+                city: _ref.read(userProvider).city,
+                country: _ref.read(userProvider).country,
+                countryDialCode: _ref.read(userProvider).countryDialCode,
+                zipcode: _ref.read(userProvider).zipcode,
+              ), 
+            );
         box.write('user_details', userDetails.toMap());
         box.write('user_interests', updatedUser.interests);
       } else {

@@ -69,9 +69,13 @@ class EditProfileController {
     try {
       if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating Location..");
-        await ref
-            .read(userLocationProvider.notifier)
-            .updateLocationFromZipcode(zipcodeController.text.trim());
+        try {
+          await ref
+              .read(userLocationProvider.notifier)
+              .getLocationFromZipcode(zipcodeController.text.trim());
+        } catch (e) {
+          debugPrint("Error updating location: $e");
+        }
       }
 
       String? newImageUrl;
