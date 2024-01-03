@@ -20,7 +20,7 @@ class LocationServices extends StateNotifier<LocationModel> {
   }
 
   Future<void> getLocationFromZipcode(String newZipcode) async {
-    state.copyWith(zipcode: newZipcode);
+    state = state.copyWith(zipcode: newZipcode);
     try {
       final res = await ref.read(dioServicesProvider).dio.get(DioConstants.getLocation,
           data: {"zipcode": "000000"}); // TODO: update this to newZipcode

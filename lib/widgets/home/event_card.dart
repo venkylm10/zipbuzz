@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
 class EventCard extends ConsumerStatefulWidget {
@@ -65,6 +69,12 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   Future<void> addToFavorite() async {
+    if (GetStorage().read(BoxConstants.guestUser) != null) {
+      showSnackBar(message: "You need to be signed in", duration: 2);
+      await Future.delayed(const Duration(seconds: 2));
+      ref.read(newEventProvider.notifier).showSignInForm();
+      return;
+    }
     widget.event.isFavorite = !widget.event.isFavorite;
     setState(() {});
     if (widget.event.isFavorite) {

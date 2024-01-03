@@ -68,10 +68,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
         UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
     final list = await ref.read(dbServicesProvider).getUserEvents(userEventsRequestModel);
     state = state.copyWith(allEvents: list);
-    updateEventsMap();
-    updateFocusedEvents();
-    updateUpcomingEvents();
-    updatePastEvents();
+    adjustEventData();
   }
 
   void updateEventsMap() {
@@ -103,10 +100,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
           UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
       final list = await ref.read(dbServicesProvider).getUserFavoriteEvents(userEventsRequestModel);
       state = state.copyWith(allEvents: list);
-      updateEventsMap();
-      updateFocusedEvents();
-      updateUpcomingEvents();
-      updatePastEvents();
+      adjustEventData();
       return;
     }
     state = state.copyWith(showingFavorites: false);
@@ -124,6 +118,10 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     var events = state.allEvents;
     events.removeWhere((element) => element.id == eventId);
     state = state.copyWith(allEvents: events);
+    adjustEventData();
+  }
+
+  void adjustEventData() {
     updateEventsMap();
     updateFocusedEvents();
     updateUpcomingEvents();

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -98,7 +102,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                   duration: const Duration(milliseconds: 300),
                   child: !widget.isSearching
                       ? GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             widget.toggleSearching();
                             widget.onSearch(widget.searchController.text);
                           },
@@ -113,8 +117,14 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     widget.toggleSearching();
+                    if (GetStorage().read(BoxConstants.guestUser) != null) {
+                      showSnackBar(message: "You need to be signed in", duration: 2);
+                      await Future.delayed(const Duration(seconds: 2));
+                      ref.read(newEventProvider.notifier).showSignInForm();
+                      return;
+                    }
                     widget.updateFavoriteEvents();
                   },
                   child: Container(

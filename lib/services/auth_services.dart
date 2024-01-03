@@ -91,11 +91,16 @@ class AuthServices {
   }
 
   Future<void> signOut() async {
+    final box = GetStorage();
+    if (box.read(BoxConstants.guestUser) != null) {
+      box.remove(BoxConstants.login);
+      box.remove(BoxConstants.guestUser);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+      return;
+    }
     try {
       await _googleSignIn.signOut();
-      await _googleSignIn.disconnect();
       await _auth.signOut();
-      final box = GetStorage();
       box.remove(BoxConstants.login);
       box.remove(BoxConstants.guestUser);
       navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
