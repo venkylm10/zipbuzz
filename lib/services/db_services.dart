@@ -12,6 +12,7 @@ import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
+import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -151,7 +152,7 @@ class DBServices {
                 country: _ref.read(userProvider).country,
                 countryDialCode: _ref.read(userProvider).countryDialCode,
                 zipcode: _ref.read(userProvider).zipcode,
-              ), 
+              ),
             );
         box.write('user_details', userDetails.toMap());
         box.write('user_interests', updatedUser.interests);
@@ -201,7 +202,7 @@ class DBServices {
             endTime: res.endTime,
             attendees: res.filledCapacity,
             category: res.category,
-            favourite: false,
+            isFavorite: res.isFavorite,
             bannerPath: res.banner,
             iconPath: allInterests[res.category] ?? allInterests['Hiking']!,
             about: res.description,
@@ -218,6 +219,50 @@ class DBServices {
         return await Future.wait(events);
       } catch (e) {
         debugPrint(e.toString());
+        return [];
+      }
+    }
+    return guestEventsList;
+  }
+
+  Future<List<EventModel>> getUserFavoriteEvents(
+      UserEventsRequestModel userEventsRequestModel) async {
+    if (box.read(BoxConstants.guestUser) == null) {
+      try {
+        final list = await _dioServices.getUserFavoriteEvents(userEventsRequestModel);
+        final events = list.map((e) async {
+          final res = FavoriteEventModel.fromMap(e as Map<String, dynamic>);
+          final members =
+              await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.eventId));
+          final fav = FavoriteEventModel.fromMap(e);
+          final eventModel = EventModel(
+            id: fav.eventId,
+            title: fav.name,
+            hostId: fav.hostId,
+            coHostIds: [],
+            location: fav.venue,
+            date: fav.date,
+            startTime: fav.startTime,
+            endTime: fav.endTime,
+            attendees: fav.filledCapacity,
+            category: fav.category,
+            isFavorite: true,
+            bannerPath: fav.image,
+            iconPath: allInterests[fav.category] ?? allInterests['Hiking']!,
+            about: fav.description,
+            isPrivate: fav.eventType,
+            capacity: fav.capacity,
+            imageUrls: [],
+            privateGuestList: true,
+            hostName: fav.hostName,
+            hostPic: fav.hostPic,
+            eventMembers: members,
+          );
+          return eventModel;
+        }).toList();
+        return await Future.wait(events);
+      } catch (e) {
+        debugPrint("Error getting favorite events: $e");
         return [];
       }
     }

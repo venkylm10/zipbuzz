@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -14,9 +15,9 @@ import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
 class EventCard extends ConsumerStatefulWidget {
-  final EventModel event;
+  EventModel event;
   final bool? focusedEvent;
-  const EventCard({super.key, required this.event, this.focusedEvent = false});
+  EventCard({super.key, required this.event, this.focusedEvent = false});
 
   @override
   ConsumerState<EventCard> createState() => _EventCardState();
@@ -61,6 +62,16 @@ class _EventCardState extends ConsumerState<EventCard> {
   void getEventColor() {
     eventColor = getInterestColor(widget.event.iconPath);
     setState(() {});
+  }
+
+  Future<void> addToFavorite() async {
+    widget.event.isFavorite = !widget.event.isFavorite;
+    setState(() {});
+    if (widget.event.isFavorite) {
+      await ref.read(eventsControllerProvider.notifier).addEventToFavorites(widget.event.id);
+    } else {
+      await ref.read(eventsControllerProvider.notifier).removeEventFromFavorites(widget.event.id);
+    }
   }
 
   @override
@@ -165,17 +176,22 @@ class _EventCardState extends ConsumerState<EventCard> {
                                 Positioned(
                                   right: 10,
                                   top: 10,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Icon(
-                                      Icons.favorite_rounded,
-                                      color: widget.event.favourite
-                                          ? Colors.pink[400]
-                                          : Colors.grey[300],
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await addToFavorite();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Icon(
+                                        Icons.favorite_rounded,
+                                        color: widget.event.isFavorite
+                                            ? Colors.red[500]
+                                            : Colors.grey[300],
+                                      ),
                                     ),
                                   ),
                                 ),

@@ -118,8 +118,8 @@ class EditProfileController {
           .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Getting new events...");
-      await ref.read(eventsControllerProvider).getUserEvents();
-      ref.read(eventsControllerProvider).updateUpcomingEvents();
+      await ref.read(eventsControllerProvider.notifier).getUserEvents();
+      ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
       ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");

@@ -20,8 +20,8 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   bool isMounted = true;
 
   void onDaySelected(DateTime day, DateTime focusedDay) {
-    ref.read(eventsControllerProvider).updatedFocusedDay(focusedDay.toLocal());
-    ref.read(eventsControllerProvider).updateFocusedEvents();
+    ref.read(eventsControllerProvider.notifier).updatedFocusedDay(focusedDay.toLocal());
+    ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
     setState(() {});
   }
 
@@ -38,9 +38,9 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   }
 
   void getUserEvents() async {
-    if (isMounted) await ref.read(eventsControllerProvider).getUserEvents();
-    if (isMounted) ref.read(eventsControllerProvider).updateUpcomingEvents();
-    if (isMounted) ref.read(eventsControllerProvider).updateFocusedEvents();
+    if (isMounted) await ref.read(eventsControllerProvider.notifier).getUserEvents();
+    if (isMounted) ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
+    if (isMounted) ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
     if (isMounted) setState(() {});
   }
 
@@ -149,12 +149,14 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
                 )
               : const SizedBox();
         }),
-        Consumer(builder: (context, ref, child) {
-          final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
-          return Column(
-            children: upcomingEvents.map((e) => EventCard(event: e)).toList(),
-          );
-        }),
+        Consumer(
+          builder: (context, ref, child) {
+            final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
+            return Column(
+              children: upcomingEvents.map((e) => EventCard(event: e)).toList(),
+            );
+          },
+        ),
       ],
     );
   }

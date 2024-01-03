@@ -36,7 +36,7 @@ class EditEventController extends StateNotifier<EventModel> {
             endTime: "",
             attendees: 0,
             category: "Hiking",
-            favourite: false,
+            isFavorite: false,
             bannerPath: "",
             iconPath: allInterests['Hiking']!,
             about: "",
@@ -284,11 +284,11 @@ class EditEventController extends StateNotifier<EventModel> {
       ref.read(loadingTextProvider.notifier).updateLoadingText("Editing Event...");
       await ref.read(dbServicesProvider).editEvent(eventPostModel);
       var eventDateTime = DateTime.parse(state.date);
-      ref.read(eventsControllerProvider).updatedFocusedDay(eventDateTime);
+      ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-      await ref.read(eventsControllerProvider).getUserEvents();
-      ref.read(eventsControllerProvider).updateUpcomingEvents();
-      ref.read(eventsControllerProvider).updateFocusedEvents();
+      await ref.read(eventsControllerProvider.notifier).getUserEvents();
+      ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
+      ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Event edited successfully");
       navigatorKey.currentState!.pop();

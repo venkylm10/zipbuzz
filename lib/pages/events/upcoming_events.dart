@@ -4,28 +4,14 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
-import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/widgets/home/event_card.dart';
 
-class UpcomingEvents extends ConsumerStatefulWidget {
+class UpcomingEvents extends ConsumerWidget {
   const UpcomingEvents({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _UpcomingEventsState();
-}
-
-class _UpcomingEventsState extends ConsumerState<UpcomingEvents> {
-  List<EventModel> upcomingEvents = [];
-
-  @override
-  void initState() {
-    ref.read(eventsControllerProvider).updateUpcomingEvents();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
     return upcomingEvents.isNotEmpty
         ? Column(
             children: upcomingEvents
@@ -52,8 +38,7 @@ class _UpcomingEventsState extends ConsumerState<UpcomingEvents> {
               InkWell(
                 onTap: () {},
                 child: Ink(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(22),

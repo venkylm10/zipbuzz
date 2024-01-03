@@ -45,17 +45,17 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   void onTapRowCategory(String interest) {
     final selectedCategory = ref.read(eventsControllerProvider).selectedCategory;
     if (selectedCategory != interest) {
-      ref.read(eventsControllerProvider).selectCategory(category: interest);
+      ref.read(eventsControllerProvider.notifier).selectCategory(category: interest);
       setState(() {});
     } else {
-      ref.read(eventsControllerProvider).selectCategory(category: '');
+      ref.read(eventsControllerProvider.notifier).selectCategory(category: '');
       setState(() {});
     }
   }
 
   void onTapGridCategory(String interest) {
     scrollDownInterests();
-    ref.read(eventsControllerProvider).selectCategory(category: interest);
+    ref.read(eventsControllerProvider.notifier).selectCategory(category: interest);
     setState(() {});
   }
 
@@ -75,6 +75,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     topPadding = MediaQuery.of(context).padding.top;
     final homeTabController = ref.watch(homeTabControllerProvider.notifier);
     var isSearching = homeTabController.isSearching;
+    var showingFavorites = ref.watch(eventsControllerProvider).showingFavorites;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -85,6 +86,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           setState(() {
             isSearching = !isSearching;
           });
+        },
+        updateFavoriteEvents: () async {
+          await ref.read(eventsControllerProvider.notifier).updateFavoriteEvents();
+          setState(() {});
         },
         topPadding: topPadding,
       ),

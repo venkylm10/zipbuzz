@@ -19,7 +19,7 @@ class _PastEventsState extends ConsumerState<PastEvents> {
 
   @override
   void initState() {
-    ref.read(eventsControllerProvider).updatePastEvents();
+    ref.read(eventsControllerProvider.notifier).updatePastEvents();
     super.initState();
   }
 

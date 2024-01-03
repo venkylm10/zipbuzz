@@ -76,6 +76,7 @@ class AppIcons {
   final people_outline = 'assets/icons/people_outline.svg';
   final group_chat = 'assets/icons/group_chat.svg';
   final arrow_repeat = 'assets/icons/arrow_repeat.svg';
+  final star_fill = 'assets/icons/star_fill.svg';
 }
 
 class WelcomeImage {

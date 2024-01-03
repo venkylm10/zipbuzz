@@ -15,14 +15,14 @@ class EventModel {
   final String endTime;
   final int attendees;
   final String category;
-  final bool favourite;
+  bool isFavorite;
   final String bannerPath;
   final String iconPath;
   final bool isPrivate;
   final int capacity;
   final List<String> imageUrls;
   final List<EventInviteMember> eventMembers;
-  const EventModel({
+  EventModel({
     required this.id,
     required this.title,
     required this.hostId,
@@ -33,7 +33,7 @@ class EventModel {
     required this.endTime,
     required this.attendees,
     required this.category,
-    required this.favourite,
+    this.isFavorite = true,
     required this.bannerPath,
     required this.iconPath,
     required this.about,
@@ -61,7 +61,7 @@ class EventModel {
     String? endTime,
     int? attendees,
     String? category,
-    bool? favourite,
+    bool? isFavorite,
     String? bannerPath,
     String? iconPath,
     bool? isPrivate,
@@ -81,7 +81,7 @@ class EventModel {
       endTime: endTime ?? this.endTime,
       attendees: attendees ?? this.attendees,
       category: category ?? this.category,
-      favourite: favourite ?? this.favourite,
+      isFavorite: isFavorite ?? this.isFavorite,
       bannerPath: bannerPath ?? this.bannerPath,
       iconPath: iconPath ?? this.iconPath,
       isPrivate: isPrivate ?? this.isPrivate,
@@ -99,21 +99,21 @@ class EventModel {
       id: map['id'] as int,
       title: map['title'] as String,
       about: map['about'] as String,
-      hostId: map['hostId'] as int,
-      hostName: map['hostName'] as String,
-      hostPic: map['hostPic'] as String,
+      hostId: map['host_id'] as int,
+      hostName: map['host_name'] as String,
+      hostPic: map['host_pic'] as String,
       coHostIds: (map['coHostIds'] as List).map((e) => e.toString()).toList(),
       location: map['location'] as String,
       date: map['date'] as String,
-      startTime: map['startTime'] as String,
-      endTime: map['endTime'] as String,
-      attendees: map['attendees'] as int,
+      startTime: map['start_time'] as String,
+      endTime: map['end_time'] as String,
+      attendees: map['capacity'] as int,
       category: map['category'] as String,
-      favourite: map['favourite'] as bool,
-      bannerPath: map['bannerPath'] as String,
+      isFavorite: map['is_favourite'] as bool,
+      bannerPath: map['banner'] as String,
       iconPath: map['iconPath'] as String,
-      isPrivate: map['isPrivate'] as bool,
-      capacity: map['capacity'] as int,
+      isPrivate: map['event_type'] as bool,
+      capacity: map['filled_capacity'] as int,
       imageUrls: (map['imageUrls'] as List).map((e) => e.toString()).toList(),
       privateGuestList: map['privateGuestList'] as bool,
       eventMembers: (map['eventMembers'] as List)
@@ -123,25 +123,28 @@ class EventModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    return {
       'id': id,
       'title': title,
       'about': about,
-      'hostId': hostId,
+      'host_id': hostId,
+      'host_name': hostName,
+      'host_pic': hostPic,
       'coHostIds': coHostIds,
       'location': location,
       'date': date,
-      'startTime': startTime,
-      'endTime': endTime,
-      'attendees': attendees,
+      'start_time': startTime,
+      'end_time': endTime,
+      'capacity': attendees,
       'category': category,
-      'favourite': favourite,
-      'bannerPath': bannerPath,
+      'is_favourite': isFavorite,
+      'banner': bannerPath,
       'iconPath': iconPath,
-      'isPrivate': isPrivate,
-      'capacity': capacity,
+      'event_type': isPrivate,
+      'filled_capacity': capacity,
       'imageUrls': imageUrls,
       'privateGuestList': privateGuestList,
+      'eventMembers': eventMembers.map((e) => e.toMap()).toList(),
     };
   }
 }

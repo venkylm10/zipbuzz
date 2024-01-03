@@ -39,7 +39,7 @@ class NewEvent extends StateNotifier<EventModel> {
             endTime: "",
             attendees: 0,
             category: "Hiking",
-            favourite: false,
+            isFavorite: false,
             bannerPath: "",
             iconPath: allInterests['Hiking']!,
             about: "",
@@ -317,7 +317,7 @@ class NewEvent extends StateNotifier<EventModel> {
       showSnackBar(message: "Event created successfully");
       resetNewEvent();
       ref.read(loadingTextProvider.notifier).reset();
-      ref.read(eventsControllerProvider).updatedFocusedDay(eventDateTime);
+      ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(0);
 
       navigatorKey.currentState!.pop();
@@ -351,7 +351,7 @@ class NewEvent extends StateNotifier<EventModel> {
       endTime: "",
       attendees: 0,
       category: "Hiking",
-      favourite: false,
+      isFavorite: false,
       bannerPath: "",
       iconPath: allInterests['Hiking']!,
       about: "",

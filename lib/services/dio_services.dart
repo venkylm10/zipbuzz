@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
+import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
@@ -168,6 +169,7 @@ class DioServices {
           await dio.get(DioConstants.getUserEvents, data: userEventsRequestModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
+        print(list);
         debugPrint("GETTING USER EVENTS SUCCESSFULL");
         return list;
       } else {
@@ -176,6 +178,52 @@ class DioServices {
     } catch (e) {
       debugPrint(e.toString());
       throw 'FAILED TO GET USER EVENTS';
+    }
+  }
+
+  Future<List> getUserFavoriteEvents(UserEventsRequestModel userEventsRequestModel) async {
+    try {
+      debugPrint("GETTING USER EVENTS");
+      final response =
+          await dio.get(DioConstants.getUserFavoriteEvents, data: userEventsRequestModel.toMap());
+      if (response.data[DioConstants.status] == DioConstants.success) {
+        final list = response.data['favorite_events'] as List;
+        debugPrint("GETTING USER EVENTS SUCCESSFULL");
+        return list;
+      } else {
+        throw 'FAILED TO GET USER EVENTS';
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      throw 'FAILED TO GET USER EVENTS';
+    }
+  }
+
+  Future<void> addEventToFavorite(AddEventToFavoriteModelClass model) async {
+    try {
+      debugPrint("ADDING EVENT TO FAVORITE");
+      final response = await dio.post(DioConstants.addEventToFavorite, data: model.toMap());
+      if (response.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("ADDING EVENT TO FAVORITE SUCCESSFULL");
+      } else {
+        throw "ADDING EVENT TO FAVORITE FAILED";
+      }
+    } catch (e) {
+      debugPrint("ADDING EVENT TO FAVORITE FAILED: $e");
+    }
+  }
+
+  Future<void> removeEventFromFavorite(AddEventToFavoriteModelClass model) async {
+    try {
+      debugPrint("REMOVING EVENT FROM FAVORITE");
+      final response = await dio.put(DioConstants.addEventToFavorite, data: model.toMap());
+      if (response.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("REMOVING EVENT FROM FAVORITE SUCCESSFULL");
+      } else {
+        throw "REMOVING EVENT FROM FAVORITE FAILED";
+      }
+    } catch (e) {
+      debugPrint("REMOVING EVENT FROM FAVORITE FAILED: $e");
     }
   }
 

@@ -3,15 +3,137 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 
-final eventsControllerProvider = Provider(
-  (ref) => EventsController(ref: ref, user: ref.watch(userProvider)),
+final eventsControllerProvider = StateNotifierProvider<EventsControllProvider, EventsController>(
+  (ref) => EventsControllProvider(ref: ref, user: ref.watch(userProvider)),
 );
+
+class EventsControllProvider extends StateNotifier<EventsController> {
+  final UserModel? user;
+  final Ref ref;
+  EventsControllProvider({required this.ref, required this.user})
+      : super(EventsController(ref: ref, user: user));
+
+  void setCalendarHeight(double height) {
+    state = state.copyWith(calenderHeight: height);
+  }
+
+  void updatedFocusedDay(DateTime date) {
+    final formattedDate = DateTime(date.year, date.month, date.day);
+    state = state.copyWith(focusedDay: formattedDate);
+  }
+
+  void updateFocusedEvents() {
+    state = state.copyWith(focusedEvents: state.eventsMap[state.focusedDay] ?? []);
+  }
+
+  void updateUpcomingEvents() {
+    state = state.copyWith(upcomingEvents: []);
+    var events = <EventModel>[];
+    state.eventsMap.forEach((key, value) {
+      if (key.isAfter(state.today) || key.isAtSameMomentAs(state.today)) {
+        events.addAll(value);
+      }
+    });
+
+    events.sort((a, b) => a.date.compareTo(b.date));
+    state = state.copyWith(upcomingEvents: events);
+  }
+
+  void updatePastEvents() {
+    state = state.copyWith(pastEvents: []);
+    var events = <EventModel>[];
+    state.eventsMap.forEach((key, value) {
+      if (key.isBefore(state.today)) {
+        events.addAll(value);
+      }
+    });
+    events.sort((a, b) => b.date.compareTo(a.date));
+    state = state.copyWith(pastEvents: events);
+  }
+
+  void selectCategory({String? category = ''}) {
+    state = state.copyWith(selectedCategory: category ?? '');
+  }
+
+  Future<void> getUserEvents() async {
+    final userEventsRequestModel =
+        UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
+    final list = await ref.read(dbServicesProvider).getUserEvents(userEventsRequestModel);
+    state = state.copyWith(allEvents: list);
+    updateEventsMap();
+    updateFocusedEvents();
+    updateUpcomingEvents();
+    updatePastEvents();
+  }
+
+  void updateEventsMap() {
+    state = state.copyWith(eventsMap: {});
+    Map<DateTime, List<EventModel>> map = {};
+    for (final event in state.allEvents) {
+      final date = getDateTimeFromEventData(event.date);
+      if (map.containsKey(date)) {
+        map[date]!.add(event);
+      } else {
+        map[date] = [event];
+      }
+    }
+    state = state.copyWith(eventsMap: map);
+  }
+
+  DateTime getDateTimeFromEventData(String date) {
+    return DateFormat('yyyy-MM-dd').parse(date);
+  }
+
+  String getformatedDate(DateTime date) {
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
+  Future<void> updateFavoriteEvents() async {
+    if (!state.showingFavorites) {
+      state = state.copyWith(showingFavorites: true);
+      final userEventsRequestModel =
+          UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
+      final list = await ref.read(dbServicesProvider).getUserFavoriteEvents(userEventsRequestModel);
+      state = state.copyWith(allEvents: list);
+      updateEventsMap();
+      updateFocusedEvents();
+      updateUpcomingEvents();
+      updatePastEvents();
+      return;
+    }
+    state = state.copyWith(showingFavorites: false);
+    getUserEvents();
+  }
+
+  Future<void> addEventToFavorites(int eventId) async {
+    final model = AddEventToFavoriteModelClass(eventId: eventId, userId: ref.read(userProvider).id);
+    await ref.read(dioServicesProvider).addEventToFavorite(model);
+  }
+
+  Future<void> removeEventFromFavorites(int eventId) async {
+    final model = AddEventToFavoriteModelClass(eventId: eventId, userId: ref.read(userProvider).id);
+    await ref.read(dioServicesProvider).removeEventFromFavorite(model);
+    var events = state.allEvents;
+    events.removeWhere((element) => element.id == eventId);
+    state = state.copyWith(allEvents: events);
+    updateEventsMap();
+    updateFocusedEvents();
+    updateUpcomingEvents();
+    updatePastEvents();
+  }
+
+  void refresh() {
+    state = state.copyWith();
+  }
+}
 
 class EventsController {
   final UserModel? user;
@@ -24,73 +146,39 @@ class EventsController {
   Map<DateTime, List<EventModel>> eventsMap = {};
   String selectedCategory = '';
   double calenderHeight = 150;
+  bool showingFavorites = false;
 
   final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   var focusedDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-  void setCalendarHeight(double height) {
-    calenderHeight = height;
-  }
+  EventsController copyWith({
+    UserModel? user,
+    Ref? ref,
+    List<EventModel>? allEvents,
+    List<EventModel>? upcomingEvents,
+    List<EventModel>? pastEvents,
+    List<EventModel>? focusedEvents,
+    Map<DateTime, List<EventModel>>? eventsMap,
+    String? selectedCategory,
+    double? calenderHeight,
+    bool? showingFavorites,
+    DateTime? focusedDay,
+  }) {
+    var res = EventsController(
+      user: user ?? this.user,
+      ref: ref ?? this.ref,
+    );
 
-  void updatedFocusedDay(DateTime date) {
-    final formattedDate = DateTime(date.year, date.month, date.day);
-    focusedDay = formattedDate;
-  }
-
-  void updateFocusedEvents() {
-    focusedEvents = eventsMap[focusedDay] ?? [];
-  }
-
-  void updateUpcomingEvents() {
-    upcomingEvents.clear();
-    eventsMap.forEach((key, value) {
-      if (key.isAfter(today) || key.isAtSameMomentAs(today)) {
-        upcomingEvents.addAll(value);
-      }
-    });
-    upcomingEvents.sort((a, b) => a.date.compareTo(b.date));
-  }
-
-  void updatePastEvents() {
-    pastEvents.clear();
-    eventsMap.forEach((key, value) {
-      if (key.isBefore(today)) {
-        pastEvents.addAll(value);
-      }
-    });
-    pastEvents.sort((a, b) => b.date.compareTo(a.date));
-  }
-
-  void selectCategory({String? category = ''}) {
-    selectedCategory = category ?? '';
-  }
-
-  Future<void> getUserEvents() async {
-    final userEventsRequestModel =
-        UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
-    final list = await ref.read(dbServicesProvider).getUserEvents(userEventsRequestModel);
-    allEvents = list;
-    updateEventsMap();
-  }
-
-  void updateEventsMap() {
-    eventsMap.clear();
-    for (final event in allEvents) {
-      final date = getDateTimeFromEventData(event.date);
-      if (eventsMap.containsKey(date)) {
-        eventsMap[date]!.add(event);
-      } else {
-        eventsMap[date] = [event];
-      }
-    }
-  }
-
-  DateTime getDateTimeFromEventData(String date) {
-    return DateFormat('yyyy-MM-dd').parse(date);
-  }
-
-  String getformatedDate(DateTime date) {
-    return DateFormat('yyyy-MM-dd').format(date);
+    res.allEvents = allEvents ?? this.allEvents;
+    res.upcomingEvents = upcomingEvents ?? this.upcomingEvents;
+    res.pastEvents = pastEvents ?? this.pastEvents;
+    res.focusedEvents = focusedEvents ?? this.focusedEvents;
+    res.eventsMap = eventsMap ?? this.eventsMap;
+    res.selectedCategory = selectedCategory ?? this.selectedCategory;
+    res.calenderHeight = calenderHeight ?? this.calenderHeight;
+    res.showingFavorites = showingFavorites ?? this.showingFavorites;
+    res.focusedDay = focusedDay ?? this.focusedDay;
+    return res;
   }
 }
 
@@ -128,7 +216,7 @@ final guestEventsList = <EventModel>[
     endTime: "12:00 PM",
     attendees: 15,
     category: "Hiking",
-    favourite: false,
+    isFavorite: false,
     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[0]]!,
     iconPath: allInterests["Hiking"]!,
     about:
@@ -173,7 +261,7 @@ final guestEventsList = <EventModel>[
     endTime: "12:00 PM",
     attendees: 15,
     category: "Sports",
-    favourite: false,
+    isFavorite: false,
     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[1]]!,
     iconPath: allInterests["Sports"]!,
     about:
@@ -218,7 +306,7 @@ final guestEventsList = <EventModel>[
     endTime: "12:00 PM",
     attendees: 15,
     category: "Hiking",
-    favourite: false,
+    isFavorite: false,
     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[2]]!,
     iconPath: allInterests["Hiking"]!,
     about:
@@ -263,7 +351,7 @@ final guestEventsList = <EventModel>[
     endTime: "12:00 PM",
     attendees: 15,
     category: "Fitness",
-    favourite: false,
+    isFavorite: false,
     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[0]]!,
     iconPath: allInterests["Fitness"]!,
     about:
@@ -308,7 +396,7 @@ final guestEventsList = <EventModel>[
     endTime: "12:00 PM",
     attendees: 15,
     category: "Parties",
-    favourite: false,
+    isFavorite: false,
     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[1]]!,
     iconPath: allInterests["Parties"]!,
     about:
@@ -353,7 +441,7 @@ final guestEventsList = <EventModel>[
     endTime: "12:00 PM",
     attendees: 15,
     category: "Fitness",
-    favourite: false,
+    isFavorite: false,
     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[2]]!,
     iconPath: allInterests["Fitness"]!,
     about:
@@ -398,7 +486,7 @@ final guestEventsList = <EventModel>[
     endTime: "12:00 PM",
     attendees: 15,
     category: "Parties",
-    favourite: false,
+    isFavorite: false,
     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[3]]!,
     iconPath: allInterests["Parties"]!,
     about:

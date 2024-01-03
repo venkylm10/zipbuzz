@@ -1,24 +1,23 @@
-class EventResponseModel {
-  final int id;
-  final String banner;
-  final String category;
-  final String name;
-  final String description;
-  final String date;
-  final String venue;
-  final String startTime;
-  final String endTime;
-  final String hostPic;
-  final int hostId;
-  final bool eventType;
-  final String hostName;
-  final int capacity;
-  final int filledCapacity;
-  final bool isFavorite;
+class FavoriteEventModel {
+  int eventId;
+  String image;
+  String category;
+  String name;
+  String description;
+  String date;
+  String venue;
+  String startTime;
+  String endTime;
+  String hostName;
+  String hostPic;
+  int hostId;
+  bool eventType;
+  int capacity;
+  int filledCapacity;
 
-  EventResponseModel({
-    required this.id,
-    required this.banner,
+  FavoriteEventModel({
+    required this.eventId,
+    required this.image,
     required this.category,
     required this.name,
     required this.description,
@@ -26,19 +25,18 @@ class EventResponseModel {
     required this.venue,
     required this.startTime,
     required this.endTime,
+    required this.hostName,
     required this.hostPic,
     required this.hostId,
     required this.eventType,
-    required this.hostName,
     required this.capacity,
     required this.filledCapacity,
-    this.isFavorite = false,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
-      'banner': banner,
+      'event_id': eventId,
+      'image': image,
       'category': category,
       'name': name,
       'description': description,
@@ -46,20 +44,19 @@ class EventResponseModel {
       'venue': venue,
       'start_time': startTime,
       'end_time': endTime,
+      'host_name': hostName,
       'host_pic': hostPic,
       'host_id': hostId,
       'event_type': eventType,
-      'host_name': hostName,
       'capacity': capacity,
       'filled_capacity': filledCapacity,
-      'is_favorite': isFavorite,
     };
   }
 
-  factory EventResponseModel.fromMap(Map<String, dynamic> map) {
-    return EventResponseModel(
-      id: (map['id'] ?? map['event_id']) as int,
-      banner: map['banner'] as String,
+  factory FavoriteEventModel.fromMap(Map<String, dynamic> map) {
+    return FavoriteEventModel(
+      eventId: map['event_id'] as int,
+      image: map['image'] as String,
       category: map['category'] as String,
       name: map['name'] as String,
       description: map['description'] as String,
@@ -67,13 +64,12 @@ class EventResponseModel {
       venue: map['venue'] as String,
       startTime: map['start_time'] as String,
       endTime: map['end_time'] as String,
+      hostName: map['host_name'] as String,
       hostPic: map['host_pic'] as String,
       hostId: map['host_id'] as int,
       eventType: map['event_type'] as bool,
-      hostName: map['host_name'] as String,
       capacity: map['capacity'] as int,
       filledCapacity: map['filled_capacity'] as int,
-      isFavorite: map['is_favorite'] as bool,
     );
   }
 }

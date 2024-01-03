@@ -34,8 +34,6 @@ class AuthServices {
 
       if (googleUser != null) {
         final box = GetStorage();
-        box.remove(BoxConstants.login);
-        box.remove(BoxConstants.guestUser);
         final googleAuth = await googleUser.authentication;
         final authCredential = GoogleAuthProvider.credential(
             idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
@@ -95,6 +93,7 @@ class AuthServices {
   Future<void> signOut() async {
     try {
       await _googleSignIn.signOut();
+      await _googleSignIn.disconnect();
       await _auth.signOut();
       final box = GetStorage();
       box.remove(BoxConstants.login);

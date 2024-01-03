@@ -13,8 +13,7 @@ class CreateEventForm extends ConsumerStatefulWidget {
   const CreateEventForm({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _CreateEventFormState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _CreateEventFormState();
 }
 
 class _CreateEventFormState extends ConsumerState<CreateEventForm> {
@@ -81,9 +80,12 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void updateTime({bool? isEnd = false}) async {
-    final time =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    var time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
     if (time != null) {
+      time = time.replacing(minute: time.minute - (time.minute % 5));
       newEventController.updateTime(time, isEnd: isEnd);
       final formatedTime = newEventController.getTimeFromTimeOfDay(time);
       if (isEnd!) {
