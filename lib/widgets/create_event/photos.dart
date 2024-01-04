@@ -9,7 +9,6 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/services/image_picker.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class AddEventPhotos extends ConsumerStatefulWidget {
   const AddEventPhotos({super.key});

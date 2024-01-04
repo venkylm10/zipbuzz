@@ -106,7 +106,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     getUserEvents();
   }
 
-  Future<void> addEventToFavorites(int eventId) async {
+Future<void> addEventToFavorites(int eventId) async {
     final model = AddEventToFavoriteModelClass(eventId: eventId, userId: ref.read(userProvider).id);
     await ref.read(dioServicesProvider).addEventToFavorite(model);
   }
@@ -114,10 +114,12 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   Future<void> removeEventFromFavorites(int eventId) async {
     final model = AddEventToFavoriteModelClass(eventId: eventId, userId: ref.read(userProvider).id);
     await ref.read(dioServicesProvider).removeEventFromFavorite(model);
-    var events = state.allEvents;
-    events.removeWhere((element) => element.id == eventId);
-    state = state.copyWith(allEvents: events);
-    adjustEventData();
+    if (state.showingFavorites) {
+      var events = state.allEvents;
+      events.removeWhere((element) => element.id == eventId);
+      state = state.copyWith(allEvents: events);
+      adjustEventData();
+    }
   }
 
   void adjustEventData() {
