@@ -208,7 +208,7 @@ class DBServices {
             about: res.description,
             isPrivate: res.eventType,
             capacity: res.capacity,
-            imageUrls: [],
+            imageUrls: res.images.map((e) => e.imageUrl).toList(),
             privateGuestList: true,
             hostName: res.hostName,
             hostPic: res.hostPic,

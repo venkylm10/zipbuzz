@@ -258,10 +258,7 @@ class NewEvent extends StateNotifier<EventModel> {
       var bannerUrl = "";
       if (bannerImage != null) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading banner image...");
-        bannerUrl = await ref
-                .read(storageServicesProvider)
-                .uploadEventBanner(id: ref.read(userProvider).id, file: bannerImage!) ??
-            "";
+        bannerUrl = await ref.read(dioServicesProvider).postEventBanner(bannerImage!);
       } else {
         final defaults = ref.read(defaultsProvider);
         final rand = Random().nextInt(defaults.bannerUrls.length);
@@ -314,6 +311,11 @@ class NewEvent extends StateNotifier<EventModel> {
         eventId: eventId,
       );
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
+
+      // upload event images
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
+      await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
+
       showSnackBar(message: "Event created successfully");
       resetNewEvent();
       ref.read(loadingTextProvider.notifier).reset();

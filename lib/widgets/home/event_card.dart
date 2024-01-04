@@ -18,6 +18,7 @@ import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
+// ignore: must_be_immutable
 class EventCard extends ConsumerStatefulWidget {
   EventModel event;
   final bool? focusedEvent;

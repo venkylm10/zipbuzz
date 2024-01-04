@@ -105,17 +105,14 @@ class _AddHostsState extends ConsumerState<AddHosts> {
             height: 32,
             padding: const EdgeInsets.symmetric(horizontal: 6),
             decoration: BoxDecoration(
-              color: !coHost
-                  ? AppColors.primaryColor.withOpacity(0.1)
-                  : AppColors.borderGrey,
+              color: !coHost ? AppColors.primaryColor.withOpacity(0.1) : AppColors.borderGrey,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
               child: !coHost
                   ? Text(
                       "Host",
-                      style:
-                          AppStyles.h4.copyWith(color: AppColors.primaryColor),
+                      style: AppStyles.h4.copyWith(color: AppColors.primaryColor),
                     )
                   : Row(
                       children: [

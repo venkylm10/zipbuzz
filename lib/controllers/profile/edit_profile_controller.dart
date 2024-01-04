@@ -9,8 +9,8 @@ import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
-import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
@@ -78,19 +78,18 @@ class EditProfileController {
         }
       }
 
-      String? newImageUrl;
+      var profileUrl = ref.read(userProvider).imageUrl;
+
       if (image != null) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading profile pic...");
-        newImageUrl = await ref
-            .read(storageServicesProvider)
-            .uploadProfilePic(id: userClone.id, file: image!);
+        profileUrl = await ref.read(dioServicesProvider).postUserImage(image!);
       }
 
       final updatedUser = ref.read(userProvider).copyWith(
             name: nameController.text.trim(),
             about: aboutController.text.trim(),
+            imageUrl: profileUrl,
             mobileNumber: mobileController.text.trim(),
-            imageUrl: newImageUrl,
             handle: handleController.text.trim(),
             linkedinId: linkedinIdControler.text.trim(),
             instagramId: instagramIdController.text.trim(),
@@ -101,9 +100,9 @@ class EditProfileController {
       final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
         id: updatedUser.id,
         phoneNumber: updatedUser.mobileNumber,
+        profilePicture: updatedUser.imageUrl,
         zipcode: updatedUser.zipcode,
         email: updatedUser.email,
-        profilePicture: updatedUser.imageUrl,
         description: updatedUser.about,
         username: updatedUser.name,
         isAmbassador: updatedUser.isAmbassador,

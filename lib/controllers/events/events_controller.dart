@@ -48,7 +48,6 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   }
 
   void updatePastEvents() {
-    state = state.copyWith(pastEvents: []);
     var events = <EventModel>[];
     state.eventsMap.forEach((key, value) {
       if (key.isBefore(state.today)) {

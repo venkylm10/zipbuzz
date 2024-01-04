@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ import 'package:zipbuzz/models/interests/requests/user_interests_update_model.da
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
 
@@ -39,6 +41,58 @@ class DioServices {
     } catch (error) {
       debugPrint('Error in postUser: $error');
       throw ('Failed to post user');
+    }
+  }
+
+  Future<String> postUserImage(File image) async {
+    final userId = box.read(BoxConstants.id) as int;
+    final imageName = image.path.split('/').last;
+
+    final formData = FormData.fromMap({
+      "media": await MultipartFile.fromFile(image.path, filename: imageName),
+      "user_id": userId,
+    });
+    try {
+      final res = await dio.post(DioConstants.postUserImage, data: formData);
+      debugPrint("Posted user image");
+      return res.data['pic_url'] as String;
+    } catch (error) {
+      debugPrint('Error in putUserImage: $error');
+      throw ('Failed to put user image');
+    }
+  }
+
+  Future<String> postEventBanner(File image) async {
+    final imageName = image.path.split('/').last;
+    final formData = FormData.fromMap({
+      "media": await MultipartFile.fromFile(image.path, filename: imageName),
+    });
+    try {
+      final res = await dio.post(DioConstants.postEventBanner, data: formData);
+      debugPrint("Posted Event Banner");
+      return res.data['pic_url'] as String;
+    } catch (error) {
+      debugPrint('Error in postEventBanner: $error');
+      throw ('Failed to post Event Banner');
+    }
+  }
+
+  Future<void> postEventImages(int eventId, List<File> images) async {
+    try {
+      List<MultipartFile> imageFiles = [];
+
+      for (int i = 0; i < images.length; i++) {
+        final imageName = images[i].path.split('/').last;
+        imageFiles.add(await MultipartFile.fromFile(images[i].path, filename: imageName));
+      }
+      final formData = FormData.fromMap({
+        "medias": imageFiles,
+        "event_id": eventId.toString(),
+      });
+      await dio.post(DioConstants.postEventImages, data: formData);
+    } catch (error) {
+      debugPrint('Error in postEventImages: $error');
+      throw ('Failed to post Event Images');
     }
   }
 
@@ -169,7 +223,6 @@ class DioServices {
           await dio.get(DioConstants.getUserEvents, data: userEventsRequestModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
-        print(list);
         debugPrint("GETTING USER EVENTS SUCCESSFULL");
         return list;
       } else {

@@ -116,30 +116,6 @@ class StorageSerives {
     }
   }
 
-  Future<List<String>> uploadEventImages(
-      {required String uid, required String eventId, required List<File> images}) async {
-    List<String> downloadUrls = [];
-    for (final file in images) {
-      final filename = "eventBanner_${eventId}_${file.path.split('/').last}";
-      try {
-        final ref = _storage
-            .ref()
-            .child(StorageConstants.userData)
-            .child(uid)
-            .child(StorageConstants.eventBannersFolder)
-            .child(eventId)
-            .child(StorageConstants.eventBanner)
-            .child(filename);
-        UploadTask uploadTask = ref.putFile(file);
-        final snapshot = await uploadTask;
-        final url = await snapshot.ref.getDownloadURL();
-        downloadUrls.add(url);
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-    return downloadUrls;
-  }
 
   Future<List<String>> uploadInviteePics(
       {required int hostId, required int eventId, required List<Contact> contacts}) async {

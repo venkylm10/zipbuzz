@@ -409,6 +409,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   Widget buildPhotos(bool isPreview, WidgetRef ref) {
     final imageFiles = ref.watch(newEventProvider.notifier).selectedImages;
+    final imageUrls = widget.event.imageUrls;
     return isPreview
         ? Container(
             decoration: BoxDecoration(
@@ -445,14 +446,14 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               children: List.generate(
-                7,
+                imageUrls.length,
                 (index) => StaggeredGridTile.count(
                   crossAxisCellCount: index % (maxImages - 1) == 0 ? 2 : 1,
                   mainAxisCellCount: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      'assets/images/about/Image-$index.png',
+                    child: Image.network(
+                      imageUrls[index],
                       fit: BoxFit.cover,
                     ),
                   ),

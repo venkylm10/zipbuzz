@@ -15,6 +15,7 @@ class EventResponseModel {
   final int capacity;
   final int filledCapacity;
   final bool isFavorite;
+  List<ImageModel> images;
 
   EventResponseModel({
     required this.id,
@@ -33,6 +34,7 @@ class EventResponseModel {
     required this.capacity,
     required this.filledCapacity,
     this.isFavorite = false,
+    this.images = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -53,6 +55,7 @@ class EventResponseModel {
       'capacity': capacity,
       'filled_capacity': filledCapacity,
       'is_favorite': isFavorite,
+      'images': images.map((image) => image.toMap()).toList(),
     };
   }
 
@@ -74,6 +77,24 @@ class EventResponseModel {
       capacity: map['capacity'] as int,
       filledCapacity: map['filled_capacity'] as int,
       isFavorite: map['is_favorite'] as bool,
+      images: (map['images'] as List).map((e) => ImageModel.fromMap(e)).toList(),
+    );
+  }
+}
+
+class ImageModel {
+  String imageUrl;
+  ImageModel({required this.imageUrl});
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'image_url': imageUrl,
+    };
+  }
+
+  factory ImageModel.fromMap(Map<String, dynamic> map) {
+    return ImageModel(
+      imageUrl: map['image_url'] as String,
     );
   }
 }

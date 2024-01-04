@@ -36,20 +36,10 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
   }
 
   void addImages() async {
-    if (selectedImages.length >= maxImages) {
-      showSnackBar(message: "You can only add $maxImages images");
-      return;
-    }
     File? image;
-    var pickedImages =
-        await ref.read(imageServicesProvider).pickMultipleImages();
+    var pickedImages = await ref.read(imageServicesProvider).pickMultipleImages();
     if (pickedImages.isNotEmpty) {
       pickedImages.map((pickedImage) {
-        if (selectedImages.length >= maxImages) {
-          showSnackBar(message: "You can only add $maxImages images");
-          setState(() {});
-          return;
-        }
         image = File(pickedImage!.path);
         ref.read(newEventProvider.notifier).selectedImages.add(image!);
       }).toList();
@@ -76,8 +66,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         if (selectedImages.isEmpty)
           GestureDetector(
             onTap: () {
-              showSnackBar();
-              // addImages();
+              addImages();
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
@@ -128,8 +117,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
                       Align(
                         alignment: Alignment.center,
                         child: GestureDetector(
-                          onTap: () =>
-                              removeImage(image: selectedImages[index]),
+                          onTap: () => removeImage(image: selectedImages[index]),
                           child: SizedBox(
                             height: 36,
                             width: 36,
@@ -142,8 +130,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
                                       sigmaX: 4,
                                       sigmaY: 4,
                                     ),
-                                    child:
-                                        const SizedBox(height: 36, width: 36),
+                                    child: const SizedBox(height: 36, width: 36),
                                   ),
                                 ),
                                 SvgPicture.asset(
@@ -166,9 +153,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         if (selectedImages.isNotEmpty)
           GestureDetector(
             onTap: () {
-              showSnackBar();
-              // TODO: Adding images to events
-              // addImages();
+              addImages();
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),

@@ -75,6 +75,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     topPadding = MediaQuery.of(context).padding.top;
     final homeTabController = ref.watch(homeTabControllerProvider.notifier);
     var isSearching = homeTabController.isSearching;
+    // ignore: unused_local_variable
     var showingFavorites = ref.watch(eventsControllerProvider).showingFavorites;
     return Scaffold(
       backgroundColor: Colors.white,
