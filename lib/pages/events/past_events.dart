@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -12,13 +13,17 @@ class PastEvents extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pastEvents = ref.watch(eventsControllerProvider).pastEvents;
+    final userId = ref.read(userProvider).id;
     return pastEvents.isNotEmpty
         ? Column(
-            children: pastEvents
-                .map(
-                  (e) => EventCard(event: e),
-                )
-                .toList(),
+            children: pastEvents.map(
+              (e) {
+                if (e.hostId == userId) {
+                  return EventCard(event: e, showHostedTag: false);
+                }
+                return const SizedBox();
+              },
+            ).toList(),
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.center,

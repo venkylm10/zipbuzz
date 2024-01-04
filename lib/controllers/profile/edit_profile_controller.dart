@@ -117,7 +117,7 @@ class EditProfileController {
           .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Getting new events...");
-      await ref.read(eventsControllerProvider.notifier).getUserEvents();
+      await ref.read(eventsControllerProvider.notifier).getAllEvents();
       ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
       ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pop();

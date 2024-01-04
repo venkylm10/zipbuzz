@@ -216,21 +216,21 @@ class DioServices {
     }
   }
 
-  Future<List> getUserEvents(UserEventsRequestModel userEventsRequestModel) async {
+  Future<List> getAllEvents(UserEventsRequestModel userEventsRequestModel) async {
     try {
-      debugPrint("GETTING USER EVENTS");
+      debugPrint("GETTING ALL EVENTS");
       final response =
-          await dio.get(DioConstants.getUserEvents, data: userEventsRequestModel.toMap());
+          await dio.get(DioConstants.getAllEvents, data: userEventsRequestModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
-        debugPrint("GETTING USER EVENTS SUCCESSFULL");
+        debugPrint("GETTING ALL EVENTS SUCCESSFULL");
         return list;
       } else {
-        throw 'FAILED TO GET USER EVENTS';
+        throw 'FAILED TO GET ALL EVENTS';
       }
     } catch (e) {
       debugPrint(e.toString());
-      throw 'FAILED TO GET USER EVENTS';
+      throw 'FAILED TO GET ALL EVENTS';
     }
   }
 

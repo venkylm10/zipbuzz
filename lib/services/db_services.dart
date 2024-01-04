@@ -183,10 +183,10 @@ class DBServices {
     }
   }
 
-  Future<List<EventModel>> getUserEvents(UserEventsRequestModel userEventsRequestModel) async {
+  Future<List<EventModel>> getAllEvents(UserEventsRequestModel userEventsRequestModel) async {
     if (box.read(BoxConstants.guestUser) == null) {
       try {
-        final list = await _dioServices.getUserEvents(userEventsRequestModel);
+        final list = await _dioServices.getAllEvents(userEventsRequestModel);
         final events = list.map((e) async {
           final res = EventResponseModel.fromMap(e as Map<String, dynamic>);
           final members =

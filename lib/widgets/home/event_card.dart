@@ -22,7 +22,8 @@ import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 class EventCard extends ConsumerStatefulWidget {
   EventModel event;
   final bool? focusedEvent;
-  EventCard({super.key, required this.event, this.focusedEvent = false});
+  final bool showHostedTag;
+  EventCard({super.key, required this.event, this.focusedEvent = false, this.showHostedTag = true});
 
   @override
   ConsumerState<EventCard> createState() => _EventCardState();
@@ -126,7 +127,7 @@ class _EventCardState extends ConsumerState<EventCard> {
             Expanded(
               child: Column(
                 children: [
-                  if (isHosted)
+                  if (isHosted && widget.showHostedTag)
                     Container(
                       height: 40,
                       padding: const EdgeInsets.only(top: 4),

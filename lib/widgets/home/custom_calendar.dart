@@ -27,7 +27,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
 
   @override
   void initState() {
-    getUserEvents();
+    getAllEvents();
     super.initState();
   }
 
@@ -37,8 +37,8 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
     super.dispose();
   }
 
-  void getUserEvents() async {
-    if (isMounted) await ref.read(eventsControllerProvider.notifier).getUserEvents();
+  void getAllEvents() async {
+    if (isMounted) await ref.read(eventsControllerProvider.notifier).getAllEvents();
     if (isMounted) ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
     if (isMounted) ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
     if (isMounted) setState(() {});

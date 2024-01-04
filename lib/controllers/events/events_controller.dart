@@ -62,10 +62,10 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     state = state.copyWith(selectedCategory: category ?? '');
   }
 
-  Future<void> getUserEvents() async {
+  Future<void> getAllEvents() async {
     final userEventsRequestModel =
         UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
-    final list = await ref.read(dbServicesProvider).getUserEvents(userEventsRequestModel);
+    final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
     state = state.copyWith(allEvents: list);
     adjustEventData();
   }
@@ -103,10 +103,10 @@ class EventsControllProvider extends StateNotifier<EventsController> {
       return;
     }
     state = state.copyWith(showingFavorites: false);
-    getUserEvents();
+    getAllEvents();
   }
 
-Future<void> addEventToFavorites(int eventId) async {
+  Future<void> addEventToFavorites(int eventId) async {
     final model = AddEventToFavoriteModelClass(eventId: eventId, userId: ref.read(userProvider).id);
     await ref.read(dioServicesProvider).addEventToFavorite(model);
   }
