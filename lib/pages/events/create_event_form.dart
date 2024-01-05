@@ -17,7 +17,7 @@ class CreateEventForm extends ConsumerStatefulWidget {
 }
 
 class _CreateEventFormState extends ConsumerState<CreateEventForm> {
-  String category = allInterests.entries.first.key;
+  String category = allInterests.first.category;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController dateController;
@@ -324,18 +324,18 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             borderSide: BorderSide(color: Colors.transparent),
           ),
         ),
-        items: allInterests.entries
+        items: allInterests
             .map(
               (e) => DropdownMenuItem(
                 onTap: () {
                   setState(() {
-                    category = e.key;
+                    category = e.category;
                   });
                 },
-                value: e.key,
+                value: e.category,
                 child: Row(
                   children: [
-                    Text(e.key),
+                    Text(e.category),
                   ],
                 ),
               ),

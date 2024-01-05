@@ -26,7 +26,7 @@ class EditEventPage extends ConsumerStatefulWidget {
 }
 
 class _CreateEventState extends ConsumerState<EditEventPage> {
-  String category = allInterests.entries.first.key;
+  String category = allInterests.first.category;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   int randInt = 0;
@@ -80,7 +80,9 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
               broadDivider(),
               const CreateEventGuestListType(),
               const SizedBox(height: 32),
-              EventHostGuestList(guests: ref.watch(editEventControllerProvider).eventMembers, eventId: ref.watch(editEventControllerProvider).id),
+              EventHostGuestList(
+                  guests: ref.watch(editEventControllerProvider).eventMembers,
+                  eventId: ref.watch(editEventControllerProvider).id),
               broadDivider(),
               const SizedBox(height: 16),
             ],

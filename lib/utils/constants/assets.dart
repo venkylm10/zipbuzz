@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 
 class Assets {
   static const icons = AppIcons();
@@ -102,38 +102,10 @@ class Images {
   final profile = 'assets/images/profile.png';
 }
 
-final allInterests = {
-  'Hiking': Assets.icons.hiking,
-  'Sports': Assets.icons.sports,
-  'Music': Assets.icons.music,
-  'Movie Clubs': Assets.icons.movieClubs,
-  'Dance': Assets.icons.dance,
-  'Fitness': Assets.icons.fitness,
-  'Parties': Assets.icons.parties,
-  'Book': Assets.icons.book,
-  'Boating': Assets.icons.boating,
-  'Wine Tasting': Assets.icons.wineTasting,
-  'Gaming': Assets.icons.gaming,
-  'Kid Playdates': Assets.icons.kidPlaydates,
-  'Pet Activities': Assets.icons.petActivites,
-};
+var allInterests = <InterestModel>[];
 
-final Map<String, Color> interestColors = {
-  Assets.icons.hiking: Colors.brown,
-  Assets.icons.sports: Colors.green,
-  Assets.icons.music: const Color.fromARGB(255, 228, 208, 34),
-  Assets.icons.movieClubs: Colors.deepPurple,
-  Assets.icons.dance: Colors.red,
-  Assets.icons.fitness: Colors.blueGrey,
-  Assets.icons.parties: Colors.pink,
-  Assets.icons.book: Colors.lightGreen,
-  Assets.icons.boating: Colors.lime,
-  Assets.icons.wineTasting: AppColors.primaryColor,
-  Assets.icons.gaming: Colors.red,
-  Assets.icons.kidPlaydates: Colors.pink,
-  Assets.icons.petActivites: Colors.orange,
-};
+var interestIcons = <String, String>{};
 
-Color getInterestColor(String iconPath) {
-  return interestColors[iconPath]!;
-}
+var interestBanners = <String, String>{};
+
+var interestColors = <String, Color>{};

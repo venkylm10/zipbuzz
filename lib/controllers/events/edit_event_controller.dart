@@ -9,11 +9,11 @@ import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
@@ -38,7 +38,7 @@ class EditEventController extends StateNotifier<EventModel> {
             category: "Hiking",
             isFavorite: false,
             bannerPath: "",
-            iconPath: allInterests['Hiking']!,
+            iconPath: "", // updating this just after getting allInterests from the API
             about: "",
             hostId: ref.read(userProvider).id,
             hostName: ref.read(userProvider).name,
@@ -97,7 +97,7 @@ class EditEventController extends StateNotifier<EventModel> {
   }
 
   void updateCategory(String category) {
-    state = state.copyWith(category: category, iconPath: allInterests[category]!);
+    state = state.copyWith(category: category, iconPath: interestIcons[category]!);
   }
 
   void onChangeCapacity(String value) {

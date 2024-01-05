@@ -14,16 +14,21 @@ import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_resonse_modal_class.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
+import 'package:zipbuzz/models/onboarding_page_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
+import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
 
-final dioServicesProvider = Provider((ref) => DioServices());
+final dioServicesProvider = Provider((ref) => DioServices(ref: ref));
 
 class DioServices {
+  final Ref ref;
+  DioServices({required this.ref});
   Dio dio = Dio(
     BaseOptions(
       baseUrl: DioConstants.baseUrl,
@@ -33,6 +38,18 @@ class DioServices {
     ),
   );
   final box = GetStorage();
+
+  Future<void> updateOnboardingDetails() async {
+    try {
+      final response = await dio.get(DioConstants.onboardingDetails);
+      final list = response.data['onboarding_data'] as List;
+      final pageDetails = list.map((e) => OnboardingPageModel.fromMap(e)).toList();
+      ref.read(onboardingDetailsProvider.notifier).update((state) => pageDetails);
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception("Failed to get onboarding details");
+    }
+  }
 
   Future<Map<String, dynamic>> createUser(UserPostModel userPostModel) async {
     try {
@@ -96,10 +113,14 @@ class DioServices {
     }
   }
 
-  Future<Map<String, dynamic>> getMasterInterests() async {
+  Future<List<InterestModel>> getAllInterests() async {
     try {
-      final response = await dio.get(DioConstants.masterInterests);
-      return response.data as Map<String, dynamic>;
+      final response = await dio.get(DioConstants.allCategories);
+      var list = <InterestModel>[];
+      for (var item in (response.data['category_data'] as List)) {
+        list.add(InterestModel.fromMap(item as Map<String, dynamic>));
+      }
+      return list;
     } catch (error) {
       debugPrint('Error in getMasterInterests: ${error.toString()}');
       throw Exception('Failed to get master interests');

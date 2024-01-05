@@ -345,14 +345,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: allInterests.entries.map(
+      children: allInterests.map(
         (interest) {
           {
-            final iconPath = interest.value;
-            final color = getInterestColor(iconPath);
-            final present = myInterests.contains(interest.key);
+            final iconPath = interest.iconUrl;
+            final color = interestColors[interest.category]!;
+            final present = myInterests.contains(interest.category);
             return GestureDetector(
-              onTap: () => updateInterest(interest.key),
+              onTap: () => updateInterest(interest.category),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -365,11 +365,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   children: [
                     Opacity(
                       opacity: present ? 1 : 0.4,
-                      child: Image.asset(iconPath, height: 16),
+                      child: Image.network(iconPath, height: 16),
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      interest.key,
+                      interest.category,
                       style: AppStyles.h4.copyWith(
                         color: present ? color : Colors.grey[800],
                       ),

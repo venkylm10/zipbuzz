@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
-import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -26,7 +23,7 @@ class CreateEvent extends ConsumerStatefulWidget {
 }
 
 class _CreateEventState extends ConsumerState<CreateEvent> {
-  String category = allInterests.entries.first.key;
+  String category = allInterests.first.category;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   int randInt = 0;
@@ -99,8 +96,6 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
 
   Future<Color> getDominantColor() async {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    final defaultBanners = ref.read(defaultsProvider).bannerPaths;
-    randInt = Random().nextInt(defaultBanners.length);
     Color dominantColor = Colors.green;
     if (previewBanner != null) {
       final image = FileImage(previewBanner);
@@ -109,7 +104,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
       );
       dominantColor = generator.dominantColor!.color;
     } else {
-      final image = AssetImage(defaultBanners[randInt]);
+      final image = NetworkImage(interestBanners[ref.read(newEventProvider).category]!);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
         image,
       );

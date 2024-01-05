@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
@@ -8,7 +10,9 @@ import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
@@ -34,6 +38,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
     }
     ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your Data...");
+    await updateInterestsData();
     final id = GetStorage().read(BoxConstants.id) as int;
     final requestModel = UserDetailsRequestModel(userId: id);
     await ref.read(dbServicesProvider).getUserData(requestModel);
@@ -63,6 +68,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     } else {
       await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
     }
+    await updateInterestsData();
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
     GetStorage().write(BoxConstants.id, 1);
@@ -80,7 +86,14 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       return;
     }
     await Future.delayed(const Duration(milliseconds: 500));
+    await ref.read(dioServicesProvider).updateOnboardingDetails();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);
+  }
+
+  Future<void> updateInterestsData() async {
+    await ref.read(eventsControllerProvider.notifier).getAllInterests();
+    ref.read(newEventProvider.notifier).updateCategory(allInterests.first.category);
+    ref.read(editEventControllerProvider.notifier).updateCategory(allInterests.first.category);
   }
 
   @override

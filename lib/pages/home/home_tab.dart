@@ -139,9 +139,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 physics: const BouncingScrollPhysics(),
                 child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: allInterests.entries.map((e) {
-                      final name = e.key;
-                      final iconPath = e.value;
+                    children: allInterests.map((e) {
+                      final name = e.category;
+                      final iconPath = e.iconUrl;
                       return GestureDetector(
                         onTap: () => onTapRowCategory(name),
                         child: Container(
@@ -165,7 +165,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                             opacity: ref.watch(eventsControllerProvider).selectedCategory == name
                                 ? 1
                                 : 0.5,
-                            child: Image.asset(
+                            child: Image.network(
                               iconPath,
                               height: 30,
                             ),
@@ -227,7 +227,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildCategoryPage(int pageIndex, BuildContext context) {
-    final subInterests = allInterests.entries.map((e) => e.key).toList().sublist(pageIndex * 8,
+    final subInterests = allInterests.sublist(pageIndex * 8,
         (pageIndex + 1) * 8 > allInterests.length ? allInterests.length : (pageIndex + 1) * 8);
     final width = MediaQuery.of(context).size.width;
     return Container(
@@ -242,22 +242,22 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         children: List.generate(
           subInterests.length,
           (index) {
-            final name = subInterests[index];
+            final interest = subInterests[index];
             return GestureDetector(
-              onTap: () => onTapGridCategory(subInterests[index]),
+              onTap: () => onTapGridCategory(interest.category),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
                     constraints: const BoxConstraints(minHeight: 50),
-                    child: Image.asset(
-                      allInterests[name]!,
+                    child: Image.network(
+                      interest.iconUrl,
                       height: 40,
                     ),
                   ),
                   Text(
-                    name,
+                    interest.category,
                     softWrap: true,
                     textAlign: TextAlign.center,
                     style: AppStyles.h5,

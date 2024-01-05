@@ -28,7 +28,7 @@ class EventChip extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
+          Image.network(
             iconPath,
             height: 16,
           ),

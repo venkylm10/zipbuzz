@@ -278,7 +278,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   }
 
   Widget buildEventIndicator(EventModel event, int index, int length) {
-    final color = getInterestColor(event.iconPath);
+    final color = interestColors[event.category];
     return Expanded(
       child: Transform.translate(
         offset: Offset(-(2 * index).toDouble(), 0),

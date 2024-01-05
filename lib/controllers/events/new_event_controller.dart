@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,13 +11,12 @@ import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
-import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -41,7 +39,7 @@ class NewEvent extends StateNotifier<EventModel> {
             category: "Hiking",
             isFavorite: false,
             bannerPath: "",
-            iconPath: allInterests['Hiking']!,
+            iconPath: "", // updating this just after getting allInterests from the API
             about: "",
             hostId: ref.read(userProvider).id,
             hostName: ref.read(userProvider).name,
@@ -95,7 +93,7 @@ class NewEvent extends StateNotifier<EventModel> {
   }
 
   void updateCategory(String category) {
-    state = state.copyWith(category: category, iconPath: allInterests[category]!);
+    state = state.copyWith(category: category, iconPath: interestIcons[category]!);
   }
 
   void onChangeCapacity(String value) {
@@ -256,9 +254,7 @@ class NewEvent extends StateNotifier<EventModel> {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading banner image...");
         bannerUrl = await ref.read(dioServicesProvider).postEventBanner(bannerImage!);
       } else {
-        final defaults = ref.read(defaultsProvider);
-        final rand = Random().nextInt(defaults.bannerUrls.length);
-        bannerUrl = defaults.bannerUrls[defaults.bannerPaths[rand]]!;
+        bannerUrl = interestBanners[state.category]!;
       }
       debugPrint("New Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
@@ -348,10 +344,10 @@ class NewEvent extends StateNotifier<EventModel> {
       startTime: "",
       endTime: "",
       attendees: 0,
-      category: "Hiking",
+      category: allInterests.first.category,
       isFavorite: false,
       bannerPath: "",
-      iconPath: allInterests['Hiking']!,
+      iconPath: allInterests.first.iconUrl,
       about: "",
       hostId: ref.read(userProvider).id,
       hostName: ref.read(userProvider).name,

@@ -68,7 +68,7 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   void getEventColor() {
-    eventColor = getInterestColor(widget.event.iconPath);
+    eventColor = interestColors[widget.event.category]!;
     setState(() {});
   }
 
@@ -121,7 +121,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                       color: eventColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    child: Image.asset(widget.event.iconPath),
+                    child: Image.network(widget.event.iconPath),
                   )
                 ],
               ),
@@ -348,7 +348,7 @@ class _EventCardState extends ConsumerState<EventCard> {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
+          Image.network(
             widget.event.iconPath,
             height: 16,
           ),

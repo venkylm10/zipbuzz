@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/models/onboarding_page_model.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
+
+final onboardingDetailsProvider = StateProvider((ref) => <OnboardingPageModel>[]);
 
 class WelcomePage extends ConsumerStatefulWidget {
   static const id = '/welcome';
@@ -15,22 +17,7 @@ class WelcomePage extends ConsumerStatefulWidget {
 class _WelcomePageState extends ConsumerState<WelcomePage> {
   var currentPage = 0;
   late PageController pageController;
-  final welcomeImages = [
-    Assets.welcomeImage.welcome1,
-    Assets.welcomeImage.welcome2,
-    Assets.welcomeImage.welcome3,
-  ];
-  final pageHeadings = [
-    'An event of every kind for everyone',
-    'Near or far, don’t miss out any adventure',
-    'New connections & adventures',
-  ];
-
-  final pageDiscriptions = [
-    'Explore hundreds of events for you and your friends to attend near by. This goes into line number 3.',
-    'Driver sink salmagundi run jib shot cutlass down. Yer or brethren crack piracy league brace.',
-    "Deck measured spirits dead gaff jones' pin coxswain round sloop. Brace scurvy ballast lugsail arrgh on tell shrouds plate."
-  ];
+  var pageDetails = <OnboardingPageModel>[];
 
   void pageChanged(int index) {
     setState(() {
@@ -39,13 +26,13 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   }
 
   void skip() async {
-    await pageController.animateToPage(welcomeImages.length - 1,
+    await pageController.animateToPage(pageDetails.length - 1,
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     showSignInForm();
   }
 
   void next() async {
-    if (currentPage < welcomeImages.length - 1) {
+    if (currentPage < pageDetails.length - 1) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -74,8 +61,9 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
 
   @override
   void initState() {
-    super.initState();
     pageController = PageController(initialPage: 0);
+    pageDetails = ref.read(onboardingDetailsProvider);
+    super.initState();
   }
 
   @override
@@ -87,7 +75,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
           Expanded(
             child: PageView.builder(
               controller: pageController,
-              itemCount: welcomeImages.length,
+              itemCount: pageDetails.length,
               scrollDirection: Axis.horizontal,
               onPageChanged: (value) => pageChanged(value),
               itemBuilder: (context, index) {
@@ -95,8 +83,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                   children: [
                     SizedBox(
                       height: double.infinity,
-                      child: Image.asset(
-                        welcomeImages[index],
+                      child: Image.network(
+                        pageDetails[index].imageUrl,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -117,7 +105,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              pageHeadings[currentPage],
+                              pageDetails[currentPage].heading,
                               style: AppStyles.h1.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -125,7 +113,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              pageDiscriptions[currentPage],
+                              pageDetails[currentPage].subheading,
                               style: AppStyles.h3.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w300,
@@ -159,7 +147,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                 ),
                 Row(
                   children: List.generate(
-                    welcomeImages.length,
+                    pageDetails.length,
                     (index) => Container(
                       height: 6,
                       width: 6,
@@ -174,7 +162,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                 GestureDetector(
                   onTap: next,
                   child: Text(
-                    currentPage == welcomeImages.length - 1 ? 'Finish' : 'Next',
+                    currentPage == pageDetails.length - 1 ? 'Finish' : 'Next',
                     style: AppStyles.h3.copyWith(
                       color: Colors.white,
                     ),

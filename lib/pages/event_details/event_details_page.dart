@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,13 +8,12 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 import 'package:zipbuzz/widgets/event_details_page/friends_registered_box.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
-import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -54,7 +52,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   final bodyScrollController = ScrollController();
   Color eventColor = Colors.white;
   double horizontalMargin = 16;
-  List<String> defaultBanners = [];
   int maxImages = 0;
   List<UserModel> coHosts = [];
   File? image;
@@ -73,7 +70,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   }
 
   void getEventColor() {
-    eventColor = getInterestColor(widget.event.iconPath);
+    eventColor = interestColors[widget.event.category]!;
     setState(() {});
   }
 
@@ -90,7 +87,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   void initialise() async {
     maxImages = ref.read(newEventProvider.notifier).maxImages;
-    defaultBanners = ref.read(defaultsProvider).bannerPaths;
     await ref.read(dbServicesProvider).getEventRequestMembers(widget.event.id);
     getEventColor();
   }
@@ -280,8 +276,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   Future<Color> getDominantColor() async {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    final defaultBanners = ref.read(defaultsProvider).bannerPaths;
-    final randInt = Random().nextInt(defaultBanners.length);
     Color dominantColor = Colors.green;
     if (previewBanner != null) {
       final image = FileImage(previewBanner);
@@ -290,12 +284,13 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       );
       dominantColor = generator.dominantColor!.color;
     } else {
-      final image = AssetImage(defaultBanners[randInt]);
+      final image = NetworkImage(interestBanners[widget.event.category]!);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
         image,
       );
       dominantColor = generator.dominantColor!.color;
     }
+    setState(() {});
     return dominantColor;
   }
 
@@ -351,32 +346,33 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           ),
         ),
         const Expanded(child: SizedBox()),
-        if(widget.isPreview || widget.rePublish)Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: GestureDetector(
-            onTap: () => pickImage(),
-            child: Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                  child: Center(
-                    child: Icon(
-                      Icons.edit,
-                      color: widget.dominantColor,
+        if (widget.isPreview || widget.rePublish)
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: GestureDetector(
+              onTap: () => pickImage(),
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                    child: Center(
+                      child: Icon(
+                        Icons.edit,
+                        color: widget.dominantColor,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -409,8 +405,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset(
-                defaultBanners[widget.randInt],
+              child: Image.network(
+                interestBanners[widget.event.category]!,
                 fit: BoxFit.cover,
               ),
             ),
