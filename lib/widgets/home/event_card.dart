@@ -50,6 +50,8 @@ class _EventCardState extends ConsumerState<EventCard> {
         builder: (context) => EventDetailsPage(
           event: widget.event,
           dominantColor: dominantColor,
+          isPreview: false,
+          rePublish: false,
         ),
       ),
     );

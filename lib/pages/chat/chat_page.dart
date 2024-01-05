@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,6 +11,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+
 
 class ChatPage extends ConsumerStatefulWidget {
   static const id = '/chat';
@@ -66,6 +66,11 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       maxLines = 5;
     }
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -141,9 +146,19 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                 bool showDate = true;
                 if (index != messages.length - 1) {
                   showProfilePic = messages[index + 1].senderId != messages[index].senderId;
-                  showDate = messages[index].timeStamp.substring(0, 10) !=
-                      messages[index + 1].timeStamp.substring(0, 10);
+                  final d1 = DateTime.parse(messages[index].timeStamp)
+                      .toLocal()
+                      .toString()
+                      .substring(0, 10);
+                  final d2 = DateTime.parse(messages[index + 1].timeStamp)
+                      .toLocal()
+                      .toString()
+                      .substring(0, 10);
+                  final first =
+                      DateTime.parse(messages.last.timeStamp).toLocal().toString().substring(0, 10);
+                  showDate = (d1 != d2 && d1 != first);
                 }
+
                 return buildMessage(messages[index], showProfilePic, showDate);
               },
             ),
@@ -193,8 +208,15 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           bool showDate = true;
           if (index != bufferChats.length - 1) {
             showProfilePic = bufferChats[index + 1].senderId != bufferChats[index].senderId;
-            showDate = bufferChats[index].timeStamp.substring(0, 10) !=
-                bufferChats[index + 1].timeStamp.substring(0, 10);
+            final d1 =
+                DateTime.parse(bufferChats[index].timeStamp).toLocal().toString().substring(0, 10);
+            final d2 = DateTime.parse(bufferChats[index + 1].timeStamp)
+                .toLocal()
+                .toString()
+                .substring(0, 10);
+            final first =
+                DateTime.parse(bufferChats.last.timeStamp).toLocal().toString().substring(0, 10);
+            showDate = (d1 != d2 && d1 != first);
           }
           return buildMessage(bufferChats[index], showProfilePic, showDate);
         },

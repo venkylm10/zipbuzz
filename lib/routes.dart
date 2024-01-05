@@ -27,7 +27,7 @@ final routes = {
       event: event,
       isPreview: isPreview,
       dominantColor: dominantColor,
-      randInt: randInt,
+      randInt: randInt ?? 0,
       rePublish: rePublish,
     );
   },

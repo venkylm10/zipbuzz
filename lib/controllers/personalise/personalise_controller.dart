@@ -122,6 +122,7 @@ class PersonaliseController {
         ref.read(newEventProvider.notifier).updateHostId(id);
         ref.read(newEventProvider.notifier).updateHostName(newUser.name);
         ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
+        
 
         // posting users interests
         ref.read(loadingTextProvider.notifier).updateLoadingText("Personalising the app...");

@@ -200,10 +200,6 @@ class NewEvent extends StateNotifier<EventModel> {
   }
 
   bool validateNewEvent() {
-    if (bannerImage == null) {
-      showSnackBar(message: "Please select a banner image");
-      return false;
-    }
     if (state.title.isEmpty) {
       showSnackBar(message: "Please enter event title");
       return false;

@@ -68,6 +68,7 @@ dependencies:
   get: ^4.6.6
   flutter_contacts: ^1.1.7+1
   firebase_dynamic_links: ^5.4.8
+  http: ^1.1.2
   
 
 dev_dependencies:

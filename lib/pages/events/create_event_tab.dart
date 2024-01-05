@@ -14,7 +14,6 @@ import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/create_event_form.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
-import 'package:zipbuzz/widgets/create_event/event_banner_selector.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
 import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 import 'package:zipbuzz/widgets/create_event/photos.dart';
@@ -53,8 +52,9 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const EventBannerSelector(),
-          const SizedBox(height: 16),
+          // TODO: Removed banner selector in create event tab
+          // const EventBannerSelector(),
+          // const SizedBox(height: 16),
           const CreateEventForm(),
           broadDivider(),
           const AddHosts(),
@@ -121,7 +121,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
   void showPreview() async {
     if (ref.read(newEventProvider.notifier).validateNewEvent()) {
       final dominantColor = await getDominantColor();
-      navigatorKey.currentState!.pushNamed(
+      await navigatorKey.currentState!.pushNamed(
         EventDetailsPage.id,
         arguments: {
           'event': ref.read(newEventProvider),

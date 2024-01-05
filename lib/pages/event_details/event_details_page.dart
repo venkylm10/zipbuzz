@@ -1,11 +1,16 @@
+import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 import 'package:zipbuzz/widgets/event_details_page/friends_registered_box.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -24,14 +29,15 @@ import 'package:zipbuzz/widgets/event_details_page/event_hosts.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_qrcode.dart';
 import 'package:zipbuzz/widgets/event_details_page/guest_list.dart';
 
+// ignore: must_be_immutable
 class EventDetailsPage extends ConsumerStatefulWidget {
   static const id = 'event/details';
   final EventModel event;
-  final int? randInt;
-  final bool? isPreview;
-  final bool? rePublish;
-  final Color dominantColor;
-  const EventDetailsPage({
+  final int randInt;
+  final bool isPreview;
+  final bool rePublish;
+  Color dominantColor;
+  EventDetailsPage({
     super.key,
     required this.event,
     this.randInt = 0,
@@ -51,6 +57,20 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   List<String> defaultBanners = [];
   int maxImages = 0;
   List<UserModel> coHosts = [];
+  File? image;
+
+  void pickImage() async {
+    final pickedImage = await ImageServices().pickImage();
+    if (pickedImage != null) {
+      image = File(pickedImage.path);
+      ref.read(newEventProvider.notifier).updateBannerImage(image!);
+      ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
+      widget.dominantColor = await getDominantColor();
+      ref.read(loadingTextProvider.notifier).reset();
+      setState(() {});
+    }
+  }
 
   void getEventColor() {
     eventColor = getInterestColor(widget.event.iconPath);
@@ -133,9 +153,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     const SizedBox(width: 10),
                                     Consumer(builder: (context, ref, child) {
                                       var attendees = 1;
-                                      if (widget.isPreview!) {
+                                      if (widget.isPreview) {
                                         attendees = ref.watch(newEventProvider).attendees;
-                                      } else if (widget.rePublish!) {
+                                      } else if (widget.rePublish) {
                                         attendees =
                                             ref.watch(editEventControllerProvider).attendees;
                                       } else {
@@ -144,9 +164,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
                                       var total = 1;
 
-                                      if (widget.isPreview!) {
+                                      if (widget.isPreview) {
                                         total = ref.watch(newEventProvider).capacity;
-                                      } else if (widget.rePublish!) {
+                                      } else if (widget.rePublish) {
                                         total = ref.watch(editEventControllerProvider).capacity;
                                       } else {
                                         total = widget.event.capacity;
@@ -197,7 +217,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                             ),
                             const SizedBox(height: 16),
-                            buildPhotos(widget.isPreview!, ref),
+                            buildPhotos(widget.isPreview, ref),
                             const SizedBox(height: 16),
                             Divider(
                               color: AppColors.greyColor.withOpacity(0.2),
@@ -217,7 +237,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                   children: [
                                     EventHosts(
                                       event: widget.event,
-                                      isPreview: widget.isPreview!,
+                                      isPreview: widget.isPreview,
                                     ),
                                     const SizedBox(height: 16),
                                     Divider(
@@ -244,7 +264,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                   ),
                 ),
               ),
-              SizedBox(height: widget.isPreview! ? 100 : 40),
+              SizedBox(height: widget.isPreview ? 100 : 40),
             ],
           ),
         ),
@@ -258,9 +278,30 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     );
   }
 
+  Future<Color> getDominantColor() async {
+    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
+    final defaultBanners = ref.read(defaultsProvider).bannerPaths;
+    final randInt = Random().nextInt(defaultBanners.length);
+    Color dominantColor = Colors.green;
+    if (previewBanner != null) {
+      final image = FileImage(previewBanner);
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      dominantColor = generator.dominantColor!.color;
+    } else {
+      final image = AssetImage(defaultBanners[randInt]);
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      dominantColor = generator.dominantColor!.color;
+    }
+    return dominantColor;
+  }
+
   Widget buildGuestList() {
     final userId = GetStorage().read(BoxConstants.id);
-    if (widget.isPreview!) {
+    if (widget.isPreview) {
       return EventGuestList(
         guests: widget.event.eventMembers,
       );
@@ -310,6 +351,32 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           ),
         ),
         const Expanded(child: SizedBox()),
+        if(widget.isPreview || widget.rePublish)Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: GestureDetector(
+            onTap: () => pickImage(),
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                  child: Center(
+                    child: Icon(
+                      Icons.edit,
+                      color: widget.dominantColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -317,7 +384,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   Widget buildBanner() {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
 
-    if (widget.isPreview!) {
+    if (widget.isPreview) {
       if (previewBanner != null) {
         return SizedBox(
           height: 300,
@@ -343,7 +410,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           children: [
             Positioned.fill(
               child: Image.asset(
-                defaultBanners[widget.randInt!],
+                defaultBanners[widget.randInt],
                 fit: BoxFit.cover,
               ),
             ),

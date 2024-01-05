@@ -75,22 +75,38 @@ class SignInSheet extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () => signInGuestUser(ref),
+                onTap: () {
+                  signInGuestUser(ref);
+                  // TODO: Guest View Flow
+                  // navigatorKey.currentState!.pop();
+                  // showSnackBar();
+                },
                 child: Container(
                   height: 56,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.white),
                   ),
                   child: Center(
-                    child: Text(
-                      "Explore as Guest",
-                      style: AppStyles.h4.copyWith(
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.white,
-                        color: Colors.white,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Terms & Conditions",
+                          style: AppStyles.h4.copyWith(
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.white,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SvgPicture.asset(
+                          Assets.icons.lock,
+                          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                          height: 20,
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -123,7 +139,7 @@ class SignInButton extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
           child: Row(
