@@ -7,6 +7,7 @@ import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/services/auth_services.dart';
@@ -76,10 +77,10 @@ class SignInSheet extends ConsumerWidget {
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {
-                  signInGuestUser(ref);
                   // TODO: Guest View Flow
-                  // navigatorKey.currentState!.pop();
-                  // showSnackBar();
+                  // signInGuestUser(ref);
+                  navigatorKey.currentState!.pop();
+                  showSnackBar();
                 },
                 child: Container(
                   height: 56,
