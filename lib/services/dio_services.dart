@@ -32,8 +32,8 @@ class DioServices {
   Dio dio = Dio(
     BaseOptions(
       baseUrl: DioConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 7),
-      receiveTimeout: const Duration(seconds: 7),
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
       headers: {'Content-Type': 'application/json'},
     ),
   );
@@ -237,11 +237,15 @@ class DioServices {
     }
   }
 
-  Future<List> getAllEvents(UserEventsRequestModel userEventsRequestModel) async {
+  Future<List> getAllEvents(UserEventsRequestModel userEventsRequestModel,
+      {String category = ""}) async {
     try {
       debugPrint("GETTING ALL EVENTS");
-      final response =
-          await dio.get(DioConstants.getAllEvents, data: userEventsRequestModel.toMap());
+      final data = userEventsRequestModel.toMap();
+      data.addAll({
+        "category": category,
+      });
+      final response = await dio.get(DioConstants.getAllEvents, data: data);
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
         debugPrint("GETTING ALL EVENTS SUCCESSFULL");

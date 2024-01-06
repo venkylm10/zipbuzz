@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -80,9 +81,11 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void updateTime({bool? isEnd = false}) async {
-    var time = await showTimePicker(
+    var time = await showIntervalTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+      interval: 5,
+      visibleStep: VisibleStep.fifths,
     );
     if (time != null) {
       time = time.replacing(minute: time.minute - (time.minute % 5));
