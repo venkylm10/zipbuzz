@@ -81,14 +81,14 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void updateTime({bool? isEnd = false}) async {
+    final currentTime = TimeOfDay.fromDateTime(DateTime.now());
     var time = await showIntervalTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+      initialTime: currentTime.replacing(minute: currentTime.minute - (currentTime.minute % 5)),
       interval: 5,
       visibleStep: VisibleStep.fifths,
     );
     if (time != null) {
-      time = time.replacing(minute: time.minute - (time.minute % 5));
       newEventController.updateTime(time, isEnd: isEnd);
       final formatedTime = newEventController.getTimeFromTimeOfDay(time);
       if (isEnd!) {
