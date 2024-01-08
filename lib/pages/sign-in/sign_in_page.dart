@@ -80,7 +80,7 @@ class SignInSheet extends ConsumerWidget {
                   // TODO: Guest View Flow
                   // signInGuestUser(ref);
                   navigatorKey.currentState!.pop();
-                  showSnackBar();
+                  showPrivacySheet(context);
                 },
                 child: Container(
                   height: 56,
@@ -94,7 +94,7 @@ class SignInSheet extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "Terms & Conditions",
+                          "Privacy Protected",
                           style: AppStyles.h4.copyWith(
                             decoration: TextDecoration.underline,
                             decorationColor: Colors.white,
@@ -158,6 +158,57 @@ class SignInButton extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void showPrivacySheet(BuildContext context) async {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isDismissible: true,
+    barrierColor: Colors.transparent,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(32),
+      ),
+    ),
+    builder: (context) {
+      return const PrivacySheet();
+    },
+  );
+}
+
+class PrivacySheet extends StatelessWidget {
+  const PrivacySheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.primaryColor.withOpacity(0.3),
+                AppColors.primaryColor,
+              ],
+            ),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(32),
+            ),
+          ),
+          child: Text(
+            "Are you harvesting and sharing my data for other commercial interests? \n\nEMPHATICALLY NO! We do not and will NEVER share your data with anyone for any reason at any time.",
+            style: AppStyles.h4.copyWith(color: Colors.white),
           ),
         ),
       ),

@@ -36,99 +36,111 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     final personaliseController = ref.read(personaliseControllerProvider);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          // Background Gradients
-          Container(
-            height: size.height,
-            width: size.width,
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  AppColors.primaryColor.withOpacity(0.3),
-                  Colors.transparent,
-                ],
-                radius: 0.8,
-                center: Alignment.topRight,
-                focalRadius: 0,
+      body: SizedBox(
+        height: size.height,
+        width: size.height,
+        child: Stack(
+          children: [
+            // Background Gradients
+            Container(
+              height: size.height,
+              width: size.width,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.primaryColor.withOpacity(0.3),
+                    Colors.transparent,
+                  ],
+                  radius: 0.8,
+                  center: Alignment.topRight,
+                  focalRadius: 0,
+                ),
               ),
             ),
-          ),
-          Container(
-            height: size.height,
-            width: size.width,
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  AppColors.primaryColor.withOpacity(0.2),
-                  Colors.transparent,
-                ],
-                radius: 0.8,
-                center: Alignment.bottomLeft,
-                focalRadius: 0,
+            Container(
+              height: size.height,
+              width: size.width,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.primaryColor.withOpacity(0.2),
+                    Colors.transparent,
+                  ],
+                  radius: 0.8,
+                  center: Alignment.bottomLeft,
+                  focalRadius: 0,
+                ),
               ),
             ),
-          ),
-          // Form
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 54),
-                  Text(
-                    "Hi ${currentUser.displayName ?? ""}!",
-                    style: AppStyles.extraLarge.copyWith(
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.bold,
+            // Form
+            Positioned(
+              top: 0,
+              left: 0,
+              child: SizedBox(
+                height: size.height,
+                width: size.width,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 54),
+                        Text(
+                          "Hi ${currentUser.displayName ?? ""}!",
+                          style: AppStyles.extraLarge.copyWith(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          softWrap: true,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Lets start by personalize your experience...",
+                          style: AppStyles.h2,
+                        ),
+                        const SizedBox(height: 24),
+                        Consumer(builder: (context, subRef, child) {
+                          final userLocation = subRef.watch(userLocationProvider);
+                          return buildTextField(
+                            Assets.icons.geo,
+                            "Zipcode",
+                            personaliseController.zipcodeController,
+                            userLocation.zipcode,
+                            keyboardType: TextInputType.number,
+                            maxLength: 10,
+                          );
+                        }),
+                        const SizedBox(height: 24),
+                        buildTextField(
+                          Assets.icons.telephone_filled,
+                          "Mobile no",
+                          personaliseController.mobileController,
+                          currentUser.phoneNumber ?? "9998887776",
+                          keyboardType: TextInputType.phone,
+                          maxLength: 10,
+                        ),
+                        const SizedBox(height: 40),
+                        Text(
+                          "Select at least 3 interests:",
+                          style: AppStyles.h3.copyWith(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        buildInterests(ref),
+                        const SizedBox(height: 60),
+                      ],
                     ),
-                    softWrap: true,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Lets start by personalize your experience...",
-                    style: AppStyles.h2,
-                  ),
-                  const SizedBox(height: 24),
-                  Consumer(builder: (context, subRef, child) {
-                    final userLocation = subRef.watch(userLocationProvider);
-                    return buildTextField(
-                      Assets.icons.geo,
-                      "Zipcode",
-                      personaliseController.zipcodeController,
-                      userLocation.zipcode,
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
-                    );
-                  }),
-                  const SizedBox(height: 24),
-                  buildTextField(
-                    Assets.icons.telephone_filled,
-                    "Mobile no",
-                    personaliseController.mobileController,
-                    currentUser.phoneNumber ?? "9998887776",
-                    keyboardType: TextInputType.phone,
-                    maxLength: 10,
-                  ),
-                  const SizedBox(height: 40),
-                  Text(
-                    "Select at least 3 interests:",
-                    style: AppStyles.h3.copyWith(
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  buildInterests(ref),
-                  const SizedBox(height: 40),
-                ],
+                ),
               ),
             ),
-          ),
-          buildSubmitButton(personaliseController),
-        ],
+            buildSubmitButton(personaliseController),
+          ],
+        ),
       ),
     );
   }

@@ -29,7 +29,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   final box = GetStorage();
 
   Future<void> getLoggedInUserData() async {
-    await Future.delayed(const Duration(milliseconds: 500));
     if (box.hasData(BoxConstants.location)) {
       await ref
           .read(userLocationProvider.notifier)
@@ -38,7 +37,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
     }
     ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your Data...");
-    await updateInterestsData();
     final id = GetStorage().read(BoxConstants.id) as int;
     final requestModel = UserDetailsRequestModel(userId: id);
     await ref.read(dbServicesProvider).getUserData(requestModel);
@@ -59,7 +57,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   }
 
   Future<void> setUpGuestData() async {
-    await Future.delayed(const Duration(milliseconds: 500));
     ref.read(userProvider.notifier).update((state) => globalDummyUser);
     if (box.hasData(BoxConstants.location)) {
       await ref
@@ -68,7 +65,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     } else {
       await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
     }
-    await updateInterestsData();
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
     GetStorage().write(BoxConstants.id, 1);
@@ -78,6 +74,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   void buildNextScreen() async {
     bool? login = box.read(BoxConstants.login) as bool?;
     bool? guest = box.read(BoxConstants.guestUser) as bool?;
+    await Future.delayed(const Duration(milliseconds: 500));
+    await updateInterestsData();
     if (guest != null) {
       await setUpGuestData();
       return;
@@ -85,8 +83,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       await getLoggedInUserData();
       return;
     }
-    await Future.delayed(const Duration(milliseconds: 500));
     await ref.read(dioServicesProvider).updateOnboardingDetails();
+    await updateInterestsData();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);
   }
 
