@@ -23,7 +23,7 @@ class CreateEvent extends ConsumerStatefulWidget {
 }
 
 class _CreateEventState extends ConsumerState<CreateEvent> {
-  String category = allInterests.first.category;
+  String category = allInterests.first.activity;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   int randInt = 0;
@@ -116,14 +116,15 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
   void showPreview() async {
     if (ref.read(newEventProvider.notifier).validateNewEvent()) {
       final dominantColor = await getDominantColor();
+      Map<String, dynamic> args = {
+        'event': ref.read(newEventProvider),
+        'isPreview': true,
+        'dominantColor': dominantColor,
+        'randInt': randInt,
+      };
       await navigatorKey.currentState!.pushNamed(
         EventDetailsPage.id,
-        arguments: {
-          'event': ref.read(newEventProvider),
-          'isPreview': true,
-          'dominantColor': dominantColor,
-          'randInt': randInt,
-        },
+        arguments: args,
       );
     }
   }

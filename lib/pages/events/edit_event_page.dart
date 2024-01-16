@@ -26,7 +26,7 @@ class EditEventPage extends ConsumerStatefulWidget {
 }
 
 class _CreateEventState extends ConsumerState<EditEventPage> {
-  String category = allInterests.first.category;
+  String category = allInterests.first.activity;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   int randInt = 0;

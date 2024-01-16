@@ -18,7 +18,7 @@ class CreateEventForm extends ConsumerStatefulWidget {
 }
 
 class _CreateEventFormState extends ConsumerState<CreateEventForm> {
-  String category = allInterests.first.category;
+  String category = allInterests.first.activity;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController dateController;
@@ -332,13 +332,13 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
               (e) => DropdownMenuItem(
                 onTap: () {
                   setState(() {
-                    category = e.category;
+                    category = e.activity;
                   });
                 },
-                value: e.category,
+                value: e.activity,
                 child: Row(
                   children: [
-                    Text(e.category),
+                    Text(e.activity),
                   ],
                 ),
               ),

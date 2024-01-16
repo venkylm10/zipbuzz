@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -127,6 +129,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
     final index = ref.watch(homeTabControllerProvider.notifier).index;
     final selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
+    final userInterests = allInterests
+        .where(
+          (element) => ref.read(userProvider).interests.contains(element.activity),
+        )
+        .toList();
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: !isSearching
@@ -139,8 +146,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 physics: const BouncingScrollPhysics(),
                 child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: allInterests.map((e) {
-                      final name = e.category;
+                    children: userInterests.map((e) {
+                      final name = e.activity;
                       final iconPath = e.iconUrl;
                       return GestureDetector(
                         onTap: () => onTapRowCategory(name),
@@ -181,6 +188,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   Widget buildInterests(BuildContext context) {
     final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
+    final userInterests = allInterests
+        .where(
+          (element) => ref.read(userProvider).interests.contains(element.activity),
+        )
+        .toList();
     return AnimatedOpacity(
       key: ref.read(homeTabControllerProvider.notifier).categoryPageKey,
       duration: const Duration(milliseconds: 500),
@@ -193,8 +205,15 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
-            (allInterests.length / 8).ceil(),
-            (index) => buildCategoryPage(index, context),
+            (userInterests.length / 8).ceil(),
+            (index) {
+              var interests = userInterests;
+              if (interests.length > 8) {
+                interests = userInterests.sublist(index * 8,
+                    (index + 1) * 8 > allInterests.length ? allInterests.length : (index + 1) * 8);
+              }
+              return buildCategoryPage(index, context, interests);
+            },
           ),
         ),
       ),
@@ -204,6 +223,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   Widget buildPageIndicator() {
     final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
     final index = ref.watch(homeTabControllerProvider.notifier).index;
+    final userInterests = allInterests
+        .where(
+          (element) => ref.read(userProvider).interests.contains(element.activity),
+        )
+        .toList();
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 500),
       opacity: isSearching ? 1 : 0,
@@ -211,7 +235,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          (allInterests.length / 8).ceil(),
+          (userInterests.length / 8).ceil(),
           (pageIndex) => Container(
             height: 6,
             width: 6,
@@ -226,9 +250,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     );
   }
 
-  Widget buildCategoryPage(int pageIndex, BuildContext context) {
-    final subInterests = allInterests.sublist(pageIndex * 8,
-        (pageIndex + 1) * 8 > allInterests.length ? allInterests.length : (pageIndex + 1) * 8);
+  Widget buildCategoryPage(int pageIndex, BuildContext context, List<InterestModel> interests) {
     final width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
@@ -240,11 +262,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
-          subInterests.length,
+          interests.length,
           (index) {
-            final interest = subInterests[index];
+            final interest = interests[index];
             return GestureDetector(
-              onTap: () => onTapGridCategory(interest.category),
+              onTap: () => onTapGridCategory(interest.activity),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -257,7 +279,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     ),
                   ),
                   Text(
-                    interest.category,
+                    interest.activity,
                     softWrap: true,
                     textAlign: TextAlign.center,
                     style: AppStyles.h5,

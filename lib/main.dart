@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       initialRoute: AuthGate.id,
-      routes: routes,
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }

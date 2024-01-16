@@ -23,6 +23,7 @@ class AttendeeNumbers extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
             Assets.icons.people,

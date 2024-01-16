@@ -225,6 +225,36 @@ class DBServices {
     return [];
   }
 
+  Future<EventModel> getEventDetails(int eventId) async {
+    final e = await _dioServices.getEventDetails(eventId);
+    final res = EventResponseModel.fromMap(e);
+    final members = await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.id));
+    final eventModel = EventModel(
+      id: res.id,
+      title: res.name,
+      hostId: res.hostId,
+      coHostIds: [],
+      location: res.venue,
+      date: res.date,
+      startTime: res.startTime,
+      endTime: res.endTime,
+      attendees: res.filledCapacity,
+      category: res.category,
+      isFavorite: res.isFavorite,
+      bannerPath: res.banner,
+      iconPath: interestIcons[res.category]!,
+      about: res.description,
+      isPrivate: res.eventType,
+      capacity: res.capacity,
+      imageUrls: res.images.map((e) => e.imageUrl).toList(),
+      privateGuestList: true,
+      hostName: res.hostName,
+      hostPic: res.hostPic,
+      eventMembers: members,
+    );
+    return eventModel;
+  }
+
   Future<List<EventModel>> getUserFavoriteEvents(
       UserEventsRequestModel userEventsRequestModel) async {
     if (box.read(BoxConstants.guestUser) == null) {

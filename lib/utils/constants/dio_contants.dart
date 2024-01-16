@@ -6,7 +6,9 @@ class DioConstants {
   static const String getUserDetails = "/users/fetch_user/";
   static const String updateUserDetails = "/users/update_user/";
   static const String postUserImage = "/users/user_profile_picture/";
+  static const String getEventDetails = "/events/event_details/";
   static const String getAllEvents = "/events/fetch_events/";
+  static const String requestToJoinEvent = "/events/event_request_mobile/";
   static const String getUserFavoriteEvents = '/events/event_favorite/';
   static const String addEventToFavorite = "/events/event_favorite/";
   static const String allCategories = "/events/all_category/";

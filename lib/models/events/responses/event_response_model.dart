@@ -76,7 +76,7 @@ class EventResponseModel {
       hostName: map['host_name'] as String,
       capacity: map['capacity'] as int,
       filledCapacity: map['filled_capacity'] as int,
-      isFavorite: map['is_favorite'] as bool,
+      isFavorite: map['is_favorite'] != null ? map['is_favorite'] as bool : false,
       images: (map['images'] as List).map((e) => ImageModel.fromMap(e)).toList(),
     );
   }

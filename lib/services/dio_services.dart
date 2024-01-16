@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
+import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
@@ -32,8 +33,6 @@ class DioServices {
   Dio dio = Dio(
     BaseOptions(
       baseUrl: DioConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
       headers: {'Content-Type': 'application/json'},
     ),
   );
@@ -180,6 +179,7 @@ class DioServices {
       box.write('user_details', response.data['data']);
       box.write('user_interests', response.data['interests']);
       box.write('user_socials', response.data['socials']);
+      print(response.data);
       return response.data as Map<String, dynamic>;
     } catch (error) {
       debugPrint("GETTING USER DATA FAILED");
@@ -256,6 +256,22 @@ class DioServices {
     } catch (e) {
       debugPrint(e.toString());
       throw 'FAILED TO GET ALL EVENTS';
+    }
+  }
+
+  Future<Map<String, dynamic>> getEventDetails(int eventId) async {
+    try {
+      debugPrint("GETTING EVENT DETAILS");
+      final response = await dio.get(DioConstants.getEventDetails, data: {"event_id": eventId});
+      if (response.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("GETTING EVENT DETAILS SUCCESSFULL");
+        return (response.data['event_details'] as List)[0] as Map<String, dynamic>;
+      } else {
+        throw 'FAILED TO GET EVENT DETAILS';
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      throw 'FAILED TO GET EVENT DETAILS';
     }
   }
 
@@ -392,5 +408,20 @@ class DioServices {
       debugPrint(e.toString());
       throw Exception("Failed to get event requests");
     }
+  }
+
+  Future<bool> requestToJoinEvent(JoinEventRequestModel joinEventRequestModel) async {
+    try {
+      final res =
+          await dio.post(DioConstants.requestToJoinEvent, data: joinEventRequestModel.toMap());
+      if (res.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("REQUEST SENT SUCCESSFULL");
+        return true;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    return false;
   }
 }

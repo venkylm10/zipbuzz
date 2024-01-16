@@ -11,6 +11,7 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/services/deep_link_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -18,7 +19,7 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 
 class AuthGate extends ConsumerStatefulWidget {
-  static const id = '/auth_gate';
+  static const id = '/';
   const AuthGate({super.key});
 
   @override
@@ -53,6 +54,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
         );
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
+    DeepLinkServices(ref).retrieveDeepLink();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 
@@ -90,8 +92,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
 
   Future<void> updateInterestsData() async {
     await ref.read(eventsControllerProvider.notifier).getAllInterests();
-    ref.read(newEventProvider.notifier).updateCategory(allInterests.first.category);
-    ref.read(editEventControllerProvider.notifier).updateCategory(allInterests.first.category);
+    ref.read(newEventProvider.notifier).updateCategory(allInterests.first.activity);
+    ref.read(editEventControllerProvider.notifier).updateCategory(allInterests.first.activity);
   }
 
   @override

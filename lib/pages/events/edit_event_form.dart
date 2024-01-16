@@ -19,7 +19,7 @@ class EditEventForm extends ConsumerStatefulWidget {
 
 class _CreateEventFormState extends ConsumerState<EditEventForm> {
   Color eventColor = Colors.white;
-  String category = allInterests.first.category;
+  String category = allInterests.first.activity;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController dateController;
@@ -329,14 +329,14 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
               (e) => DropdownMenuItem(
                 onTap: () {
                   setState(() {
-                    category = e.category;
+                    category = e.activity;
                     ref.read(editEventControllerProvider.notifier).updateCategory(category);
                   });
                 },
-                value: e.category,
+                value: e.activity,
                 child: Row(
                   children: [
-                    Text(e.category),
+                    Text(e.activity),
                   ],
                 ),
               ),

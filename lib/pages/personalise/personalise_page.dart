@@ -123,7 +123,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                         ),
                         const SizedBox(height: 40),
                         Text(
-                          "Select at least 3 interests:",
+                          "Select at least 5 interests:",
                           style: AppStyles.h3.copyWith(
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,
@@ -197,7 +197,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
       runSpacing: 8,
       children: allInterests.map(
         (e) {
-          final name = e.category;
+          final name = e.activity;
           return GestureDetector(
             onTap: () {
               personaliseController.updateInterests(name);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
@@ -6,37 +7,100 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/pages/settings/faqs_page.dart';
-import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
 
-final routes = {
-  AuthGate.id: (context) => const AuthGate(),
-  WelcomePage.id: (context) => const WelcomePage(),
-  SignInSheet.id: (context) => const SignInSheet(),
-  PersonalisePage.id: (context) => const PersonalisePage(),
-  Home.id: (context) => const Home(),
-  EventDetailsPage.id: (context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    final event = args['event'];
-    final isPreview = args['isPreview'] ?? false;
-    final rePublish = args['rePublish'] ?? false;
-    final dominantColor = args['dominantColor'] as Color;
-    final randInt = args['randInt'] as int?;
-    return EventDetailsPage(
-      event: event,
-      isPreview: isPreview,
-      dominantColor: dominantColor,
-      randInt: randInt ?? 0,
-      rePublish: rePublish,
-    );
-  },
-  EditProfilePage.id: (context) => const EditProfilePage(),
-  FAQsPage.id: (context) => const FAQsPage(),
-  ChatPage.id: (context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    final event = args['event'];
-    return ChatPage(event: event);
-  },
-  EditEventPage.id: (context) => const EditEventPage(),
-};
+Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case WelcomePage.id:
+      return PageTransition(
+        child: const WelcomePage(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+
+    case PersonalisePage.id:
+      return PageTransition(
+        child: const PersonalisePage(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+
+    case Home.id:
+      return PageTransition(
+        child: const Home(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+
+    case FAQsPage.id:
+      return PageTransition(
+        child: const FAQsPage(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+
+    case EditProfilePage.id:
+      return PageTransition(
+        child: const EditProfilePage(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+
+    case EditEventPage.id:
+      return PageTransition(
+        child: const EditEventPage(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+
+    case ChatPage.id:
+      return MaterialPageRoute(
+        builder: (context) {
+          final args = settings.arguments as Map<String, dynamic>;
+          final event = args['event'];
+          return ChatPage(event: event);
+        },
+      );
+
+    case EventDetailsPage.id:
+      return MaterialPageRoute(
+        builder: (context) {
+          final args = settings.arguments as Map<String, dynamic>;
+          final event = args['event'];
+          final isPreview = args['isPreview'] ?? false;
+          final rePublish = args['rePublish'] ?? false;
+          final dominantColor = args['dominantColor'] as Color;
+          final randInt = args['randInt'] as int?;
+          return EventDetailsPage(
+            event: event,
+            isPreview: isPreview,
+            dominantColor: dominantColor,
+            randInt: randInt ?? 0,
+            rePublish: rePublish,
+          );
+        },
+      );
+
+    default:
+      return PageTransition(
+        child: const AuthGate(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+  }
+}

@@ -4,9 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
+import 'package:zipbuzz/services/deep_link_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_invite.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -17,7 +23,7 @@ import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-class EventButtons extends StatelessWidget {
+class EventButtons extends ConsumerStatefulWidget {
   const EventButtons({
     required this.event,
     this.isPreview = false,
@@ -29,6 +35,11 @@ class EventButtons extends StatelessWidget {
   final bool? isPreview;
   final bool? rePublish;
 
+  @override
+  ConsumerState<EventButtons> createState() => _EventButtonsState();
+}
+
+class _EventButtonsState extends ConsumerState<EventButtons> {
   void publishEvent(WidgetRef ref) async {
     await ref.read(newEventProvider.notifier).publishEvent();
     navigatorKey.currentState!.pop();
@@ -36,7 +47,7 @@ class EventButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return !isPreview! ? eventDetailsButtons() : eventPreviewButtons();
+    return !widget.isPreview! ? eventDetailsButtons() : eventPreviewButtons();
   }
 
   Widget eventPreviewButtons() {
@@ -157,8 +168,8 @@ class EventButtons extends StatelessWidget {
 
   Widget eventDetailsButtons() {
     final userId = GetStorage().read(BoxConstants.id);
-    if (userId == event.hostId) {
-      if (rePublish!) {
+    if (userId == widget.event.hostId) {
+      if (widget.rePublish!) {
         return eventRePublishButtons();
       }
       return editShareButtonss();
@@ -214,6 +225,23 @@ class EventButtons extends StatelessWidget {
     );
   }
 
+  Future<void> addToFavorite() async {
+    if (GetStorage().read(BoxConstants.guestUser) != null) {
+      showSnackBar(message: "You need to be signed in", duration: 2);
+      await Future.delayed(const Duration(seconds: 2));
+      ref.read(newEventProvider.notifier).showSignInForm();
+      return;
+    }
+    widget.event.isFavorite = !widget.event.isFavorite;
+    setState(() {});
+    if (widget.event.isFavorite) {
+      await ref.read(eventsControllerProvider.notifier).addEventToFavorites(widget.event.id);
+    } else {
+      await ref.read(eventsControllerProvider.notifier).removeEventFromFavorites(widget.event.id);
+    }
+    await ref.read(eventsControllerProvider.notifier).getAllEvents();
+  }
+
   Widget eventJoinButton() {
     return Container(
       width: double.infinity,
@@ -223,69 +251,91 @@ class EventButtons extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: GestureDetector(
-                onTap: showSnackBar,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(Assets.icons.add_fill, height: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Join ",
-                          style: AppStyles.h3.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          "(${event.attendees}/${event.capacity})",
-                          style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: showSnackBar,
-              child: Container(
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.primaryColor.withOpacity(0.3),
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(11),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 10,
-                      sigmaY: 10,
+              child: Consumer(builder: (context, ref, child) {
+                return GestureDetector(
+                  onTap: () async {
+                    final user = ref.read(userProvider);
+                    var model = JoinEventRequestModel(
+                        eventId: widget.event.id,
+                        name: user.name,
+                        phoneNumber: "${user.countryDialCode}${user.mobileNumber}",
+                        image: user.imageUrl);
+                    final res = await ref.read(dioServicesProvider).requestToJoinEvent(model);
+                    if (res) {
+                      showSnackBar(message: "Request sent successfully");
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(24),
                     ),
                     child: Center(
-                      child: SvgPicture.asset(
-                        Assets.icons.send_fill,
-                        height: 24,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(Assets.icons.add_fill, height: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Join ",
+                            style: AppStyles.h3.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            "(${widget.event.attendees}/${widget.event.capacity})",
+                            style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(width: 8),
+            Consumer(builder: (context, ref, child) {
+              return GestureDetector(
+                onTap: () async {
+                  final uri = await DeepLinkServices(ref)
+                      .generateEventDynamicLink(widget.event.id.toString());
+                  Share.share(
+                      "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n${uri.toString()}");
+                },
+                child: Container(
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.primaryColor.withOpacity(0.3),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(11),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: 10,
+                        sigmaY: 10,
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          Assets.icons.send_fill,
+                          height: 24,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
             const SizedBox(width: 8),
             GestureDetector(
-              onTap: showSnackBar,
+              onTap: () {
+                addToFavorite();
+              },
               child: Container(
                 height: 48,
                 width: 48,
@@ -307,6 +357,10 @@ class EventButtons extends StatelessWidget {
                       child: SvgPicture.asset(
                         Assets.icons.heart_fill,
                         height: 24,
+                        colorFilter: ColorFilter.mode(
+                          widget.event.isFavorite ? Colors.red.shade500 : AppColors.primaryColor,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                   ),
@@ -331,8 +385,8 @@ class EventButtons extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    ref.read(editEventControllerProvider.notifier).eventId = event.id;
-                    ref.read(editEventControllerProvider.notifier).updateEvent(event);
+                    ref.read(editEventControllerProvider.notifier).eventId = widget.event.id;
+                    ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
                     await navigatorKey.currentState!.pushNamed(EditEventPage.id);
                     ref.read(editEventControllerProvider.notifier).updateBannerImage(null);
                   },
@@ -370,7 +424,12 @@ class EventButtons extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: GestureDetector(
-                  onTap: showSnackBar,
+                  onTap: () async {
+                    final uri = await DeepLinkServices(ref)
+                        .generateEventDynamicLink(widget.event.id.toString());
+                    Share.share(
+                        "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n${uri.toString()}");
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColors.bgGrey,

@@ -12,7 +12,6 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
-import 'package:zipbuzz/widgets/event_details_page/friends_registered_box.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -29,7 +28,7 @@ import 'package:zipbuzz/widgets/event_details_page/guest_list.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends ConsumerStatefulWidget {
-  static const id = 'event/details';
+  static const id = '/event/details';
   final EventModel event;
   final int randInt;
   final bool isPreview;
@@ -136,46 +135,43 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               softWrap: true,
                             ),
                             const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Wrap(
+                              direction: Axis.horizontal,
+                              alignment: WrapAlignment.start,
+                              spacing: 8,
+                              runSpacing: 8,
                               children: [
-                                Row(
-                                  children: [
-                                    EventChip(
-                                      eventColor: eventColor,
-                                      interest: widget.event.category,
-                                      iconPath: widget.event.iconPath,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Consumer(builder: (context, ref, child) {
-                                      var attendees = 1;
-                                      if (widget.isPreview) {
-                                        attendees = ref.watch(newEventProvider).attendees;
-                                      } else if (widget.rePublish) {
-                                        attendees =
-                                            ref.watch(editEventControllerProvider).attendees;
-                                      } else {
-                                        attendees = widget.event.attendees;
-                                      }
-
-                                      var total = 1;
-
-                                      if (widget.isPreview) {
-                                        total = ref.watch(newEventProvider).capacity;
-                                      } else if (widget.rePublish) {
-                                        total = ref.watch(editEventControllerProvider).capacity;
-                                      } else {
-                                        total = widget.event.capacity;
-                                      }
-                                      return AttendeeNumbers(
-                                        attendees: attendees,
-                                        total: total,
-                                        backgroundColor: AppColors.greyColor.withOpacity(0.1),
-                                      );
-                                    }),
-                                  ],
+                                EventChip(
+                                  eventColor: eventColor,
+                                  interest: widget.event.category,
+                                  iconPath: widget.event.iconPath,
                                 ),
-                                const EventQRCode(),
+                                Consumer(builder: (context, ref, child) {
+                                  var attendees = 1;
+                                  if (widget.isPreview) {
+                                    attendees = ref.watch(newEventProvider).attendees;
+                                  } else if (widget.rePublish) {
+                                    attendees = ref.watch(editEventControllerProvider).attendees;
+                                  } else {
+                                    attendees = widget.event.attendees;
+                                  }
+
+                                  var total = 1;
+
+                                  if (widget.isPreview) {
+                                    total = ref.watch(newEventProvider).capacity;
+                                  } else if (widget.rePublish) {
+                                    total = ref.watch(editEventControllerProvider).capacity;
+                                  } else {
+                                    total = widget.event.capacity;
+                                  }
+                                  return AttendeeNumbers(
+                                    attendees: attendees,
+                                    total: total,
+                                    backgroundColor: AppColors.greyColor.withOpacity(0.1),
+                                  );
+                                }),
+                                EventQRCode(event: widget.event),
                               ],
                             ),
                             const SizedBox(height: 16),
@@ -255,7 +251,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                           ],
                         ),
                       ),
-                      const FriendsRegisteredBox()
+                      // Friends registered notifier
+                      // const FriendsRegisteredBox()
                     ],
                   ),
                 ),

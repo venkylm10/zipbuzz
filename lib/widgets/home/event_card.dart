@@ -32,6 +32,7 @@ class EventCard extends ConsumerStatefulWidget {
 class _EventCardState extends ConsumerState<EventCard> {
   Color eventColor = Colors.white;
   int randInt = 0;
+  bool isMounted = true;
 
   String getMonth(DateTime date) {
     final formatter = DateFormat.MMM();
@@ -45,7 +46,7 @@ class _EventCardState extends ConsumerState<EventCard> {
   void navigateToEventDetails() async {
     final dominantColor = await getDominantColor();
     ref.read(guestListTagProvider.notifier).update((state) => "All");
-    navigatorKey.currentState!.push(
+    await navigatorKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => EventDetailsPage(
           event: widget.event,
@@ -55,6 +56,7 @@ class _EventCardState extends ConsumerState<EventCard> {
         ),
       ),
     );
+    if (isMounted) setState(() {});
   }
 
   Future<Color> getDominantColor() async {
@@ -92,6 +94,12 @@ class _EventCardState extends ConsumerState<EventCard> {
   void initState() {
     getEventColor();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    isMounted = false;
+    super.dispose();
   }
 
   @override

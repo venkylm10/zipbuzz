@@ -17,12 +17,14 @@ class ChatPage extends ConsumerStatefulWidget {
   static const id = '/chat';
   final EventModel event;
   const ChatPage({super.key, required this.event});
+  
 
   @override
   ConsumerState<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends ConsumerState<ChatPage> {
+  
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
   var bufferChats = <Message>[];

@@ -65,8 +65,8 @@ class PersonaliseController {
       showSnackBar(message: "Please enter valid mobile number");
       return false;
     }
-    if (selectedInterests.length < 3) {
-      showSnackBar(message: "Please select at least 3 interests");
+    if (selectedInterests.length < 5) {
+      showSnackBar(message: "Please select at least 5 interests");
       return false;
     }
     return true;
@@ -122,7 +122,6 @@ class PersonaliseController {
         ref.read(newEventProvider.notifier).updateHostId(id);
         ref.read(newEventProvider.notifier).updateHostName(newUser.name);
         ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
-        
 
         // posting users interests
         ref.read(loadingTextProvider.notifier).updateLoadingText("Personalising the app...");

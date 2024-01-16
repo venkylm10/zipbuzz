@@ -4,8 +4,10 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
+import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
@@ -261,6 +263,7 @@ class EditEventController extends StateNotifier<EventModel> {
                 .uploadEventBanner(id: ref.read(userProvider).id, file: bannerImage!) ??
             state.bannerPath;
       }
+      state = state.copyWith(bannerPath: bannerUrl);
       debugPrint("Updated Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
       final eventPostModel = EditEventRequestModel(
@@ -293,7 +296,21 @@ class EditEventController extends StateNotifier<EventModel> {
       showSnackBar(message: "Event edited successfully");
       navigatorKey.currentState!.pop();
       navigatorKey.currentState!.pop();
-      navigatorKey.currentState!.pop();
+      final image = NetworkImage(eventPostModel.banner);
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      final dominantColor = generator.dominantColor?.color;
+      Map<String, dynamic> args = {
+        'event': state,
+        'isPreview': false,
+        'dominantColor': dominantColor ?? const Color(0xFF4a5759),
+        'randInt': 0,
+      };
+      await navigatorKey.currentState!.pushReplacementNamed(
+        EventDetailsPage.id,
+        arguments: args,
+      );
     } catch (e) {
       debugPrint(e.toString());
     }

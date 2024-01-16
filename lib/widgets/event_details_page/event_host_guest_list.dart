@@ -186,7 +186,10 @@ class EventHostGuestList extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(member.image, height: 32, width: 32),
+                child: Image.network(
+                    member.image != "null" ? member.image : Defaults().contactAvatarUrl,
+                    height: 32,
+                    width: 32),
               ),
               const SizedBox(width: 8),
               Column(

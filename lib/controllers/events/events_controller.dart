@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
@@ -136,17 +137,17 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     final list = await ref.read(dioServicesProvider).getAllInterests();
     Map<String, String> map = {};
     for (var item in list) {
-      map.addEntries([MapEntry(item.category, item.iconUrl)]);
+      map.addEntries([MapEntry(item.activity, item.iconUrl)]);
     }
 
     Map<String, Color> colors = {};
     for (var item in list) {
-      colors.addEntries([MapEntry(item.category, hexStringToColor(item.color))]);
+      colors.addEntries([MapEntry(item.activity, hexStringToColor(item.color))]);
     }
 
     Map<String, String> banners = {};
     for (var item in list) {
-      banners.addEntries([MapEntry(item.category, item.bannerUrl)]);
+      banners.addEntries([MapEntry(item.activity, item.bannerUrl)]);
     }
     allInterests = list;
     interestIcons = map;
@@ -161,6 +162,17 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     }
     int hexValue = int.parse(hexColor, radix: 16);
     return Color(hexValue);
+  }
+
+  Future<bool> requestToJoinEvent(int eventId) async {
+    final user = ref.read(userProvider);
+    final model = JoinEventRequestModel(
+      eventId: eventId,
+      name: user.name,
+      phoneNumber: user.mobileNumber,
+      image: user.imageUrl,
+    );
+    return ref.read(dioServicesProvider).requestToJoinEvent(model);
   }
 }
 
