@@ -138,23 +138,6 @@ class DioServices {
     }
   }
 
-  Future<List<String>> getInterests(int id) async {
-    try {
-      final response = await dio.get(DioConstants.getUserInterests, data: {
-        "user_id": id,
-      });
-
-      if (response.data[DioConstants.status] == DioConstants.success) {
-        return UserInterestPostModel.fromMap(response.data).interests;
-      } else {
-        return [];
-      }
-    } catch (error) {
-      debugPrint('Error in getInterests: $error');
-      throw Exception('Failed to get interests');
-    }
-  }
-
   Future<int> getUserId(UserIdRequestModel userIdRequestModel) async {
     try {
       final response = await dio.get(DioConstants.getUserId, data: userIdRequestModel.toMap());

@@ -47,8 +47,6 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    // final user = ref.read(userProvider)!;
-
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: widget.preferredSize.height,

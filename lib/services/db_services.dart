@@ -13,6 +13,7 @@ import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
 import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
@@ -126,7 +127,10 @@ class DBServices {
       final res = await _dioServices.getUserData(userDetailsRequestModel);
       if (res['status'] == "success") {
         final userDetails = UserDetailsModel.fromMap(res['data']);
-        final interests = (res['interests'] as List).map((e) => e.toString()).toList();
+        final interests = (res['interests'] as List).map((e) {
+          final interest = UserInterestModel.fromMap(e);
+          return interest.activity;
+        }).toList();
         final userSocials = UserSocialsModel.fromMap(res['socials']);
         final updatedUser = _ref.read(userProvider).copyWith(
               id: userDetailsRequestModel.userId,

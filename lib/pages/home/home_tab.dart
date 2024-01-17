@@ -228,29 +228,35 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           (element) => ref.read(userProvider).interests.contains(element.activity),
         )
         .toList();
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 500),
-      opacity: isSearching ? 1 : 0,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(
-          (userInterests.length / 8).ceil(),
-          (pageIndex) => Container(
-            height: 6,
-            width: 6,
-            margin: const EdgeInsets.symmetric(horizontal: 2),
-            decoration: BoxDecoration(
-              color: index == pageIndex ? AppColors.primaryColor : Colors.grey[350],
-              borderRadius: BorderRadius.circular(3),
+    return userInterests.length > 8
+        ? AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: isSearching ? 1 : 0,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                (userInterests.length / 8).ceil(),
+                (pageIndex) => Container(
+                  height: 6,
+                  width: 6,
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                  decoration: BoxDecoration(
+                    color: index == pageIndex ? AppColors.primaryColor : Colors.grey[350],
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          )
+        : const SizedBox();
   }
 
-  Widget buildCategoryPage(int pageIndex, BuildContext context, List<InterestModel> interests) {
+  Widget buildCategoryPage(
+    int pageIndex,
+    BuildContext context,
+    List<InterestModel> interests,
+  ) {
     final width = MediaQuery.of(context).size.width;
     return Container(
       width: width,

@@ -10,6 +10,7 @@ class UserDetailsUpdateRequestModel {
   final String instagram;
   final String twitter;
   final String linkedin;
+  final List<String> interests;
 
   UserDetailsUpdateRequestModel({
     required this.id,
@@ -23,6 +24,7 @@ class UserDetailsUpdateRequestModel {
     required this.instagram,
     required this.linkedin,
     required this.twitter,
+    required this.interests,
   });
 
   Map<String, dynamic> toMap() {
@@ -38,7 +40,7 @@ class UserDetailsUpdateRequestModel {
       'instagram': instagram,
       'linkedin': linkedin,
       'twitter': twitter,
-
+      'interests': interests,
     };
   }
 
@@ -55,6 +57,7 @@ class UserDetailsUpdateRequestModel {
       instagram: map['instagram'] as String,
       linkedin: map['linkedin'] as String,
       twitter: map['twitter'] as String,
+      interests: (map['interests'] as List<dynamic>).map((e) => e as String).toList(),
     );
   }
 }

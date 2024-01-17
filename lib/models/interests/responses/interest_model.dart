@@ -41,3 +41,36 @@ class InterestModel {
     );
   }
 }
+
+
+class UserInterestModel {
+  String activity;
+  String iconUrl;
+  String bannerUrl;
+  String color;
+
+  UserInterestModel({
+    required this.activity,
+    required this.iconUrl,
+    required this.bannerUrl,
+    required this.color,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      "activity": activity,
+      "icon": iconUrl,
+      "banner": bannerUrl,
+      "color": color,
+    };
+  }
+
+  factory UserInterestModel.fromMap(Map<String, dynamic> map) {
+    return UserInterestModel(
+      activity: map['activity'],
+      iconUrl: map['icon'],
+      bannerUrl: map['banner'],
+      color: map['color'],
+    );
+  }
+}

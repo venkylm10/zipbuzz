@@ -1,3 +1,4 @@
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 
 class UserModel {
@@ -60,7 +61,16 @@ class UserModel {
       'linkedinId': linkedinId,
       'instagramId': instagramId,
       'twitterId': twitterId,
-      'interests': interests,
+      'interests': interests
+          .map(
+            (e) => {
+              "activity": e,
+              "icon": "",
+              "banner": "",
+              "color": "",
+            },
+          )
+          .toList(),
       'about': about,
       'eventUids': eventUids,
       'pastEventUids': pastEventUids,
@@ -76,27 +86,22 @@ class UserModel {
       name: map['name'] != null ? map['name'] as String : "",
       email: map['email'] != null ? map['email'] as String : "",
       handle: map['handle'] != null ? map['handle'] as String : "",
-      isAmbassador:
-          map['is_ambassador'] != null ? map['is_ambassador'] as bool : false,
-      eventsHosted:
-          map['eventsHosted'] != null ? map['eventsHosted'] as int : 0,
+      isAmbassador: map['is_ambassador'] != null ? map['is_ambassador'] as bool : false,
+      eventsHosted: map['eventsHosted'] != null ? map['eventsHosted'] as int : 0,
       rating: map['rating'] != null
-          ? (map['rating'].runtimeType == int
-              ? map['rating'].toDouble()
-              : map['rating'])
+          ? (map['rating'].runtimeType == int ? map['rating'].toDouble() : map['rating'])
           : 0.0,
-      imageUrl: map['imageUrl'] != null
-          ? map['imageUrl'] as String
-          : Assets.images.profile,
-      mobileNumber:
-          map['mobileNumber'] != null ? map['mobileNumber'] as String : "",
+      imageUrl: map['imageUrl'] != null ? map['imageUrl'] as String : Assets.images.profile,
+      mobileNumber: map['mobileNumber'] != null ? map['mobileNumber'] as String : "",
       zipcode: map['zipcode'] != null ? map['zipcode'] as String : "",
       linkedinId: map['linkedinId'] != null ? map['linkedinId'] as String : "",
-      instagramId:
-          map['instagramId'] != null ? map['instagramId'] as String : null,
+      instagramId: map['instagramId'] != null ? map['instagramId'] as String : null,
       twitterId: map['twitterId'] != null ? map['twitterId'] as String : null,
       interests: map['interests'] != null
-          ? (map['interests'] as List).map((e) => e.toString()).toList()
+          ? (map['interests'] as List).map((e) {
+              final userInterest = UserInterestModel.fromMap(e);
+              return userInterest.activity;
+            }).toList()
           : [],
       about: map['about'] != null ? map['about'] as String : "New to ZipBuzz",
       eventUids: map['eventUids'] != null
@@ -107,9 +112,7 @@ class UserModel {
           : <String>[],
       city: map['city'] != null ? map['city'] as String : "",
       country: map['country'] != null ? map['country'] as String : "",
-      countryDialCode: map['countryDialCode'] != null
-          ? map['countryDialCode'] as String
-          : "",
+      countryDialCode: map['countryDialCode'] != null ? map['countryDialCode'] as String : "",
     );
   }
 
