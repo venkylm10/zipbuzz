@@ -24,6 +24,7 @@ import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final dioServicesProvider = Provider((ref) => DioServices(ref: ref));
 
@@ -162,7 +163,6 @@ class DioServices {
       box.write('user_details', response.data['data']);
       box.write('user_interests', response.data['interests']);
       box.write('user_socials', response.data['socials']);
-      print(response.data);
       return response.data as Map<String, dynamic>;
     } catch (error) {
       debugPrint("GETTING USER DATA FAILED");
@@ -248,12 +248,14 @@ class DioServices {
       final response = await dio.get(DioConstants.getEventDetails, data: {"event_id": eventId});
       if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("GETTING EVENT DETAILS SUCCESSFULL");
+        showSnackBar(message: "Got event details");
         return (response.data['event_details'] as List)[0] as Map<String, dynamic>;
       } else {
         throw 'FAILED TO GET EVENT DETAILS';
       }
     } catch (e) {
       debugPrint(e.toString());
+
       throw 'FAILED TO GET EVENT DETAILS';
     }
   }

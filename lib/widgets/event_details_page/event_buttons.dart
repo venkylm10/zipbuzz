@@ -298,7 +298,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             Consumer(builder: (context, ref, child) {
               return GestureDetector(
                 onTap: () async {
-                  final uri = await DeepLinkServices(ref)
+                  final uri = await ref.read(deepLinkServicesProvider)
                       .generateEventDynamicLink(widget.event.id.toString());
                   Share.share(
                       "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n${uri.toString()}");
@@ -425,7 +425,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    final uri = await DeepLinkServices(ref)
+                    final uri = await ref.read(deepLinkServicesProvider)
                         .generateEventDynamicLink(widget.event.id.toString());
                     Share.share(
                         "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n${uri.toString()}");

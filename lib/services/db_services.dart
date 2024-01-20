@@ -233,6 +233,7 @@ class DBServices {
     final e = await _dioServices.getEventDetails(eventId);
     final res = EventResponseModel.fromMap(e);
     final members = await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.id));
+
     final eventModel = EventModel(
       id: res.id,
       title: res.name,
@@ -256,6 +257,7 @@ class DBServices {
       hostPic: res.hostPic,
       eventMembers: members,
     );
+    showSnackBar(message: "Event Details Loaded Successfully");
     return eventModel;
   }
 

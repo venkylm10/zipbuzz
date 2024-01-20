@@ -54,7 +54,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
         );
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).isSearching = true;
-    DeepLinkServices(ref).retrieveDeepLink();
+    ref.read(deepLinkServicesProvider).retrieveDeepLink();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 

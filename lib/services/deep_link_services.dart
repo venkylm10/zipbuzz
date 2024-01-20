@@ -8,8 +8,10 @@ import 'package:zipbuzz/utils/constants/deeplinking_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
+final deepLinkServicesProvider = Provider((ref) => DeepLinkServices(ref));
+
 class DeepLinkServices {
-  final WidgetRef ref;
+  final Ref ref;
   DeepLinkServices(this.ref);
   Future<Uri> generateEventDynamicLink(String eventId) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
@@ -56,19 +58,23 @@ class DeepLinkServices {
   }
 
   Future<void> getEventDetails(String eventId) async {
-    showSnackBar(message: "Loading Event Details...", duration: 2);
-    var event = await ref.read(dbServicesProvider).getEventDetails(int.parse(eventId));
-    final dominantColor = await getDominantColor(event.bannerPath);
-    navigatorKey.currentState!.push(
-      MaterialPageRoute(
-        builder: (context) => EventDetailsPage(
-          event: event,
-          dominantColor: dominantColor,
-          isPreview: false,
-          rePublish: false,
+    try {
+      showSnackBar(message: "Loading Event Details...", duration: 5);
+      var event = await ref.read(dbServicesProvider).getEventDetails(int.parse(eventId));
+      final dominantColor = await getDominantColor(event.bannerPath);
+      navigatorKey.currentState!.push(
+        MaterialPageRoute(
+          builder: (context) => EventDetailsPage(
+            event: event,
+            dominantColor: dominantColor,
+            isPreview: false,
+            rePublish: false,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      showSnackBar(message: e.toString(), duration: 5);
+    }
   }
 
   Future<Color> getDominantColor(String path) async {

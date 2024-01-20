@@ -18,7 +18,7 @@ class EventQRCode extends StatelessWidget {
       builder: (context,ref,child) {
         return GestureDetector(
           onTap: () async {
-            final uri = await DeepLinkServices(ref).generateEventDynamicLink(event.id.toString());
+            final uri = await ref.read(deepLinkServicesProvider).generateEventDynamicLink(event.id.toString());
             QrServices.shareEventQrCode(uri.toString(), event);
           },
           child: Container(

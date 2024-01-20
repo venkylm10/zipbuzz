@@ -320,7 +320,6 @@ class NewEvent extends StateNotifier<EventModel> {
         image,
       );
       final dominantColor = generator.dominantColor?.color;
-      print(state.toMap());
       Map<String, dynamic> args = {
         'event': state,
         'isPreview': false,
