@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
@@ -127,10 +128,13 @@ class DBServices {
       final res = await _dioServices.getUserData(userDetailsRequestModel);
       if (res['status'] == "success") {
         final userDetails = UserDetailsModel.fromMap(res['data']);
+        var homeTabInterests = <InterestModel>[];
         final interests = (res['interests'] as List).map((e) {
-          final interest = UserInterestModel.fromMap(e);
+          final interest = InterestModel.fromMap(e);
+          homeTabInterests.add(interest);
           return interest.activity;
         }).toList();
+        _ref.read(homeTabControllerProvider.notifier).updateCurrentInterests(homeTabInterests);
         final userSocials = UserSocialsModel.fromMap(res['socials']);
         final updatedUser = _ref.read(userProvider).copyWith(
               id: userDetailsRequestModel.userId,

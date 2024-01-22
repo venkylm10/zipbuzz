@@ -195,7 +195,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: allInterests.map(
+      children: allInterests.sublist(0, 10).map(
         (e) {
           final name = e.activity;
           return GestureDetector(
@@ -213,7 +213,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                     : Colors.white,
               ),
               child: Text(
-                name,
+                "${e.category}/${e.activity}",
                 style: AppStyles.h5.copyWith(
                   color: personaliseController.selectedInterests.contains(name)
                       ? Colors.white

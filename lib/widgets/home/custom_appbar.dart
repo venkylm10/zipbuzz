@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -13,8 +14,6 @@ import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget {
   final bool isSearching;
-  final TextEditingController searchController;
-  final Function(String) onSearch;
   final void Function() updateFavoriteEvents;
   final VoidCallback toggleSearching;
   final double topPadding;
@@ -22,8 +21,6 @@ class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget
   const CustomAppBar({
     super.key,
     required this.isSearching,
-    required this.searchController,
-    required this.onSearch,
     required this.updateFavoriteEvents,
     required this.toggleSearching,
     required this.topPadding,
@@ -101,7 +98,6 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                       ? GestureDetector(
                           onTap: () async {
                             widget.toggleSearching();
-                            widget.onSearch(widget.searchController.text);
                           },
                           child: SvgPicture.asset(Assets.icons.search),
                         )
@@ -161,7 +157,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
   }
 }
 
-class AppBarSearchField extends StatelessWidget {
+class AppBarSearchField extends ConsumerWidget {
   const AppBarSearchField({
     super.key,
     required this.widget,
@@ -170,14 +166,17 @@ class AppBarSearchField extends StatelessWidget {
   final CustomAppBar widget;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       height: 50,
       margin: const EdgeInsets.all(10),
       child: TextField(
-        controller: widget.searchController,
+        controller: ref.read(homeTabControllerProvider.notifier).queryController,
         cursorHeight: 24,
         style: AppStyles.h4.copyWith(color: Colors.white),
+        onChanged: (value) {
+          ref.read(homeTabControllerProvider.notifier).refresh();
+        },
         decoration: InputDecoration(
           hintText: 'Search for an event',
           hintStyle: AppStyles.h4.copyWith(color: Colors.white.withOpacity(0.7), height: 1),

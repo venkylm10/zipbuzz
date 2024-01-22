@@ -281,6 +281,9 @@ class NewEvent extends StateNotifier<EventModel> {
       ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
       final eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
 
+      //update eventId locally
+      state = state.copyWith(id: eventId);
+
       var eventDateTime = DateTime.parse(state.date);
       var formattedDate = formatWithSuffix(eventDateTime);
       ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
@@ -310,9 +313,6 @@ class NewEvent extends StateNotifier<EventModel> {
       // upload event images
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
-
-      showSnackBar(message: "Event created successfully");
-      ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(0);
       final image = NetworkImage(eventPostModel.banner);
@@ -320,8 +320,11 @@ class NewEvent extends StateNotifier<EventModel> {
         image,
       );
       final dominantColor = generator.dominantColor?.color;
+      final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(eventId);
+      ref.read(loadingTextProvider.notifier).reset();
+      showSnackBar(message: "Event created successfully");
       Map<String, dynamic> args = {
-        'event': state,
+        'event': updatedEvent,
         'isPreview': false,
         'dominantColor': dominantColor ?? const Color(0xFF4a5759),
         'randInt': 0,

@@ -47,7 +47,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
 
   @override
   Widget build(BuildContext context) {
-    return !widget.isPreview! ? eventDetailsButtons() : eventPreviewButtons();
+    return !widget.isPreview ? eventDetailsButtons() : eventPreviewButtons();
   }
 
   Widget eventPreviewButtons() {
@@ -170,7 +170,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
   Widget eventDetailsButtons() {
     final userId = GetStorage().read(BoxConstants.id);
     if (userId == widget.event.hostId) {
-      if (widget.rePublish!) {
+      if (widget.rePublish) {
         return eventRePublishButtons();
       }
       return editShareButtonss();

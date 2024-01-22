@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 enum InterestViewType {
   user,
@@ -22,6 +25,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
           previousOffset: 0,
           selectedCategory: '',
           interestViewType: InterestViewType.user,
+          currentInterests: [],
         ));
 
   var tabs = const [
@@ -72,6 +76,47 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     }
     state = state.copyWith(interestViewType: InterestViewType.user);
   }
+
+  void updateCurrentInterests(List<InterestModel> interests) {
+    state = state.copyWith(currentInterests: interests);
+  }
+
+  bool containsInterest(String activity) {
+    for (final interest in state.currentInterests) {
+      if (interest.activity == activity) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void toggleHomeTabInterest(InterestModel interest) {
+    if (containsInterest(interest.activity)) {
+      if (state.currentInterests.length == 5) {
+        return;
+      }
+      final interests =
+          state.currentInterests.where((element) => element.activity != interest.activity).toList();
+      state = state.copyWith(currentInterests: interests);
+      return;
+    }
+    final interests = state.currentInterests;
+    interests.add(interest);
+    state = state.copyWith(currentInterests: interests);
+  }
+
+  bool containsQuery(EventModel event) {
+    final query = queryController.text.trim().toLowerCase();
+    final res = event.title.toLowerCase().contains(query) ||
+        event.about.toLowerCase().contains(query) ||
+        event.hostName.toLowerCase().contains(query) ||
+        event.category.toLowerCase().contains(query);
+    return res;
+  }
+
+  void refresh() {
+    state = state.copyWith();
+  }
 }
 
 class HomeTabState {
@@ -81,6 +126,7 @@ class HomeTabState {
   double previousOffset;
   String selectedCategory;
   InterestViewType interestViewType;
+  List<InterestModel> currentInterests;
 
   HomeTabState({
     required this.isSearching,
@@ -89,6 +135,7 @@ class HomeTabState {
     required this.previousOffset,
     required this.selectedCategory,
     required this.interestViewType,
+    required this.currentInterests,
   });
 
   HomeTabState copyWith({
@@ -98,6 +145,7 @@ class HomeTabState {
     double? previousOffset,
     String? selectedCategory,
     InterestViewType? interestViewType,
+    List<InterestModel>? currentInterests,
   }) {
     return HomeTabState(
       isSearching: isSearching ?? this.isSearching,
@@ -106,6 +154,7 @@ class HomeTabState {
       previousOffset: previousOffset ?? this.previousOffset,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       interestViewType: interestViewType ?? this.interestViewType,
+      currentInterests: currentInterests ?? this.currentInterests,
     );
   }
 }

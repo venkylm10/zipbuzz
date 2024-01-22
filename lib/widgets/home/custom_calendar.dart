@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -96,6 +97,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
         Consumer(builder: (context, ref, child) {
           final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
           final focusedDay = ref.watch(eventsControllerProvider).focusedDay;
+          final homeTabController = ref.read(homeTabControllerProvider);
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 500),
             child: focusedEvents.isNotEmpty
@@ -123,15 +125,24 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
         const SizedBox(height: 15),
         Consumer(builder: (context, ref, child) {
           final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
+          // ignore: unused_local_variable
+          final homeTabController = ref.read(homeTabControllerProvider);
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: focusedEvents.isNotEmpty
                 ? Consumer(builder: (context, ref, child) {
                     final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
                     return Column(
-                      children: focusedEvents
-                          .map((e) => EventCard(event: e, focusedEvent: true))
-                          .toList(),
+                      children: focusedEvents.map((e) {
+                        final containsInterest = ref
+                            .read(homeTabControllerProvider.notifier)
+                            .containsInterest(e.category);
+                        final containsQuery =
+                            ref.read(homeTabControllerProvider.notifier).containsQuery(e);
+                        final display = containsInterest && containsQuery;
+                        if (!display) return const SizedBox();
+                        return EventCard(event: e, focusedEvent: true);
+                      }).toList(),
                     );
                   })
                 : const SizedBox(),
@@ -152,8 +163,17 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
         Consumer(
           builder: (context, ref, child) {
             final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
+            // ignore: unused_local_variable
+            final homeTabController = ref.read(homeTabControllerProvider);
             return Column(
-              children: upcomingEvents.map((e) => EventCard(event: e)).toList(),
+              children: upcomingEvents.map((e) {
+                final containsInterest =
+                    ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
+                final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
+                final display = containsInterest && containsQuery;
+                if (!display) return const SizedBox();
+                return EventCard(event: e);
+              }).toList(),
             );
           },
         ),
@@ -163,6 +183,8 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
 
   CalendarBuilders<dynamic> customCalendarBuilders() {
     final eventMaps = ref.watch(eventsControllerProvider).eventsMap;
+    // ignore: unused_local_variable
+    final homeTabController = ref.watch(homeTabControllerProvider);
     return CalendarBuilders(
       dowBuilder: (context, day) {
         return Text(
@@ -259,12 +281,19 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
         final formatedDay = DateTime(day.year, day.month, day.day);
         final dayEvents = eventMaps[formatedDay] ?? [];
         final formatedEvents = (dayEvents.length > 6 ? dayEvents.sublist(0, 6) : dayEvents);
+        final displayEvents = formatedEvents.where((e) {
+          final containsInterest =
+              ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
+          final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
+          return containsInterest && containsQuery;
+        }).toList();
+
         return SizedBox(
           height: 6,
           width: 36,
           child: Row(
             children: List.generate(
-              formatedEvents.length,
+              displayEvents.length,
               (index) => buildEventIndicator(
                 formatedEvents[index],
                 index,

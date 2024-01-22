@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
+import 'package:zipbuzz/pages/home/activities_sheet.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -84,8 +84,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         isSearching: isSearching,
-        searchController: homeTabController.queryController,
-        onSearch: (query) => FocusScope.of(context).nextFocus(),
         toggleSearching: () {
           setState(() {
             isSearching = !isSearching;
@@ -128,14 +126,22 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Row buildInterestTypeButton() {
-    final view = ref.watch(homeTabControllerProvider).interestViewType;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
         GestureDetector(
-          onTap: () {
-            ref.read(homeTabControllerProvider.notifier).toggleInterestView();
+          onTap: () async {
+            await showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              enableDrag: true,
+              isDismissible: true,
+              builder: (context) {
+                return const ActivitiesSheet();
+              },
+            );
+            debugPrint("Updated homeTab interests");
             setState(() {});
           },
           child: Container(
@@ -147,7 +153,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               color: AppColors.primaryColor,
             ),
             child: Text(
-              view == InterestViewType.user ? "Explore" : "Your Interests",
+              "Explore",
               style: AppStyles.h4.copyWith(
                 color: Colors.white,
               ),
@@ -162,135 +168,127 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     final isSearching = ref.watch(homeTabControllerProvider).isSearching;
     final index = ref.watch(homeTabControllerProvider).index;
     final selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
-    final view = ref.watch(homeTabControllerProvider).interestViewType;
-    final userInterests = allInterests.where(
-      (element) {
-        if (view == InterestViewType.all) {
-          return true;
-        }
-        return ref.read(userProvider).interests.contains(element.activity);
-      },
-    ).toList();
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: !isSearching
-          ? Container(
-              width: double.infinity,
-              color: Colors.white,
-              child: SingleChildScrollView(
-                controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: userInterests.map((e) {
-                      final name = e.activity;
-                      final iconPath = e.iconUrl;
-                      return GestureDetector(
-                        onTap: () => onTapRowCategory(name),
-                        child: Container(
-                          key: selectedCategory == name
-                              ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
-                              : null,
-                          margin: EdgeInsets.only(
-                            top: 5,
-                            left: index == 0 ? 12 : 2,
-                            right: index == allInterests.length - 1 ? 12 : 2,
-                            bottom: 5,
-                          ),
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: ref.watch(eventsControllerProvider).selectedCategory == name
-                                ? Colors.green.withOpacity(0.15)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Opacity(
-                            opacity: ref.watch(eventsControllerProvider).selectedCategory == name
-                                ? 1
-                                : 0.5,
-                            child: Image.network(
-                              iconPath,
-                              height: 30,
+          ? Consumer(builder: (context, ref, child) {
+              final homeTabController = ref.watch(homeTabControllerProvider);
+              final userInterests = homeTabController.currentInterests;
+              return Container(
+                width: double.infinity,
+                color: Colors.white,
+                child: SingleChildScrollView(
+                  controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: userInterests.map((e) {
+                        final name = e.activity;
+                        final iconPath = e.iconUrl;
+                        return GestureDetector(
+                          onTap: () => onTapRowCategory(name),
+                          child: Container(
+                            key: selectedCategory == name
+                                ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
+                                : null,
+                            margin: EdgeInsets.only(
+                              top: 5,
+                              left: index == 0 ? 12 : 2,
+                              right: index == allInterests.length - 1 ? 12 : 2,
+                              bottom: 5,
+                            ),
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: ref.watch(eventsControllerProvider).selectedCategory == name
+                                  ? Colors.green.withOpacity(0.15)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Opacity(
+                              opacity: ref.watch(eventsControllerProvider).selectedCategory == name
+                                  ? 1
+                                  : 0.5,
+                              child: Image.network(
+                                iconPath,
+                                height: 30,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList()),
-              ),
-            )
+                        );
+                      }).toList()),
+                ),
+              );
+            })
           : const SizedBox(),
     );
   }
 
   Widget buildInterests(BuildContext context) {
     final isSearching = ref.watch(homeTabControllerProvider).isSearching;
-    final view = ref.watch(homeTabControllerProvider).interestViewType;
-    final userInterests = allInterests.where(
-      (element) {
-        if (view == InterestViewType.all) return true;
-        return ref.read(userProvider).interests.contains(element.activity);
-      },
-    ).toList();
     return AnimatedOpacity(
       key: ref.read(homeTabControllerProvider.notifier).categoryPageKey,
       duration: const Duration(milliseconds: 500),
       opacity: isSearching ? 1 : 0.5,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
-        controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(
-            (userInterests.length / 8).ceil(),
-            (index) {
-              var interests = userInterests;
-              if (interests.length > 8) {
-                interests = userInterests.sublist(index * 8,
-                    (index + 1) * 8 > allInterests.length ? allInterests.length : (index + 1) * 8);
-              }
-              return buildCategoryPage(index, context, interests);
-            },
+      child: Consumer(builder: (context, ref, child) {
+        final homeTabController = ref.watch(homeTabControllerProvider);
+        final userInterests = homeTabController.currentInterests;
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
+          controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(
+              (userInterests.length / 8).ceil(),
+              (index) {
+                var interests = userInterests;
+                if (interests.length > 8) {
+                  interests = userInterests.sublist(
+                      index * 8,
+                      (index + 1) * 8 > userInterests.length
+                          ? userInterests.length
+                          : (index + 1) * 8);
+                }
+                return buildCategoryPage(index, context, interests);
+              },
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
   Widget buildPageIndicator() {
     final isSearching = ref.watch(homeTabControllerProvider).isSearching;
     final index = ref.watch(homeTabControllerProvider).index;
-    final view = ref.watch(homeTabControllerProvider).interestViewType;
-    final userInterests = allInterests.where(
-      (element) {
-        if (view == InterestViewType.all) return true;
-        return ref.read(userProvider).interests.contains(element.activity);
-      },
-    ).toList();
-    return userInterests.length > 8
-        ? AnimatedOpacity(
-            duration: const Duration(milliseconds: 500),
-            opacity: isSearching ? 1 : 0,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                (userInterests.length / 8).ceil(),
-                (pageIndex) => Container(
-                  height: 6,
-                  width: 6,
-                  margin: const EdgeInsets.symmetric(horizontal: 2),
-                  decoration: BoxDecoration(
-                    color: index == pageIndex ? AppColors.primaryColor : Colors.grey[350],
-                    borderRadius: BorderRadius.circular(3),
+    return Consumer(builder: (context, ref, child) {
+      final homeTabController = ref.watch(homeTabControllerProvider);
+      final userInterests = homeTabController.currentInterests;
+      return userInterests.length > 8
+          ? AnimatedOpacity(
+              duration: const Duration(milliseconds: 500),
+              opacity: isSearching ? 1 : 0,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  (userInterests.length / 8).ceil(),
+                  (pageIndex) => Container(
+                    height: 6,
+                    width: 6,
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    decoration: BoxDecoration(
+                      color: index == pageIndex ? AppColors.primaryColor : Colors.grey[350],
+                      borderRadius: BorderRadius.circular(3),
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
-        : const SizedBox();
+            )
+          : const SizedBox();
+    });
   }
 
   Widget buildCategoryPage(
@@ -304,8 +302,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: GridView.count(
         crossAxisCount: 4,
-        childAspectRatio: 0.6,
-        crossAxisSpacing: 20,
+        childAspectRatio: 0.7,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: List.generate(
@@ -316,7 +315,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               onTap: () => onTapGridCategory(interest.activity),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     constraints: const BoxConstraints(minHeight: 50),
@@ -326,9 +325,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     ),
                   ),
                   Text(
-                    "${interest.category}/${interest.activity}",
+                    interest.activity,
                     softWrap: true,
-                    maxLines: 4,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: AppStyles.h5,
