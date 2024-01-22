@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/models/onboarding_page_model.dart';
@@ -6,25 +7,25 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 
 final onboardingDetailsProvider = StateProvider((ref) => <OnboardingPageModel>[
-      OnboardingPageModel(
-        imageUrl: Assets.welcomeImage.welcome1,
-        heading: 'An event of every kind for everyone',
-        subheading: 'Discover, participate & organise fun social events in you areas of interest',
-        pageIndex: 0,
-      ),
-      OnboardingPageModel(
-        imageUrl: Assets.welcomeImage.welcome2,
-        heading: "Near or far, don't miss out any adventure",
-        subheading:
-            'Go on hikes, treks and other outdoor activities with people who share your interests',
-        pageIndex: 1,
-      ),
-      OnboardingPageModel(
-        imageUrl: Assets.welcomeImage.welcome3,
-        heading: "New connections & adventures",
-        subheading: 'Hang out with friends and neighbors who share your interests and passions',
-        pageIndex: 2,
-      ),
+      // OnboardingPageModel(
+      //   imageUrl: Assets.welcomeImage.welcome1,
+      //   heading: 'An event of every kind for everyone',
+      //   subheading: 'Discover, participate & organise fun social events in you areas of interest',
+      //   pageIndex: 0,
+      // ),
+      // OnboardingPageModel(
+      //   imageUrl: Assets.welcomeImage.welcome2,
+      //   heading: "Near or far, don't miss out any adventure",
+      //   subheading:
+      //       'Go on hikes, treks and other outdoor activities with people who share your interests',
+      //   pageIndex: 1,
+      // ),
+      // OnboardingPageModel(
+      //   imageUrl: Assets.welcomeImage.welcome3,
+      //   heading: "New connections & adventures",
+      //   subheading: 'Hang out with friends and neighbors who share your interests and passions',
+      //   pageIndex: 2,
+      // ),
     ]);
 
 class WelcomePage extends ConsumerStatefulWidget {
@@ -39,6 +40,11 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   var currentPage = 0;
   late PageController pageController;
   var pageDetails = <OnboardingPageModel>[];
+  var images = <String>[
+    Assets.welcomeImage.welcome1,
+    Assets.welcomeImage.welcome2,
+    Assets.welcomeImage.welcome3,
+  ];
 
   void pageChanged(int index) {
     setState(() {
@@ -104,8 +110,20 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                   children: [
                     SizedBox(
                       height: double.infinity,
-                      child: Image.asset(
-                        pageDetails[index].imageUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: pageDetails[index].imageUrl,
+                        placeholder: (context, url) {
+                          return Image.asset(
+                            images[index % 3],
+                            fit: BoxFit.cover,
+                          );
+                        },
+                        errorWidget: (context, url, error) {
+                          return Image.asset(
+                            images[index % 3],
+                            fit: BoxFit.cover,
+                          );
+                        },
                         fit: BoxFit.cover,
                       ),
                     ),

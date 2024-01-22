@@ -49,31 +49,33 @@ class _EventHostsState extends ConsumerState<EventHosts> {
       children: [
         buildHost(widget.event.hostId, widget.event.hostName, widget.event.hostPic),
         const SizedBox(height: 12),
-        GestureDetector(
-          onTap: () => navigateToChatPage(),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40),
-              border: Border.all(color: AppColors.primaryColor),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                SvgPicture.asset(Assets.icons.group_chat, height: 16),
-                const SizedBox(width: 8),
-                Text(
-                  "Group Chat",
-                  style: AppStyles.h5.copyWith(
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w600,
+        !widget.isPreview
+            ? GestureDetector(
+                onTap: () => navigateToChatPage(),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    border: Border.all(color: AppColors.primaryColor),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      SvgPicture.asset(Assets.icons.group_chat, height: 16),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Group Chat",
+                        style: AppStyles.h5.copyWith(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        )
+              )
+            : const SizedBox(),
       ],
     );
   }

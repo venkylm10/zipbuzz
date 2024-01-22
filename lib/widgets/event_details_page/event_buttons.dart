@@ -32,8 +32,8 @@ class EventButtons extends ConsumerStatefulWidget {
   });
 
   final EventModel event;
-  final bool? isPreview;
-  final bool? rePublish;
+  final bool isPreview;
+  final bool rePublish;
 
   @override
   ConsumerState<EventButtons> createState() => _EventButtonsState();
@@ -61,35 +61,36 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             Row(
               children: [
                 // Event Link button
-                Expanded(
-                  child: GestureDetector(
-                    onTap: showSnackBar,
-                    child: Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: AppColors.bgGrey,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppColors.borderGrey),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(Assets.icons.link, height: 20),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Event link",
-                              style: AppStyles.h5.copyWith(
-                                fontWeight: FontWeight.w600,
+                if (!widget.isPreview)
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: showSnackBar,
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColors.bgGrey,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: AppColors.borderGrey),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(Assets.icons.link, height: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Event link",
+                                style: AppStyles.h5.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
+                if (!widget.isPreview) const SizedBox(width: 8),
                 // Event Invite button
                 Expanded(
                   child: GestureDetector(
@@ -298,7 +299,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             Consumer(builder: (context, ref, child) {
               return GestureDetector(
                 onTap: () async {
-                  final uri = await ref.read(deepLinkServicesProvider)
+                  final uri = await ref
+                      .read(deepLinkServicesProvider)
                       .generateEventDynamicLink(widget.event.id.toString());
                   Share.share(
                       "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n${uri.toString()}");
@@ -425,7 +427,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    final uri = await ref.read(deepLinkServicesProvider)
+                    final uri = await ref
+                        .read(deepLinkServicesProvider)
                         .generateEventDynamicLink(widget.event.id.toString());
                     Share.share(
                         "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n${uri.toString()}");

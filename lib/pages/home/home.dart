@@ -53,21 +53,11 @@ class Home extends ConsumerWidget {
             ),
           ),
           BottomNavigationBarItem(
-            label: 'Map',
-            icon: SvgPicture.asset(
-              Assets.icons.map,
-              colorFilter: ColorFilter.mode(
-                selectedTab == 2 ? AppColors.primaryColor : AppColors.greyColor,
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-          BottomNavigationBarItem(
             label: 'Profile',
             icon: SvgPicture.asset(
               Assets.icons.person,
               colorFilter: ColorFilter.mode(
-                selectedTab == 3 ? AppColors.primaryColor : AppColors.greyColor,
+                selectedTab == 2 ? AppColors.primaryColor : AppColors.greyColor,
                 BlendMode.srcIn,
               ),
             ),

@@ -304,7 +304,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: GridView.count(
         crossAxisCount: 4,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.6,
         crossAxisSpacing: 20,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -326,9 +326,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     ),
                   ),
                   Text(
-                    interest.activity,
+                    "${interest.category}/${interest.activity}",
                     softWrap: true,
-                    maxLines: 2,
+                    maxLines: 4,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: AppStyles.h5,

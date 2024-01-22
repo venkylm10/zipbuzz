@@ -11,6 +11,7 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/deep_link_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -84,8 +85,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       await getLoggedInUserData();
       return;
     }
-    // Uncomment to enable fetching onboarding data from API
-    // await ref.read(dioServicesProvider).updateOnboardingDetails();
+    await ref.read(dioServicesProvider).updateOnboardingDetails();
     await updateInterestsData();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);
   }

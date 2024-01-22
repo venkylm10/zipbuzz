@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -170,6 +171,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
               const SizedBox(height: 16),
               buildInterests(),
+              buildInterestTypeButton(),
               const SizedBox(height: 24),
               Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
               const SizedBox(height: 24),
@@ -245,6 +247,37 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Row buildInterestTypeButton() {
+    final view = ref.watch(editProfileControllerProvider).interestViewType;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        GestureDetector(
+          onTap: () {
+            ref.read(editProfileControllerProvider).toggleInterestView();
+            setState(() {});
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(360),
+              border: Border.all(color: Colors.white),
+              color: AppColors.primaryColor,
+            ),
+            child: Text(
+              view == InterestViewType.user ? "Explore" : "Your Interests",
+              style: AppStyles.h4.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -342,10 +375,17 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   Wrap buildInterests() {
     final myInterests = editProfileController.userClone.interests;
+    final view = ref.watch(editProfileControllerProvider).interestViewType;
+    final updatedInterests = allInterests.where(
+      (element) {
+        if (view == InterestViewType.all) return true;
+        return myInterests.contains(element.activity);
+      },
+    );
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: allInterests.map(
+      children: updatedInterests.map(
         (interest) {
           {
             final iconPath = interest.iconUrl;
@@ -369,7 +409,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      interest.activity,
+                      "${interest.category}/${interest.activity}",
                       style: AppStyles.h4.copyWith(
                         color: present ? color : Colors.grey[800],
                       ),

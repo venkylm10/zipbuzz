@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
-import 'package:zipbuzz/pages/map/map_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
 
 enum InterestViewType {
@@ -28,7 +27,6 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   var tabs = const [
     HomeTab(),
     EventsTab(),
-    MapTab(),
     ProfileTab(),
   ];
 

@@ -34,9 +34,8 @@ class PersonaliseController {
   var selectedInterests = <String>[];
   var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
 
-  void initialise() {
+  void initialise() async {
     userLocation = ref.read(userLocationProvider);
-    ref.read(homeTabControllerProvider.notifier).updateSearching(true);
   }
 
   void updateInterests(String interest) {

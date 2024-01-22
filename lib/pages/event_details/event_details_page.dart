@@ -171,7 +171,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     backgroundColor: AppColors.greyColor.withOpacity(0.1),
                                   );
                                 }),
-                                EventQRCode(event: widget.event),
+                                if (!widget.isPreview) EventQRCode(event: widget.event),
                               ],
                             ),
                             const SizedBox(height: 16),
