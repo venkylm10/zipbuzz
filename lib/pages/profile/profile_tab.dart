@@ -184,6 +184,19 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Version: 0.0.2",
+                      style: AppStyles.h5.copyWith(
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 24),
               ],
             ),
