@@ -39,6 +39,7 @@ class DioServices {
   );
   final box = GetStorage();
 
+  // Fetch onboarding details
   Future<void> updateOnboardingDetails() async {
     try {
       final response = await dio.get(DioConstants.onboardingDetails);

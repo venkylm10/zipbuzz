@@ -12,7 +12,7 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedTab = ref.watch(homeTabControllerProvider);
+    final selectedTab = ref.watch(homeTabControllerProvider).homeTabIndex;
     final tabs = ref.read(homeTabControllerProvider.notifier).tabs;
     return Scaffold(
       body: tabs[selectedTab],
@@ -28,7 +28,7 @@ class Home extends ConsumerWidget {
         onTap: (value) {
           ref.read(homeTabControllerProvider.notifier).updateIndex(value);
           if (value == 0) {
-            ref.read(homeTabControllerProvider.notifier).isSearching = true;
+            ref.read(homeTabControllerProvider.notifier).updateSearching(true);
           }
         },
         items: [

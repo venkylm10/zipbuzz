@@ -10,7 +10,6 @@ import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
-import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/deep_link_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -53,7 +52,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
           ),
         );
     ref.read(loadingTextProvider.notifier).reset();
-    ref.read(homeTabControllerProvider.notifier).isSearching = true;
+    ref.read(homeTabControllerProvider.notifier).updateSearching(true);
     ref.read(deepLinkServicesProvider).retrieveDeepLink();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
@@ -68,7 +67,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
     }
     ref.read(loadingTextProvider.notifier).reset();
-    ref.read(homeTabControllerProvider.notifier).isSearching = true;
+    ref.read(homeTabControllerProvider.notifier).updateSearching(true);
     GetStorage().write(BoxConstants.id, 1);
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
@@ -85,7 +84,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       await getLoggedInUserData();
       return;
     }
-    await ref.read(dioServicesProvider).updateOnboardingDetails();
+    // Uncomment to enable fetching onboarding data from API
+    // await ref.read(dioServicesProvider).updateOnboardingDetails();
     await updateInterestsData();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);
   }

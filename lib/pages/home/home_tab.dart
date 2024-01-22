@@ -76,7 +76,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
     final homeTabController = ref.watch(homeTabControllerProvider.notifier);
-    var isSearching = homeTabController.isSearching;
+    var isSearching = ref.watch(homeTabControllerProvider).isSearching;
+
     // ignore: unused_local_variable
     var showingFavorites = ref.watch(eventsControllerProvider).showingFavorites;
     return Scaffold(
@@ -106,6 +107,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               children: [
                 buildInterests(context),
                 buildPageIndicator(),
+                buildInterestTypeButton(),
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
@@ -125,15 +127,49 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     );
   }
 
+  Row buildInterestTypeButton() {
+    final view = ref.watch(homeTabControllerProvider).interestViewType;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        GestureDetector(
+          onTap: () {
+            ref.read(homeTabControllerProvider.notifier).toggleInterestView();
+            setState(() {});
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(360),
+              border: Border.all(color: Colors.white),
+              color: AppColors.primaryColor,
+            ),
+            child: Text(
+              view == InterestViewType.user ? "Explore" : "Your Interests",
+              style: AppStyles.h4.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buildCategoryRow() {
-    final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
-    final index = ref.watch(homeTabControllerProvider.notifier).index;
+    final isSearching = ref.watch(homeTabControllerProvider).isSearching;
+    final index = ref.watch(homeTabControllerProvider).index;
     final selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
-    final userInterests = allInterests
-        .where(
-          (element) => ref.read(userProvider).interests.contains(element.activity),
-        )
-        .toList();
+    final view = ref.watch(homeTabControllerProvider).interestViewType;
+    final userInterests = allInterests.where(
+      (element) {
+        if (view == InterestViewType.all) {
+          return true;
+        }
+        return ref.read(userProvider).interests.contains(element.activity);
+      },
+    ).toList();
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: !isSearching
@@ -187,12 +223,14 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildInterests(BuildContext context) {
-    final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
-    final userInterests = allInterests
-        .where(
-          (element) => ref.read(userProvider).interests.contains(element.activity),
-        )
-        .toList();
+    final isSearching = ref.watch(homeTabControllerProvider).isSearching;
+    final view = ref.watch(homeTabControllerProvider).interestViewType;
+    final userInterests = allInterests.where(
+      (element) {
+        if (view == InterestViewType.all) return true;
+        return ref.read(userProvider).interests.contains(element.activity);
+      },
+    ).toList();
     return AnimatedOpacity(
       key: ref.read(homeTabControllerProvider.notifier).categoryPageKey,
       duration: const Duration(milliseconds: 500),
@@ -221,8 +259,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildPageIndicator() {
-    final isSearching = ref.watch(homeTabControllerProvider.notifier).isSearching;
-    final index = ref.watch(homeTabControllerProvider.notifier).index;
+    final isSearching = ref.watch(homeTabControllerProvider).isSearching;
+    final index = ref.watch(homeTabControllerProvider).index;
     final userInterests = allInterests
         .where(
           (element) => ref.read(userProvider).interests.contains(element.activity),
@@ -287,6 +325,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   Text(
                     interest.activity,
                     softWrap: true,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: AppStyles.h5,
                   ),

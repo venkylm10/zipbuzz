@@ -36,7 +36,7 @@ class PersonaliseController {
 
   void initialise() {
     userLocation = ref.read(userLocationProvider);
-    ref.read(homeTabControllerProvider.notifier).isSearching = true;
+    ref.read(homeTabControllerProvider.notifier).updateSearching(true);
   }
 
   void updateInterests(String interest) {
