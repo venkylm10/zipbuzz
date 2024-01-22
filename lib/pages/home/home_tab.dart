@@ -140,6 +140,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           },
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.only(top: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(360),
               border: Border.all(color: Colors.white),
@@ -261,11 +262,13 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   Widget buildPageIndicator() {
     final isSearching = ref.watch(homeTabControllerProvider).isSearching;
     final index = ref.watch(homeTabControllerProvider).index;
-    final userInterests = allInterests
-        .where(
-          (element) => ref.read(userProvider).interests.contains(element.activity),
-        )
-        .toList();
+    final view = ref.watch(homeTabControllerProvider).interestViewType;
+    final userInterests = allInterests.where(
+      (element) {
+        if (view == InterestViewType.all) return true;
+        return ref.read(userProvider).interests.contains(element.activity);
+      },
+    ).toList();
     return userInterests.length > 8
         ? AnimatedOpacity(
             duration: const Duration(milliseconds: 500),
