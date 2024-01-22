@@ -249,7 +249,6 @@ class DioServices {
       final response = await dio.get(DioConstants.getEventDetails, data: {"event_id": eventId});
       if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("GETTING EVENT DETAILS SUCCESSFULL");
-        showSnackBar(message: "Got event details");
         return (response.data['event_details'] as List)[0] as Map<String, dynamic>;
       } else {
         throw 'FAILED TO GET EVENT DETAILS';
