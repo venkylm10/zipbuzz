@@ -5,7 +5,6 @@ import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 enum InterestViewType {
   user,
@@ -48,6 +47,9 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   Future<bool> backToHomeTab() async {
     state = state.copyWith(homeTabIndex: 0);
     return false;
+  }
+  void selectCategory({String category = ''}) {
+    state = state.copyWith(selectedCategory: category);
   }
 
   void updateBodyScrollController() {

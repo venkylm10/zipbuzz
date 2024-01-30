@@ -24,8 +24,8 @@ class _EventDetailsState extends State<EventDetails> {
 
   void initialiseTime() {
     startTime = widget.event.startTime;
-      endTime = widget.event.endTime;
-    
+    endTime = widget.event.endTime;
+
     setState(() {});
   }
 
@@ -140,7 +140,7 @@ class _EventDetailsState extends State<EventDetails> {
             ),
             const SizedBox(width: 8),
             Text(
-              "$startTime - $endTime",
+              "$startTime${endTime != "null" ? "- $endTime" : ""}",
               style: AppStyles.h4.copyWith(
                 fontWeight: FontWeight.w500,
               ),

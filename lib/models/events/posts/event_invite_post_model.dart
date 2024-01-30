@@ -9,6 +9,7 @@ class EventInvitePostModel {
   final String eventStart;
   final String eventEnd;
   final int eventId;
+  final String banner;
 
   EventInvitePostModel({
     required this.phoneNumbers,
@@ -21,6 +22,7 @@ class EventInvitePostModel {
     required this.eventStart,
     required this.eventEnd,
     required this.eventId,
+    required this.banner,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +37,7 @@ class EventInvitePostModel {
       'event_start': eventStart,
       'event_end': eventEnd,
       'event_id': eventId,
+      'banner': banner,
     };
   }
 }

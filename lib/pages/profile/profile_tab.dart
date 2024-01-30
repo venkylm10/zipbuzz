@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -152,7 +154,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                 ),
                 const SizedBox(height: 16),
-                buildInterests(user, ref),
+                buildInterests(user),
+                const SizedBox(height: 16),
+                buildInterestTypeButton(),
                 const SizedBox(height: 24),
                 Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
                 const SizedBox(height: 24),
@@ -240,37 +244,145 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  Wrap buildInterests(UserModel user, WidgetRef ref) {
-    final interests = ref.watch(userProvider).interests;
+  void updateInterests(InterestModel interest) {
+    final interests = ref.read(userProvider).interests;
+    if (interests.contains(interest.activity)) {
+      interests.remove(interest.activity);
+    } else {
+      interests.add(interest.activity);
+    }
+    ref.read(userProvider.notifier).update((state) => state.copyWith(interests: interests));
+    ref.watch(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
+  }
+
+  Wrap buildInterests(UserModel user) {
+    final myInterests = user.interests;
+    final view = ref.watch(editProfileControllerProvider).interestViewType;
+    final updatedInterests = allInterests.where(
+      (element) {
+        if (view == InterestViewType.all) return true;
+        return myInterests.contains(element.activity);
+      },
+    );
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: interests.map(
-        (e) {
-          final iconPath = interestIcons[e]!;
-          final color = interestColors[e]!;
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: color.withOpacity(0.1),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.network(iconPath, height: 16),
-                const SizedBox(width: 8),
-                Text(
-                  e,
-                  style: AppStyles.h4.copyWith(color: color),
+      children: updatedInterests.map(
+        (interest) {
+          {
+            final iconPath = interest.iconUrl;
+            final color = interestColors[interest.activity]!;
+            final present = myInterests.contains(interest.activity);
+            return GestureDetector(
+              onTap: () {
+                updateInterests(interest);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: present ? color.withOpacity(0.1) : AppColors.bgGrey,
+                  border: !present ? Border.all(color: AppColors.borderGrey) : null,
                 ),
-              ],
-            ),
-          );
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Opacity(
+                      opacity: present ? 1 : 0.4,
+                      child: Image.network(iconPath, height: 16),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      interest.activity,
+                      style: AppStyles.h4.copyWith(
+                        color: present ? color : Colors.grey[800],
+                      ),
+                    ),
+                    if (present)
+                      Row(
+                        children: [
+                          const SizedBox(width: 8),
+                          SvgPicture.asset(
+                            Assets.icons.remove,
+                            colorFilter: ColorFilter.mode(
+                              color,
+                              BlendMode.srcIn,
+                            ),
+                          )
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }
         },
       ).toList(),
     );
   }
+
+  Row buildInterestTypeButton() {
+    final view = ref.watch(editProfileControllerProvider).interestViewType;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        GestureDetector(
+          onTap: () {
+            ref.read(editProfileControllerProvider).toggleInterestView();
+            setState(() {});
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(360),
+              border: Border.all(color: Colors.white),
+              color: AppColors.primaryColor,
+            ),
+            child: Text(
+              view == InterestViewType.user ? "Explore" : "Your Interests",
+              style: AppStyles.h4.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Wrap buildInterests(UserModel user, WidgetRef ref) {
+  //   final interests = ref.watch(userProvider).interests;
+  //   return Wrap(
+  //     spacing: 8,
+  //     runSpacing: 8,
+  //     children: interests.map(
+  //       (e) {
+  //         final iconPath = interestIcons[e]!;
+  //         final color = interestColors[e]!;
+  //         return Container(
+  //           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(16),
+  //             color: color.withOpacity(0.1),
+  //           ),
+  //           child: Row(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Image.network(iconPath, height: 16),
+  //               const SizedBox(width: 8),
+  //               Text(
+  //                 e,
+  //                 style: AppStyles.h4.copyWith(color: color),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //     ).toList(),
+  //   );
+  // }
 
   Row buildDetailTile(String iconPath, String label, String value, {bool handle = false}) {
     return Row(

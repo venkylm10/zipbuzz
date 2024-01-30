@@ -220,10 +220,6 @@ class EditEventController extends StateNotifier<EventModel> {
       showSnackBar(message: "Please enter event start time");
       return false;
     }
-    if (state.endTime.isEmpty) {
-      showSnackBar(message: "Please enter event end time");
-      return false;
-    }
     return true;
   }
 
@@ -275,7 +271,7 @@ class EditEventController extends StateNotifier<EventModel> {
         date: DateTime(date.year, date.month, date.day).toString(),
         venue: state.location,
         startTime: state.startTime,
-        endTime: state.endTime,
+        endTime: state.endTime.isEmpty ? "null" : state.endTime,
         hostId: state.hostId,
         hostName: state.hostName,
         hostPic: state.hostPic,

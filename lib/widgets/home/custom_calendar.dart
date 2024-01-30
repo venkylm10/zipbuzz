@@ -97,7 +97,6 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
         Consumer(builder: (context, ref, child) {
           final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
           final focusedDay = ref.watch(eventsControllerProvider).focusedDay;
-          final homeTabController = ref.read(homeTabControllerProvider);
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 500),
             child: focusedEvents.isNotEmpty
@@ -132,6 +131,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             child: focusedEvents.isNotEmpty
                 ? Consumer(builder: (context, ref, child) {
                     final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
+                    final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
                     return Column(
                       children: focusedEvents.map((e) {
                         final containsInterest = ref
@@ -139,7 +139,10 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
                             .containsInterest(e.category);
                         final containsQuery =
                             ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-                        final display = containsInterest && containsQuery;
+                        var display = containsInterest && containsQuery;
+                        if (selectedCategory.isNotEmpty) {
+                          display = display && e.category == selectedCategory;
+                        }
                         if (!display) return const SizedBox();
                         return EventCard(event: e, focusedEvent: true);
                       }).toList(),
@@ -165,12 +168,16 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
             // ignore: unused_local_variable
             final homeTabController = ref.read(homeTabControllerProvider);
+            final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
             return Column(
               children: upcomingEvents.map((e) {
                 final containsInterest =
                     ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
                 final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-                final display = containsInterest && containsQuery;
+                var display = containsInterest && containsQuery;
+                if (selectedCategory.isNotEmpty) {
+                  display = display && e.category == selectedCategory;
+                }
                 if (!display) return const SizedBox();
                 return EventCard(event: e);
               }).toList(),
@@ -185,6 +192,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
     final eventMaps = ref.watch(eventsControllerProvider).eventsMap;
     // ignore: unused_local_variable
     final homeTabController = ref.watch(homeTabControllerProvider);
+    final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
     return CalendarBuilders(
       dowBuilder: (context, day) {
         return Text(
@@ -285,7 +293,12 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
           final containsInterest =
               ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
           final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-          return containsInterest && containsQuery;
+          var display = containsInterest && containsQuery;
+
+          if (selectedCategory.isNotEmpty) {
+            display = display && e.category == selectedCategory;
+          }
+          return display;
         }).toList();
 
         return SizedBox(

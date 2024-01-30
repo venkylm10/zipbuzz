@@ -216,10 +216,6 @@ class NewEvent extends StateNotifier<EventModel> {
       showSnackBar(message: "Please enter event start time");
       return false;
     }
-    if (state.endTime.isEmpty) {
-      showSnackBar(message: "Please enter event end time");
-      return false;
-    }
     return true;
   }
 
@@ -269,7 +265,7 @@ class NewEvent extends StateNotifier<EventModel> {
         date: DateTime(date.year, date.month, date.day).toString(),
         venue: state.location,
         startTime: state.startTime,
-        endTime: state.endTime,
+        endTime: state.endTime.isEmpty ? "null" : state.endTime,
         hostId: state.hostId,
         hostName: state.hostName,
         hostPic: state.hostPic,
@@ -277,6 +273,10 @@ class NewEvent extends StateNotifier<EventModel> {
         capacity: state.capacity,
         filledCapacity: eventInvites.length,
       );
+
+      // print(eventPostModel.toMap());
+      // ref.read(loadingTextProvider.notifier).reset();
+      // return;
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
       final eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
@@ -307,6 +307,7 @@ class NewEvent extends StateNotifier<EventModel> {
         eventStart: eventPostModel.startTime,
         eventEnd: eventPostModel.endTime,
         eventId: eventId,
+        banner: bannerUrl,
       );
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
 

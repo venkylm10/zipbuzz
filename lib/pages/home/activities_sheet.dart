@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -44,6 +45,15 @@ class ActivitiesSheet extends StatelessWidget {
                         .containsInterest(interest.activity);
                     return GestureDetector(
                       onTap: () {
+                        final interests = ref.read(userProvider).interests;
+                        if (interests.contains(interest.activity)) {
+                          interests.remove(interest.activity);
+                        } else {
+                          interests.add(interest.activity);
+                        }
+                        ref
+                            .read(userProvider.notifier)
+                            .update((state) => state.copyWith(interests: interests));
                         ref
                             .watch(homeTabControllerProvider.notifier)
                             .toggleHomeTabInterest(interest);

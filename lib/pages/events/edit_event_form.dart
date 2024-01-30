@@ -99,7 +99,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     locationController.text = event.location;
     category = ref.read(editEventControllerProvider).category;
     startTimeController.text = event.startTime;
-    endTimeController.text = event.endTime;
+    endTimeController.text = event.endTime != "null" ? event.endTime : "";
     convertDateString();
   }
 

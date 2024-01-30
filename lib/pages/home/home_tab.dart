@@ -45,19 +45,23 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   void onTapRowCategory(String interest) {
-    final selectedCategory = ref.read(eventsControllerProvider).selectedCategory;
+    final selectedCategory = ref.read(homeTabControllerProvider).selectedCategory;
     if (selectedCategory != interest) {
-      ref.read(eventsControllerProvider.notifier).selectCategory(category: interest);
-      setState(() {});
+      ref.read(homeTabControllerProvider.notifier).selectCategory(category: interest);
     } else {
-      ref.read(eventsControllerProvider.notifier).selectCategory(category: '');
-      setState(() {});
+      ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
     }
+    setState(() {});
   }
 
   void onTapGridCategory(String interest) {
     scrollDownInterests();
-    ref.read(eventsControllerProvider.notifier).selectCategory(category: interest);
+    final selectedCategory = ref.read(homeTabControllerProvider).selectedCategory;
+    if (selectedCategory != interest) {
+      ref.read(homeTabControllerProvider.notifier).selectCategory(category: interest);
+    } else {
+      ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
+    }
     setState(() {});
   }
 
@@ -77,9 +81,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     topPadding = MediaQuery.of(context).padding.top;
     final homeTabController = ref.watch(homeTabControllerProvider.notifier);
     var isSearching = ref.watch(homeTabControllerProvider).isSearching;
-
-    // ignore: unused_local_variable
-    var showingFavorites = ref.watch(eventsControllerProvider).showingFavorites;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
@@ -187,7 +188,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                         final name = e.activity;
                         final iconPath = e.iconUrl;
                         return GestureDetector(
-                          onTap: () => onTapRowCategory(name),
+                          onTap: () {
+                            onTapRowCategory(name);
+                          },
                           child: Container(
                             key: selectedCategory == name
                                 ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
@@ -200,7 +203,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                             ),
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: ref.watch(eventsControllerProvider).selectedCategory == name
+                              color: homeTabController.selectedCategory == name
                                   ? Colors.green.withOpacity(0.15)
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(8),
