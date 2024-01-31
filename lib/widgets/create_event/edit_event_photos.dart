@@ -9,7 +9,6 @@ import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 
 class EditEventPhotos extends ConsumerStatefulWidget {
@@ -24,13 +23,13 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
 
   @override
   void initState() {
-    maxImages = ref.read(newEventProvider.notifier).maxImages;
-    ref.read(newEventProvider.notifier).selectedImages.clear();
+    maxImages = ref.read(editEventControllerProvider.notifier).maxImages;
+    ref.read(editEventControllerProvider.notifier).selectedImages.clear();
     super.initState();
   }
 
   void removeFileImage({required File image}) {
-    ref.read(newEventProvider.notifier).selectedImages.remove(image);
+    ref.read(editEventControllerProvider.notifier).selectedImages.remove(image);
     setState(() {});
   }
 
@@ -45,7 +44,7 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
     if (pickedImages.isNotEmpty) {
       pickedImages.map((pickedImage) {
         image = File(pickedImage!.path);
-        ref.read(newEventProvider.notifier).selectedImages.add(image!);
+        ref.read(editEventControllerProvider.notifier).selectedImages.add(image!);
       }).toList();
     }
     setState(() {});
@@ -67,33 +66,38 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
           style: AppStyles.h4,
         ),
         if (selectedImages.isEmpty) const SizedBox(height: 16),
-        if (selectedImages.isEmpty)
-          GestureDetector(
-            onTap: () {
-              addImages();
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.bgGrey,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.borderGrey),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(Assets.icons.add_circle),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Add",
-                    style: AppStyles.h4.copyWith(
-                      color: AppColors.greyColor,
+        Consumer(builder: (context, ref, child) {
+          final urls = ref.watch(editEventControllerProvider).imageUrls;
+          if (urls.isEmpty && selectedImages.isEmpty) {
+            return GestureDetector(
+              onTap: () {
+                addImages();
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.bgGrey,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.borderGrey),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(Assets.icons.add_circle),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Add",
+                      style: AppStyles.h4.copyWith(
+                        color: AppColors.greyColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          }
+          return const SizedBox();
+        }),
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
@@ -121,7 +125,7 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
                                   fit: BoxFit.cover,
                                 )
                               : Image.file(
-                                  selectedImages[index],
+                                  selectedImages[index - urls.length],
                                   fit: BoxFit.cover,
                                 ),
                         ),
@@ -132,7 +136,7 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
                               if (index < urls.length) {
                                 removeImageUrl(imageUrl: urls[index]);
                               } else {
-                                removeFileImage(image: selectedImages[index]);
+                                removeFileImage(image: selectedImages[index - urls.length]);
                               }
                             },
                             child: SizedBox(
@@ -167,34 +171,43 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
             );
           }),
         ),
-        if (selectedImages.isNotEmpty) const SizedBox(height: 16),
-        if (selectedImages.isNotEmpty)
-          GestureDetector(
-            onTap: () {
-              addImages();
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.bgGrey,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.borderGrey),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(Assets.icons.add_circle),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Add more",
-                    style: AppStyles.h4.copyWith(
-                      color: AppColors.greyColor,
-                    ),
+        Consumer(builder: (context, ref, child) {
+          final urls = ref.watch(editEventControllerProvider).imageUrls;
+          if (urls.isEmpty) {
+            return const SizedBox();
+          }
+          return Column(
+            children: [
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: () {
+                  addImages();
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgGrey,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.borderGrey),
                   ),
-                ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(Assets.icons.add_circle),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Add more",
+                        style: AppStyles.h4.copyWith(
+                          color: AppColors.greyColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            ],
+          );
+        })
       ],
     );
   }

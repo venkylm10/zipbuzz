@@ -11,9 +11,9 @@ import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
+import 'package:zipbuzz/widgets/create_event/edit_event_photos.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
 import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
-import 'package:zipbuzz/widgets/create_event/create_event.dart';
 import 'package:zipbuzz/widgets/edit_event/event_banner.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
@@ -76,7 +76,7 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
               broadDivider(),
               const EventTypeAndCapacity(rePublish: true),
               broadDivider(),
-              const AddEventPhotos(),
+              const EditEventPhotos(),
               broadDivider(),
               const CreateEventGuestListType(),
               const SizedBox(height: 32),

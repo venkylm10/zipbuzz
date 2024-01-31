@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/services/deep_link_services.dart';
 import 'package:zipbuzz/services/qr_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -17,10 +16,12 @@ class EventQRCode extends StatelessWidget {
     return Consumer(builder: (context, ref, child) {
       return GestureDetector(
         onTap: () async {
-          final uri = await ref
-              .read(deepLinkServicesProvider)
-              .generateEventDynamicLink(event.id.toString());
-          QrServices.showQRImage(uri.toString(), event);
+          // deepLink Url
+          // final uri = await ref
+          //     .read(deepLinkServicesProvider)
+          //     .generateEventDynamicLink(event.id.toString());
+          final eventUrl = event.inviteUrl;
+          QrServices.showQRImage(eventUrl, event);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(

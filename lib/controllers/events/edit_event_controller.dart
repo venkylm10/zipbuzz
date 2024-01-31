@@ -10,6 +10,7 @@ import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
@@ -288,6 +289,11 @@ class EditEventController extends StateNotifier<EventModel> {
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Editing Event...");
       await ref.read(dbServicesProvider).editEvent(eventPostModel);
+      if (selectedImages.isNotEmpty) {
+        // upload event images
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
+        await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
+      }
       var eventDateTime = DateTime.parse(state.date);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(1);
@@ -303,8 +309,9 @@ class EditEventController extends StateNotifier<EventModel> {
         image,
       );
       final dominantColor = generator.dominantColor?.color;
+      final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(eventId);
       Map<String, dynamic> args = {
-        'event': state,
+        'event': updatedEvent,
         'isPreview': false,
         'dominantColor': dominantColor ?? const Color(0xFF4a5759),
         'randInt': 0,

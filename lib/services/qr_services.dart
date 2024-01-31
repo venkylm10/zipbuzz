@@ -79,7 +79,10 @@ class QrServices {
                 maxHeight: 300,
                 maxWidth: 300,
               ),
-              child: Image.file(File(filePath)),
+              child: Image.file(
+                File(filePath),
+                fit: BoxFit.contain,
+              ),
             ),
           );
         });

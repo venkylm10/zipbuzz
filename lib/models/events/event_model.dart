@@ -22,6 +22,7 @@ class EventModel {
   final int capacity;
   final List<String> imageUrls;
   final List<EventInviteMember> eventMembers;
+  final String inviteUrl;
   EventModel({
     required this.id,
     required this.title,
@@ -44,6 +45,7 @@ class EventModel {
     required this.hostName,
     required this.hostPic,
     required this.eventMembers,
+    this.inviteUrl = "",
   });
 
   EventModel copyWith({
@@ -68,6 +70,7 @@ class EventModel {
     int? capacity,
     List<String>? imageUrls,
     bool? privateGuestList,
+    String? inviteUrl,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -91,6 +94,7 @@ class EventModel {
       hostName: hostName ?? this.hostName,
       hostPic: hostPic ?? this.hostPic,
       eventMembers: eventMembers ?? this.eventMembers,
+      inviteUrl: inviteUrl ?? this.inviteUrl,
     );
   }
 
@@ -119,6 +123,7 @@ class EventModel {
       eventMembers: (map['eventMembers'] as List)
           .map((e) => EventInviteMember.fromMap(e as Map<String, dynamic>))
           .toList(),
+      inviteUrl: map['invite_url'] ?? ""
     );
   }
 
@@ -145,6 +150,7 @@ class EventModel {
       'imageUrls': imageUrls,
       'privateGuestList': privateGuestList,
       'eventMembers': eventMembers.map((e) => e.toMap()).toList(),
+      "invite_url" : inviteUrl,
     };
   }
 }

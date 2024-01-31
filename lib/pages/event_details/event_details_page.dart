@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -209,7 +210,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                             ),
                             const SizedBox(height: 16),
-                            buildPhotos(widget.isPreview, ref),
+                            buildPhotos(widget.isPreview, widget.rePublish, ref),
                             const SizedBox(height: 16),
                             Divider(
                               color: AppColors.greyColor.withOpacity(0.2),
@@ -467,10 +468,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     );
   }
 
-  Widget buildPhotos(bool isPreview, WidgetRef ref) {
-    final imageFiles = ref.watch(newEventProvider.notifier).selectedImages;
+  Widget buildPhotos(bool isPreview, bool rePublish, WidgetRef ref) {
+    final imageFiles = rePublish
+        ? ref.watch(editEventControllerProvider.notifier).selectedImages
+        : ref.watch(newEventProvider.notifier).selectedImages;
     final imageUrls = widget.event.imageUrls;
-    return isPreview
+    return isPreview || rePublish
         ? Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -480,7 +483,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               children: List.generate(
-                imageFiles.length,
+                rePublish ? imageUrls.length + imageFiles.length : imageFiles.length,
                 (index) => StaggeredGridTile.count(
                   crossAxisCellCount: index % (maxImages - 1) == 0
                       ? 2
@@ -488,10 +491,20 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                   mainAxisCellCount: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      imageFiles[index],
-                      fit: BoxFit.cover,
-                    ),
+                    child: rePublish
+                        ? index < imageUrls.length
+                            ? CachedNetworkImage(
+                                imageUrl: imageUrls[index],
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                                imageFiles[index - imageUrls.length],
+                                fit: BoxFit.cover,
+                              )
+                        : Image.file(
+                            imageFiles[index],
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ),

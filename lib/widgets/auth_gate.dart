@@ -86,7 +86,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       return;
     }
     await ref.read(dioServicesProvider).updateOnboardingDetails();
-    await updateInterestsData();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);
   }
 

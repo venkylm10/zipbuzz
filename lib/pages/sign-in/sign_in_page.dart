@@ -19,6 +19,7 @@ class SignInSheet extends ConsumerWidget {
   const SignInSheet({super.key});
 
   void googleSignIn(WidgetRef ref) {
+    ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
     ref.read(authServicesProvider).signInWithGoogle();
   }
@@ -26,6 +27,7 @@ class SignInSheet extends ConsumerWidget {
   void signInGuestUser(WidgetRef ref) {
     GetStorage().write(BoxConstants.guestUser, true);
     GetStorage().write(BoxConstants.id, 1);
+    ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
     NavigationController.routeOff(route: AuthGate.id);
   }

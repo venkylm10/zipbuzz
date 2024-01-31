@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
@@ -12,11 +13,11 @@ enum InterestViewType {
 }
 
 final homeTabControllerProvider = StateNotifierProvider<HomeTabController, HomeTabState>((ref) {
-  return HomeTabController();
+  return HomeTabController(ref: ref);
 });
 
 class HomeTabController extends StateNotifier<HomeTabState> {
-  HomeTabController()
+  HomeTabController({required this.ref})
       : super(HomeTabState(
           isSearching: true,
           index: 0,
@@ -26,6 +27,8 @@ class HomeTabController extends StateNotifier<HomeTabState> {
           interestViewType: InterestViewType.user,
           currentInterests: [],
         ));
+
+  final Ref ref;
 
   var tabs = const [
     HomeTab(),
@@ -41,6 +44,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   final rowCategoryKey = GlobalKey();
 
   void updateIndex(int index) {
+    ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
     state = state.copyWith(homeTabIndex: index);
   }
 
@@ -48,6 +52,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     state = state.copyWith(homeTabIndex: 0);
     return false;
   }
+
   void selectCategory({String category = ''}) {
     state = state.copyWith(selectedCategory: category);
   }
@@ -118,6 +123,15 @@ class HomeTabController extends StateNotifier<HomeTabState> {
 
   void refresh() {
     state = state.copyWith();
+  }
+
+  void updateUserInterests() {
+    final updatedInterests = state.currentInterests.map((e) => e.activity).toList();
+    ref.read(userProvider.notifier).update(
+          (state) => state.copyWith(
+            interests: updatedInterests,
+          ),
+        );
   }
 }
 

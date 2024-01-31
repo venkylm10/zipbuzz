@@ -220,6 +220,7 @@ class DBServices {
             hostName: res.hostName,
             hostPic: res.hostPic,
             eventMembers: members,
+            inviteUrl: res.inviteUrl,
           );
           return eventModel;
         }).toList();
@@ -260,6 +261,7 @@ class DBServices {
       hostName: res.hostName,
       hostPic: res.hostPic,
       eventMembers: members,
+      inviteUrl: res.inviteUrl,
     );
     showSnackBar(message: "Event Details Loaded Successfully");
     return eventModel;
@@ -297,6 +299,7 @@ class DBServices {
             hostName: fav.hostName,
             hostPic: fav.hostPic,
             eventMembers: members,
+            inviteUrl: fav.inviteUrl,
           );
           return eventModel;
         }).toList();

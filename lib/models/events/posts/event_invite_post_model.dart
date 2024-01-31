@@ -4,6 +4,7 @@ class EventInvitePostModel {
   final List<String> names;
   final String senderName;
   final String eventName;
+  final String eventDescription;
   final String eventDate;
   final String eventLocation;
   final String eventStart;
@@ -17,6 +18,7 @@ class EventInvitePostModel {
     required this.names,
     required this.senderName,
     required this.eventName,
+    required this.eventDescription,
     required this.eventDate,
     required this.eventLocation,
     required this.eventStart,
@@ -32,6 +34,7 @@ class EventInvitePostModel {
       'names': names,
       'sender_name': senderName,
       'event_name': eventName,
+      'event_description': eventDescription,
       'event_date': eventDate,
       'event_location': eventLocation,
       'event_start': eventStart,

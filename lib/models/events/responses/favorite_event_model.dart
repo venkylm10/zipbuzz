@@ -14,6 +14,7 @@ class FavoriteEventModel {
   bool eventType;
   int capacity;
   int filledCapacity;
+  String inviteUrl;
 
   FavoriteEventModel({
     required this.eventId,
@@ -31,6 +32,7 @@ class FavoriteEventModel {
     required this.eventType,
     required this.capacity,
     required this.filledCapacity,
+    this.inviteUrl = "",
   });
 
   Map<String, dynamic> toMap() {
@@ -50,6 +52,7 @@ class FavoriteEventModel {
       'event_type': eventType,
       'capacity': capacity,
       'filled_capacity': filledCapacity,
+      "invite_url": inviteUrl,
     };
   }
 
@@ -70,6 +73,7 @@ class FavoriteEventModel {
       eventType: map['event_type'] as bool,
       capacity: map['capacity'] as int,
       filledCapacity: map['filled_capacity'] as int,
+      inviteUrl: map['invite_url'] ?? "",
     );
   }
 }

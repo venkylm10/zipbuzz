@@ -29,8 +29,8 @@ class DeepLinkServices {
       // ),
     );
     var uri = await FirebaseDynamicLinks.instance.buildLink(parameters);
-    print("event_id: $eventId");
-    print("generated link: ${uri.toString()}");
+    debugPrint("event_id: $eventId");
+    debugPrint("generated link: ${uri.toString()}");
     return uri;
   }
 

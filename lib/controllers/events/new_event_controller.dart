@@ -302,6 +302,7 @@ class NewEvent extends StateNotifier<EventModel> {
         }).toList(),
         senderName: ref.read(userProvider).name,
         eventName: eventPostModel.name,
+        eventDescription: eventPostModel.description,
         eventDate: formattedDate,
         eventLocation: eventPostModel.venue,
         eventStart: eventPostModel.startTime,
@@ -315,6 +316,7 @@ class NewEvent extends StateNotifier<EventModel> {
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
+      ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
       ref.read(homeTabControllerProvider.notifier).updateIndex(0);
       final image = NetworkImage(eventPostModel.banner);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
