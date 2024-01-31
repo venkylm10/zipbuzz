@@ -13,7 +13,7 @@ import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
 import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
-import 'package:zipbuzz/widgets/create_event/photos.dart';
+import 'package:zipbuzz/widgets/create_event/create_event.dart';
 
 class CreateEvent extends ConsumerStatefulWidget {
   const CreateEvent({super.key});

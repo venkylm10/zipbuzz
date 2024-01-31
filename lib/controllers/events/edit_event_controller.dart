@@ -62,6 +62,12 @@ class EditEventController extends StateNotifier<EventModel> {
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
 
+  void updateEventImageUrls(String url) {
+    final updatedUrls = state.imageUrls;
+    updatedUrls.remove(url);
+    state = state.copyWith(imageUrls: updatedUrls);
+  }
+
   void updateEvent(EventModel event) {
     state = event;
   }
