@@ -287,7 +287,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                      "${widget.event.startTime} - ${widget.event.endTime}",
+                                      "${widget.event.startTime}${widget.event.endTime != "null" ? " - ${widget.event.endTime}" : ""}",
                                       style: AppStyles.h5.copyWith(
                                         color: AppColors.lightGreyColor,
                                       ),

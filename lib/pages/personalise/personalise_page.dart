@@ -131,63 +131,61 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                         ),
                         const SizedBox(height: 8),
                         buildInterests(ref),
-                        const SizedBox(height: 60),
+                        const SizedBox(height: 48),
+                        buildSubmitButton(personaliseController),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-            buildSubmitButton(personaliseController),
           ],
         ),
       ),
     );
   }
 
-  Align buildSubmitButton(PersonaliseController personaliseController) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Consumer(builder: (context, subRef, child) {
-        final loadingText = subRef.watch(loadingTextProvider);
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 8),
-          child: InkWell(
-            onTap: () {
-              if (loadingText == null) {
-                personaliseController.sumbitInterests();
-              }
-            },
-            borderRadius: BorderRadius.circular(24),
-            child: Ink(
-              height: 48,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Center(
-                child: loadingText == null
-                    ? Text(
-                        "Confirm & Personalize",
-                        style: AppStyles.h3.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
-                    : Text(
-                        loadingText,
-                        style: AppStyles.h4.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+  Widget buildSubmitButton(PersonaliseController personaliseController) {
+    return Consumer(builder: (context, subRef, child) {
+      final loadingText = subRef.watch(loadingTextProvider);
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 8),
+        child: InkWell(
+          onTap: () {
+            if (loadingText == null) {
+              personaliseController.sumbitInterests();
+            }
+          },
+          borderRadius: BorderRadius.circular(24),
+          child: Ink(
+            height: 48,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Center(
+              child: loadingText == null
+                  ? Text(
+                      "Confirm & Personalize",
+                      style: AppStyles.h3.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
                       ),
-              ),
+                    )
+                  : Text(
+                      loadingText,
+                      style: AppStyles.h4.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   Widget buildInterests(WidgetRef ref) {
