@@ -1,5 +1,5 @@
 class DioConstants {
-  static const String baseUrl = "http://13.51.247.140";
+  static const String baseUrl = "https://admin.zipbuzz.me";
   static const String onboardingDetails = "/users/onboard_images/";
   static const String createUser = "/users/create_user/";
   static const String getUserId = "/users/sign_in/";

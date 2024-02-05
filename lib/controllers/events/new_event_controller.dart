@@ -294,6 +294,7 @@ class NewEvent extends StateNotifier<EventModel> {
 
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: eventInvites.map((e) {
+          print(e.phones.first.normalizedNumber);
           return e.phones.first.normalizedNumber;
         }).toList(),
         images: inviteePicUrls,
@@ -310,6 +311,7 @@ class NewEvent extends StateNotifier<EventModel> {
         eventId: eventId,
         banner: bannerUrl,
       );
+      print(eventInvitePostModel.toMap());
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
 
       // upload event images

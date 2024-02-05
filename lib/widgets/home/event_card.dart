@@ -46,6 +46,8 @@ class _EventCardState extends ConsumerState<EventCard> {
   void navigateToEventDetails() async {
     final dominantColor = await getDominantColor();
     ref.read(guestListTagProvider.notifier).update((state) => "All");
+    print(widget.event.id);
+    print(widget.event.eventMembers);
     await navigatorKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => EventDetailsPage(

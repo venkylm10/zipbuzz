@@ -237,7 +237,7 @@ class DioServices {
         throw 'FAILED TO GET ALL EVENTS';
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("FAILED TO GET ALL EVENTS$e");
       throw 'FAILED TO GET ALL EVENTS';
     }
   }
@@ -253,7 +253,7 @@ class DioServices {
         throw 'FAILED TO GET EVENT DETAILS';
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("FAILED TO GET EVENT DETAILS: $e");
 
       throw 'FAILED TO GET EVENT DETAILS';
     }

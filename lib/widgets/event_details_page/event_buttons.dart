@@ -11,7 +11,6 @@ import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
-import 'package:zipbuzz/services/deep_link_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_invite.dart';
@@ -435,7 +434,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                     //     .generateEventDynamicLink(widget.event.id.toString());
                     final eventUrl = widget.event.inviteUrl;
                     Share.share(
-                        "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n$eventUrl");
+                        "Follow the link to find more details on the Event\n\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n$eventUrl");
                   },
                   child: Container(
                     decoration: BoxDecoration(
