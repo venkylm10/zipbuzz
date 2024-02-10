@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/home/activities_sheet.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -142,6 +145,16 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 return const ActivitiesSheet();
               },
             );
+            await ref.read(dioServicesProvider).updateUserInterests(
+                  UserInterestsUpdateModel(
+                    userId: ref.read(userProvider).id,
+                    interests: ref
+                        .read(homeTabControllerProvider)
+                        .currentInterests
+                        .map((e) => e.activity)
+                        .toList(),
+                  ),
+                );
             debugPrint("Updated homeTab interests");
             setState(() {});
           },

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
+import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -244,8 +246,18 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  void updateInterests(InterestModel interest) {
+  void updateInterests(InterestModel interest) async {
     ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
+    await ref.read(dioServicesProvider).updateUserInterests(
+          UserInterestsUpdateModel(
+            userId: ref.read(userProvider).id,
+            interests: ref
+                .read(homeTabControllerProvider)
+                .currentInterests
+                .map((e) => e.activity)
+                .toList(),
+          ),
+        );
   }
 
   Widget buildInterests(UserModel user) {
@@ -269,7 +281,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
               final color = interestColors[interest.activity]!;
               final present = myInterests.contains(interest.activity);
               return GestureDetector(
-                onTap: () {
+                onTap: () async {
                   updateInterests(interest);
                 },
                 child: Container(
