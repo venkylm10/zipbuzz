@@ -63,6 +63,48 @@ class EditProfileController {
         interestViewType == InterestViewType.user ? InterestViewType.all : InterestViewType.user;
   }
 
+  bool validateLocationCheck() {
+    if (zipcodeController.text.isEmpty) {
+      showSnackBar(message: "Please enter zipcode");
+      return false;
+    }
+
+    if (zipcodeController.text.length < 5) {
+      showSnackBar(message: "Please enter valid zipcode");
+      return false;
+    }
+    if (userClone.interests.length < 5) {
+      showSnackBar(message: "Please select at least 5 interests");
+      return false;
+    }
+    return true;
+  }
+
+  bool validate() {
+    if (zipcodeController.text.isEmpty) {
+      showSnackBar(message: "Please enter zipcode");
+      return false;
+    }
+
+    if (zipcodeController.text.length < 5) {
+      showSnackBar(message: "Please enter valid zipcode");
+      return false;
+    }
+    if (mobileController.text.isEmpty) {
+      showSnackBar(message: "Please enter mobile number");
+      return false;
+    }
+    if (mobileController.text.length != 10) {
+      showSnackBar(message: "Please enter valid mobile number");
+      return false;
+    }
+    if (userClone.interests.length < 5) {
+      showSnackBar(message: "Please select at least 5 interests");
+      return false;
+    }
+    return true;
+  }
+
   Future<void> saveChanges() async {
     ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
@@ -132,8 +174,8 @@ class EditProfileController {
       await ref.read(eventsControllerProvider.notifier).getAllEvents();
       ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
       ref.read(loadingTextProvider.notifier).reset();
-      navigatorKey.currentState!.pop();
       showSnackBar(message: "Updated successfully");
+      image = null;
     } catch (e) {
       debugPrint("Error updating user: $e");
       showSnackBar(message: "Error updating user, try later..");

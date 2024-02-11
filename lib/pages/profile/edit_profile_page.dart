@@ -6,6 +6,7 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
@@ -40,6 +41,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   void saveChanges() async {
     await editProfileController.saveChanges();
+    navigatorKey.currentState!.pop();
   }
 
   @override

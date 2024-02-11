@@ -5,9 +5,11 @@ import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/deep_link_services.dart';
@@ -55,6 +57,21 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).updateSearching(true);
     ref.read(deepLinkServicesProvider).retrieveDeepLink();
+    if (location.zipcode == "zipbuzz-null") {
+      ref.read(userProvider.notifier).update(
+            (state) => state.copyWith(
+              zipcode: "",
+              city: location.city,
+              country: location.country,
+              countryDialCode: location.countryDialCode,
+            ),
+          );
+      ref.read(editProfileControllerProvider).zipcodeController.text = "";
+      ref.read(userLocationProvider.notifier).updateState(location.copyWith(zipcode: ""));
+      ref.read(editProfileControllerProvider).userClone = ref.read(userProvider).getClone();
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(LocationCheckPage.id, (route) => false);
+      return;
+    }
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 

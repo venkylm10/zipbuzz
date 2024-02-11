@@ -12,6 +12,8 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/widgets/home/custom_appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
+import 'package:zipbuzz/widgets/home/event_card.dart';
+import 'package:zipbuzz/widgets/home/event_search_results.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
@@ -111,6 +113,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 buildPageIndicator(),
                 buildInterestTypeButton(),
                 const SizedBox(height: 10),
+                homeTabController.queryController.text.trim().isNotEmpty
+                    ? const EventsSearchResults()
+                    : const SizedBox(),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
                   child: Text(

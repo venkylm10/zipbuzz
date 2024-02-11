@@ -193,9 +193,11 @@ class DBServices {
   Future<List<EventModel>> getAllEvents(UserEventsRequestModel userEventsRequestModel) async {
     if (box.read(BoxConstants.guestUser) == null) {
       try {
+        final userZipcode = _ref.read(userLocationProvider).zipcode;
         final list = await _dioServices.getAllEvents(userEventsRequestModel);
-        final events = list.map((e) async {
-          final res = EventResponseModel.fromMap(e as Map<String, dynamic>);
+        final userEvents = list.where((element) => element['host_zipcode'] == userZipcode).toList();
+        final events = userEvents.map((e) async {
+          final res = EventResponseModel.fromMap(e);
           final members =
               await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.id));
           final eventModel = EventModel(

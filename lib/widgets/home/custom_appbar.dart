@@ -190,6 +190,16 @@ class AppBarSearchField extends ConsumerWidget {
               ),
             ),
           ),
+          suffixIcon: GestureDetector(
+            onTap: () {
+              ref.read(homeTabControllerProvider.notifier).queryController.clear();
+              ref.read(homeTabControllerProvider.notifier).refresh();
+            },
+            child: Icon(
+              Icons.cancel_outlined,
+              color: Colors.white.withOpacity(0.7),
+            ),
+          ),
           filled: true,
           fillColor: Colors.white.withOpacity(0.1),
           border: OutlineInputBorder(
