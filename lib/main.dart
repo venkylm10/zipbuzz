@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/services/noti_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/firebase_options.dart';
 import 'package:zipbuzz/routes.dart';
@@ -17,6 +18,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await GetStorage.init();
+  await NotificationServices().initNotifications();
   runApp(const ProviderScope(child: MyApp()));
 }
 

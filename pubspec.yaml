@@ -68,13 +68,13 @@ dependencies:
   get_storage: ^2.1.1
   get: ^4.6.6
   flutter_contacts: ^1.1.7+1
-  firebase_dynamic_links: ^5.4.8
   http: ^1.1.2
   page_transition: ^2.1.0
   share_plus: ^7.2.1
   qr_flutter: ^4.1.0
   color: ^3.0.0
   cached_network_image: ^3.3.1
+  firebase_messaging: ^14.7.15
   
   
 

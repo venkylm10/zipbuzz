@@ -89,6 +89,7 @@ class DBServices {
         description: user.about,
         username: user.name,
         isAmbassador: false,
+        deviceToken: box.read(BoxConstants.deviceToken),
       );
 
       final userSocials = UserSocialsModel(

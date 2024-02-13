@@ -28,6 +28,8 @@ class AuthServices {
         _ref = ref,
         _googleSignIn = googleSignIn;
 
+  final box = GetStorage();
+
   Future<void> signInWithGoogle() async {
     try {
       final googleUser = await _googleSignIn.signIn();
@@ -69,9 +71,12 @@ class AuthServices {
           return;
         } else {
           // getting id
-          final id = await _ref
-              .read(dbServicesProvider)
-              .getUserId(UserIdRequestModel(email: newUser.email));
+          final id = await _ref.read(dbServicesProvider).getUserId(
+                UserIdRequestModel(
+                  email: newUser.email,
+                  deviceToken: box.read(BoxConstants.deviceToken),
+                ),
+              );
           // storing id
           box.write(BoxConstants.id, id);
           box.write(BoxConstants.login, true);

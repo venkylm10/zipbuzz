@@ -14,4 +14,5 @@ class BoxConstants {
   static const userInterests = 'user_interests';
   static const userSocials = 'user_socials';
   static const location = 'user_location';
+  static const deviceToken = 'device_token';
 }

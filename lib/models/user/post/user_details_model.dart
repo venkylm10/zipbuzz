@@ -7,6 +7,7 @@ class UserDetailsModel {
     required this.description,
     required this.username,
     required this.isAmbassador,
+    required this.deviceToken,
   });
   final String phoneNumber;
   final String zipcode;
@@ -15,7 +16,7 @@ class UserDetailsModel {
   final String description;
   final String username;
   final bool isAmbassador;
-
+  final String deviceToken;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -26,6 +27,7 @@ class UserDetailsModel {
       'description': description,
       'username': username,
       'is_ambassador': isAmbassador,
+      'device_token': deviceToken,
     };
   }
 
@@ -38,6 +40,7 @@ class UserDetailsModel {
       description: map['description'] as String,
       username: map['username'] as String,
       isAmbassador: map['is_ambassador'] as bool,
+      deviceToken: map['device_token'] as String,
     );
   }
 }

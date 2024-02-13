@@ -11,6 +11,7 @@ class EventInvitePostModel {
   final String eventEnd;
   final int eventId;
   final String banner;
+  final InviteData notificationData;
 
   EventInvitePostModel({
     required this.phoneNumbers,
@@ -25,6 +26,7 @@ class EventInvitePostModel {
     required this.eventEnd,
     required this.eventId,
     required this.banner,
+    required this.notificationData,
   });
 
   Map<String, dynamic> toMap() {
@@ -41,6 +43,32 @@ class EventInvitePostModel {
       'event_end': eventEnd,
       'event_id': eventId,
       'banner': banner,
+      'notification_data': notificationData.toMap(),
     };
+  }
+}
+
+class InviteData {
+  final String notificationType = "invited";
+  final int eventId;
+  final int senderId;
+  InviteData({
+    required this.eventId,
+    required this.senderId,
+  });
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'notification_type': notificationType,
+      'event_id': eventId,
+      'sender_id': senderId,
+    };
+  }
+
+  factory InviteData.fromMap(Map<String, dynamic> map) {
+    return InviteData(
+      eventId: map['event_id'] as int,
+      senderId: map['sender_id'] as int,
+    );
   }
 }

@@ -310,8 +310,9 @@ class NewEvent extends StateNotifier<EventModel> {
         eventEnd: eventPostModel.endTime,
         eventId: eventId,
         banner: bannerUrl,
+        notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
-      print(eventInvitePostModel.toMap());
+      debugPrint(eventInvitePostModel.toMap().toString());
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
 
       // upload event images

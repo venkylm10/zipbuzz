@@ -12,7 +12,6 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
-import 'package:zipbuzz/services/deep_link_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -56,7 +55,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
         );
     ref.read(loadingTextProvider.notifier).reset();
     ref.read(homeTabControllerProvider.notifier).updateSearching(true);
-    ref.read(deepLinkServicesProvider).retrieveDeepLink();
     if (location.zipcode == "zipbuzz-null") {
       ref.read(userProvider.notifier).update(
             (state) => state.copyWith(
