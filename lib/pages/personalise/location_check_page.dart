@@ -106,14 +106,14 @@ class _LocationCheckPageState extends ConsumerState<LocationCheckPage> {
                         }),
                         const SizedBox(height: 24),
                         Text(
-                          "Select at least 5 interests:",
+                          "Select at least 3 interests:",
                           style: AppStyles.h3.copyWith(
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        buildInterests(ref),
+                        buildInterests(context, ref),
                         const SizedBox(height: 48),
                         buildSubmitButton(editProfileController),
                         const SizedBox(height: 24),
@@ -174,7 +174,7 @@ class _LocationCheckPageState extends ConsumerState<LocationCheckPage> {
     });
   }
 
-  Widget buildInterests(WidgetRef ref) {
+  Widget buildInterests(BuildContext context, WidgetRef ref) {
     final editProfileController = ref.watch(editProfileControllerProvider);
     return Wrap(
       spacing: 8,
@@ -184,6 +184,7 @@ class _LocationCheckPageState extends ConsumerState<LocationCheckPage> {
           final name = e.activity;
           return GestureDetector(
             onTap: () {
+              FocusScope.of(context).unfocus();
               editProfileController.updateInterest(name);
               setState(() {});
             },

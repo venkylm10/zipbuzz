@@ -5,6 +5,7 @@ import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
+import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
@@ -46,15 +47,6 @@ class PersonaliseController {
   }
 
   bool validate() {
-    if (zipcodeController.text.isEmpty) {
-      showSnackBar(message: "Please enter zipcode");
-      return false;
-    }
-
-    if (zipcodeController.text.length < 5) {
-      showSnackBar(message: "Please enter valid zipcode");
-      return false;
-    }
     if (mobileController.text.isEmpty) {
       showSnackBar(message: "Please enter mobile number");
       return false;
@@ -63,8 +55,8 @@ class PersonaliseController {
       showSnackBar(message: "Please enter valid mobile number");
       return false;
     }
-    if (selectedInterests.length < 5) {
-      showSnackBar(message: "Please select at least 5 interests");
+    if (selectedInterests.length < 3) {
+      showSnackBar(message: "Please select at least 3 interests");
       return false;
     }
     return true;
@@ -74,6 +66,9 @@ class PersonaliseController {
     final check = validate();
     final countryDialCode = userLocation.countryDialCode;
     if (check) {
+      if (zipcodeController.text.trim().length < 5) {
+        zipcodeController.text = 95050.toString();
+      }
       try {
         var location = ref.read(userLocationProvider);
         if (location.zipcode != zipcodeController.text.trim()) {
@@ -116,7 +111,6 @@ class PersonaliseController {
         ref.read(userProvider.notifier).update((state) => newUser.copyWith(id: id));
         final userInterestPostModel =
             UserInterestPostModel(userId: id, interests: selectedInterests);
-
         ref.read(newEventProvider.notifier).updateHostId(id);
         ref.read(newEventProvider.notifier).updateHostName(newUser.name);
         ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
@@ -125,6 +119,8 @@ class PersonaliseController {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Personalising the app...");
         await ref.read(dbServicesProvider).postUserInterests(userInterestPostModel);
         box.write('user_interests', newUser.interests);
+        final requestModel = UserDetailsRequestModel(userId: id);
+        await ref.read(dbServicesProvider).getUserData(requestModel);
         debugPrint("USER CREATED SUCCESSFULLY");
         ref.read(loadingTextProvider.notifier).reset();
         navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);

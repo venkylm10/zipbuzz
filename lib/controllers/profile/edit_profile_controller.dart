@@ -64,32 +64,14 @@ class EditProfileController {
   }
 
   bool validateLocationCheck() {
-    if (zipcodeController.text.isEmpty) {
-      showSnackBar(message: "Please enter zipcode");
-      return false;
-    }
-
-    if (zipcodeController.text.length < 5) {
-      showSnackBar(message: "Please enter valid zipcode");
-      return false;
-    }
-    if (userClone.interests.length < 5) {
-      showSnackBar(message: "Please select at least 5 interests");
+    if (userClone.interests.length < 3) {
+      showSnackBar(message: "Please select at least 3 interests");
       return false;
     }
     return true;
   }
 
   bool validate() {
-    if (zipcodeController.text.isEmpty) {
-      showSnackBar(message: "Please enter zipcode");
-      return false;
-    }
-
-    if (zipcodeController.text.length < 5) {
-      showSnackBar(message: "Please enter valid zipcode");
-      return false;
-    }
     if (mobileController.text.isEmpty) {
       showSnackBar(message: "Please enter mobile number");
       return false;
@@ -98,8 +80,8 @@ class EditProfileController {
       showSnackBar(message: "Please enter valid mobile number");
       return false;
     }
-    if (userClone.interests.length < 5) {
-      showSnackBar(message: "Please select at least 5 interests");
+    if (userClone.interests.length < 3) {
+      showSnackBar(message: "Please select at least 3 interests");
       return false;
     }
     return true;
@@ -117,6 +99,9 @@ class EditProfileController {
 
     debugPrint("updating user");
     try {
+      if (zipcodeController.text.trim().length < 5) {
+        zipcodeController.text = 95050.toString();
+      }
       if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating Location..");
         try {

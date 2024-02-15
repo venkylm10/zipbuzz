@@ -13,7 +13,7 @@ class LocationServices extends StateNotifier<LocationModel> {
   final Ref ref;
   LocationServices({required this.ref})
       : super(LocationModel(
-            city: "San Jose", country: "USA", countryDialCode: "+1", zipcode: "94088"));
+            city: "San Jose", country: "USA", countryDialCode: "+1", zipcode: "95050"));
 
   void updateState(LocationModel updatedLocation) {
     state = updatedLocation;
