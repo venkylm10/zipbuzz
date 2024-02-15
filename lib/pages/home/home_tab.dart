@@ -124,7 +124,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   ),
                 ),
                 const CustomCalendar(),
-                const SizedBox(height: 400)
+                const SizedBox(height: 200)
               ],
             ),
           ),

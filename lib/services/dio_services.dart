@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
@@ -230,6 +231,11 @@ class DioServices {
         final list = response.data['data'] as List;
         debugPrint("GETTING ALL EVENTS SUCCESSFULL");
         print(list.length);
+
+        for (var e in list) {
+          print(e);
+          print(e['status']);
+        }
         return list;
       } else {
         throw 'FAILED TO GET ALL EVENTS';

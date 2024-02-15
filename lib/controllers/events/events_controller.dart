@@ -66,6 +66,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     final userEventsRequestModel =
         UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
     final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
+    print(list.length);
     state = state.copyWith(allEvents: list);
     adjustEventData();
   }

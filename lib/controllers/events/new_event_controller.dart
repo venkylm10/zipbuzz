@@ -52,6 +52,7 @@ class NewEvent extends StateNotifier<EventModel> {
             imageUrls: [],
             privateGuestList: false,
             eventMembers: [],
+            status: "nothing",
           ),
         );
   List<File> selectedImages = [];
@@ -383,6 +384,7 @@ class NewEvent extends StateNotifier<EventModel> {
       imageUrls: [],
       privateGuestList: false,
       eventMembers: [],
+      status: "nothing",
     );
     eventInvites = [];
     bannerImage = null;

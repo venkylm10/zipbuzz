@@ -47,7 +47,7 @@ class EventModel {
     required this.hostPic,
     required this.eventMembers,
     this.inviteUrl = "",
-    this.status = "nothing",
+    required this.status,
   });
 
   EventModel copyWith({

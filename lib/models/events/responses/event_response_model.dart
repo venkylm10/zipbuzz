@@ -38,7 +38,7 @@ class EventResponseModel {
     this.isFavorite = false,
     this.images = const [],
     this.inviteUrl = "",
-    this.status = "nothing",
+    required this.status,
   });
 
   Map<String, dynamic> toMap() {
@@ -61,7 +61,7 @@ class EventResponseModel {
       'is_favorite': isFavorite,
       'images': images.map((image) => image.toMap()).toList(),
       "invite_url": inviteUrl,
-      "status" : status,
+      "status": status,
     };
   }
 
@@ -85,7 +85,7 @@ class EventResponseModel {
       isFavorite: map['is_favorite'] != null ? map['is_favorite'] as bool : false,
       images: (map['images'] as List).map((e) => ImageModel.fromMap(e)).toList(),
       inviteUrl: map['invite_url'] ?? "",
-      status: map['status'] ?? "nothing",
+      status: map['status'],
     );
   }
 }

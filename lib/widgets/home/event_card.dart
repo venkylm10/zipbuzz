@@ -108,7 +108,6 @@ class _EventCardState extends ConsumerState<EventCard> {
   Widget build(BuildContext context) {
     final date = DateTime.parse(widget.event.date);
     final status = getUserTag(widget.event.status);
-    print(status);
     return GestureDetector(
       onTap: () => navigateToEventDetails(),
       child: Container(

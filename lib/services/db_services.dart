@@ -266,6 +266,7 @@ class DBServices {
       hostPic: res.hostPic,
       eventMembers: members,
       inviteUrl: res.inviteUrl,
+      status: res.status,
     );
     showSnackBar(message: "Event Details Loaded Successfully");
     return eventModel;
@@ -304,6 +305,7 @@ class DBServices {
             hostPic: fav.hostPic,
             eventMembers: members,
             inviteUrl: fav.inviteUrl,
+            status: fav.status,
           );
           return eventModel;
         }).toList();

@@ -52,6 +52,7 @@ class EditEventController extends StateNotifier<EventModel> {
             imageUrls: [],
             privateGuestList: false,
             eventMembers: [],
+            status: "nothing",
           ),
         );
   int eventId = 1;
