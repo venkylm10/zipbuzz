@@ -8,4 +8,6 @@ class AppColors {
   static const lightGreyColor = Color(0xFFA1A1AA);
   static final bgGrey = Colors.grey.shade50;
   static final borderGrey = Colors.grey.shade200;
+  static const positiveGreen = Color(0xFF08AD5B);
+  static const negativeRed = Color(0xFFEF4C43);
 }

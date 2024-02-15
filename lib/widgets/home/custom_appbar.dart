@@ -5,10 +5,12 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/pages/home/notification_page.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -105,7 +107,9 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(
-                  onTap: showSnackBar,
+                  onTap: () {
+                    navigatorKey.currentState!.pushNamed(NotificationPage.id);
+                  },
                   child: SvgPicture.asset(Assets.icons.notification),
                 ),
                 const SizedBox(width: 12),

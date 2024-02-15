@@ -4,6 +4,7 @@ import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/home/notification_page.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
@@ -34,6 +35,14 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     case Home.id:
       return PageTransition(
         child: const Home(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+    case NotificationPage.id:
+      return PageTransition(
+        child: const NotificationPage(),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),
