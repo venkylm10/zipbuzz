@@ -38,7 +38,8 @@ class ContactsServices {
   }
 
   Future<void> updateAllContacts() async {
-    final contacts = await getContacts();
+    final contacts = await getContacts()
+        .then((value) => value.where((element) => element.phones.isNotEmpty).toList());
     ref.read(newEventProvider.notifier).updateAllContacts(contacts);
   }
 }

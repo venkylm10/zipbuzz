@@ -312,6 +312,18 @@ class _EventCardState extends ConsumerState<EventCard> {
     );
   }
 
+  String getUserTag(String status){
+    if(status == "hosted"){
+      return "Hosted";
+    }else if(status == "pending"){
+      return "Requested";
+    }else if(status == "confirm"){
+      return "Confirmed";
+    }else{
+      return "";
+    }
+  }
+
   Container buildHostChip() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2).copyWith(left: 2),

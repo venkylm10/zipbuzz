@@ -88,7 +88,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
         ],
       ),
     );

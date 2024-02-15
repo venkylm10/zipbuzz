@@ -85,31 +85,36 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
                   eventId: ref.watch(editEventControllerProvider).id),
               broadDivider(),
               const SizedBox(height: 16),
+              buildSaveButton(),
+              const SizedBox(height: 32),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(12).copyWith(top: 0),
-        child: InkWell(
-          onTap: () {
-            showPreview();
-          },
-          child: Ink(
-            height: 50,
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Center(
-              child: Text(
-                "Save",
-                style: AppStyles.h3.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+    );
+  }
+
+  Padding buildSaveButton() {
+    return Padding(
+      padding: const EdgeInsets.all(12).copyWith(top: 0),
+      child: InkWell(
+        onTap: () {
+          showPreview();
+        },
+        child: Ink(
+          height: 50,
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Center(
+            child: Text(
+              "Save",
+              style: AppStyles.h3.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
             ),
           ),
