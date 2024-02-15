@@ -292,7 +292,6 @@ class NewEvent extends StateNotifier<EventModel> {
       final inviteePicUrls = await ref
           .read(storageServicesProvider)
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
-
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: eventInvites.map((e) {
           print(e.phones.first.normalizedNumber);
@@ -336,6 +335,7 @@ class NewEvent extends StateNotifier<EventModel> {
         'dominantColor': dominantColor ?? const Color(0xFF4a5759),
         'randInt': 0,
       };
+      ref.read(loadingTextProvider.notifier).reset();
       await navigatorKey.currentState!.pushReplacementNamed(
         EventDetailsPage.id,
         arguments: args,

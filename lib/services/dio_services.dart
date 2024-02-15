@@ -233,7 +233,6 @@ class DioServices {
         print(list.length);
 
         for (var e in list) {
-          print(e);
           print(e['status']);
         }
         return list;
