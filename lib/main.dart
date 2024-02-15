@@ -20,7 +20,7 @@ void main() async {
   ]);
   await GetStorage.init();
   await NotificationServices().initNotifications();
-  FlutterContacts.config.returnUnifiedContacts = false;
+  FlutterContacts.config.returnUnifiedContacts = true;
   runApp(const ProviderScope(child: MyApp()));
 }
 

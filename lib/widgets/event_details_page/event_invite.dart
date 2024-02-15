@@ -221,11 +221,25 @@ class _EventInviteState extends ConsumerState<EventInvite> {
           children: [
             buildAvatar(contact),
             const SizedBox(width: 12),
-            Text(
-              contact.displayName,
-              style: AppStyles.h4.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  contact.displayName,
+                  style: AppStyles.h4.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (contact.phones.isNotEmpty)
+                  Text(
+                    contact.phones.first.normalizedNumber,
+                    style: AppStyles.h5.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.lightGreyColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+              ],
             ),
             const Expanded(child: SizedBox()),
             SvgPicture.asset(

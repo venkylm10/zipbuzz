@@ -309,7 +309,6 @@ class DioServices {
   Future<void> sendEventInvite(EventInvitePostModel eventInvitePostModel) async {
     if (eventInvitePostModel.phoneNumbers.isNotEmpty) {
       try {
-        showSnackBar(message: eventInvitePostModel.phoneNumbers.first, duration: 5);
         debugPrint("SENDING EVENT INVITE");
         await dio.post(DioConstants.sendInvitation, data: eventInvitePostModel.toMap());
         debugPrint("SENDING EVENT INVITE SUCCESSFULL");
