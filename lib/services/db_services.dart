@@ -224,6 +224,7 @@ class DBServices {
             hostPic: res.hostPic,
             eventMembers: members,
             inviteUrl: res.inviteUrl,
+            status: res.status,
           );
           return eventModel;
         }).toList();

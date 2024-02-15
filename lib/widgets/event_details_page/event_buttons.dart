@@ -173,6 +173,10 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         return eventRePublishButtons();
       }
       return editShareButtonss();
+    } else if (widget.event.status == "pending") {
+      return eventRequestedButton();
+    } else if (widget.event.status == "joined") {
+      return eventJoinedButton();
     }
     return eventJoinButton();
   }
@@ -295,85 +299,181 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               }),
             ),
             const SizedBox(width: 8),
-            Consumer(builder: (context, ref, child) {
-              return GestureDetector(
-                onTap: () async {
-                  // deepLink Url
-                  // final uri = await ref
-                  //     .read(deepLinkServicesProvider)
-                  //     .generateEventDynamicLink(widget.event.id.toString());
-                  final eventUrl = widget.event.inviteUrl;
-                  Share.share(
-                      "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n$eventUrl");
-                },
-                child: Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.primaryColor.withOpacity(0.3),
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(11),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: 10,
-                        sigmaY: 10,
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          Assets.icons.send_fill,
-                          height: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
+            buildShareButton(),
             const SizedBox(width: 8),
-            GestureDetector(
-              onTap: () {
-                addToFavorite();
-              },
-              child: Container(
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.primaryColor.withOpacity(0.3),
-                  ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(11),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 10,
-                      sigmaY: 10,
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        Assets.icons.heart_fill,
-                        height: 24,
-                        colorFilter: ColorFilter.mode(
-                          widget.event.isFavorite ? Colors.red.shade500 : AppColors.primaryColor,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            buildAddToFavoriteButton(),
           ],
         ),
       ),
     );
+  }
+
+  Widget eventRequestedButton() {
+    return Container(
+      width: double.infinity,
+      height: 48,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Center(
+        child: Row(
+          children: [
+            Expanded(
+              child: Consumer(builder: (context, ref, child) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Requested ",
+                          style: AppStyles.h3.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          "(${widget.event.attendees}/${widget.event.capacity})",
+                          style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(width: 8),
+            buildShareButton(),
+            const SizedBox(width: 8),
+            buildAddToFavoriteButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget eventJoinedButton() {
+    return Container(
+      width: double.infinity,
+      height: 48,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Center(
+        child: Row(
+          children: [
+            Expanded(
+              child: Consumer(builder: (context, ref, child) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Joined ",
+                          style: AppStyles.h3.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          "(${widget.event.attendees}/${widget.event.capacity})",
+                          style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(width: 8),
+            buildShareButton(),
+            const SizedBox(width: 8),
+            buildAddToFavoriteButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  GestureDetector buildAddToFavoriteButton() {
+    return GestureDetector(
+      onTap: () {
+        addToFavorite();
+      },
+      child: Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.primaryColor.withOpacity(0.3),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(11),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 10,
+              sigmaY: 10,
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                Assets.icons.heart_fill,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  widget.event.isFavorite ? Colors.red.shade500 : AppColors.primaryColor,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Consumer buildShareButton() {
+    return Consumer(builder: (context, ref, child) {
+      return GestureDetector(
+        onTap: () async {
+          final eventUrl = widget.event.inviteUrl;
+          Share.share(
+              "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n$eventUrl");
+        },
+        child: Container(
+          height: 48,
+          width: 48,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.primaryColor.withOpacity(0.3),
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(11),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 10,
+                sigmaY: 10,
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  Assets.icons.send_fill,
+                  height: 24,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget editShareButtonss() {
