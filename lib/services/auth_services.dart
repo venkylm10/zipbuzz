@@ -4,12 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
+import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -67,6 +71,35 @@ class AuthServices {
 
         if (credentials.additionalUserInfo!.isNewUser) {
           _ref.read(loadingTextProvider.notifier).reset();
+          var location = _ref.read(userLocationProvider);
+          location = _ref.read(userLocationProvider);
+          final auth = _ref.read(authProvider);
+          UserModel newUser = UserModel(
+            id: 1,
+            name: auth.currentUser?.displayName ?? '',
+            mobileNumber: "+19998887776",
+            email: auth.currentUser?.email ?? '',
+            imageUrl: _ref.read(defaultsProvider).profilePictureUrl,
+            handle: "",
+            isAmbassador: false,
+            about: "New to Zipbuzz",
+            eventsHosted: 0,
+            rating: 0.toDouble(),
+            zipcode: location.zipcode,
+            interests: [],
+            eventUids: [],
+            pastEventUids: [],
+            instagramId: "null",
+            linkedinId: "null",
+            twitterId: "null",
+            city: location.city,
+            country: location.country,
+            countryDialCode: location.countryDialCode,
+          );
+          // creating new user
+          _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
+          await _ref.read(dbServicesProvider).createUser(user: newUser);
+          debugPrint("USER CREATED SUCCESSFULLY");
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {

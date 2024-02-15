@@ -3,16 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
+import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
-import 'package:zipbuzz/models/user/user_model.dart';
+import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
-import 'package:zipbuzz/services/firebase_providers.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
-import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -64,7 +63,6 @@ class PersonaliseController {
 
   void sumbitInterests() async {
     final check = validate();
-    final countryDialCode = userLocation.countryDialCode;
     if (check) {
       if (zipcodeController.text.trim().length < 5) {
         zipcodeController.text = 95050.toString();
@@ -77,51 +75,53 @@ class PersonaliseController {
               .read(userLocationProvider.notifier)
               .getLocationFromZipcode(zipcodeController.text.trim());
         }
-        location = ref.read(userLocationProvider);
-        final auth = ref.read(authProvider);
-        UserModel newUser = UserModel(
-          id: 1,
-          name: auth.currentUser?.displayName ?? '',
-          mobileNumber: "$countryDialCode${mobileController.text.trim()}",
-          email: auth.currentUser?.email ?? '',
-          imageUrl: ref.read(defaultsProvider).profilePictureUrl,
-          handle: "",
-          isAmbassador: false,
-          about: "New to Zipbuzz",
-          eventsHosted: 0,
-          rating: 0.toDouble(),
-          zipcode: zipcodeController.text.trim(),
-          interests: selectedInterests,
-          eventUids: [],
-          pastEventUids: [],
-          instagramId: "null",
-          linkedinId: "null",
-          twitterId: "null",
-          city: location.city,
-          country: location.country,
-          countryDialCode: location.countryDialCode,
-        );
 
-        // creating new user
-        ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
-        await ref.read(dbServicesProvider).createUser(user: newUser);
+        location = ref.read(userLocationProvider);
+        final updatedUser = ref.read(userProvider).copyWith(
+              zipcode: zipcodeController.text.trim(),
+              mobileNumber: mobileController.text.trim(),
+              interests: selectedInterests,
+            );
+
+        final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
+          id: updatedUser.id,
+          phoneNumber: updatedUser.mobileNumber,
+          profilePicture: updatedUser.imageUrl,
+          zipcode: updatedUser.zipcode,
+          email: updatedUser.email,
+          description: updatedUser.about,
+          username: updatedUser.name,
+          isAmbassador: updatedUser.isAmbassador,
+          instagram: updatedUser.instagramId ?? "",
+          linkedin: updatedUser.linkedinId ?? "",
+          twitter: updatedUser.twitterId ?? "",
+          interests: updatedUser.interests,
+        );
+        await ref.read(dioServicesProvider).updateUserInterests(
+              UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
+            );
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Updating user data...");
+        await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
+        await ref
+            .read(dbServicesProvider)
+            .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
 
         // Reading id after id is being updated in createUser method
         final id = GetStorage().read(BoxConstants.id);
-        ref.read(userProvider.notifier).update((state) => newUser.copyWith(id: id));
-        final userInterestPostModel =
-            UserInterestPostModel(userId: id, interests: selectedInterests);
-        ref.read(newEventProvider.notifier).updateHostId(id);
-        ref.read(newEventProvider.notifier).updateHostName(newUser.name);
-        ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
 
         // posting users interests
         ref.read(loadingTextProvider.notifier).updateLoadingText("Personalising the app...");
-        await ref.read(dbServicesProvider).postUserInterests(userInterestPostModel);
-        box.write('user_interests', newUser.interests);
+        await ref.read(dioServicesProvider).updateUserInterests(
+              UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
+            );
+        box.write('user_interests', selectedInterests);
         final requestModel = UserDetailsRequestModel(userId: id);
         await ref.read(dbServicesProvider).getUserData(requestModel);
         debugPrint("USER CREATED SUCCESSFULLY");
+        final user = ref.read(userProvider);
+        ref.read(newEventProvider.notifier).updateHostId(id);
+        ref.read(newEventProvider.notifier).updateHostName(user.name);
+        ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
         ref.read(loadingTextProvider.notifier).reset();
         navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
       } catch (e) {
