@@ -221,18 +221,15 @@ class DioServices {
     }
   }
 
-  Future<List> getAllEvents(UserEventsRequestModel userEventsRequestModel,
-      {String category = ""}) async {
+  Future<List> getAllEvents(UserEventsRequestModel userEventsRequestModel) async {
     try {
       debugPrint("GETTING ALL EVENTS");
       final data = userEventsRequestModel.toMap();
-      data.addAll({
-        "category": category,
-      });
       final response = await dio.get(DioConstants.getAllEvents, data: data);
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
         debugPrint("GETTING ALL EVENTS SUCCESSFULL");
+        print(list.length);
         return list;
       } else {
         throw 'FAILED TO GET ALL EVENTS';

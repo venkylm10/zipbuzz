@@ -61,6 +61,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     if (bodyScrollController.offset > 120 && state.isSearching) {
       state = state.copyWith(isSearching: false);
     } else if (bodyScrollController.offset < 120 && !state.isSearching) {
+      state = state.copyWith(selectedCategory: "");
       state = state.copyWith(isSearching: true);
     }
     state = state.copyWith(previousOffset: bodyScrollController.offset);

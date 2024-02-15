@@ -107,7 +107,8 @@ class _EventCardState extends ConsumerState<EventCard> {
   @override
   Widget build(BuildContext context) {
     final date = DateTime.parse(widget.event.date);
-    final isHosted = ref.read(userProvider).id == widget.event.hostId;
+    final status = getUserTag(widget.event.status);
+    print(status);
     return GestureDetector(
       onTap: () => navigateToEventDetails(),
       child: Container(
@@ -139,7 +140,7 @@ class _EventCardState extends ConsumerState<EventCard> {
             Expanded(
               child: Column(
                 children: [
-                  if (isHosted && widget.showHostedTag)
+                  if (status.isNotEmpty)
                     Container(
                       height: 40,
                       padding: const EdgeInsets.only(top: 4),
@@ -154,7 +155,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                           SvgPicture.asset(Assets.icons.stars, height: 12),
                           const SizedBox(width: 8),
                           Text(
-                            "Hosted",
+                            status,
                             style: AppStyles.h6.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -166,7 +167,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                       ),
                     ),
                   Transform.translate(
-                    offset: Offset(0, isHosted ? -20 : 0),
+                    offset: Offset(0, status.isNotEmpty ? -20 : 0),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -312,14 +313,14 @@ class _EventCardState extends ConsumerState<EventCard> {
     );
   }
 
-  String getUserTag(String status){
-    if(status == "hosted"){
+  String getUserTag(String status) {
+    if (status == "hosted") {
       return "Hosted";
-    }else if(status == "pending"){
+    } else if (status == "pending") {
       return "Requested";
-    }else if(status == "confirm"){
+    } else if (status == "confirm") {
       return "Confirmed";
-    }else{
+    } else {
       return "";
     }
   }

@@ -96,6 +96,7 @@ class AuthServices {
           _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
           await _ref.read(dbServicesProvider).createUser(user: newUser);
           debugPrint("USER CREATED SUCCESSFULLY");
+          _ref.read(loadingTextProvider.notifier).reset();
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
