@@ -9,6 +9,7 @@ class ResponseNotiCard extends StatelessWidget {
     required this.hostUsername,
     required this.hostProfilePic,
     required this.eventId,
+    required this.positiveResponse,
     required this.time,
   });
 
@@ -16,6 +17,7 @@ class ResponseNotiCard extends StatelessWidget {
   final String hostUsername;
   final String hostProfilePic;
   final int eventId;
+  final bool positiveResponse;
   final String time;
 
   @override
@@ -62,9 +64,9 @@ class ResponseNotiCard extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'RSVP - Yes ',
+                      text: 'RSVP - ${positiveResponse ? "Yes" : "No"} ',
                       style: AppStyles.h5.copyWith(
-                        color: AppColors.positiveGreen,
+                        color: positiveResponse ? AppColors.positiveGreen : AppColors.negativeRed,
                       ),
                     ),
                     TextSpan(
