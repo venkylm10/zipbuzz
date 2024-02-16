@@ -12,7 +12,6 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/widgets/home/custom_appbar.dart';
 import 'package:zipbuzz/widgets/home/custom_calendar.dart';
-import 'package:zipbuzz/widgets/home/event_card.dart';
 import 'package:zipbuzz/widgets/home/event_search_results.dart';
 
 class HomeTab extends ConsumerStatefulWidget {

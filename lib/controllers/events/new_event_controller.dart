@@ -294,7 +294,6 @@ class NewEvent extends StateNotifier<EventModel> {
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: eventInvites.map((e) {
-          print(e.phones.first.normalizedNumber);
           return e.phones.first.normalizedNumber;
         }).toList(),
         images: inviteePicUrls,

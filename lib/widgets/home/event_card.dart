@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -46,8 +45,6 @@ class _EventCardState extends ConsumerState<EventCard> {
   void navigateToEventDetails() async {
     final dominantColor = await getDominantColor();
     ref.read(guestListTagProvider.notifier).update((state) => "All");
-    print(widget.event.id);
-    print(widget.event.eventMembers);
     await navigatorKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => EventDetailsPage(

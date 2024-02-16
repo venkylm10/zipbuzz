@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';

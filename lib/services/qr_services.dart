@@ -40,7 +40,7 @@ class QrServices {
   }
 
   static void showQRImage(String link, EventModel event) async {
-    print(link);
+    debugPrint("Link : $link");
     final image = await QrPainter(
       data: link,
       version: QrVersions.auto,
