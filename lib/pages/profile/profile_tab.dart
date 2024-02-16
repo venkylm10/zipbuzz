@@ -196,7 +196,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Version: 0.0.7",
+                      "Version: 0.0.8",
                       style: AppStyles.h5.copyWith(
                         fontStyle: FontStyle.italic,
                       ),

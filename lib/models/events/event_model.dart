@@ -122,13 +122,13 @@ class EventModel {
       iconPath: map['iconPath'] as String,
       isPrivate: map['event_type'] as bool,
       capacity: map['filled_capacity'] as int,
+      inviteUrl: map['invite_url'] ?? "",
+      status: map['status'] ?? "nothing",
       imageUrls: (map['imageUrls'] as List).map((e) => e.toString()).toList(),
       privateGuestList: map['privateGuestList'] as bool,
       eventMembers: (map['eventMembers'] as List)
           .map((e) => EventInviteMember.fromMap(e as Map<String, dynamic>))
-          .toList(),
-      inviteUrl: map['invite_url'] ?? "",
-      status: map['status'] ?? "nothing",
+          .toList()
     );
   }
 

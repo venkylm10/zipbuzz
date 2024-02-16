@@ -64,7 +64,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
 
   Future<void> getAllEvents() async {
     final userEventsRequestModel =
-        UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
+        UserEventsRequestModel(userId: ref.read(userProvider).id);
     final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
     print(list.length);
     state = state.copyWith(allEvents: list);
@@ -97,7 +97,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     if (!state.showingFavorites) {
       state = state.copyWith(showingFavorites: true);
       final userEventsRequestModel =
-          UserEventsRequestModel(userId: ref.read(userProvider).id.toString());
+          UserEventsRequestModel(userId: ref.read(userProvider).id);
       final list = await ref.read(dbServicesProvider).getUserFavoriteEvents(userEventsRequestModel);
       state = state.copyWith(allEvents: list);
       adjustEventData();

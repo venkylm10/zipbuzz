@@ -248,7 +248,8 @@ class DioServices {
   Future<Map<String, dynamic>> getEventDetails(int eventId) async {
     try {
       debugPrint("GETTING EVENT DETAILS");
-      final response = await dio.get(DioConstants.getEventDetails, data: {"event_id": eventId});
+      final userId = box.read(BoxConstants.id) as int;
+      final response = await dio.get(DioConstants.getEventDetails, data: {"event_id": eventId, "user_id": userId});
       if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("GETTING EVENT DETAILS SUCCESSFULL");
         return (response.data['event_details'] as List)[0] as Map<String, dynamic>;

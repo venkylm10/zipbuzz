@@ -1,5 +1,5 @@
 class UserEventsRequestModel {
-  final String userId;
+  final int userId;
   const UserEventsRequestModel({required this.userId});
 
   Map<String, dynamic> toMap() {
@@ -10,7 +10,7 @@ class UserEventsRequestModel {
 
   factory UserEventsRequestModel.fromMap(Map<String, dynamic> map) {
     return UserEventsRequestModel(
-      userId: map['user_id'] as String,
+      userId: map['user_id'] as int,
     );
   }
 }
