@@ -102,22 +102,16 @@ class PersonaliseController {
             );
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating user data...");
         await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
-        await ref
-            .read(dbServicesProvider)
-            .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
 
         // Reading id after id is being updated in createUser method
         final id = GetStorage().read(BoxConstants.id);
 
         // posting users interests
         ref.read(loadingTextProvider.notifier).updateLoadingText("Personalising the app...");
-        await ref.read(dioServicesProvider).updateUserInterests(
-              UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
-            );
         box.write('user_interests', selectedInterests);
         final requestModel = UserDetailsRequestModel(userId: id);
         await ref.read(dbServicesProvider).getUserData(requestModel);
-        debugPrint("USER CREATED SUCCESSFULLY");
+        debugPrint("UPDATED USER DATA SUCCESSFULLY");
         final user = ref.read(userProvider);
         ref.read(newEventProvider.notifier).updateHostId(id);
         ref.read(newEventProvider.notifier).updateHostName(user.name);

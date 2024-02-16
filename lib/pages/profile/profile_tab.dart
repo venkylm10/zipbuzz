@@ -360,38 +360,6 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  // Wrap buildInterests(UserModel user, WidgetRef ref) {
-  //   final interests = ref.watch(userProvider).interests;
-  //   return Wrap(
-  //     spacing: 8,
-  //     runSpacing: 8,
-  //     children: interests.map(
-  //       (e) {
-  //         final iconPath = interestIcons[e]!;
-  //         final color = interestColors[e]!;
-  //         return Container(
-  //           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(16),
-  //             color: color.withOpacity(0.1),
-  //           ),
-  //           child: Row(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               Image.network(iconPath, height: 16),
-  //               const SizedBox(width: 8),
-  //               Text(
-  //                 e,
-  //                 style: AppStyles.h4.copyWith(color: color),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     ).toList(),
-  //   );
-  // }
-
   Row buildDetailTile(String iconPath, String label, String value, {bool handle = false}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
