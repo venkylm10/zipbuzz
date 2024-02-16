@@ -38,6 +38,17 @@ class DioServices {
   );
   final box = GetStorage();
 
+  // Get country code
+  Future<String?> getCountryCode() async {
+    try {
+      final response = await dio.get(DioConstants.countryCode);
+      return response.data['countryCode'].toString();
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
   // Fetch onboarding details
   Future<void> updateOnboardingDetails() async {
     try {

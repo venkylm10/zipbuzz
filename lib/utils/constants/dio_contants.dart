@@ -25,6 +25,9 @@ class DioConstants {
   static const String editUserStatus = "/events/event_request/";
   static const String getLocation = "/users/user_location/";
 
+  // country dial code
+  static const String countryCode = "http://ip-api.com/json/";
+
   static const String status = "status";
   static const String success = "success";
 }

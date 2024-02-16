@@ -15,4 +15,5 @@ class BoxConstants {
   static const userSocials = 'user_socials';
   static const location = 'user_location';
   static const deviceToken = 'device_token';
+  static const countryDialCode = "country_dial_code";
 }

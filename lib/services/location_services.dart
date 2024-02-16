@@ -1,9 +1,12 @@
+import 'package:country_dial_code/country_dial_code.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 
 final userLocationProvider =
@@ -14,6 +17,8 @@ class LocationServices extends StateNotifier<LocationModel> {
   LocationServices({required this.ref})
       : super(LocationModel(
             city: "San Jose", country: "USA", countryDialCode: "+1", zipcode: "95050"));
+
+  final box = GetStorage();
 
   void updateState(LocationModel updatedLocation) {
     state = updatedLocation;
@@ -36,10 +41,30 @@ class LocationServices extends StateNotifier<LocationModel> {
         city: res.data['location_name'].split(",")[0].toString().trim(),
         country: res.data['location_name'].split(",")[1].toString().trim(),
       );
+      await updateCountryDialCode();
     } on DioException catch (e) {
       debugPrint("Error updating location using zipcode $newZipcode: $e");
     } catch (e) {
       debugPrint("Error updating location using zipcode $newZipcode: $e");
+    }
+  }
+
+  Future<void> updateCountryDialCode() async {
+    try {
+      final countryCode = await ref.read(dioServicesProvider).getCountryCode();
+      if (countryCode != null) {
+        final countryDialCode = "+${CountryDialCode.fromCountryCode(countryCode).dialCode}";
+        state = state.copyWith(countryDialCode: countryDialCode);
+        box.write(BoxConstants.countryDialCode, countryDialCode);
+      }
+    } catch (e) {
+      try {
+        final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
+        state = state.copyWith(countryDialCode: countryDialCode);
+      } catch (e) {
+        debugPrint("Failed to get country dial code from box");
+      }
+      debugPrint("Failed to get country dial code");
     }
   }
 
