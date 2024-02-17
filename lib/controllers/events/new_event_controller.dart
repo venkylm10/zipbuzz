@@ -12,6 +12,7 @@ import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
@@ -296,7 +297,7 @@ class NewEvent extends StateNotifier<EventModel> {
         phoneNumbers: eventInvites.map((e) {
           final number = e.phones.first.normalizedNumber;
           if (!number.startsWith("+")) {
-            final countryCode = ref.read(userProvider).countryDialCode;
+            final countryCode = ref.read(userLocationProvider).countryDialCode;
             return "$countryCode$number";
           }
           return e.phones.first.normalizedNumber;
