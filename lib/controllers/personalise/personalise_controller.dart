@@ -79,7 +79,7 @@ class PersonaliseController {
         location = ref.read(userLocationProvider);
         final updatedUser = ref.read(userProvider).copyWith(
               zipcode: zipcodeController.text.trim(),
-              mobileNumber: mobileController.text.trim(),
+              mobileNumber: "${location.countryDialCode}${mobileController.text.trim()}",
               interests: selectedInterests,
             );
 

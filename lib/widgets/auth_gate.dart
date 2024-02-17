@@ -31,6 +31,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   final box = GetStorage();
 
   Future<void> getLoggedInUserData() async {
+    await ref.read(userLocationProvider.notifier).updateCountryDialCode();
     if (box.hasData(BoxConstants.location)) {
       await ref
           .read(userLocationProvider.notifier)

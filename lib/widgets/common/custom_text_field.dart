@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final bool? showCounter;
   final double? borderRadius;
   final CrossAxisAlignment? crossAxisAlignment;
+  final TextInputType? keyboardType;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -28,6 +29,7 @@ class CustomTextField extends StatelessWidget {
     this.showCounter = false,
     this.borderRadius = 12,
     this.crossAxisAlignment,
+    this.keyboardType,
   });
 
   Widget? buildCounter() {
@@ -69,11 +71,11 @@ class CustomTextField extends StatelessWidget {
               inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
               maxLines: maxLines,
               onChanged: onChanged,
+              keyboardType: keyboardType,
               decoration: InputDecoration(
                 enabled: enabled!,
                 hintText: hintText,
-                hintStyle:
-                    AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                hintStyle: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
                 contentPadding: const EdgeInsets.all(8),
                 counter: buildCounter(),
                 border: const OutlineInputBorder(

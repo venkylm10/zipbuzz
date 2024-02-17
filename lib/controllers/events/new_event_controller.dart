@@ -294,6 +294,11 @@ class NewEvent extends StateNotifier<EventModel> {
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: eventInvites.map((e) {
+          final number = e.phones.first.normalizedNumber;
+          if (!number.startsWith("+")) {
+            final countryCode = ref.read(userProvider).countryDialCode;
+            return "$countryCode$number";
+          }
           return e.phones.first.normalizedNumber;
         }).toList(),
         images: inviteePicUrls,

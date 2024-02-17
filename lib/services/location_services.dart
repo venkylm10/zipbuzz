@@ -34,14 +34,12 @@ class LocationServices extends StateNotifier<LocationModel> {
           zipcode: newZipcode,
           city: res.data['location_name'].split(",")[0].toString().trim(),
           country: res.data['location_name'].split(",")[1].toString().trim(),
-          countryDialCode: state.countryDialCode,
         );
       });
       state = state.copyWith(
         city: res.data['location_name'].split(",")[0].toString().trim(),
         country: res.data['location_name'].split(",")[1].toString().trim(),
       );
-      await updateCountryDialCode();
     } on DioException catch (e) {
       debugPrint("Error updating location using zipcode $newZipcode: $e");
     } catch (e) {
@@ -53,7 +51,7 @@ class LocationServices extends StateNotifier<LocationModel> {
     try {
       final countryCode = await ref.read(dioServicesProvider).getCountryCode();
       if (countryCode != null) {
-        final countryDialCode = "+${CountryDialCode.fromCountryCode(countryCode).dialCode}";
+        final countryDialCode = CountryDialCode.fromCountryCode(countryCode).dialCode;
         state = state.copyWith(countryDialCode: countryDialCode);
         box.write(BoxConstants.countryDialCode, countryDialCode);
       }
