@@ -32,7 +32,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   final box = GetStorage();
 
   Future<void> getLoggedInUserData() async {
-    await ref.read(userLocationProvider.notifier).updateCountryDialCode();
     if (box.hasData(BoxConstants.location)) {
       await ref
           .read(userLocationProvider.notifier)
@@ -98,6 +97,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     bool? login = box.read(BoxConstants.login) as bool?;
     bool? guest = box.read(BoxConstants.guestUser) as bool?;
     await Future.delayed(const Duration(milliseconds: 500));
+    await ref.read(userLocationProvider.notifier).updateCountryDialCode();
     await updateInterestsData();
     if (guest != null) {
       await setUpGuestData();

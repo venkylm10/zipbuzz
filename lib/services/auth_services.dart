@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
@@ -40,30 +41,6 @@ class AuthServices {
         final authCredential = GoogleAuthProvider.credential(
             idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
         final credentials = await _auth.signInWithCredential(authCredential);
-        UserModel newUser;
-        final location = _ref.read(userLocationProvider);
-        newUser = UserModel(
-          id: 1,
-          name: _auth.currentUser?.displayName ?? '',
-          mobileNumber: _auth.currentUser?.phoneNumber ?? '${location.countryDialCode}9999999999',
-          email: _auth.currentUser?.email ?? '',
-          imageUrl: _ref.read(defaultsProvider).profilePictureUrl,
-          handle: "",
-          isAmbassador: false,
-          about: "New to Zipbuzz",
-          eventsHosted: 0,
-          rating: 0.toDouble(),
-          zipcode: location.zipcode,
-          interests: [],
-          eventUids: [],
-          pastEventUids: [],
-          instagramId: "null",
-          linkedinId: "null",
-          twitterId: "null",
-          city: location.city,
-          country: location.country,
-          countryDialCode: location.countryDialCode,
-        );
 
         if (credentials.additionalUserInfo!.isNewUser) {
           _ref.read(loadingTextProvider.notifier).reset();
@@ -97,13 +74,23 @@ class AuthServices {
           await _ref.read(dbServicesProvider).createUser(user: newUser);
           debugPrint("USER CREATED SUCCESSFULLY");
           _ref.read(loadingTextProvider.notifier).reset();
+          final id = await _ref.read(dbServicesProvider).getUserId(
+                UserIdRequestModel(
+                  email: _ref.read(authProvider).currentUser!.email ?? "",
+                  deviceToken: box.read(BoxConstants.deviceToken),
+                ),
+              );
+          // storing id
+          box.write(BoxConstants.id, id);
+          box.write(BoxConstants.login, true);
+          await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id));
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
           // getting id
           final id = await _ref.read(dbServicesProvider).getUserId(
                 UserIdRequestModel(
-                  email: newUser.email,
+                  email: _ref.read(authProvider).currentUser!.email ?? "",
                   deviceToken: box.read(BoxConstants.deviceToken),
                 ),
               );
@@ -111,8 +98,6 @@ class AuthServices {
           box.write(BoxConstants.id, id);
           box.write(BoxConstants.login, true);
           _ref.read(newEventProvider.notifier).updateHostId(id);
-          _ref.read(newEventProvider.notifier).updateHostName(newUser.name);
-          _ref.read(newEventProvider.notifier).updateHostPic(newUser.imageUrl);
 
           // Back to AuthGate
           navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);

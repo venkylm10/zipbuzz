@@ -96,6 +96,8 @@ class PersonaliseController {
               mobileNumber: "${location.countryDialCode}${mobileController.text.trim()}",
               interests: selectedInterests,
             );
+        print(updatedUser.toMap());
+
         print("country dial code (personalise): ${location.countryDialCode}");
         final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: updatedUser.id,
