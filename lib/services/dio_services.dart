@@ -38,6 +38,23 @@ class DioServices {
   );
   final box = GetStorage();
 
+  // phone check
+  Future<bool> checkPhone(String phoneNumber) async {
+    try {
+      final res = await dio.get(
+        DioConstants.phoneCheck,
+        data: {"phone": phoneNumber},
+      );
+      print("check phone: $phoneNumber ${res.data}");
+      if (res.data['message'] == "User not found") {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // Get country code
   Future<String?> getCountryCode() async {
     try {
@@ -253,7 +270,8 @@ class DioServices {
     try {
       debugPrint("GETTING EVENT DETAILS");
       final userId = box.read(BoxConstants.id) as int;
-      final response = await dio.get(DioConstants.getEventDetails, data: {"event_id": eventId, "user_id": userId});
+      final response = await dio
+          .get(DioConstants.getEventDetails, data: {"event_id": eventId, "user_id": userId});
       if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("GETTING EVENT DETAILS SUCCESSFULL");
         return (response.data['event_details'] as List)[0] as Map<String, dynamic>;

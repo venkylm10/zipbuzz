@@ -48,16 +48,25 @@ class LocationServices extends StateNotifier<LocationModel> {
   }
 
   Future<void> updateCountryDialCode() async {
+    if (box.hasData(BoxConstants.countryDialCode)) {
+      final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
+      state = state.copyWith(countryDialCode: countryDialCode);
+      print("Country dial code: $countryDialCode");
+      print("Country dial code: ${state.countryDialCode}");
+      return;
+    }
     try {
       final countryCode = await ref.read(dioServicesProvider).getCountryCode();
       if (countryCode != null) {
         final countryDialCode = CountryDialCode.fromCountryCode(countryCode).dialCode;
         state = state.copyWith(countryDialCode: countryDialCode);
+        print("Country dial code: $countryDialCode");
         box.write(BoxConstants.countryDialCode, countryDialCode);
       }
     } catch (e) {
       try {
         final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
+        print("Country dial code: $countryDialCode");
         state = state.copyWith(countryDialCode: countryDialCode);
       } catch (e) {
         debugPrint("Failed to get country dial code from box");

@@ -16,7 +16,7 @@ const globalDummyUser = UserModel(
   eventsHosted: 8,
   rating: 4.5,
   zipcode: "95120",
-  mobileNumber: "+14082383322",
+  mobileNumber: "+11234567890",
   linkedinId: "https://www.linkedin.com/company/linkedin/",
   instagramId: "https://www.instagram.com/instagram/",
   twitterId: "https://twitter.com/X/",

@@ -87,6 +87,14 @@ class EditProfileController {
     return true;
   }
 
+  Future<bool> checkPhone() async {
+    final mobileNumber = mobileController.text.trim();
+    if (ref.read(userProvider).mobileNumber == mobileNumber) {
+      return true;
+    }
+    return await ref.read(dioServicesProvider).checkPhone(mobileNumber);
+  }
+
   Future<void> saveChanges() async {
     ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
@@ -101,6 +109,14 @@ class EditProfileController {
     try {
       if (zipcodeController.text.trim().length < 5) {
         zipcodeController.text = 95050.toString();
+      }
+      final newMobileNumber = await checkPhone();
+      if (!newMobileNumber) {
+        showSnackBar(
+          message: "Mobile number already in use. Please use another number.",
+          duration: 2,
+        );
+        return;
       }
       if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating Location..");

@@ -242,10 +242,17 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               ],
                             ),
                             const SizedBox(height: 16),
-                            Text(
-                              "Guest list (${widget.event.eventMembers.length})",
-                              style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                            ),
+                            Consumer(builder: (context, ref, child) {
+                              final newEvent = ref.watch(newEventProvider);
+                              var num = widget.event.eventMembers.length;
+                              if (widget.isPreview) {
+                                num = newEvent.eventMembers.length;
+                              }
+                              return Text(
+                                "Guest list ($num)",
+                                style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                              );
+                            }),
                             const SizedBox(height: 16),
                             buildGuestList(),
                             const SizedBox(height: 16),
@@ -293,20 +300,25 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   }
 
   Widget buildGuestList() {
-    final userId = GetStorage().read(BoxConstants.id);
-    if (widget.isPreview) {
-      return EventGuestList(
-        guests: widget.event.eventMembers,
-      );
-    }
-    if (widget.event.hostId != userId) {
-      return EventGuestList(
-        guests: widget.event.eventMembers,
-      );
-    }
-    return EventHostGuestList(
-      guests: widget.event.eventMembers,
-      eventId: widget.event.id,
+    return Consumer(
+      builder: (context, ref, child) {
+        final userId = GetStorage().read(BoxConstants.id);
+        final newEvent = ref.watch(newEventProvider);
+        if (widget.isPreview) {
+          return EventGuestList(
+            guests: newEvent.eventMembers,
+          );
+        }
+        if (widget.event.hostId != userId) {
+          return EventGuestList(
+            guests: widget.event.eventMembers,
+          );
+        }
+        return EventHostGuestList(
+          guests: widget.event.eventMembers,
+          eventId: widget.event.id,
+        );
+      },
     );
   }
 

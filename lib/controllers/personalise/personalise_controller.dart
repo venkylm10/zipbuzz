@@ -61,11 +61,25 @@ class PersonaliseController {
     return true;
   }
 
+  Future<bool> checkPhone() async {
+    var location = ref.read(userLocationProvider);
+    final mobileNumber = "${location.countryDialCode}${mobileController.text.trim()}";
+    return await ref.read(dioServicesProvider).checkPhone(mobileNumber);
+  }
+
   void sumbitInterests() async {
     final check = validate();
     if (check) {
-      if (zipcodeController.text.trim().length < 5) {
+      if (zipcodeController.text.trim().isEmpty) {
         zipcodeController.text = 95050.toString();
+      }
+      final newUser = await checkPhone();
+      if (!newUser) {
+        showSnackBar(
+          message: "Mobile number already in use. Please use another number.",
+          duration: 2,
+        );
+        return;
       }
       try {
         var location = ref.read(userLocationProvider);
@@ -82,7 +96,7 @@ class PersonaliseController {
               mobileNumber: "${location.countryDialCode}${mobileController.text.trim()}",
               interests: selectedInterests,
             );
-
+        print("country dial code (personalise): ${location.countryDialCode}");
         final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: updatedUser.id,
           phoneNumber: updatedUser.mobileNumber,
@@ -101,6 +115,8 @@ class PersonaliseController {
               UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
             );
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating user data...");
+
+        print(userDetailsUpdateRequestModel.toMap());
         await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
 
         // Reading id after id is being updated in createUser method

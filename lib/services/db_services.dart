@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
@@ -29,6 +30,7 @@ import 'package:zipbuzz/models/user/post/user_socials_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
+import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
@@ -150,18 +152,16 @@ class DBServices {
               instagramId: userSocials.instagram,
               linkedinId: userSocials.linkedin,
               twitterId: userSocials.twitter,
+              country: _ref.read(userLocationProvider).country,
+              countryDialCode: _ref.read(userLocationProvider).countryDialCode,
             );
         _ref.read(newEventProvider.notifier).updateHostId(userDetailsRequestModel.userId);
         _ref.read(userProvider.notifier).update((state) => updatedUser);
         debugPrint("CURRENT USER DATA${_ref.read(userProvider).toMap()}");
-        _ref.read(userLocationProvider.notifier).updateState(
-              LocationModel(
-                city: _ref.read(userProvider).city,
-                country: _ref.read(userProvider).country,
-                countryDialCode: _ref.read(userProvider).countryDialCode,
-                zipcode: _ref.read(userProvider).zipcode,
-              ),
-            );
+        final location = _ref.read(userLocationProvider);
+        _ref.read(userLocationProvider.notifier).updateState(location.copyWith(
+              zipcode: _ref.read(userProvider).zipcode,
+            ));
         box.write('user_details', userDetails.toMap());
         box.write('user_interests', updatedUser.interests);
       } else {
@@ -226,6 +226,11 @@ class DBServices {
             inviteUrl: res.inviteUrl,
             status: res.status,
           );
+          print(eventModel.id);
+          print(eventModel.title);
+          for (var e in eventModel.eventMembers) {
+            print(e.toMap());
+          }
           return eventModel;
         }).toList();
         return await Future.wait(events);

@@ -73,7 +73,7 @@ class AuthServices {
           UserModel newUser = UserModel(
             id: 1,
             name: auth.currentUser?.displayName ?? '',
-            mobileNumber: "+19998887776",
+            mobileNumber: "+11234567890",
             email: auth.currentUser?.email ?? '',
             imageUrl: _ref.read(defaultsProvider).profilePictureUrl,
             handle: "",

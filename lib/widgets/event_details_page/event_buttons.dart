@@ -586,5 +586,6 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         );
       },
     );
+    setState(() {});
   }
 }
