@@ -140,7 +140,7 @@ class _EventDetailsState extends State<EventDetails> {
             ),
             const SizedBox(width: 8),
             Text(
-              "$startTime${endTime != "null" ? "- $endTime" : ""}",
+              "$startTime${endTime != "null" ? " - $endTime" : ""}",
               style: AppStyles.h4.copyWith(
                 fontWeight: FontWeight.w500,
               ),

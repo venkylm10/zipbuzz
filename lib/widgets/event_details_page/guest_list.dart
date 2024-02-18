@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
 class EventGuestList extends StatefulWidget {
@@ -80,7 +81,11 @@ class _EventGuestListState extends State<EventGuestList> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(member.image, height: 32, width: 32),
+                    child: Image.network(
+                      member.image != "null" ? member.image : Defaults().contactAvatarUrl,
+                      height: 32,
+                      width: 32,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Column(

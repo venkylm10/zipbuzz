@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
@@ -165,11 +166,25 @@ class NewEvent extends StateNotifier<EventModel> {
         state = state.copyWith(capacity: state.capacity + 1);
       }
       eventInvites.add(contact);
-      state = state.copyWith(attendees: state.attendees + 1);
+      final member = EventInviteMember(
+        image: "null",
+        phone: contact.phones.isNotEmpty ? contact.phones.first.normalizedNumber : "",
+        name: contact.displayName,
+      );
+      state = state.copyWith(
+        attendees: state.attendees + 1,
+        eventMembers: state.eventMembers..add(member),
+      );
       return;
     }
     eventInvites.remove(contact);
-    state = state.copyWith(attendees: state.attendees - 1);
+    final member = state.eventMembers.firstWhere(
+      (element) => element.phone == contact.phones.first.normalizedNumber,
+    );
+    state = state.copyWith(
+      attendees: state.attendees - 1,
+      eventMembers: state.eventMembers..remove(member),
+    );
   }
 
   void updateContactSearchResult(String query) {
