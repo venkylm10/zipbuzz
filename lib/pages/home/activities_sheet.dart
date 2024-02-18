@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
 class ActivitiesSheet extends StatelessWidget {
@@ -23,6 +24,23 @@ class ActivitiesSheet extends StatelessWidget {
               color: Colors.black,
             ),
           ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  navigatorKey.currentState!.pop();
+                },
+                child: Icon(
+                  Icons.cancel,
+                  color: AppColors.primaryColor.withOpacity(0.8),
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+          ),
+          const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.all(16),
             child: GridView.count(

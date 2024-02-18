@@ -129,8 +129,8 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                const UserStats(),
-                const SizedBox(height: 24),
+                // const UserStats(),
+                // const SizedBox(height: 24),
                 Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
                 const SizedBox(height: 24),
                 Text(
