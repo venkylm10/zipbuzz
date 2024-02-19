@@ -42,7 +42,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
       );
     case NotificationPage.id:
       return PageTransition(
-        child: const NotificationPage(),
+        child: NotificationPage(),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),

@@ -346,6 +346,7 @@ class NewEvent extends StateNotifier<EventModel> {
         image,
       );
       final dominantColor = generator.dominantColor?.color;
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Getting event details...");
       final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(eventId);
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Event created successfully");
@@ -362,6 +363,8 @@ class NewEvent extends StateNotifier<EventModel> {
       );
       resetNewEvent();
     } catch (e) {
+      ref.read(loadingTextProvider.notifier).reset();
+      navigatorKey.currentState!.pop();
       debugPrint(e.toString());
     }
   }

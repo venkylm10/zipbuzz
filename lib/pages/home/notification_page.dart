@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
@@ -8,8 +9,9 @@ import 'package:zipbuzz/widgets/home/response_noti_card.dart';
 
 class NotificationPage extends ConsumerWidget {
   static const id = "/notification_page";
-  const NotificationPage({super.key});
+  NotificationPage({super.key});
 
+  final currentTime = DateTime.now();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -61,5 +63,42 @@ class NotificationPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Widget buildNotificationCard(NotificationData notification) {
+    if (notification.notificationType == "invited") {
+      final notiTime = DateTime.parse(notification.notificationTime);
+      final timeDiff = currentTime.difference(notiTime);
+      return InviteNotiCard(
+        hostName: notification.senderName,
+        hostUsername: "ralhyy",
+        hostProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        eventName: notification.eventName,
+        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
+      );
+    } else if (notification.notificationType == "yes") {
+      final notiTime = DateTime.parse(notification.notificationTime);
+      final timeDiff = currentTime.difference(notiTime);
+      return ResponseNotiCard(
+        hostName: notification.senderName,
+        hostUsername: "ralhyy",
+        hostProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        positiveResponse: true,
+        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
+      );
+    } else {
+      final notiTime = DateTime.parse(notification.notificationTime);
+      final timeDiff = currentTime.difference(notiTime);
+      return ResponseNotiCard(
+        hostName: notification.senderName,
+        hostUsername: "ralhyy",
+        hostProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        positiveResponse: false,
+        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
+      );
+    }
   }
 }

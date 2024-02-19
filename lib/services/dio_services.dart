@@ -16,6 +16,7 @@ import 'package:zipbuzz/models/events/responses/event_members_response_model.dar
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
+import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/models/onboarding_page_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
@@ -37,6 +38,18 @@ class DioServices {
     ),
   );
   final box = GetStorage();
+
+  // notification
+  Future<List<NotificationData>> getNotifications() async {
+    try {
+      final response = await dio.get(DioConstants.getNotifications);
+      final list = response.data['notification_data'] as List;
+      return list.map((e) => NotificationData.fromMap(e)).toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
 
   // phone check
   Future<bool> checkPhone(String phoneNumber) async {

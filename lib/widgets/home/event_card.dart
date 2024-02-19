@@ -310,14 +310,17 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   String getUserTag(String status) {
-    if (status == "hosted") {
-      return "Hosted";
-    } else if (status == "pending") {
-      return "Requested";
-    } else if (status == "confirm") {
-      return "Confirmed";
-    } else {
-      return "";
+    switch (status) {
+      case "hosted":
+        return "Hosted";
+      case "pending":
+        return "Requested";
+      case "confirm":
+        return "Confirmed";
+      case "invited":
+        return "Invited";
+      default:
+        return "";
     }
   }
 
