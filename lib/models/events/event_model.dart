@@ -23,7 +23,7 @@ class EventModel {
   final List<String> imageUrls;
   final List<EventInviteMember> eventMembers;
   final String inviteUrl;
-  final String status;
+  String status;
   EventModel({
     required this.id,
     required this.title,

@@ -228,9 +228,7 @@ class DBServices {
           );
           print(eventModel.id);
           print(eventModel.title);
-          for (var e in eventModel.eventMembers) {
-            print(e.toMap());
-          }
+          print(eventModel.status);
           return eventModel;
         }).toList();
         return await Future.wait(events);

@@ -172,7 +172,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       if (widget.rePublish) {
         return eventRePublishButtons();
       }
-      return editShareButtonss();
+      return editShareButtons();
     } else if (widget.event.status == "pending") {
       return eventRequestedButton();
     } else if (widget.event.status == "joined") {
@@ -258,6 +258,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               child: Consumer(builder: (context, ref, child) {
                 return GestureDetector(
                   onTap: () async {
+                    widget.event.status = "pending";
+                    setState(() {});
                     final user = ref.read(userProvider);
                     var model = JoinEventRequestModel(
                         eventId: widget.event.id,
@@ -476,7 +478,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     });
   }
 
-  Widget editShareButtonss() {
+  Widget editShareButtons() {
     return Consumer(builder: (context, ref, child) {
       return Container(
         width: double.infinity,
