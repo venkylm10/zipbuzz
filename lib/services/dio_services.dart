@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
@@ -42,12 +43,29 @@ class DioServices {
   // notification
   Future<List<NotificationData>> getNotifications() async {
     try {
-      final response = await dio.get(DioConstants.getNotifications);
+      final response = await dio.get(DioConstants.getNotifications, data: {
+        "user_id": ref.read(userProvider).id,
+      });
       final list = response.data['notification_data'] as List;
       return list.map((e) => NotificationData.fromMap(e)).toList();
     } catch (e) {
       debugPrint(e.toString());
-      return [];
+      return <NotificationData>[];
+    }
+  }
+
+  Future<void> updateNotification(int notificationId, String notificationType) async {
+    print({
+      "notification_id": notificationId,
+      "notification_type": notificationType,
+    });
+    try {
+      await dio.put(DioConstants.updateNotification, data: {
+        "notification_id": notificationId,
+        "notification_type": notificationType,
+      });
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 

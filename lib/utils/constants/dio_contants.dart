@@ -26,6 +26,7 @@ class DioConstants {
   static const String getLocation = "/users/user_location/";
   static const String phoneCheck = "/users/phone_check/";
   static const String getNotifications = "/users/user_notification/";
+  static const String updateNotification = "/users/user_notification/";
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";
