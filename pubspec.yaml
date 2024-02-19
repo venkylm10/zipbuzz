@@ -51,6 +51,7 @@ dependencies:
   firebase_core: ^2.24.0
   firebase_auth: ^4.15.0
   google_sign_in: ^6.1.6
+  sign_in_with_apple: ^5.0.0
 
   # location services
   location: ^5.0.3
@@ -75,6 +76,7 @@ dependencies:
   color: ^3.0.0
   cached_network_image: ^3.3.1
   firebase_messaging: ^14.7.15
+  crypto: ^3.0.3
   
   
 
