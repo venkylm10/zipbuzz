@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -87,6 +89,13 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         acceptInvite: () async {
           await ref.read(dioServicesProvider).updateNotification(notification.id, "yes");
           setState(() {});
+          final user = ref.read(userProvider);
+          var model = JoinEventRequestModel(
+              eventId: notification.eventId,
+              name: user.name,
+              phoneNumber: user.mobileNumber,
+              image: user.imageUrl);
+          await ref.read(dioServicesProvider).requestToJoinEvent(model);
         },
         declineInvite: () async {
           await ref.read(dioServicesProvider).updateNotification(notification.id, "no");

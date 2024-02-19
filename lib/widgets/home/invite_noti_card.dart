@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/pages/event_details/event_details_page.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
-class InviteNotiCard extends StatelessWidget {
+class InviteNotiCard extends ConsumerWidget {
   const InviteNotiCard({
     super.key,
     required this.hostName,
@@ -22,8 +29,32 @@ class InviteNotiCard extends StatelessWidget {
   final VoidCallback acceptInvite;
   final VoidCallback declineInvite;
 
+  void navigateToEventDetails(WidgetRef ref) async {
+    showSnackBar(message: "Getting event details...");
+    final event = await ref.read(dbServicesProvider).getEventDetails(eventId);
+    final dominantColor = await getDominantColor(event.bannerPath);
+    ref.read(guestListTagProvider.notifier).update((state) => "All");
+    await navigatorKey.currentState!.pushNamed(EventDetailsPage.id, arguments: {
+      "event": event,
+      "dominantColor": dominantColor,
+      "isPreview": false,
+      "rePublish": false,
+      "randInt": 0,
+    });
+  }
+
+  Future<Color> getDominantColor(String bannerPath) async {
+    Color dominantColor = Colors.green;
+    final image = NetworkImage(bannerPath);
+    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+      image,
+    );
+    dominantColor = generator.dominantColor!.color;
+    return dominantColor;
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Row(
@@ -51,23 +82,26 @@ class InviteNotiCard extends StatelessWidget {
                   ),
                   softWrap: true,
                 ),
-                RichText(
-                  softWrap: true,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Invited you for ',
-                        style: AppStyles.h5,
-                      ),
-                      TextSpan(
-                        text: eventName,
-                        style: AppStyles.h5.copyWith(
-                          color: AppColors.primaryColor,
-                          fontStyle: FontStyle.italic,
-                          decoration: TextDecoration.underline,
+                GestureDetector(
+                  onTap: () => navigateToEventDetails(ref),
+                  child: RichText(
+                    softWrap: true,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Invited you for ',
+                          style: AppStyles.h5,
                         ),
-                      ),
-                    ],
+                        TextSpan(
+                          text: eventName,
+                          style: AppStyles.h5.copyWith(
+                            color: AppColors.primaryColor,
+                            fontStyle: FontStyle.italic,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),

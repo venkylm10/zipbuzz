@@ -42,7 +42,6 @@ class DioServices {
 
   // delete event images
   Future<void> deleteEventImages(List<String> images) async {
-    images.map((e) => print(e));
     try {
       await dio.put(DioConstants.updateEventImages, data: {"event_images": images});
     } catch (e) {
@@ -451,9 +450,12 @@ class DioServices {
     }
   }
 
-  Future<void> editUserStatus(int id, String status) async {
+  Future<void> editUserStatus(int eventId, String phoneNumber, String status) async {
     try {
-      await dio.put(DioConstants.editUserStatus, data: {"user_event_id": id, "status": status});
+      await dio.put(
+        DioConstants.editUserStatus,
+        data: {"event_id": eventId, "phone_number": phoneNumber, "status": status},
+      );
       debugPrint("Updated user status");
     } catch (e) {
       debugPrint(e.toString());

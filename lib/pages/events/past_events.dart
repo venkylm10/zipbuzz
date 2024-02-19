@@ -21,7 +21,7 @@ class PastEvents extends ConsumerWidget {
         .where((element) => element.hostId == userId));
     return ownPastEvents.isNotEmpty
         ? Column(
-            children: ownPastEvents.map((e) => EventCard(event: e, showHostedTag: false)).toList(),
+            children: ownPastEvents.map((e) => EventCard(event: e, showTag: false)).toList(),
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.center,

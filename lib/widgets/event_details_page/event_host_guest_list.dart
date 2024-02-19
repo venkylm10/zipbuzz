@@ -155,7 +155,9 @@ class EventHostGuestList extends StatelessWidget {
                       ref
                           .read(eventRequestMembersProvider.notifier)
                           .update((state) => updateMembers);
-                      await ref.read(dioServicesProvider).editUserStatus(member.id, "confirm");
+                      await ref
+                          .read(dioServicesProvider)
+                          .editUserStatus(eventId, member.phone, "confirm");
                       ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                     }
                   },

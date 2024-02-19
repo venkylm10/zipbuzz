@@ -173,9 +173,9 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         return eventRePublishButtons();
       }
       return editShareButtons();
-    } else if (widget.event.status == "pending") {
+    } else if (widget.event.status == "requested") {
       return eventRequestedButton();
-    } else if (widget.event.status == "joined") {
+    } else if (widget.event.status == "confirmed") {
       return eventJoinedButton();
     }
     return eventJoinButton();
@@ -258,13 +258,13 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               child: Consumer(builder: (context, ref, child) {
                 return GestureDetector(
                   onTap: () async {
-                    widget.event.status = "pending";
+                    widget.event.status = "requested";
                     setState(() {});
                     final user = ref.read(userProvider);
                     var model = JoinEventRequestModel(
                         eventId: widget.event.id,
                         name: user.name,
-                        phoneNumber: "${user.countryDialCode}${user.mobileNumber}",
+                        phoneNumber: user.mobileNumber,
                         image: user.imageUrl);
                     final res = await ref.read(dioServicesProvider).requestToJoinEvent(model);
                     if (res) {

@@ -21,8 +21,7 @@ class UpcomingEvents extends ConsumerWidget {
         .where((element) => element.hostId == userId));
     return ownUpcomingEvents.isNotEmpty
         ? Column(
-            children:
-                ownUpcomingEvents.map((e) => EventCard(event: e, showHostedTag: false)).toList(),
+            children: ownUpcomingEvents.map((e) => EventCard(event: e, showTag: false)).toList(),
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.center,
