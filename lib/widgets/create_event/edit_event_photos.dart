@@ -34,7 +34,7 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
   }
 
   void removeImageUrl({required String imageUrl}) {
-    ref.read(editEventControllerProvider.notifier).updateEventImageUrls(imageUrl);
+    ref.read(editEventControllerProvider.notifier).removeEventImageUrl(imageUrl);
     setState(() {});
   }
 

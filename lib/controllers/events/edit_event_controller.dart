@@ -63,10 +63,12 @@ class EditEventController extends StateNotifier<EventModel> {
   List<Contact> eventInvites = [];
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
+  List<String> deletedImages = [];
 
-  void updateEventImageUrls(String url) {
+  void removeEventImageUrl(String url) {
     final updatedUrls = state.imageUrls;
     updatedUrls.remove(url);
+    deletedImages.add(url);
     state = state.copyWith(imageUrls: updatedUrls);
   }
 
@@ -294,6 +296,10 @@ class EditEventController extends StateNotifier<EventModel> {
         // upload event images
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
         await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
+      }
+      if (deletedImages.isNotEmpty) {
+        await ref.read(dioServicesProvider).deleteEventImages(deletedImages);
+        deletedImages.clear();
       }
       var eventDateTime = DateTime.parse(state.date);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);

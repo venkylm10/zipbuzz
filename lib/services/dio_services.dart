@@ -40,8 +40,9 @@ class DioServices {
   );
   final box = GetStorage();
 
-  // update event images
-  Future<void> updateEventImages(List<String> images) async {
+  // delete event images
+  Future<void> deleteEventImages(List<String> images) async {
+    images.map((e) => print(e));
     try {
       await dio.put(DioConstants.updateEventImages, data: {"event_images": images});
     } catch (e) {
