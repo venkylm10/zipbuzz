@@ -96,9 +96,6 @@ class PersonaliseController {
               mobileNumber: "${location.countryDialCode}${mobileController.text.trim()}",
               interests: selectedInterests,
             );
-        print(updatedUser.toMap());
-
-        print("country dial code (personalise): ${location.countryDialCode}");
         final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: updatedUser.id,
           phoneNumber: updatedUser.mobileNumber,
@@ -117,8 +114,6 @@ class PersonaliseController {
               UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
             );
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating user data...");
-
-        print(userDetailsUpdateRequestModel.toMap());
         await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
 
         // Reading id after id is being updated in createUser method

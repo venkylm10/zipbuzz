@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
@@ -187,10 +187,10 @@ class EditEventController extends StateNotifier<EventModel> {
   void updateContactSearchResult(String query) {
     contactSearchResult = allContacts.where(
       (element) {
-        var name = element.displayName.toLowerCase().contains(query);
+        var name = (element.displayName ?? "").toLowerCase().contains(query);
         var number = false;
-        if (element.phones.isNotEmpty) {
-          number = element.phones.first.normalizedNumber.contains(query);
+        if (element.phones!.isNotEmpty) {
+          number = (element.phones!.first.value ?? "").contains(query);
         }
         return name || number;
       },

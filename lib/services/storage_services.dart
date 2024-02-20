@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
@@ -121,8 +121,8 @@ class StorageSerives {
       {required int hostId, required int eventId, required List<Contact> contacts}) async {
     List<String> downloadUrls = [];
     for (final contact in contacts) {
-      if (contact.photo != null) {
-        final filename = contact.phones.first.toString();
+      if (contact.avatar != null) {
+        final filename = contact.phones!.first.toString();
         try {
           final ref = _storage
               .ref()
@@ -132,7 +132,7 @@ class StorageSerives {
               .child(eventId.toString())
               .child(StorageConstants.inviteePics)
               .child(filename);
-          UploadTask uploadTask = ref.putData(contact.photo!);
+          UploadTask uploadTask = ref.putData(contact.avatar!);
           final snapshot = await uploadTask;
           final url = await snapshot.ref.getDownloadURL();
           downloadUrls.add(url);

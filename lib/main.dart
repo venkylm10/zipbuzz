@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/services/noti_services.dart';
@@ -20,7 +19,6 @@ void main() async {
   ]);
   await GetStorage.init();
   await NotificationServices().initNotifications();
-  FlutterContacts.config.returnUnifiedContacts = true;
   runApp(const ProviderScope(child: MyApp()));
 }
 

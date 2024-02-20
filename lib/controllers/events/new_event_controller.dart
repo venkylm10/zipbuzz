@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
@@ -168,8 +168,8 @@ class NewEvent extends StateNotifier<EventModel> {
       eventInvites.add(contact);
       final member = EventInviteMember(
         image: "null",
-        phone: contact.phones.isNotEmpty ? contact.phones.first.normalizedNumber : "",
-        name: contact.displayName,
+        phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
+        name: contact.displayName ?? "",
       );
       state = state.copyWith(
         attendees: state.attendees + 1,
@@ -179,7 +179,7 @@ class NewEvent extends StateNotifier<EventModel> {
     }
     eventInvites.remove(contact);
     final member = state.eventMembers.firstWhere(
-      (element) => element.phone == contact.phones.first.normalizedNumber,
+      (element) => element.phone == contact.phones!.first.value,
     );
     state = state.copyWith(
       attendees: state.attendees - 1,
@@ -190,10 +190,12 @@ class NewEvent extends StateNotifier<EventModel> {
   void updateContactSearchResult(String query) {
     contactSearchResult = allContacts.where(
       (element) {
-        var name = element.displayName.toLowerCase().contains(query);
+        var name = (element.displayName ?? "").toLowerCase().contains(query);
         var number = false;
-        if (element.phones.isNotEmpty) {
-          number = element.phones.first.normalizedNumber.contains(query);
+        if (element.phones!.isNotEmpty) {
+          final phoneNumber =
+              (element.phones!.first.value ?? "").replaceAll("-", "").replaceAll(" ", "");
+          number = phoneNumber.contains(query);
         }
         return name || number;
       },
@@ -310,16 +312,16 @@ class NewEvent extends StateNotifier<EventModel> {
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: eventInvites.map((e) {
-          final number = e.phones.first.normalizedNumber;
-          if (!number.startsWith("+")) {
-            final countryCode = ref.read(userLocationProvider).countryDialCode;
+          final number = (e.phones!.first.value ?? "").replaceAll("-", "").replaceAll(" ", "");
+          final countryCode = ref.read(userLocationProvider).countryDialCode;
+          if (!number.startsWith(countryCode)) {
             return "$countryCode$number";
           }
-          return e.phones.first.normalizedNumber;
+          return e.phones!.first.value ?? "";
         }).toList(),
         images: inviteePicUrls,
         names: eventInvites.map((e) {
-          return e.displayName;
+          return e.displayName ?? "";
         }).toList(),
         senderName: ref.read(userProvider).name,
         eventName: eventPostModel.name,
