@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -150,14 +151,17 @@ class AuthServices {
     // Sign in the user with Firebase. If the nonce we generated earlier does
     // not match the nonce in `appleCredential.identityToken`, sign in will fail.
     UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    User user = userCredential.user!;
 
-    if(appleCredential.email == null){
-      showSnackBar();
+    if(user.email == null){
+      Get.snackbar(
+        "Something Went Wrong",
+        "Email Doesn\'t Exist In Apple ID",
+      );
     }
 
     else if(userCredential.additionalUserInfo!.isNewUser){
 
-      User user = userCredential.user!;
 
       _ref.read(loadingTextProvider.notifier).reset();
       var location = _ref.read(userLocationProvider);
@@ -192,7 +196,7 @@ class AuthServices {
       _ref.read(loadingTextProvider.notifier).reset();
       final id = await _ref.read(dbServicesProvider).getUserId(
         UserIdRequestModel(
-          email: _ref.read(authProvider).currentUser!.email ?? "",
+          email: user.email ?? "",
           deviceToken: box.read(BoxConstants.deviceToken),
         ),
       );
@@ -205,10 +209,11 @@ class AuthServices {
 
 
     }else {
+
       // getting id
       final id = await _ref.read(dbServicesProvider).getUserId(
         UserIdRequestModel(
-          email: _ref.read(authProvider).currentUser!.email ?? "",
+          email: user.email ?? "",
           deviceToken: box.read(BoxConstants.deviceToken),
         ),
       );
