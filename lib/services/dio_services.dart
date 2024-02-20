@@ -228,28 +228,11 @@ class DioServices {
       final response =
           await dio.get(DioConstants.getUserDetails, data: userDetailsRequestModel.toMap());
       debugPrint("GETTING USER DATA COMPLETE");
-      box.write('user_details', response.data['data']);
-      box.write('user_interests', response.data['interests']);
-      box.write('user_socials', response.data['socials']);
       return response.data as Map<String, dynamic>;
     } catch (error) {
       debugPrint("GETTING USER DATA FAILED");
       debugPrint(error.toString());
-      if (box.hasData('user_details')) {
-        debugPrint("LOADING USER DATA FROM LOCAL STORAGE");
-        final details = box.read('user_details') as Map<String, dynamic>;
-        final interests = box.read('user_interests') as List;
-        final socials = box.read('user_socials') as Map<String, dynamic>;
-        final res = {
-          "status": "success",
-          "data": details,
-          "interests": interests.map((e) => e.toString()).toList(),
-          "socials": socials,
-        };
-        return res;
-      } else {
-        throw Exception('FAILED TO GET USER DATA');
-      }
+      throw Exception('FAILED TO GET USER DATA');
     }
   }
 

@@ -344,38 +344,38 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
             ),
             const SizedBox(height: 24),
-            if (editProfileController.userClone.isAmbassador)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SvgPicture.asset(
-                      Assets.icons.check,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.primaryColor,
-                        BlendMode.srcIn,
-                      ),
-                      height: 20,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      "Brand Ambassador",
-                      style: AppStyles.h5.copyWith(
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // if (editProfileController.userClone.isAmbassador)
+            // Container(
+            //   padding: const EdgeInsets.symmetric(
+            //     horizontal: 10,
+            //     vertical: 6,
+            //   ),
+            //   decoration: BoxDecoration(
+            //     color: AppColors.primaryColor.withOpacity(0.1),
+            //     borderRadius: BorderRadius.circular(20),
+            //   ),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.start,
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       SvgPicture.asset(
+            //         Assets.icons.check,
+            //         colorFilter: const ColorFilter.mode(
+            //           AppColors.primaryColor,
+            //           BlendMode.srcIn,
+            //         ),
+            //         height: 20,
+            //       ),
+            //       const SizedBox(width: 5),
+            //       Text(
+            //         "Brand Ambassador",
+            //         style: AppStyles.h5.copyWith(
+            //           color: AppColors.primaryColor,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ],

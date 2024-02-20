@@ -113,8 +113,8 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                           user.handle,
                           style: AppStyles.h4.copyWith(color: AppColors.greyColor),
                         ),
-                        const SizedBox(height: 8),
-                        if (user.isAmbassador) buildAmbassadorTag(),
+                        // const SizedBox(height: 8),
+                        // if (user.isAmbassador) buildAmbassadorTag(),
                       ],
                     ),
                     ClipRRect(
