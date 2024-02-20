@@ -18,7 +18,12 @@ class Home extends ConsumerWidget {
     final selectedTab = ref.watch(homeTabControllerProvider).homeTabIndex;
     final tabs = ref.read(homeTabControllerProvider.notifier).tabs;
     return Scaffold(
-      body: tabs[selectedTab],
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: tabs[selectedTab],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
         currentIndex: selectedTab,

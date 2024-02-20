@@ -54,200 +54,205 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   Widget build(BuildContext context) {
     editProfileController = ref.watch(editProfileControllerProvider);
     final loadingText = ref.watch(loadingTextProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: AppStyles.h2.copyWith(
-            color: AppColors.primaryColor,
-            fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Profile",
+            style: AppStyles.h2.copyWith(
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          centerTitle: true,
+          leading: backButton(),
+          elevation: 0,
         ),
-        centerTitle: true,
-        leading: backButton(),
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildProfilePic(),
-              const SizedBox(height: 8),
-              Text("Name:", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(controller: editProfileController.nameController),
-              const SizedBox(height: 8),
-              Text("About me:", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(
-                controller: editProfileController.aboutController,
-                maxLength: 550,
-                showCounter: true,
-              ),
-              const SizedBox(height: 24),
-              Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
-              const SizedBox(height: 24),
-              Text(
-                "Personal details",
-                style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-              ),
-              const SizedBox(height: 16),
-              Text("Zipcode:", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(
-                controller: editProfileController.zipcodeController,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildProfilePic(),
+                const SizedBox(height: 8),
+                Text("Name:", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(controller: editProfileController.nameController),
+                const SizedBox(height: 8),
+                Text("About me:", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(
+                  controller: editProfileController.aboutController,
+                  maxLength: 550,
+                  showCounter: true,
                 ),
-                maxLength: 6,
-                maxLines: 1,
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 8),
-              Text("Mobile no:", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(
-                controller: editProfileController.mobileController,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: SvgPicture.asset(Assets.icons.telephone, height: 20),
+                const SizedBox(height: 24),
+                Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
+                const SizedBox(height: 24),
+                Text(
+                  "Personal details",
+                  style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                 ),
-                maxLines: 1,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 8),
-              Text("ZipBuzz handle:", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(
-                controller: editProfileController.handleController,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: SvgPicture.asset(Assets.icons.at, height: 20),
-                ),
-                enabled: false,
-              ),
-              const SizedBox(height: 24),
-              Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
-              const SizedBox(height: 24),
-              Text(
-                "Social links",
-                style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-              ),
-              const SizedBox(height: 16),
-              Text("LinkedIn", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(
-                controller: editProfileController.linkedinIdControler,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Image.asset(Assets.icons.linkedin, height: 20),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text("Instagram", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(
-                controller: editProfileController.instagramIdController,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Image.asset(Assets.icons.instagram, height: 20),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text("Twitter", style: AppStyles.h4),
-              const SizedBox(height: 4),
-              CustomTextField(
-                controller: editProfileController.twitterIdController,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Image.asset(Assets.icons.twitter, height: 20),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
-              const SizedBox(height: 24),
-              Text(
-                "My Interests",
-                style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-              ),
-              const SizedBox(height: 16),
-              buildInterests(),
-              buildInterestTypeButton(),
-              const SizedBox(height: 24),
-              Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
-              const SizedBox(height: 24),
-              InkWell(
-                onTap: showSnackBar,
-                child: Ink(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(24),
+                const SizedBox(height: 16),
+                Text("Zipcode:", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(
+                  controller: editProfileController.zipcodeController,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(Assets.icons.delete),
-                      const SizedBox(width: 8),
-                      Text(
-                        "Delete Account",
-                        style: AppStyles.h3.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.red.shade500,
+                  maxLength: 6,
+                  maxLines: 1,
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 8),
+                Text("Mobile no:", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(
+                  controller: editProfileController.mobileController,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: SvgPicture.asset(Assets.icons.telephone, height: 20),
+                  ),
+                  maxLines: 1,
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 8),
+                Text("ZipBuzz handle:", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(
+                  controller: editProfileController.handleController,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: SvgPicture.asset(Assets.icons.at, height: 20),
+                  ),
+                  enabled: false,
+                ),
+                const SizedBox(height: 24),
+                Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
+                const SizedBox(height: 24),
+                Text(
+                  "Social links",
+                  style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                ),
+                const SizedBox(height: 16),
+                Text("LinkedIn", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(
+                  controller: editProfileController.linkedinIdControler,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Image.asset(Assets.icons.linkedin, height: 20),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text("Instagram", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(
+                  controller: editProfileController.instagramIdController,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Image.asset(Assets.icons.instagram, height: 20),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text("Twitter", style: AppStyles.h4),
+                const SizedBox(height: 4),
+                CustomTextField(
+                  controller: editProfileController.twitterIdController,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Image.asset(Assets.icons.twitter, height: 20),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
+                const SizedBox(height: 24),
+                Text(
+                  "My Interests",
+                  style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                ),
+                const SizedBox(height: 16),
+                buildInterests(),
+                buildInterestTypeButton(),
+                const SizedBox(height: 24),
+                Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
+                const SizedBox(height: 24),
+                InkWell(
+                  onTap: showSnackBar,
+                  child: Ink(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(Assets.icons.delete),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Delete Account",
+                          style: AppStyles.h3.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red.shade500,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
-              const SizedBox(height: 24),
-              InkWell(
-                onTap: () {
-                  if (loadingText == null) {
-                    saveChanges();
-                  }
-                },
-                child: Ink(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(24),
+                const SizedBox(height: 24),
+                Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
+                const SizedBox(height: 24),
+                InkWell(
+                  onTap: () {
+                    if (loadingText == null) {
+                      saveChanges();
+                    }
+                  },
+                  child: Ink(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: loadingText == null
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(Assets.icons.save),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Save Changes",
+                                style: AppStyles.h3.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                loadingText,
+                                style: AppStyles.h3.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                   ),
-                  child: loadingText == null
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(Assets.icons.save),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Save Changes",
-                              style: AppStyles.h3.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              loadingText,
-                              style: AppStyles.h3.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

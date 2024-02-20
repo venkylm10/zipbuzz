@@ -47,47 +47,52 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: backButton(),
-        title: Text(
-          "Editing Event",
-          style: AppStyles.h2.copyWith(
-            color: AppColors.primaryColor,
-            fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: backButton(),
+          title: Text(
+            "Editing Event",
+            style: AppStyles.h2.copyWith(
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          centerTitle: true,
+          forceMaterialTransparency: true,
         ),
-        centerTitle: true,
-        forceMaterialTransparency: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const EditEventBannerSelector(),
-              const SizedBox(height: 16),
-              const EditEventForm(),
-              broadDivider(),
-              const AddHosts(),
-              broadDivider(),
-              const EventTypeAndCapacity(rePublish: true),
-              broadDivider(),
-              const EditEventPhotos(),
-              broadDivider(),
-              const CreateEventGuestListType(),
-              const SizedBox(height: 32),
-              EventHostGuestList(
-                  guests: ref.watch(editEventControllerProvider).eventMembers,
-                  eventId: ref.watch(editEventControllerProvider).id),
-              broadDivider(),
-              const SizedBox(height: 16),
-              buildSaveButton(),
-              const SizedBox(height: 32),
-            ],
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const EditEventBannerSelector(),
+                const SizedBox(height: 16),
+                const EditEventForm(),
+                broadDivider(),
+                const AddHosts(),
+                broadDivider(),
+                const EventTypeAndCapacity(rePublish: true),
+                broadDivider(),
+                const EditEventPhotos(),
+                broadDivider(),
+                const CreateEventGuestListType(),
+                const SizedBox(height: 32),
+                EventHostGuestList(
+                    guests: ref.watch(editEventControllerProvider).eventMembers,
+                    eventId: ref.watch(editEventControllerProvider).id),
+                broadDivider(),
+                const SizedBox(height: 16),
+                buildSaveButton(),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
       ),
