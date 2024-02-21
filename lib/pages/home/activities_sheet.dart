@@ -26,8 +26,16 @@ class ActivitiesSheet extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              const SizedBox(width: 16),
+              Text(
+                "Note: Select minimum of 3 interests",
+                style: AppStyles.h5.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              const Expanded(child: SizedBox()),
               GestureDetector(
                 onTap: () {
                   navigatorKey.currentState!.pop();
@@ -101,20 +109,6 @@ class ActivitiesSheet extends StatelessWidget {
                     );
                   });
                 },
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(360),
-            ),
-            child: Text(
-              "Select minimum of 5 interests",
-              style: AppStyles.h5.copyWith(
-                color: Colors.white,
-                fontStyle: FontStyle.italic,
               ),
             ),
           ),

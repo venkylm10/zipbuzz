@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
@@ -110,7 +111,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               children: [
                 buildInterests(context),
                 buildPageIndicator(),
-                buildInterestTypeButton(),
+                buildHomeTabButtons(),
                 const SizedBox(height: 10),
                 homeTabController.queryController.text.trim().isNotEmpty
                     ? const EventsSearchResults()
@@ -133,50 +134,99 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     );
   }
 
-  Row buildInterestTypeButton() {
+  Widget buildHomeTabButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
       children: [
-        GestureDetector(
-          onTap: () async {
-            await showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              enableDrag: true,
-              isDismissible: true,
-              builder: (context) {
-                return const ActivitiesSheet();
-              },
-            );
-            await ref.read(dioServicesProvider).updateUserInterests(
-                  UserInterestsUpdateModel(
-                    userId: ref.read(userProvider).id,
-                    interests: ref
-                        .read(homeTabControllerProvider)
-                        .currentInterests
-                        .map((e) => e.activity)
-                        .toList(),
-                  ),
+        Wrap(
+          direction: Axis.horizontal,
+          runAlignment: WrapAlignment.center,
+          runSpacing: 8,
+          spacing: 8,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                await showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  enableDrag: true,
+                  isDismissible: true,
+                  builder: (context) {
+                    return const ActivitiesSheet();
+                  },
                 );
-            debugPrint("Updated homeTab interests");
-            setState(() {});
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            margin: const EdgeInsets.only(top: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(360),
-              border: Border.all(color: Colors.white),
-              color: AppColors.primaryColor,
-            ),
-            child: Text(
-              "Explore",
-              style: AppStyles.h4.copyWith(
-                color: Colors.white,
+                await ref.read(dioServicesProvider).updateUserInterests(
+                      UserInterestsUpdateModel(
+                        userId: ref.read(userProvider).id,
+                        interests: ref
+                            .read(homeTabControllerProvider)
+                            .currentInterests
+                            .map((e) => e.activity)
+                            .toList(),
+                      ),
+                    );
+                debugPrint("Updated homeTab interests");
+                setState(() {});
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                margin: const EdgeInsets.only(top: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(360),
+                  border: Border.all(color: Colors.white),
+                  color: AppColors.primaryColor,
+                ),
+                child: Text(
+                  "Explore",
+                  style: AppStyles.h4.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
-          ),
+            GestureDetector(
+              onTap: () {
+                ref.read(homeTabControllerProvider.notifier).updateIndex(1);
+                ref.read(eventTabControllerProvider.notifier).updateIndex(2);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                margin: const EdgeInsets.only(top: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(360),
+                  border: Border.all(color: Colors.white),
+                  color: AppColors.primaryColor,
+                ),
+                child: Text(
+                  "Create Event",
+                  style: AppStyles.h4.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                ref.read(homeTabControllerProvider.notifier).updateIndex(1);
+                ref.read(eventTabControllerProvider.notifier).updateIndex(0);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                margin: const EdgeInsets.only(top: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(360),
+                  border: Border.all(color: Colors.white),
+                  color: AppColors.primaryColor,
+                ),
+                child: Text(
+                  "My Events",
+                  style: AppStyles.h4.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ],
     );

@@ -100,7 +100,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
 
   void toggleHomeTabInterest(InterestModel interest) {
     if (containsInterest(interest.activity)) {
-      if (state.currentInterests.length == 5) {
+      if (state.currentInterests.length <= 3) {
         return;
       }
       final interests =

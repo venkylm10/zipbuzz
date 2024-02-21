@@ -198,7 +198,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                "About",
+                                "Event description",
                                 style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                               ),
                               const SizedBox(height: 16),
@@ -210,7 +210,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                "Sneak peaks",
+                                "Photos",
                                 style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                               ),
                               const SizedBox(height: 16),
@@ -349,10 +349,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                 borderRadius: BorderRadius.circular(8),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                  child: Center(
+                  child: const Center(
                     child: Icon(
                       Icons.arrow_back,
-                      color: widget.dominantColor,
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
@@ -377,10 +377,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                   borderRadius: BorderRadius.circular(8),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                    child: Center(
+                    child: const Center(
                       child: Icon(
                         Icons.edit,
-                        color: widget.dominantColor,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),

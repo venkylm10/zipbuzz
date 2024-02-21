@@ -108,7 +108,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                             SvgPicture.asset(Assets.icons.people, height: 20),
                             const SizedBox(width: 8),
                             Text(
-                              "Invite people",
+                              "Invite Guests",
                               style: AppStyles.h5.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),

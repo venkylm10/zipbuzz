@@ -72,7 +72,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
               ),
               const SizedBox(height: 12),
               Text(
-                "Invite People",
+                "Invite Guests",
                 style: AppStyles.h2.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

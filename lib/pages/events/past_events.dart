@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -39,15 +40,17 @@ class PastEvents extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  ref.read(eventTabControllerProvider.notifier).updateIndex(2);
+                },
                 child: Ink(
-                  padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(22),
                   ),
                   child: Text(
-                    "Browse events",
+                    "Create event",
                     style: AppStyles.h4.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,

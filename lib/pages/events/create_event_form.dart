@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -128,7 +129,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 4),
         categoryDropDown(),
         broadDivider(),
         Text(
@@ -145,7 +146,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 4),
         CustomTextField(
           controller: nameController,
           hintText: "eg: A madcap house party",
@@ -161,7 +162,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 4),
         CustomTextField(
           controller: descriptionController,
           hintText: "Event description",
@@ -177,6 +178,29 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         const SizedBox(height: 16),
         Row(
           children: [
+            Text("Enter venue location", style: AppStyles.h4),
+            Text(
+              "*",
+              style: AppStyles.h4.copyWith(color: Colors.red),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        CustomTextField(
+          controller: locationController,
+          hintText: "eg: 420 Gala St, San Jose 95125",
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
+          ),
+          enabled: true,
+          onChanged: (value) {
+            updateLocation(value);
+          },
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
             Text("Choose date", style: AppStyles.h4),
             Text(
               "*",
@@ -184,7 +208,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 4),
         GestureDetector(
           onTap: () {
             updateDate();
@@ -198,29 +222,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             ),
             enabled: false,
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Text("Enter venue location", style: AppStyles.h4),
-            Text(
-              "*",
-              style: AppStyles.h4.copyWith(color: Colors.red),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        CustomTextField(
-          controller: locationController,
-          hintText: "eg: 420 Gala St, San Jose 95125",
-          prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(Assets.icons.geo_mini, height: 20),
-          ),
-          enabled: true,
-          onChanged: (value) {
-            updateLocation(value);
-          },
         ),
         const SizedBox(height: 16),
         Row(
@@ -242,7 +243,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 4),
         Row(
           children: [
             // start time
@@ -287,6 +288,13 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   Container categoryDropDown() {
+    var interests =
+        ref.read(homeTabControllerProvider).currentInterests.map((e) => e.activity).toList();
+    for (var e in allInterests) {
+      if (!interests.contains(e.activity)) {
+        interests.add(e.activity);
+      }
+    }
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
       decoration: BoxDecoration(
@@ -327,18 +335,18 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             borderSide: BorderSide(color: Colors.transparent),
           ),
         ),
-        items: allInterests
+        items: interests
             .map(
               (e) => DropdownMenuItem(
                 onTap: () {
                   setState(() {
-                    category = e.activity;
+                    category = e;
                   });
                 },
-                value: e.activity,
+                value: e,
                 child: Row(
                   children: [
-                    Text(e.activity),
+                    Text(e),
                   ],
                 ),
               ),

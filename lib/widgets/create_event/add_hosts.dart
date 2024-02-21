@@ -24,7 +24,7 @@ class _AddHostsState extends ConsumerState<AddHosts> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Hosts & Co-hosts",
+          "Hosts",
           style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
         ),
         const SizedBox(height: 16),
