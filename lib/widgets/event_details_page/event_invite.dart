@@ -1,5 +1,5 @@
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -174,7 +174,8 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   Widget buildInvitedContacts(List<Contact> selectedContacts) {
     final selectSearchContacts = selectedContacts.where(
       (element) {
-        return element.displayName.toLowerCase().contains(searchController.text);
+        final name = element.displayName ?? "";
+        return name.toLowerCase().contains(searchController.text);
       },
     ).toList();
     return Column(
@@ -204,6 +205,8 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   }
 
   Widget buildContactCard(Contact contact, {bool isSelected = false}) {
+    final name = contact.displayName ?? "";
+    final phoneNumber = contact.phones!.first.value ?? "";
     return GestureDetector(
       onTap: () {
         ref.read(newEventProvider.notifier).updateSelectedContact(contact);
@@ -225,14 +228,14 @@ class _EventInviteState extends ConsumerState<EventInvite> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  contact.displayName,
+                  name,
                   style: AppStyles.h4.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (contact.phones.isNotEmpty)
+                if (contact.phones!.isNotEmpty)
                   Text(
-                    contact.phones.first.normalizedNumber,
+                    phoneNumber,
                     style: AppStyles.h5.copyWith(
                       fontWeight: FontWeight.w500,
                       color: AppColors.lightGreyColor,
@@ -254,7 +257,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   }
 
   Widget buildAvatar(Contact contact) {
-    if (contact.photo != null) {
+    if (contact.avatar != null && contact.avatar!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Container(
@@ -263,7 +266,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Image.memory(contact.photo!, fit: BoxFit.cover),
+          child: Image.memory(contact.avatar!, fit: BoxFit.cover),
         ),
       );
     } else {
@@ -274,8 +277,16 @@ class _EventInviteState extends ConsumerState<EventInvite> {
           width: 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
+            color: AppColors.borderGrey,
           ),
-          child: Image.asset(Assets.images.default_contact_avatar),
+          child: Center(
+            child: Text(
+              contact.initials(),
+              style: AppStyles.h4.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
         ),
       );
     }

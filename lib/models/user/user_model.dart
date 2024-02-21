@@ -21,7 +21,6 @@ class UserModel {
   final List<String>? pastEventUids;
   final String city;
   final String country;
-  final String countryDialCode;
 
   const UserModel({
     required this.id,
@@ -38,7 +37,6 @@ class UserModel {
     required this.mobileNumber,
     required this.city,
     required this.country,
-    required this.countryDialCode,
     this.linkedinId,
     this.instagramId,
     this.twitterId,
@@ -76,7 +74,6 @@ class UserModel {
       'pastEventUids': pastEventUids,
       'city': city,
       'country': country,
-      'countryDialCode': countryDialCode,
     };
   }
 
@@ -112,7 +109,6 @@ class UserModel {
           : <String>[],
       city: map['city'] != null ? map['city'] as String : "",
       country: map['country'] != null ? map['country'] as String : "",
-      countryDialCode: map['countryDialCode'] != null ? map['countryDialCode'] as String : "",
     );
   }
 
@@ -158,7 +154,6 @@ class UserModel {
       pastEventUids: pastEventUids ?? this.pastEventUids,
       city: city ?? this.city,
       country: country ?? this.country,
-      countryDialCode: countryDialCode ?? this.countryDialCode,
     );
   }
 

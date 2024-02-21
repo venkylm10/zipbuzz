@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
@@ -74,7 +73,6 @@ class AuthServices {
             twitterId: "null",
             city: location.city,
             country: location.country,
-            countryDialCode: location.countryDialCode,
           );
           // creating new user
           _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
@@ -187,7 +185,6 @@ class AuthServices {
         twitterId: "null",
         city: location.city,
         country: location.country,
-        countryDialCode: location.countryDialCode,
       );
       // creating new user
       _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");

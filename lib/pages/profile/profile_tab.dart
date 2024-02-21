@@ -17,7 +17,6 @@ import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
 import 'package:zipbuzz/widgets/profile/socials.dart';
-import 'package:zipbuzz/widgets/profile/user_stats.dart';
 
 class ProfileTab extends ConsumerStatefulWidget {
   const ProfileTab({super.key});
@@ -113,8 +112,8 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                           user.handle,
                           style: AppStyles.h4.copyWith(color: AppColors.greyColor),
                         ),
-                        const SizedBox(height: 8),
-                        if (user.isAmbassador) buildAmbassadorTag(),
+                        // const SizedBox(height: 8),
+                        // if (user.isAmbassador) buildAmbassadorTag(),
                       ],
                     ),
                     ClipRRect(

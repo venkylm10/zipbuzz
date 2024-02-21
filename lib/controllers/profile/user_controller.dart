@@ -27,5 +27,4 @@ const globalDummyUser = UserModel(
   pastEventUids: [],
   city: "San Jose",
   country: "USA",
-  countryDialCode: "+1",
 );
