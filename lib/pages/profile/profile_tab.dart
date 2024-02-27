@@ -141,7 +141,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 const SizedBox(height: 4),
                 buildDetailTile(Assets.icons.telephone, "Mobile no:", user.mobileNumber),
                 const SizedBox(height: 4),
-                buildDetailTile(Assets.icons.at, "ZipBuzz handle:", user.handle, handle: true),
+                buildDetailTile(Assets.icons.at, "Buzz.Me handle:", user.handle, handle: true),
                 const SizedBox(height: 24),
                 Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
                 const SizedBox(height: 24),
@@ -195,7 +195,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Version: 0.1.1",
+                      "Version: 0.1.2",
                       style: AppStyles.h5.copyWith(
                         fontStyle: FontStyle.italic,
                       ),

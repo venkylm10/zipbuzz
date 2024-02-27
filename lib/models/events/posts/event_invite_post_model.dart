@@ -10,6 +10,7 @@ class EventInvitePostModel {
   final String eventStart;
   final String eventEnd;
   final int eventId;
+  final int hostId;
   final String banner;
   final InviteData notificationData;
 
@@ -26,6 +27,7 @@ class EventInvitePostModel {
     required this.eventEnd,
     required this.eventId,
     required this.banner,
+    required this.hostId,
     required this.notificationData,
   });
 
@@ -43,6 +45,7 @@ class EventInvitePostModel {
       'event_end': eventEnd,
       'event_id': eventId,
       'banner': banner,
+      'host_id': hostId,
       'notification_data': notificationData.toMap(),
     };
   }

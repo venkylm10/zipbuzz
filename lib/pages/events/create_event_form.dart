@@ -115,11 +115,11 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Category",
-          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        ),
-        const SizedBox(height: 16),
+        // Text(
+        //   "Category",
+        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+        // ),
+        // const SizedBox(height: 16),
         Row(
           children: [
             Text("Event category", style: AppStyles.h4),
@@ -288,8 +288,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   Container categoryDropDown() {
-    var interests =
-        ref.read(homeTabControllerProvider).currentInterests.map((e) => e.activity).toList();
+    var interests = ref.read(homeTabControllerProvider).currentInterests.map((e) => e.activity).toList();
+    interests.sort((a, b) => a.compareTo(b));
     for (var e in allInterests) {
       if (!interests.contains(e.activity)) {
         interests.add(e.activity);

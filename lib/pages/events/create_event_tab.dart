@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -16,7 +17,8 @@ import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 import 'package:zipbuzz/widgets/create_event/add_event_photos.dart';
 
 class CreateEvent extends ConsumerStatefulWidget {
-  const CreateEvent({super.key});
+  const CreateEvent({super.key, this.rePublish = false});
+  final bool? rePublish;
 
   @override
   ConsumerState<CreateEvent> createState() => _CreateEventState();
@@ -42,8 +44,13 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
     super.dispose();
   }
 
+  var newIsPrivate = false;
+
   @override
   Widget build(BuildContext context) {
+    newIsPrivate = widget.rePublish!
+        ? ref.watch(editEventControllerProvider).isPrivate
+        : ref.watch(newEventProvider).isPrivate;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Column(
@@ -57,8 +64,10 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           const AddHosts(),
           broadDivider(),
           const EventTypeAndCapacity(),
-          broadDivider(),
-          const CreateEventGuestListType(),
+          if(newIsPrivate)
+            broadDivider(),
+          if(newIsPrivate)
+            const CreateEventGuestListType(),
           broadDivider(),
           const AddEventPhotos(),
           broadDivider(),

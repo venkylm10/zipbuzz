@@ -43,6 +43,7 @@ class ActivitiesSheet extends StatelessWidget {
                 child: Icon(
                   Icons.cancel,
                   color: AppColors.primaryColor.withOpacity(0.8),
+                  size: 32,
                 ),
               ),
               const SizedBox(width: 12),

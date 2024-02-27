@@ -159,7 +159,7 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,

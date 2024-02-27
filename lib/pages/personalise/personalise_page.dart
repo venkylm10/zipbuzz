@@ -258,6 +258,12 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                 style: AppStyles.h4,
                 keyboardType: keyboardType,
                 maxLength: maxLength,
+                onChanged: (value){
+                  if(value.length == maxLength){
+                    //close keyboard
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  }
+                },
                 decoration: InputDecoration(
                   counter: const SizedBox(),
                   hintText: hintText,

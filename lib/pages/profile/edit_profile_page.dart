@@ -123,7 +123,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 8),
-                Text("ZipBuzz handle:", style: AppStyles.h4),
+                Text("Buzz.Me handle:", style: AppStyles.h4),
                 const SizedBox(height: 4),
                 CustomTextField(
                   controller: editProfileController.handleController,

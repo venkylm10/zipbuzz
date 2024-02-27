@@ -332,6 +332,7 @@ class NewEvent extends StateNotifier<EventModel> {
         eventEnd: eventPostModel.endTime,
         eventId: eventId,
         banner: bannerUrl,
+        hostId: ref.read(userProvider).id,
         notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
       debugPrint(eventInvitePostModel.toMap().toString());

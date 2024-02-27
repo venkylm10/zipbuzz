@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 
-Column broadDivider({double? gap = 32}) {
+Column broadDivider({double? gap = 14}) {
   return Column(
     children: [
       SizedBox(height: gap),
