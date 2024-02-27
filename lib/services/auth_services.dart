@@ -56,20 +56,17 @@ class AuthServices {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
 
         if (credentials.additionalUserInfo!.isNewUser) {
-
           Fluttertoast.showToast(
-              msg: "User Doesn\'t Exists",
+              msg: "User Doesn't Exists",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
 
           _ref.read(loadingTextProvider.notifier).reset();
           var location = _ref.read(userLocationProvider);
@@ -80,7 +77,7 @@ class AuthServices {
             name: auth.currentUser?.displayName ?? '',
             mobileNumber: "+11234567890",
             email: auth.currentUser?.email ?? '',
-            imageUrl: _ref.read(defaultsProvider).profilePictureUrl,
+            imageUrl: auth.currentUser?.photoURL ?? _ref.read(defaultsProvider).profilePictureUrl,
             handle: "",
             isAmbassador: false,
             about: "New to Zipbuzz",
@@ -104,8 +101,7 @@ class AuthServices {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
 
           // creating new user
           _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
@@ -126,8 +122,7 @@ class AuthServices {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
           // storing id
           box.write(BoxConstants.id, id);
           box.write(BoxConstants.login, true);
@@ -139,14 +134,12 @@ class AuthServices {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
 
           await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id));
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
-
           Fluttertoast.showToast(
               msg: "User Exists",
               toastLength: Toast.LENGTH_SHORT,
@@ -154,9 +147,7 @@ class AuthServices {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
-
+              fontSize: 16.0);
 
           // getting id
           final id = await _ref.read(dbServicesProvider).getUserId(
@@ -173,8 +164,7 @@ class AuthServices {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
 
           // storing id
           box.write(BoxConstants.id, id);
@@ -187,8 +177,7 @@ class AuthServices {
               timeInSecForIosWeb: 1,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
 
           _ref.read(newEventProvider.notifier).updateHostId(id);
 
@@ -216,14 +205,11 @@ class AuthServices {
   }
 
   Future<void> signInWithApple() async {
-
     final rawNonce = generateNonce();
     final nonce = sha256ofString(rawNonce);
 
     final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email
-      ],
+      scopes: [AppleIDAuthorizationScopes.email],
       nonce: nonce,
     );
 
@@ -235,11 +221,11 @@ class AuthServices {
 
     // Sign in the user with Firebase. If the nonce we generated earlier does
     // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(oauthCredential);
     User user = userCredential.user!;
 
-    if(appleCredential.email == null){
-
+    if (appleCredential.email == null) {
       Fluttertoast.showToast(
           msg: "E-Mail Sharing Is Off",
           toastLength: Toast.LENGTH_SHORT,
@@ -247,14 +233,8 @@ class AuthServices {
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,
           textColor: Colors.white,
-          fontSize: 16.0
-      );
-
-    }
-
-    else if(userCredential.additionalUserInfo!.isNewUser){
-
-
+          fontSize: 16.0);
+    } else if (userCredential.additionalUserInfo!.isNewUser) {
       _ref.read(loadingTextProvider.notifier).reset();
       var location = _ref.read(userLocationProvider);
       location = _ref.read(userLocationProvider);
@@ -264,7 +244,7 @@ class AuthServices {
         name: user.displayName ?? '',
         mobileNumber: "+11234567890",
         email: user.email ?? '',
-        imageUrl: _ref.read(defaultsProvider).profilePictureUrl,
+        imageUrl: user.photoURL ?? _ref.read(defaultsProvider).profilePictureUrl,
         handle: "",
         isAmbassador: false,
         about: "New to Zipbuzz",
@@ -286,28 +266,25 @@ class AuthServices {
       debugPrint("USER CREATED SUCCESSFULLY");
       _ref.read(loadingTextProvider.notifier).reset();
       final id = await _ref.read(dbServicesProvider).getUserId(
-        UserIdRequestModel(
-          email: user.email ?? "",
-          deviceToken: box.read(BoxConstants.deviceToken),
-        ),
-      );
+            UserIdRequestModel(
+              email: user.email ?? "",
+              deviceToken: box.read(BoxConstants.deviceToken),
+            ),
+          );
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
       await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id));
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
-
-
-    }
-    else {
+    } else {
       // getting id
       final id = await _ref.read(dbServicesProvider).getUserId(
-        UserIdRequestModel(
-          email: user.email ?? "",
-          deviceToken: box.read(BoxConstants.deviceToken),
-        ),
-      );
+            UserIdRequestModel(
+              email: user.email ?? "",
+              deviceToken: box.read(BoxConstants.deviceToken),
+            ),
+          );
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
@@ -318,10 +295,7 @@ class AuthServices {
 
       return;
     }
-
   }
-
-
 
   Future<void> signOut() async {
     final box = GetStorage();

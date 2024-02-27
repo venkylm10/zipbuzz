@@ -64,6 +64,15 @@ class DBServices {
     }
   }
 
+  Future<int> getCommentCount({required int eventId}) async {
+    int count = 0;
+    DataSnapshot dataSnapshot = await _database.ref('chatRooms').child(eventId.toString()).get();
+    if (dataSnapshot.exists) {
+      count = dataSnapshot.children.length;
+    }
+    return count;
+  }
+
   Stream<DatabaseEvent> getMessages({required int eventId}) {
     return _database.ref(DatabaseConstants.chatRoomCollection).child(eventId.toString()).onValue;
   }
