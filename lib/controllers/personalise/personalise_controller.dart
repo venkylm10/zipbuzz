@@ -51,10 +51,10 @@ class PersonaliseController {
   }
 
   bool validate() {
-    if (!emailCheck()) {
-      showSnackBar(message: "Please use own email, This will be used for further communication");
-      return false;
-    }
+    // if (!emailCheck()) {
+    //   showSnackBar(message: "Please use own email, This will be used for further communication");
+    //   return false;
+    // }
     if (mobileController.text.isEmpty) {
       showSnackBar(message: "Please enter mobile number");
       return false;
@@ -72,7 +72,7 @@ class PersonaliseController {
 
   bool emailCheck() {
     // Define the regular expression pattern
-    RegExp emailPattern = RegExp(r'^[a-z]\d+@zbuzz\.com$');
+    RegExp emailPattern = RegExp(r'^[a-z]+\d+@zbuzz\.com$');
 
     // Check if the input text matches the pattern
     if (emailPattern.hasMatch(emailController.text.trim())) {

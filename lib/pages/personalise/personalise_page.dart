@@ -105,14 +105,14 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             style: AppStyles.h2,
                           ),
                           const SizedBox(height: 24),
-                          buildTextField(
-                            Assets.icons.email,
-                            "Email",
-                            personaliseController.emailController,
-                            currentUser.email ?? "buzz.me@mail.com",
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          const SizedBox(height: 24),
+                          // buildTextField(
+                          //   Assets.icons.email,
+                          //   "Email",
+                        //   personaliseController.emailController,
+                          //   currentUser.email ?? "buzz.me@mail.com",
+                          //   keyboardType: TextInputType.emailAddress,
+                          // ),
+                          // const SizedBox(height: 24),
                           Consumer(builder: (context, subRef, child) {
                             final userLocation = subRef.watch(userLocationProvider);
                             return buildTextField(

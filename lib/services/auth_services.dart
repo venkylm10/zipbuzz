@@ -262,7 +262,7 @@ class AuthServices {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-        final dummyEmail = _generateRandomEmail();
+        final dummyEmail = _generateRandomEmail(user.uid);
         newUser = newUser.copyWith(email: dummyEmail);
         debugPrint("CHECK @@2233");
       }
@@ -333,16 +333,8 @@ class AuthServices {
     }
   }
 
-  String _generateRandomEmail() {
-    // Generate a random number between 1 and 100
-    int randomNumber = Random().nextInt(100) + 1;
-
-    // Generate a random character between 'a' and 'z'
-    String randomChar = String.fromCharCode(Random().nextInt(26) + 'a'.codeUnitAt(0));
-
-    // Construct the email using the random character and number
-    String email = '$randomChar$randomNumber@zbuzz.com';
-
+  String _generateRandomEmail(String uid) {
+    String email = '$uid@zbuzz.com';
     return email;
   }
 }
