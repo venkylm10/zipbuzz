@@ -109,17 +109,32 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         hostName: notification.senderName,
         hostProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
+        eventName: notification.eventName,
         positiveResponse: true,
         time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
       );
-    } else {
+    } else if(notification.notificationType == "no") {
       final notiTime = DateTime.parse(notification.notificationTime);
       final timeDiff = currentTime.difference(notiTime);
       return ResponseNotiCard(
         hostName: notification.senderName,
         hostProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
+        eventName: notification.eventName,
         positiveResponse: false,
+        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
+      );
+    }
+    else{
+      final notiTime = DateTime.parse(notification.notificationTime);
+      final timeDiff = currentTime.difference(notiTime);
+      return ResponseNotiCard(
+        hostName: notification.senderName,
+        hostProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        eventName: notification.eventName,
+        positiveResponse: false,
+        confirmResponse: true,
         time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
       );
     }

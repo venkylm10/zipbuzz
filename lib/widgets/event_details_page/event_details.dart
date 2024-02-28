@@ -101,11 +101,14 @@ class _EventDetailsState extends State<EventDetails> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
-                  widget.event.location,
-                  softWrap: true,
-                  style: AppStyles.h4.copyWith(
-                    fontWeight: FontWeight.w500,
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: Text(
+                    widget.event.location,
+                    softWrap: true,
+                    style: AppStyles.h4.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 // Text(

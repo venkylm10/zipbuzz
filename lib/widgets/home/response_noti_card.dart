@@ -8,14 +8,18 @@ class ResponseNotiCard extends StatelessWidget {
     required this.hostName,
     required this.hostProfilePic,
     required this.eventId,
+    required this.eventName,
     required this.positiveResponse,
+    this.confirmResponse = false,
     required this.time,
   });
 
   final String hostName;
   final String hostProfilePic;
   final int eventId;
+  final String eventName;
   final bool positiveResponse;
+  final bool confirmResponse;
   final String time;
 
   @override
@@ -47,25 +51,34 @@ class ResponseNotiCard extends StatelessWidget {
                   ),
                   softWrap: true,
                 ),
-                RichText(
-                  softWrap: true,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'RSVP - ${positiveResponse ? "Yes" : "No"} ',
-                        style: AppStyles.h5.copyWith(
-                          color: positiveResponse ? AppColors.positiveGreen : AppColors.negativeRed,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'your invite',
+                confirmResponse
+                    ? Text(
+                        "$hostName has confirmed your request for $eventName",
                         style: AppStyles.h5.copyWith(
                           color: AppColors.greyColor,
                         ),
+                      )
+                    : RichText(
+                        softWrap: true,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'RSVP - ${positiveResponse ? "Yes" : "No"} ',
+                              style: AppStyles.h5.copyWith(
+                                color: positiveResponse
+                                    ? AppColors.positiveGreen
+                                    : AppColors.negativeRed,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'your invite',
+                              style: AppStyles.h5.copyWith(
+                                color: AppColors.greyColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
