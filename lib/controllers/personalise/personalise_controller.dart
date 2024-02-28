@@ -39,6 +39,7 @@ class PersonaliseController {
 
   void initialise() async {
     userLocation = ref.read(userLocationProvider);
+    emailController.text = ref.read(userProvider).email;
   }
 
   void updateInterests(String interest) {

@@ -76,6 +76,7 @@ class DBServices {
 
   Future<String?> getAppleUserEmail({required String uid}) async {
     try {
+      print("Getting apple email");
       DatabaseEvent dataSnapshot = await _database.ref('appleUsers/$uid').once();
 
       if (dataSnapshot.snapshot.value != null) {
