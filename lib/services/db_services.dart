@@ -64,6 +64,30 @@ class DBServices {
     }
   }
 
+  Future<void> setAppleUserEmail({required String uid, required String email}) async {
+    try {
+      await _database.ref('appleUsers/$uid').set({
+        "email": email,
+      });
+    } catch (error) {
+      debugPrint('Error Adding Apple User Email: $error');
+    }
+  }
+
+  Future<String?> getAppleUserEmail({required String uid}) async {
+    try {
+      DatabaseEvent dataSnapshot = await _database.ref('appleUsers/$uid').once();
+
+      if (dataSnapshot.snapshot.value != null) {
+        return (dataSnapshot.snapshot.value as Map<String, String>)['email'];
+      }
+      return null;
+    } catch (error) {
+      debugPrint('Error fetching Apple user email: $error');
+      return null;
+    }
+  }
+
   Future<int> getCommentCount({required int eventId}) async {
     int count = 0;
     DataSnapshot dataSnapshot = await _database.ref('chatRooms').child(eventId.toString()).get();
@@ -126,6 +150,10 @@ class DBServices {
 
   Future<void> updateUser(UserDetailsUpdateRequestModel userDetailsUpdateRequestModel) async {
     await _dioServices.updateUserDetails(userDetailsUpdateRequestModel);
+    await setAppleUserEmail(
+      uid: _ref.read(authProvider).currentUser!.uid,
+      email: userDetailsUpdateRequestModel.email,
+    );
   }
 
   Future<int> getUserId(UserIdRequestModel userIdRequestModel) async {

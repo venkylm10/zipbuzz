@@ -10,6 +10,7 @@ import 'package:zipbuzz/models/user/requests/user_details_update_request_model.d
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -26,9 +27,12 @@ class PersonoliseControllerProvider extends StateNotifier<PersonaliseController>
 
 class PersonaliseController {
   final Ref ref;
-  PersonaliseController({required this.ref});
+  PersonaliseController({required this.ref}) {
+    emailController.text = ref.read(userProvider).email;
+  }
   final box = GetStorage();
   final zipcodeController = TextEditingController();
+  final emailController = TextEditingController();
   final mobileController = TextEditingController();
   var selectedInterests = <String>[];
   var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
@@ -46,6 +50,10 @@ class PersonaliseController {
   }
 
   bool validate() {
+    if (!emailCheck()) {
+      showSnackBar(message: "Please use own email, This will be used for further communication");
+      return false;
+    }
     if (mobileController.text.isEmpty) {
       showSnackBar(message: "Please enter mobile number");
       return false;
@@ -59,6 +67,18 @@ class PersonaliseController {
       return false;
     }
     return true;
+  }
+
+  bool emailCheck() {
+    // Define the regular expression pattern
+    RegExp emailPattern = RegExp(r'^[a-z]\d+@zbuzz\.com$');
+
+    // Check if the input text matches the pattern
+    if (emailPattern.hasMatch(emailController.text.trim())) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   Future<bool> checkPhone() async {
@@ -92,6 +112,7 @@ class PersonaliseController {
 
         location = ref.read(userLocationProvider);
         final updatedUser = ref.read(userProvider).copyWith(
+              email: emailController.text.trim(),
               zipcode: zipcodeController.text.trim(),
               mobileNumber: "${location.countryDialCode}${mobileController.text.trim()}",
               interests: selectedInterests,

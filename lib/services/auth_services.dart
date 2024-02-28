@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -31,6 +30,7 @@ class AuthServices {
   final FirebaseAuth _auth;
   final Ref _ref;
   final GoogleSignIn _googleSignIn;
+
   AuthServices({required FirebaseAuth auth, required Ref ref, required GoogleSignIn googleSignIn})
       : _auth = auth,
         _ref = ref,
@@ -225,6 +225,31 @@ class AuthServices {
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
     User user = userCredential.user!;
 
+    var location = _ref.read(userLocationProvider);
+    location = _ref.read(userLocationProvider);
+    // final auth = _ref.read(authProvider);
+    UserModel newUser = UserModel(
+      id: 1,
+      name: user.displayName ?? '',
+      mobileNumber: "+11234567890",
+      email: user.email ?? '',
+      imageUrl: user.photoURL ?? _ref.read(defaultsProvider).profilePictureUrl,
+      handle: "",
+      isAmbassador: false,
+      about: "New to Zipbuzz",
+      eventsHosted: 0,
+      rating: 0.toDouble(),
+      zipcode: location.zipcode,
+      interests: [],
+      eventUids: [],
+      pastEventUids: [],
+      instagramId: "null",
+      linkedinId: "null",
+      twitterId: "null",
+      city: location.city,
+      country: location.country,
+    );
+
     if (appleCredential.email == null) {
       Fluttertoast.showToast(
           msg: "E-Mail Sharing Is Off",
@@ -234,54 +259,42 @@ class AuthServices {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    } else if (userCredential.additionalUserInfo!.isNewUser) {
+      final dummyEmail = _generateRandomEmail();
+      newUser = newUser.copyWith(email: dummyEmail);
+    }
+
+    if (userCredential.additionalUserInfo!.isNewUser) {
       _ref.read(loadingTextProvider.notifier).reset();
-      var location = _ref.read(userLocationProvider);
-      location = _ref.read(userLocationProvider);
-      // final auth = _ref.read(authProvider);
-      UserModel newUser = UserModel(
-        id: 1,
-        name: user.displayName ?? '',
-        mobileNumber: "+11234567890",
-        email: user.email ?? '',
-        imageUrl: user.photoURL ?? _ref.read(defaultsProvider).profilePictureUrl,
-        handle: "",
-        isAmbassador: false,
-        about: "New to Zipbuzz",
-        eventsHosted: 0,
-        rating: 0.toDouble(),
-        zipcode: location.zipcode,
-        interests: [],
-        eventUids: [],
-        pastEventUids: [],
-        instagramId: "null",
-        linkedinId: "null",
-        twitterId: "null",
-        city: location.city,
-        country: location.country,
-      );
       // creating new user
       _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
       await _ref.read(dbServicesProvider).createUser(user: newUser);
+      await _ref.read(dbServicesProvider).setAppleUserEmail(uid: user.uid, email: newUser.email);
       debugPrint("USER CREATED SUCCESSFULLY");
       _ref.read(loadingTextProvider.notifier).reset();
       final id = await _ref.read(dbServicesProvider).getUserId(
             UserIdRequestModel(
-              email: user.email ?? "",
+              email: newUser.email,
               deviceToken: box.read(BoxConstants.deviceToken),
             ),
           );
+
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
       await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id));
+      _ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
     } else {
       // getting id
+      final email = await _ref.read(dbServicesProvider).getAppleUserEmail(uid: user.uid);
+      if (email == null) {
+        showSnackBar(message: "User Not Found");
+        return;
+      }
       final id = await _ref.read(dbServicesProvider).getUserId(
             UserIdRequestModel(
-              email: user.email ?? "",
+              email: email,
               deviceToken: box.read(BoxConstants.deviceToken),
             ),
           );
@@ -290,6 +303,7 @@ class AuthServices {
       box.write(BoxConstants.login, true);
       _ref.read(newEventProvider.notifier).updateHostId(id);
 
+      _ref.read(loadingTextProvider.notifier).reset();
       // Back to AuthGate
       navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
 
@@ -314,5 +328,18 @@ class AuthServices {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  String _generateRandomEmail() {
+    // Generate a random number between 1 and 100
+    int randomNumber = Random().nextInt(100) + 1;
+
+    // Generate a random character between 'a' and 'z'
+    String randomChar = String.fromCharCode(Random().nextInt(26) + 'a'.codeUnitAt(0));
+
+    // Construct the email using the random character and number
+    String email = '$randomChar$randomNumber@zbuzz.com';
+
+    return email;
   }
 }

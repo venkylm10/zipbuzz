@@ -78,6 +78,7 @@ class AppIcons {
   final arrow_repeat = 'assets/icons/arrow_repeat.svg';
   final star_fill = 'assets/icons/star_fill.svg';
   final lock = 'assets/icons/lock.svg';
+  final email = 'assets/icons/email.svg';
 }
 
 class WelcomeImage {

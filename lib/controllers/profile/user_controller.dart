@@ -8,7 +8,7 @@ final userProvider = StateProvider<UserModel>((ref) {
 const globalDummyUser = UserModel(
   id: 1,
   name: "Zipbuzz User",
-  email: "zipbuzz.user@gmail.com",
+  email: "1@zbuzz.com",
   handle: "zipbuzz_user",
   imageUrl:
       "https://firebasestorage.googleapis.com/v0/b/zipbuzz-prod.appspot.com/o/defaults%2Fprofile_image%2Fprofile_image.jpg?alt=media&token=1fc0ee5d-f610-4dd6-b774-1d6f2fb5b801",
