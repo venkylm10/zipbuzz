@@ -260,13 +260,20 @@ class AuthServices {
           textColor: Colors.white,
           fontSize: 16.0);
       final dummyEmail = _generateRandomEmail();
+      newUser = newUser.copyWith(name: "ZipBuzz User");
       newUser = newUser.copyWith(email: dummyEmail);
+      debugPrint("CHECK @@2233");
+
     }
 
+    debugPrint("CHECK @@22");
+
     if (userCredential.additionalUserInfo!.isNewUser) {
+      debugPrint("CHECK @@");
       _ref.read(loadingTextProvider.notifier).reset();
       // creating new user
       _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
+      debugPrint(newUser.toMap().toString());
       await _ref.read(dbServicesProvider).createUser(user: newUser);
       await _ref.read(dbServicesProvider).setAppleUserEmail(uid: user.uid, email: newUser.email);
       debugPrint("USER CREATED SUCCESSFULLY");
@@ -291,6 +298,7 @@ class AuthServices {
       if (email == null) {
         showSnackBar(message: "User Not Found");
         return;
+
       }
       final id = await _ref.read(dbServicesProvider).getUserId(
             UserIdRequestModel(
