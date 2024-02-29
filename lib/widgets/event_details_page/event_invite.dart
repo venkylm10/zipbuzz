@@ -30,12 +30,12 @@ class _EventInviteState extends ConsumerState<EventInvite> {
     searchController = TextEditingController();
     super.initState();
     resetContacts();
-    loading = false;
-    setState(() {});
   }
 
   Future<void> resetContacts() async {
     if (isMounted) await ref.read(contactsServicesProvider).updateAllContacts();
+    loading = false;
+    print("loader set false");
     if (isMounted) setState(() {});
   }
 
@@ -126,7 +126,13 @@ class _EventInviteState extends ConsumerState<EventInvite> {
                       style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                     ),
                     const SizedBox(height: 12),
-                    buildSearchResult(contactSearchResult, selectedContacts),
+                    loading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                            ),
+                          )
+                        : buildSearchResult(contactSearchResult, selectedContacts),
                     const SizedBox(height: 60),
                   ],
                 ),
@@ -212,15 +218,6 @@ class _EventInviteState extends ConsumerState<EventInvite> {
     final nonSelectedSearchedContact = contactSearchResult.where((element) {
       return !selectedContacts.contains(element);
     }).toList();
-    if (loading) {
-      return const SizedBox(
-        height: 40,
-        width: 40,
-        child: CircularProgressIndicator(
-          color: AppColors.primaryColor,
-        ),
-      );
-    }
     return ListView.builder(
       itemCount: nonSelectedSearchedContact.length,
       shrinkWrap: true,
