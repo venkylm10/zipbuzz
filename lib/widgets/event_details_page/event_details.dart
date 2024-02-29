@@ -81,6 +81,9 @@ class _EventDetailsState extends State<EventDetails> {
         const SizedBox(height: 8),
         // location
         Row(
+          crossAxisAlignment: widget.event.location.length > 25
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.center,
           children: [
             Container(
               height: 44,
@@ -97,28 +100,14 @@ class _EventDetailsState extends State<EventDetails> {
               ),
             ),
             const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 120,
-                  child: Text(
-                    widget.event.location,
-                    softWrap: true,
-                    style: AppStyles.h4.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+            Expanded(
+              child: Text(
+                widget.event.location,
+                softWrap: true,
+                style: AppStyles.h4.copyWith(
+                  fontWeight: FontWeight.w500,
                 ),
-                // Text(
-                //   "420 Gala St, San Jose 95125",
-                //   softWrap: true,
-                //   style: AppStyles.h5.copyWith(
-                //     color: AppColors.lightGreyColor,
-                //   ),
-                // ),
-              ],
+              ),
             )
           ],
         ),

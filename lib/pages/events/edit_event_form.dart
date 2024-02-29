@@ -163,7 +163,6 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           controller: descriptionController,
           hintText: "Event description",
           maxLines: 5,
-          maxLength: 100,
           onChanged: (value) {
             editEventController.updateDescription(value);
           },

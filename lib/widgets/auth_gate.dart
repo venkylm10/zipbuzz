@@ -37,12 +37,15 @@ class _AuthGateState extends ConsumerState<AuthGate> {
           .read(userLocationProvider.notifier)
           .getLocationFromZipcode(box.read(BoxConstants.location));
     } else {
-      await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
+      await ref.read(userLocationProvider.notifier).getLocationFromZipcode("95050");
     }
     ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your Data...");
     final id = GetStorage().read(BoxConstants.id) as int;
     final requestModel = UserDetailsRequestModel(userId: id);
     await ref.read(dbServicesProvider).getUserData(requestModel);
+    await ref
+        .read(userLocationProvider.notifier)
+        .getLocationFromZipcode(ref.read(userProvider).zipcode);
     ref.read(newEventProvider.notifier).updateHostId(id);
     ref.read(newEventProvider.notifier).updateHostName(ref.read(userProvider).name);
     final location = ref.read(userLocationProvider);

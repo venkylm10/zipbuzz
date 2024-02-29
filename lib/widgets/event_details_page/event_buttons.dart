@@ -97,20 +97,27 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                     child: Container(
                       height: 48,
                       decoration: BoxDecoration(
-                        color: AppColors.bgGrey,
+                        color: AppColors.primaryColor,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppColors.borderGrey),
                       ),
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SvgPicture.asset(Assets.icons.people, height: 20),
+                            SvgPicture.asset(
+                              Assets.icons.people,
+                              height: 20,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcIn,
+                              ),
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               "Invite Guests",
                               style: AppStyles.h5.copyWith(
                                 fontWeight: FontWeight.w600,
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -444,9 +451,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     return Consumer(builder: (context, ref, child) {
       return GestureDetector(
         onTap: () async {
-          final eventUrl = widget.event.inviteUrl;
-          Share.share(
-              "Follow the link to find more details on ZipBuzz App\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n$eventUrl");
+          shareEvent(widget.event);
         },
         child: Container(
           height: 48,
@@ -530,13 +535,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    // deepLink Url
-                    // final uri = await ref
-                    //     .read(deepLinkServicesProvider)
-                    //     .generateEventDynamicLink(widget.event.id.toString());
-                    final eventUrl = widget.event.inviteUrl;
-                    Share.share(
-                        "Follow the link to find more details on the Event\n\nEvent: ${widget.event.title}\nAbout: ${widget.event.about}\nHost: ${widget.event.hostName}\nDate: ${widget.event.date.substring(0, 10)}\nStart Time: ${widget.event.startTime}\nEnd Time: ${widget.event.endTime}\nLocation: ${widget.event.location}\n\n$eventUrl");
+                    shareEvent(widget.event);
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -588,6 +587,12 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         );
       },
     );
-    setState(() {});
+  }
+
+  void shareEvent(EventModel event) {
+    final eventUrl = event.inviteUrl;
+    final article = "aeiou".contains(event.category[0].toLowerCase()) ? "an" : "a";
+    Share.share(
+        "Follow the link to find more details on the Event\n\n${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at <link> (later)");
   }
 }

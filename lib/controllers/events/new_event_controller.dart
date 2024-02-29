@@ -312,7 +312,11 @@ class NewEvent extends StateNotifier<EventModel> {
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: eventInvites.map((e) {
-          final number = (e.phones!.first.value ?? "").replaceAll("-", "").replaceAll(" ", "");
+          final number = (e.phones!.first.value ?? "")
+              .replaceAll("-", "")
+              .replaceAll(" ", "")
+              .replaceAll("(", "")
+              .replaceAll(")", "");
           final countryCode = ref.read(userLocationProvider).countryDialCode;
           if (!number.startsWith(countryCode)) {
             return "$countryCode$number";

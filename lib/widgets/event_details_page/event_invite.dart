@@ -24,14 +24,17 @@ class EventInvite extends ConsumerStatefulWidget {
 class _EventInviteState extends ConsumerState<EventInvite> {
   late TextEditingController searchController;
   bool isMounted = true;
+  bool loading = true;
   @override
   void initState() {
     searchController = TextEditingController();
     super.initState();
     resetContacts();
+    loading = false;
+    setState(() {});
   }
 
-  void resetContacts() async {
+  Future<void> resetContacts() async {
     if (isMounted) await ref.read(contactsServicesProvider).updateAllContacts();
     if (isMounted) setState(() {});
   }
@@ -87,6 +90,19 @@ class _EventInviteState extends ConsumerState<EventInvite> {
                   child: SvgPicture.asset(
                     Assets.icons.searchBarIcon,
                     colorFilter: const ColorFilter.mode(AppColors.lightGreyColor, BlendMode.srcIn),
+                  ),
+                ),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    searchController.text = "";
+                    updateSearchResult("");
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Icon(
+                      Icons.cancel_outlined,
+                      color: AppColors.lightGreyColor,
+                    ),
                   ),
                 ),
                 onChanged: (query) {
@@ -196,11 +212,23 @@ class _EventInviteState extends ConsumerState<EventInvite> {
     final nonSelectedSearchedContact = contactSearchResult.where((element) {
       return !selectedContacts.contains(element);
     }).toList();
-    return Column(
-      children: List.generate(nonSelectedSearchedContact.length, (index) {
+    if (loading) {
+      return const SizedBox(
+        height: 40,
+        width: 40,
+        child: CircularProgressIndicator(
+          color: AppColors.primaryColor,
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: nonSelectedSearchedContact.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
         final contact = nonSelectedSearchedContact[index];
         return buildContactCard(contact, isSelected: false);
-      }),
+      },
     );
   }
 

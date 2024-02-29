@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -269,10 +271,15 @@ class _EventCardState extends ConsumerState<EventCard> {
                                       height: 16,
                                     ),
                                     const SizedBox(width: 5),
-                                    Text(
-                                      widget.event.location,
-                                      style: AppStyles.h5.copyWith(
-                                        color: AppColors.lightGreyColor,
+                                    Expanded(
+                                      child: Text(
+                                        widget.event.location,
+                                        style: AppStyles.h5.copyWith(
+                                          color: AppColors.lightGreyColor,
+                                        ),
+                                        softWrap: true,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],

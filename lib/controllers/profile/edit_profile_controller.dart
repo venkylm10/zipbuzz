@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -120,13 +121,10 @@ class EditProfileController {
       }
       if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating Location..");
-        try {
           await ref
               .read(userLocationProvider.notifier)
               .getLocationFromZipcode(zipcodeController.text.trim());
-        } catch (e) {
-          debugPrint("Error updating location: $e");
-        }
+        
       }
 
       var profileUrl = ref.read(userProvider).imageUrl;

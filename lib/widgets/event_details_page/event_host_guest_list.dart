@@ -65,7 +65,8 @@ class EventHostGuestList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
           final member = pendingMembers[index];
-          return buildRequestMemberCard(member, context, index, isPending: true);
+          return buildRequestMemberCard(member, context, index,
+              isPending: true, isLast: index == pendingMembers.length - 1);
         },
       );
     });
@@ -74,15 +75,16 @@ class EventHostGuestList extends StatelessWidget {
   Widget buildConfirmedMembers() {
     return Consumer(builder: (context, ref, child) {
       var data = ref.watch(eventRequestMembersProvider);
-      final pendingMembers = data.where((element) => element.status == "confirm").toList();
+      final confirmedMembers = data.where((element) => element.status == "confirm").toList();
       return ListView.builder(
-        itemCount: pendingMembers.length,
+        itemCount: confirmedMembers.length,
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          final member = pendingMembers[index];
-          return buildRequestMemberCard(member, context, index);
+          final member = confirmedMembers[index];
+          return buildRequestMemberCard(member, context, index,
+              isLast: index == confirmedMembers.length - 1);
         },
       );
     });
@@ -102,7 +104,7 @@ class EventHostGuestList extends StatelessWidget {
   }
 
   Column buildRequestMemberCard(EventRequestMember member, BuildContext context, int index,
-      {bool isPending = false}) {
+      {bool isPending = false, bool isLast = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -151,13 +153,14 @@ class EventHostGuestList extends StatelessWidget {
                       newMember.status = "confirm";
                       var updateMembers = ref.read(eventRequestMembersProvider);
                       updateMembers.removeAt(index);
-                      updateMembers.insert(index, newMember);
+                      updateMembers.add(newMember);
                       ref
                           .read(eventRequestMembersProvider.notifier)
                           .update((state) => updateMembers);
                       await ref
                           .read(dioServicesProvider)
                           .editUserStatus(eventId, member.phone, "confirm");
+                      
                       ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                     }
                   },
@@ -167,7 +170,7 @@ class EventHostGuestList extends StatelessWidget {
             ],
           ),
         ),
-        if (index != guests.length - 1)
+        if (!isLast)
           Divider(
             color: AppColors.greyColor.withOpacity(0.2),
             thickness: 0,

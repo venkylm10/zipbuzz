@@ -21,7 +21,8 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   bool isMounted = true;
 
   void onDaySelected(DateTime day, DateTime focusedDay) {
-    ref.read(eventsControllerProvider.notifier).updatedFocusedDay(focusedDay.toLocal());
+    print(focusedDay.toString());
+    ref.read(eventsControllerProvider.notifier).updatedFocusedDay(focusedDay);
     ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
     setState(() {});
   }
@@ -62,6 +63,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
 
   @override
   Widget build(BuildContext context) {
+    const double rowHeight = 36;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -87,7 +89,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
               selectedDayPredicate: (day) => isSameDay(day, focusedDay),
               onDaySelected: onDaySelected,
               startingDayOfWeek: StartingDayOfWeek.monday,
-              rowHeight: 48,
+              rowHeight: rowHeight,
               availableGestures: AvailableGestures.horizontalSwipe,
               calendarBuilders: customCalendarBuilders(),
               eventLoader: (day) => eventsMap[day] ?? [],
@@ -208,10 +210,10 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Container(
-                height: 30,
-                width: 30,
+                height: 24,
+                width: 36,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(36),
                   color: AppColors.primaryColor.withOpacity(0.2),
                 ),
                 child: Center(

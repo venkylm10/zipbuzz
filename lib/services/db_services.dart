@@ -234,10 +234,8 @@ class DBServices {
         final userZipcode = _ref.read(userLocationProvider).zipcode;
         final list = await _dioServices.getAllEvents(userEventsRequestModel);
         final userEvents = list.where((element) => element['host_zipcode'] == userZipcode).toList();
-        final events = userEvents.map((e) async {
+        final events = userEvents.map((e) {
           final res = EventResponseModel.fromMap(e);
-          final members =
-              await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.id));
           final eventModel = EventModel(
             id: res.id,
             title: res.name,
@@ -259,7 +257,7 @@ class DBServices {
             privateGuestList: true,
             hostName: res.hostName,
             hostPic: res.hostPic,
-            eventMembers: members,
+            eventMembers: [],
             inviteUrl: res.inviteUrl,
             status: res.status,
           );
@@ -268,7 +266,7 @@ class DBServices {
           print(eventModel.status);
           return eventModel;
         }).toList();
-        return await Future.wait(events);
+        return events;
       } catch (e) {
         debugPrint(e.toString());
         return [];

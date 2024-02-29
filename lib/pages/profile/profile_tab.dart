@@ -64,30 +64,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
           leading: const SizedBox(),
           elevation: 0,
           actions: [
-            GestureDetector(
-              onTap: () => editProfile(user),
-              child: Container(
-                height: 32,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                margin: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.borderGrey),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Center(
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(Assets.icons.edit, height: 16),
-                      const SizedBox(width: 4),
-                      Text(
-                        "Edit",
-                        style: AppStyles.h5.copyWith(color: AppColors.greyColor),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            buildEditButton(user),
           ],
         ),
         body: SingleChildScrollView(
@@ -205,6 +182,41 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 const SizedBox(height: 24),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  GestureDetector buildEditButton(UserModel user) {
+    return GestureDetector(
+      onTap: () => editProfile(user),
+      child: Container(
+        height: 32,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        margin: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.borderGrey),
+          color: AppColors.primaryColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Center(
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                Assets.icons.edit,
+                height: 16,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                "Edit",
+                style: AppStyles.h5.copyWith(color: Colors.white),
+              )
+            ],
           ),
         ),
       ),

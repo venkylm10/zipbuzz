@@ -167,7 +167,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           controller: descriptionController,
           hintText: "Event description",
           maxLines: 5,
-          maxLength: 100,
           onChanged: updateDescription,
         ),
         broadDivider(),
@@ -288,7 +287,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   Container categoryDropDown() {
-    var interests = ref.read(homeTabControllerProvider).currentInterests.map((e) => e.activity).toList();
+    var interests =
+        ref.read(homeTabControllerProvider).currentInterests.map((e) => e.activity).toList();
     interests.sort((a, b) => a.compareTo(b));
     for (var e in allInterests) {
       if (!interests.contains(e.activity)) {

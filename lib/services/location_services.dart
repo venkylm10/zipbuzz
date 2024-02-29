@@ -2,6 +2,7 @@ import 'package:country_dial_code/country_dial_code.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
@@ -16,7 +17,7 @@ class LocationServices extends StateNotifier<LocationModel> {
   final Ref ref;
   LocationServices({required this.ref})
       : super(LocationModel(
-            city: "San Jose", country: "USA", countryDialCode: "+1", zipcode: "95050"));
+            city: "Santa Clara", country: "CA", countryDialCode: "+1", zipcode: "95050"));
 
   final box = GetStorage();
 
@@ -27,20 +28,33 @@ class LocationServices extends StateNotifier<LocationModel> {
   Future<void> getLocationFromZipcode(String newZipcode) async {
     state = state.copyWith(zipcode: newZipcode);
     try {
-      final res = await ref.read(dioServicesProvider).dio.get(DioConstants.getLocation,
-          data: {"zipcode": "000000"}); // TODO: update this to newZipcode
+      final res = await ref
+          .read(dioServicesProvider)
+          .dio
+          .get(DioConstants.getLocation, data: {"zipcode": newZipcode});
+      final loc = res.data['location_name'].split(",");
       ref.read(userProvider.notifier).update((state) {
         return state.copyWith(
           zipcode: newZipcode,
-          city: res.data['location_name'].split(",")[0].toString().trim(),
-          country: res.data['location_name'].split(",")[1].toString().trim(),
+          city: loc[0].toString().trim(),
+          country: loc[1].toString().trim(),
         );
       });
       state = state.copyWith(
-        city: res.data['location_name'].split(",")[0].toString().trim(),
-        country: res.data['location_name'].split(",")[1].toString().trim(),
+        city: loc[0].toString().trim(),
+        country: loc[1].toString().trim(),
       );
+      box.write(BoxConstants.location, newZipcode);
     } on DioException catch (e) {
+      Fluttertoast.showToast(
+        msg: "Zipcode doesn't exist",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
       debugPrint("Error updating location using zipcode $newZipcode: $e");
     } catch (e) {
       debugPrint("Error updating location using zipcode $newZipcode: $e");
@@ -51,8 +65,7 @@ class LocationServices extends StateNotifier<LocationModel> {
     if (box.hasData(BoxConstants.countryDialCode)) {
       final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
       state = state.copyWith(countryDialCode: countryDialCode);
-      print("Country dial code: $countryDialCode");
-      print("Country dial code: ${state.countryDialCode}");
+      debugPrint("Country dial code: $countryDialCode");
       return;
     }
     try {
@@ -64,12 +77,10 @@ class LocationServices extends StateNotifier<LocationModel> {
         box.write(BoxConstants.countryDialCode, countryDialCode);
       }
     } catch (e) {
-      try {
+      if (box.hasData(BoxConstants.countryDialCode)) {
         final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
         print("Country dial code: $countryDialCode");
         state = state.copyWith(countryDialCode: countryDialCode);
-      } catch (e) {
-        debugPrint("Failed to get country dial code from box");
       }
       debugPrint("Failed to get country dial code");
     }

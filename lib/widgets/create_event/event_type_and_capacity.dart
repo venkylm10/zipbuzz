@@ -80,84 +80,85 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
           style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
         ),
         const SizedBox(height: 16),
-        GestureDetector(
-          onTap: () => updateEventType(false),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: AppColors.bgGrey,
-              border:
-                  Border.all(color: newIsPrivate ? AppColors.borderGrey : AppColors.primaryColor),
-            ),
-            child: Row(
-              children: [
-                Radio(
-                  value: false,
-                  groupValue: newIsPrivate,
-                  activeColor: AppColors.primaryColor,
-                  onChanged: (value) {
-                    updateEventType(false);
-                  },
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Public event", style: AppStyles.h4),
-                    SizedBox(
-                      width: size.width * 0.7,
-                      child: Text(
-                        "Anyone can view the guest list",
-                        style: AppStyles.h5.copyWith(
-                          color: AppColors.lightGreyColor,
-                        ),
+        Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => updateEventType(false),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColors.bgGrey,
+                    border: Border.all(
+                        color: newIsPrivate ? AppColors.borderGrey : AppColors.primaryColor),
+                  ),
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: false,
+                        groupValue: newIsPrivate,
+                        activeColor: AppColors.primaryColor,
+                        onChanged: (value) {
+                          updateEventType(false);
+                        },
                       ),
-                    ),
-                  ],
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Public event", style: AppStyles.h4),
+                          Text(
+                            "Open to All",
+                            style: AppStyles.h5.copyWith(
+                              color: AppColors.lightGreyColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: () => updateEventType(true),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: AppColors.bgGrey,
-              border: Border.all(
-                color: !newIsPrivate ? AppColors.borderGrey : AppColors.primaryColor,
               ),
             ),
-            child: Row(
-              children: [
-                Radio(
-                  value: true,
-                  groupValue: newIsPrivate,
-                  activeColor: AppColors.primaryColor,
-                  onChanged: (value) {
-                    updateEventType(true);
-                  },
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Private event", style: AppStyles.h4),
-                    SizedBox(
-                      width: size.width * 0.7,
-                      child: Text(
-                        "Only people whom you invite can join this event",
-                        softWrap: true,
-                        style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                      ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => updateEventType(true),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColors.bgGrey,
+                    border: Border.all(
+                      color: !newIsPrivate ? AppColors.borderGrey : AppColors.primaryColor,
                     ),
-                  ],
+                  ),
+                  child: Row(
+                    children: [
+                      Radio(
+                        value: true,
+                        groupValue: newIsPrivate,
+                        activeColor: AppColors.primaryColor,
+                        onChanged: (value) {
+                          updateEventType(true);
+                        },
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Private event", style: AppStyles.h4),
+                          Text(
+                            "By Invitation Only",
+                            style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
         const SizedBox(height: 14),
         Row(

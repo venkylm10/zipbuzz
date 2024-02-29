@@ -21,7 +21,7 @@ class EventModel {
   final bool isPrivate;
   final int capacity;
   final List<String> imageUrls;
-  final List<EventInviteMember> eventMembers;
+  List<EventInviteMember> eventMembers;
   final String inviteUrl;
   String status;
   EventModel({

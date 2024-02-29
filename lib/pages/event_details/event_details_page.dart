@@ -4,10 +4,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/utils.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -88,6 +92,17 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   void initialise() async {
     maxImages = ref.read(newEventProvider.notifier).maxImages;
     await ref.read(dbServicesProvider).getEventRequestMembers(widget.event.id);
+    final members = await ref
+        .read(dioServicesProvider)
+        .getEventMembers(EventMembersRequestModel(eventId: widget.event.id));
+    widget.event.eventMembers = members;
+    for (var e in ref.read(eventRequestMembersProvider)) {
+      if (widget.event.eventMembers.firstWhereOrNull((element) => element.phone == e.phone) ==
+          null) {
+        final newMember = EventInviteMember(image: e.image, phone: e.phone, name: e.name);
+        widget.event.eventMembers.add(newMember);
+      }
+    }
     getEventColor();
   }
 
