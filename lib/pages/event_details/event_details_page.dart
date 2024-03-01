@@ -167,7 +167,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     iconPath: widget.event.iconPath,
                                   ),
                                   Consumer(builder: (context, ref, child) {
-                                    var attendees = 1;
+                                    var attendees = 0;
                                     if (widget.isPreview) {
                                       attendees = ref.watch(newEventProvider).attendees;
                                     } else if (widget.rePublish) {

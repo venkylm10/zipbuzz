@@ -139,7 +139,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         const SizedBox(height: 16),
         Row(
           children: [
-            Text("Event name", style: AppStyles.h4),
+            Text("Event title", style: AppStyles.h4),
             Text(
               "*",
               style: AppStyles.h4.copyWith(color: Colors.red),
@@ -177,7 +177,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         const SizedBox(height: 16),
         Row(
           children: [
-            Text("Enter venue location", style: AppStyles.h4),
+            Text("Enter venue/location", style: AppStyles.h4),
             Text(
               "*",
               style: AppStyles.h4.copyWith(color: Colors.red),

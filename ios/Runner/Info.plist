@@ -28,10 +28,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>User profile picture and Event banners images</string>
-	<key>NSLocationAlwaysUsageDescription</key>
+	<!-- <key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
+	<string>This app needs access to location when open.</string> -->
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>User profile picture and Event banners images.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -80,14 +80,14 @@
             </array>
         </dict>
     </array>
-    <key>NSLocationAlwaysUsageDescription</key>
+    <!-- <key>NSLocationAlwaysUsageDescription</key>
     <string>Main</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app needs access to location when open.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>This app needs to access your current location to display it on the map.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app needs access to location when in the background.</string>
+    <string>This app needs access to location when in the background.</string> -->
     <key>NSContactsUsageDescription</key>
     <string>This app requires contacts access to function properly.</string>
 </dict>

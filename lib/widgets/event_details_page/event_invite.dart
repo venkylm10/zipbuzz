@@ -238,7 +238,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
         setState(() {});
       },
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         margin: const EdgeInsets.only(bottom: 5),
         width: double.infinity,
         decoration: BoxDecoration(
