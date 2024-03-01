@@ -28,6 +28,12 @@ class ProfileTab extends ConsumerStatefulWidget {
 class _ProfileTabState extends ConsumerState<ProfileTab> {
   var isMounted = true;
   void editProfile(UserModel user) async {
+    final updatedInterests =
+        ref.read(homeTabControllerProvider).currentInterests.map((e) => e.activity).toList();
+    ref.read(userProvider.notifier).update((state) => state.copyWith(
+          interests: updatedInterests,
+        ));
+    ref.read(editProfileControllerProvider).updateUserClone();
     await navigatorKey.currentState!.pushNamed(EditProfilePage.id, arguments: {"user": user});
     if (isMounted) {
       setState(() {});

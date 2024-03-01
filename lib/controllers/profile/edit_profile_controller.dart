@@ -51,6 +51,10 @@ class EditProfileController {
     image = updatedImage;
   }
 
+  void updateUserClone(){
+    userClone = ref.read(userProvider).getClone();
+  }
+
   void updateInterest(String interest) {
     if (userClone.interests.contains(interest)) {
       userClone.interests.remove(interest);
