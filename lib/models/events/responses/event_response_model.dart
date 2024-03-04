@@ -18,7 +18,7 @@ class EventResponseModel {
   final String inviteUrl;
   List<ImageModel> images;
   final String status;
-
+  final String userDeviceToken;
   EventResponseModel({
     required this.id,
     required this.banner,
@@ -39,6 +39,7 @@ class EventResponseModel {
     this.images = const [],
     this.inviteUrl = "",
     required this.status,
+    required this.userDeviceToken,
   });
 
   Map<String, dynamic> toMap() {
@@ -62,6 +63,7 @@ class EventResponseModel {
       'images': images.map((image) => image.toMap()).toList(),
       "invite_url": inviteUrl,
       "status": status,
+      "user_device_token": userDeviceToken,
     };
   }
 
@@ -86,6 +88,7 @@ class EventResponseModel {
       images: (map['images'] as List).map((e) => ImageModel.fromMap(e)).toList(),
       inviteUrl: map['invite_url'] ?? "",
       status: map['status'],
+      userDeviceToken: map['user_device_token'] ?? "",
     );
   }
 }

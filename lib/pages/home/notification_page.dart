@@ -96,10 +96,12 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
               phoneNumber: user.mobileNumber,
               image: user.imageUrl);
           await ref.read(dioServicesProvider).requestToJoinEvent(model);
+          await ref.read(dioServicesProvider).increaseDecision(notification.eventId, "yes");
         },
         declineInvite: () async {
           await ref.read(dioServicesProvider).updateNotification(notification.id, "no");
           setState(() {});
+          await ref.read(dioServicesProvider).increaseDecision(notification.eventId, "no");
         },
       );
     } else if (notification.notificationType == "yes") {
@@ -113,7 +115,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         positiveResponse: true,
         time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
       );
-    } else if(notification.notificationType == "no") {
+    } else if (notification.notificationType == "no") {
       final notiTime = DateTime.parse(notification.notificationTime);
       final timeDiff = currentTime.difference(notiTime);
       return ResponseNotiCard(
@@ -124,8 +126,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         positiveResponse: false,
         time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
       );
-    }
-    else{
+    } else {
       final notiTime = DateTime.parse(notification.notificationTime);
       final timeDiff = currentTime.difference(notiTime);
       return ResponseNotiCard(
