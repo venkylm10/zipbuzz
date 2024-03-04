@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -24,19 +23,11 @@ class EventInvite extends ConsumerStatefulWidget {
 class _EventInviteState extends ConsumerState<EventInvite> {
   late TextEditingController searchController;
   bool isMounted = true;
-  bool loading = true;
+  bool loading = false;
   @override
   void initState() {
     searchController = TextEditingController();
     super.initState();
-    resetContacts();
-  }
-
-  Future<void> resetContacts() async {
-    if (isMounted) await ref.read(contactsServicesProvider).updateAllContacts();
-    loading = false;
-    print("loader set false");
-    if (isMounted) setState(() {});
   }
 
   @override
