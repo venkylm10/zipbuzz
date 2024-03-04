@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -33,6 +34,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final currentUser = ref.read(authProvider).currentUser!;
+    final localUid = ref.read(userProvider).email.split("@").first;
     final personaliseController = ref.read(personaliseControllerProvider);
     return GestureDetector(
       onTap: () {
@@ -92,7 +94,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                         children: [
                           const SizedBox(height: 54),
                           Text(
-                            "Hi ${currentUser.displayName ?? ""}!",
+                            "Hi ${localUid == currentUser.uid ? personaliseController.nameController.text : currentUser.displayName ?? ""}!",
                             style: AppStyles.extraLarge.copyWith(
                               color: AppColors.primaryColor,
                               fontWeight: FontWeight.bold,
@@ -105,14 +107,15 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             style: AppStyles.h2,
                           ),
                           const SizedBox(height: 24),
-                          // buildTextField(
-                          //   Assets.icons.email,
-                          //   "Email",
-                        //   personaliseController.emailController,
-                          //   currentUser.email ?? "buzz.me@mail.com",
-                          //   keyboardType: TextInputType.emailAddress,
-                          // ),
-                          // const SizedBox(height: 24),
+                          if (localUid == currentUser.uid)
+                            buildTextField(
+                              Assets.icons.personName,
+                              "Name",
+                              personaliseController.nameController,
+                              currentUser.displayName ?? "Enter name",
+                              keyboardType: TextInputType.text,
+                            ),
+                          if (localUid == currentUser.uid) const SizedBox(height: 24),
                           Consumer(builder: (context, subRef, child) {
                             final userLocation = subRef.watch(userLocationProvider);
                             return buildTextField(
