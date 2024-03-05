@@ -13,7 +13,6 @@ import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
@@ -311,19 +310,16 @@ class NewEvent extends StateNotifier<EventModel> {
       final inviteePicUrls = await ref
           .read(storageServicesProvider)
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
+      final phoneNumbers = eventInvites.map((e) {
+        final number = (e.phones!.first.value ?? "")
+            .replaceAll("-", "")
+            .replaceAll(" ", "")
+            .replaceAll("(", "")
+            .replaceAll(")", "");
+        return number;
+      }).toList();
       final eventInvitePostModel = EventInvitePostModel(
-        phoneNumbers: eventInvites.map((e) {
-          final number = (e.phones!.first.value ?? "")
-              .replaceAll("-", "")
-              .replaceAll(" ", "")
-              .replaceAll("(", "")
-              .replaceAll(")", "");
-          final countryCode = ref.read(userLocationProvider).countryDialCode;
-          if (!number.startsWith(countryCode)) {
-            return "$countryCode$number";
-          }
-          return e.phones!.first.value ?? "";
-        }).toList(),
+        phoneNumbers: phoneNumbers,
         images: inviteePicUrls,
         names: eventInvites.map((e) {
           return e.displayName ?? "";
@@ -340,9 +336,9 @@ class NewEvent extends StateNotifier<EventModel> {
         hostId: ref.read(userProvider).id,
         notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
+      showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
       debugPrint(eventInvitePostModel.toMap().toString());
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
-
       // upload event images
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
