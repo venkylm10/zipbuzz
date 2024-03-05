@@ -199,6 +199,7 @@ class DBServices {
         _ref.read(userLocationProvider.notifier).updateState(location.copyWith(
               zipcode: _ref.read(userProvider).zipcode,
             ));
+        box.write(BoxConstants.id, _ref.read(userProvider).id);
         box.write('user_details', userDetails.toMap());
         box.write('user_interests', updatedUser.interests);
       } else {
@@ -265,6 +266,7 @@ class DBServices {
           print(eventModel.id);
           print(eventModel.title);
           print(eventModel.status);
+          print(eventModel.userDeviceToken);
           return eventModel;
         }).toList();
         return events;
@@ -280,8 +282,6 @@ class DBServices {
   Future<EventModel> getEventDetails(int eventId) async {
     final e = await _dioServices.getEventDetails(eventId);
     final res = EventResponseModel.fromMap(e);
-    final members = await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.id));
-
     final eventModel = EventModel(
       id: res.id,
       title: res.name,
@@ -303,7 +303,7 @@ class DBServices {
       privateGuestList: true,
       hostName: res.hostName,
       hostPic: res.hostPic,
-      eventMembers: members,
+      eventMembers: [],
       inviteUrl: res.inviteUrl,
       status: res.status,
       userDeviceToken: res.userDeviceToken,

@@ -33,6 +33,8 @@ lib/firebase_options.dart
 .pub/
 /build/
 
+lib/services/notification_services.dart
+
 # Symbolication related
 app.*.symbols
 

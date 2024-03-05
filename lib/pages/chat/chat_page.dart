@@ -48,7 +48,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
   void sendMessage() async {
     if (messageController.text.trim().isNotEmpty) {
       await ref.read(chatServicesProvider).sendMessage(
-            eventId: widget.event.id,
+            event: widget.event,
             message: messageController.text.trim(),
           );
       messageController.clear();

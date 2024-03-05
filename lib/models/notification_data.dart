@@ -6,7 +6,7 @@ class NotificationData {
   String notificationTime;
   int eventId;
   String eventName;
-
+  String deviceToken;
   NotificationData({
     required this.id,
     required this.senderName,
@@ -15,6 +15,7 @@ class NotificationData {
     required this.notificationTime,
     required this.eventId,
     required this.eventName,
+    required this.deviceToken,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +27,7 @@ class NotificationData {
       'notification_time': notificationTime,
       'event_id': eventId,
       'event_name': eventName,
+      'device_token': deviceToken,
     };
   }
 
@@ -38,6 +40,7 @@ class NotificationData {
       notificationTime: map['notification_time'],
       eventId: map['event_id'],
       eventName: map['event_name'],
+      deviceToken: map['device_token'],
     );
   }
 }

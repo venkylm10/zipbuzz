@@ -4,6 +4,7 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
@@ -27,7 +28,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       appBar: AppBar(
         leading: backButton(),
         title: Text(
-          "Notificaitions",
+          "Notifications",
           style: AppStyles.h2.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.primaryColor,
@@ -97,11 +98,24 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
               image: user.imageUrl);
           await ref.read(dioServicesProvider).requestToJoinEvent(model);
           await ref.read(dioServicesProvider).increaseDecision(notification.eventId, "yes");
+          NotificationServices.sendMessageNotification(
+            notification.eventName,
+            "${user.name} RSVP'd Yes to the event",
+            notification.deviceToken,
+            notification.eventId,
+          );
         },
         declineInvite: () async {
           await ref.read(dioServicesProvider).updateNotification(notification.id, "no");
           setState(() {});
           await ref.read(dioServicesProvider).increaseDecision(notification.eventId, "no");
+          final user = ref.read(userProvider);
+          NotificationServices.sendMessageNotification(
+            notification.eventName,
+            "${user.name} RSVP'd No to the event",
+            notification.deviceToken,
+            notification.eventId,
+          );
         },
       );
     } else if (notification.notificationType == "yes") {

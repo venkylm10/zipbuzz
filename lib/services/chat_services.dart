@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/message_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/services/notification_services.dart';
+import 'package:zipbuzz/utils/constants/database_constants.dart';
 
 final chatServicesProvider = Provider(
   (ref) => ChatServices(
@@ -19,7 +23,7 @@ class ChatServices {
       : _ref = ref,
         _dbServices = dbServices;
 
-  Future<void> sendMessage({required int eventId, required String message}) async {
+  Future<void> sendMessage({required EventModel event, required String message}) async {
     debugPrint("SENDING MESSAGE");
     final currentUser = _ref.read(userProvider);
     final senderId = currentUser.id;
@@ -29,13 +33,22 @@ class ChatServices {
         senderId: senderId,
         senderName: currentUser.name,
         senderPic: currentUser.imageUrl,
-        eventId: eventId,
+        eventId: event.id,
         message: message,
         timeStamp: DateTime.now().toUtc().toString());
     await _dbServices.sendMessage(
-        eventId: eventId, messageId: messageId, message: newMessage.toMap());
+        eventId: event.id, messageId: messageId, message: newMessage.toMap());
     debugPrint("MESSAGE SENT");
-    _ref.read(dioServicesProvider).increaseCommentCount(eventId);
+    _ref.read(dioServicesProvider).increaseCommentCount(event.id);
+    final host = (GetStorage().read(BoxConstants.deviceToken) as String) == event.userDeviceToken;
+    if (!host) {
+      NotificationServices.sendMessageNotification(
+        event.title,
+        "${currentUser.name}: $message",
+        event.userDeviceToken,
+        event.id,
+      );
+    }
   }
 
   Stream<List<Message>> getMessages({required int eventId}) {
