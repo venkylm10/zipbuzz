@@ -158,4 +158,12 @@ class PersonaliseController {
       }
     }
   }
+
+  void clearController() {
+    emailController.clear();
+    mobileController.clear();
+    nameController.clear();
+    zipcodeController.clear();
+    selectedInterests.clear();
+  }
 }

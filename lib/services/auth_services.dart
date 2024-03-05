@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
@@ -329,6 +330,7 @@ class AuthServices {
       await _auth.signOut();
       box.remove(BoxConstants.login);
       box.remove(BoxConstants.guestUser);
+      _ref.read(personaliseControllerProvider).clearController();
       navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
     } catch (e) {
       debugPrint(e.toString());
