@@ -7,7 +7,7 @@ final userProvider = StateProvider<UserModel>((ref) {
 
 const globalDummyUser = UserModel(
   id: 1,
-  name: "Zipbuzz User",
+  name: "---",
   email: "1@zbuzz.com",
   handle: "zipbuzz_user",
   imageUrl:
@@ -15,7 +15,7 @@ const globalDummyUser = UserModel(
   isAmbassador: true,
   eventsHosted: 8,
   rating: 4.5,
-  zipcode: "95120",
+  zipcode: "95040",
   mobileNumber: "+11234567890",
   linkedinId: "https://www.linkedin.com/company/linkedin/",
   instagramId: "https://www.instagram.com/instagram/",
