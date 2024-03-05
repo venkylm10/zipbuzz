@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/message_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 
 final chatServicesProvider = Provider(
   (ref) => ChatServices(
@@ -34,6 +35,7 @@ class ChatServices {
     await _dbServices.sendMessage(
         eventId: eventId, messageId: messageId, message: newMessage.toMap());
     debugPrint("MESSAGE SENT");
+    _ref.read(dioServicesProvider).increaseCommentCount(eventId);
   }
 
   Stream<List<Message>> getMessages({required int eventId}) {

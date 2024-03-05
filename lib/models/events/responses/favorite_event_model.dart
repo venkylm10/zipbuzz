@@ -16,7 +16,7 @@ class FavoriteEventModel {
   int filledCapacity;
   String inviteUrl;
   String status;
-
+  String userDeviceToken;
   FavoriteEventModel({
     required this.eventId,
     required this.image,
@@ -35,6 +35,7 @@ class FavoriteEventModel {
     required this.filledCapacity,
     this.inviteUrl = "",
     required this.status,
+    required this.userDeviceToken,
   });
 
   Map<String, dynamic> toMap() {
@@ -56,6 +57,7 @@ class FavoriteEventModel {
       'filled_capacity': filledCapacity,
       "invite_url": inviteUrl,
       "status": status,
+      "user_device_token": userDeviceToken,
     };
   }
 
@@ -78,6 +80,7 @@ class FavoriteEventModel {
       filledCapacity: map['filled_capacity'] as int,
       inviteUrl: map['invite_url'] ?? "",
       status: map['status'] ?? "nothing",
+      userDeviceToken: map['user_device_token'] ?? "",
     );
   }
 }

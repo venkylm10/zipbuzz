@@ -40,6 +40,24 @@ class DioServices {
   );
   final box = GetStorage();
 
+  // increase count
+  Future<void> increaseCommentCount(int eventId) async {
+    try {
+      await dio.post(DioConstants.increaseComment, data: {"event_id": eventId});
+    } catch (e) {
+      debugPrint("Error increasing comment count: $e");
+    }
+  }
+
+  Future<void> increaseDecision(int eventId, String decicion) async {
+    try {
+      await dio
+          .post(DioConstants.increaseDecision, data: {"event_id": eventId, "decision": decicion});
+    } catch (e) {
+      debugPrint("Error decision increasing: $e");
+    }
+  }
+
   // delete event images
   Future<void> deleteEventImages(List<String> images) async {
     try {

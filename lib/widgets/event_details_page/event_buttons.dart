@@ -106,7 +106,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                           children: [
                             SvgPicture.asset(
                               Assets.icons.people,
-                              height: 20,
+                              height: 22,
                               colorFilter: const ColorFilter.mode(
                                 Colors.white,
                                 BlendMode.srcIn,
@@ -115,7 +115,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                             const SizedBox(width: 8),
                             Text(
                               "Invite Guests",
-                              style: AppStyles.h5.copyWith(
+                              style: AppStyles.h3.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),

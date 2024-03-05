@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.zipbuzz"
+    namespace "com.abacus.zipbuzz"
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 

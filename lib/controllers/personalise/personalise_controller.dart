@@ -10,7 +10,6 @@ import 'package:zipbuzz/models/user/requests/user_details_update_request_model.d
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -34,6 +33,7 @@ class PersonaliseController {
   final zipcodeController = TextEditingController();
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
+  final nameController = TextEditingController();
   var selectedInterests = <String>[];
   var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
 

@@ -53,6 +53,7 @@ class EditEventController extends StateNotifier<EventModel> {
             privateGuestList: false,
             eventMembers: [],
             status: "nothing",
+            userDeviceToken: "",
           ),
         );
   int eventId = 1;

@@ -12,6 +12,7 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -78,6 +79,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
     }
+    ref.read(contactsServicesProvider).updateAllContacts();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 
