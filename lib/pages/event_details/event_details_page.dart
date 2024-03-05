@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/utils.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
@@ -62,15 +63,33 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   void pickImage() async {
     final pickedImage = await ImageServices().pickImage();
-    if (pickedImage != null) {
-      image = File(pickedImage.path);
-      ref.read(newEventProvider.notifier).updateBannerImage(image!);
-      ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
-      ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
-      widget.dominantColor = await getDominantColor();
-      ref.read(loadingTextProvider.notifier).reset();
-      setState(() {});
-    }
+    if (pickedImage == null) return;
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: pickedImage.path,
+      aspectRatioPresets: [CropAspectRatioPreset.ratio16x9],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: AppColors.primaryColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.ratio16x9,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+        WebUiSettings(
+          context: navigatorKey.currentContext!,
+        ),
+      ],
+    );
+    if (croppedFile == null) return;
+    image = File(pickedImage.path);
+    ref.read(newEventProvider.notifier).updateBannerImage(image!);
+    ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
+    ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
+    widget.dominantColor = await getDominantColor();
+    ref.read(loadingTextProvider.notifier).reset();
+    setState(() {});
   }
 
   void getEventColor() {
