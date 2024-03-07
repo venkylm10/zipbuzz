@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -39,6 +38,7 @@ class Home extends ConsumerWidget {
           if (value == 0) {
             ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
             ref.read(homeTabControllerProvider.notifier).updateSearching(true);
+            ref.read(newEventProvider.notifier).resetNewEvent();
           } else if (value == 1) {
             final user = ref.read(userProvider);
             ref.read(newEventProvider.notifier).updateHostId(user.id);
@@ -46,6 +46,7 @@ class Home extends ConsumerWidget {
             ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
           } else {
             ref.read(eventsControllerProvider.notifier).getAllEvents();
+            ref.read(newEventProvider.notifier).resetNewEvent();
           }
         },
         items: [

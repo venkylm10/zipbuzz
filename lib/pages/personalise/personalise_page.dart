@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -137,6 +139,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             currentUser.phoneNumber ?? "9998887776",
                             keyboardType: TextInputType.phone,
                             maxLength: 10,
+                            prefixWidget: countryCodeSelector(),
                           ),
                           const SizedBox(height: 40),
                           Text(
@@ -159,6 +162,54 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget countryCodeSelector() {
+    final personaliseController = ref.read(personaliseControllerProvider);
+    return Container(
+      height: 54,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.lightGreyColor),
+      ),
+      child: Center(
+        child: DropdownButton(
+          value: personaliseController.countryDialCode,
+          underline: const SizedBox(),
+          padding: EdgeInsets.zero,
+          icon: Transform.rotate(
+            angle: -pi / 2,
+            child: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 16,
+            ),
+          ),
+          items: [
+            DropdownMenuItem(
+              value: "+1",
+              child: Text(
+                " + 1 ",
+                style: AppStyles.h4,
+              ),
+            ),
+            DropdownMenuItem(
+              value: "+91",
+              child: Text(
+                " + 91 ",
+                style: AppStyles.h4,
+              ),
+            ),
+          ],
+          onChanged: (val) {
+            if (val != null) {
+              personaliseController.updateCountryCode(val);
+              setState(() {});
+            }
+          },
         ),
       ),
     );
@@ -249,7 +300,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   Row buildTextField(
       String iconPath, String label, TextEditingController controller, String hintText,
-      {TextInputType? keyboardType, int? maxLength}) {
+      {TextInputType? keyboardType, int? maxLength, Widget? prefixWidget}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -265,48 +316,57 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
             children: [
               Text(label, style: AppStyles.h3),
               const SizedBox(height: 8),
-              TextField(
-                controller: controller,
-                cursorColor: AppColors.primaryColor,
-                style: AppStyles.h4,
-                keyboardType: keyboardType,
-                maxLength: maxLength,
-                onChanged: (value) {
-                  if (value.length == maxLength) {
-                    //close keyboard
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  }
-                },
-                decoration: InputDecoration(
-                  counter: const SizedBox(),
-                  hintText: hintText,
-                  hintStyle: AppStyles.h4.copyWith(
-                    color: AppColors.lightGreyColor,
-                  ),
-                  contentPadding: const EdgeInsets.all(16),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.lightGreyColor,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (prefixWidget != null) prefixWidget,
+                  if (prefixWidget != null) const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      cursorColor: AppColors.primaryColor,
+                      style: AppStyles.h4,
+                      keyboardType: keyboardType,
+                      maxLength: maxLength,
+                      onChanged: (value) {
+                        if (value.length == maxLength) {
+                          //close keyboard
+                          FocusScope.of(context).requestFocus(FocusNode());
+                        }
+                      },
+                      decoration: InputDecoration(
+                        counter: const SizedBox(),
+                        hintText: hintText,
+                        hintStyle: AppStyles.h4.copyWith(
+                          color: AppColors.lightGreyColor,
+                        ),
+                        contentPadding: const EdgeInsets.all(16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.lightGreyColor,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.lightGreyColor,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.lightGreyColor,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.lightGreyColor,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.lightGreyColor,
-                    ),
-                  ),
-                ),
+                ],
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

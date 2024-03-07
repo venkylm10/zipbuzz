@@ -4,6 +4,7 @@ import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 
 class EventTypeAndCapacity extends ConsumerStatefulWidget {
   const EventTypeAndCapacity({super.key, this.rePublish = false});
@@ -64,7 +65,6 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     newCapacity = widget.rePublish!
         ? ref.watch(editEventControllerProvider).capacity
         : ref.watch(newEventProvider).capacity;
@@ -161,6 +161,8 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
           ],
         ),
         const SizedBox(height: 14),
+        if (newIsPrivate) const CreateEventGuestListType(),
+        if (newIsPrivate) const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,

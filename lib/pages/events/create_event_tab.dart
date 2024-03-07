@@ -13,7 +13,6 @@ import 'package:zipbuzz/pages/events/create_event_form.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
-import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 import 'package:zipbuzz/widgets/create_event/add_event_photos.dart';
 
 class CreateEvent extends ConsumerStatefulWidget {
@@ -64,10 +63,6 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           const AddHosts(),
           broadDivider(),
           const EventTypeAndCapacity(),
-          if(newIsPrivate)
-            broadDivider(),
-          if(newIsPrivate)
-            const CreateEventGuestListType(),
           broadDivider(),
           const AddEventPhotos(),
           broadDivider(),
@@ -87,7 +82,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
                   SvgPicture.asset(Assets.icons.save_event),
                   const SizedBox(width: 8),
                   Text(
-                    "Save & Invite",
+                    "Save & Invite Guests",
                     style: AppStyles.h3.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.white,

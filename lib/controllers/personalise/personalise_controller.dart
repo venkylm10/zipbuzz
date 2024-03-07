@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -34,12 +35,17 @@ class PersonaliseController {
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
   final nameController = TextEditingController();
+  var countryDialCode = "+1";
   var selectedInterests = <String>[];
   var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
 
   void initialise() async {
     userLocation = ref.read(userLocationProvider);
     emailController.text = ref.read(userProvider).email;
+  }
+
+  void updateCountryCode(String code) {
+    countryDialCode = code;
   }
 
   void updateInterests(String interest) {
@@ -83,8 +89,7 @@ class PersonaliseController {
   }
 
   Future<bool> checkPhone() async {
-    var location = ref.read(userLocationProvider);
-    final mobileNumber = "${location.countryDialCode}${mobileController.text.trim()}";
+    final mobileNumber = "$countryDialCode${mobileController.text.trim()}";
     return await ref.read(dioServicesProvider).checkPhone(mobileNumber);
   }
 
@@ -110,14 +115,18 @@ class PersonaliseController {
               .read(userLocationProvider.notifier)
               .getLocationFromZipcode(zipcodeController.text.trim());
         }
+        final localUid = ref.read(userProvider).email.split("@").first;
+        final currentUser = FirebaseAuth.instance.currentUser!;
 
         location = ref.read(userLocationProvider);
         final updatedUser = ref.read(userProvider).copyWith(
+              name: localUid == currentUser.uid ? nameController.text.trim() : null,
               email: emailController.text.trim(),
               zipcode: zipcodeController.text.trim(),
-              mobileNumber: "${location.countryDialCode}${mobileController.text.trim()}",
+              mobileNumber: "$countryDialCode${mobileController.text.trim()}",
               interests: selectedInterests,
             );
+        box.write(BoxConstants.countryDialCode, countryDialCode);
         final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: updatedUser.id,
           phoneNumber: updatedUser.mobileNumber,

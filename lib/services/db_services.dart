@@ -76,12 +76,10 @@ class DBServices {
 
   Future<String?> getAppleUserEmail({required String uid}) async {
     try {
-      print("Getting apple email");
       DataSnapshot dataSnapshot = await _database.ref('appleUsers/$uid').get();
 
       if (dataSnapshot.value != null) {
         final email = (dataSnapshot.value as Map)['email'];
-        print("Email Id: $email");
         return email;
       }
       return null;
@@ -263,10 +261,6 @@ class DBServices {
             status: res.status,
             userDeviceToken: res.userDeviceToken,
           );
-          print(eventModel.id);
-          print(eventModel.title);
-          print(eventModel.status);
-          print(eventModel.userDeviceToken);
           return eventModel;
         }).toList();
         return events;

@@ -102,7 +102,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     bool? login = box.read(BoxConstants.login) as bool?;
     bool? guest = box.read(BoxConstants.guestUser) as bool?;
     await Future.delayed(const Duration(milliseconds: 500));
-    await ref.read(userLocationProvider.notifier).updateCountryDialCode();
     await updateInterestsData();
     if (guest != null) {
       await setUpGuestData();

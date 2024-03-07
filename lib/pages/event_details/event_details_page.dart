@@ -83,7 +83,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       ],
     );
     if (croppedFile == null) return;
-    image = File(pickedImage.path);
+    image = File(croppedFile.path);
     ref.read(newEventProvider.notifier).updateBannerImage(image!);
     ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
     ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
@@ -185,31 +185,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     interest: widget.event.category,
                                     iconPath: widget.event.iconPath,
                                   ),
-                                  Consumer(builder: (context, ref, child) {
-                                    var attendees = 0;
-                                    if (widget.isPreview) {
-                                      attendees = ref.watch(newEventProvider).attendees;
-                                    } else if (widget.rePublish) {
-                                      attendees = ref.watch(editEventControllerProvider).attendees;
-                                    } else {
-                                      attendees = widget.event.attendees;
-                                    }
-
-                                    var total = 1;
-
-                                    if (widget.isPreview) {
-                                      total = ref.watch(newEventProvider).capacity;
-                                    } else if (widget.rePublish) {
-                                      total = ref.watch(editEventControllerProvider).capacity;
-                                    } else {
-                                      total = widget.event.capacity;
-                                    }
-                                    return AttendeeNumbers(
-                                      attendees: attendees,
-                                      total: total,
-                                      backgroundColor: AppColors.greyColor.withOpacity(0.1),
-                                    );
-                                  }),
+                                  buildAttendeeNumber(),
                                   if (!widget.isPreview) EventQRCode(event: widget.event),
                                 ],
                               ),
@@ -315,6 +291,62 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           rePublish: widget.rePublish,
         ),
       ),
+    );
+  }
+
+  Widget buildAttendeeNumber() {
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: navigatorKey.currentContext!,
+          isScrollControlled: true,
+          enableDrag: true,
+          builder: (context) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  child: EventHostGuestList(
+                    guests: widget.event.eventMembers,
+                    eventId: widget.event.id,
+                    interative: false,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+      child: Consumer(builder: (context, ref, child) {
+        var data = ref.watch(eventRequestMembersProvider);
+        final confirmedMembers =
+            data.where((element) => element.status == "confirm").toList().length;
+        final pendingMembers = data.where((element) => element.status == "pending").toList().length;
+        String attendees = "";
+        if (widget.isPreview) {
+          attendees = "${ref.watch(newEventProvider).attendees},0,0";
+        } else if (widget.rePublish) {
+          attendees = "${widget.event.eventMembers.length},$pendingMembers,$confirmedMembers";
+        } else {
+          attendees = "${widget.event.eventMembers.length},$pendingMembers,$confirmedMembers";
+        }
+
+        var total = 1;
+
+        if (widget.isPreview) {
+          total = ref.watch(newEventProvider).capacity;
+        } else if (widget.rePublish) {
+          total = ref.watch(editEventControllerProvider).capacity;
+        } else {
+          total = widget.event.capacity;
+        }
+        return AttendeeNumbers(
+          attendees: attendees,
+          total: total,
+          backgroundColor: AppColors.greyColor.withOpacity(0.1),
+        );
+      }),
     );
   }
 

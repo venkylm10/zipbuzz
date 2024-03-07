@@ -21,7 +21,6 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
   bool isMounted = true;
 
   void onDaySelected(DateTime day, DateTime focusedDay) {
-    print(focusedDay.toString());
     ref.read(eventsControllerProvider.notifier).updatedFocusedDay(focusedDay);
     ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
     setState(() {});

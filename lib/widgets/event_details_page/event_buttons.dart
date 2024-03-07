@@ -1,9 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
@@ -390,6 +389,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             const SizedBox(width: 8),
             buildShareButton(),
             const SizedBox(width: 8),
+            buildCopyButton(),
+            const SizedBox(width: 8),
             buildAddToFavoriteButton(),
           ],
         ),
@@ -435,6 +436,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             ),
             const SizedBox(width: 8),
             buildShareButton(),
+            const SizedBox(width: 8),
+            buildCopyButton(),
             const SizedBox(width: 8),
             buildAddToFavoriteButton(),
           ],
@@ -482,6 +485,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             const SizedBox(width: 8),
             buildShareButton(),
             const SizedBox(width: 8),
+            buildCopyButton(),
+            const SizedBox(width: 8),
             buildAddToFavoriteButton(),
           ],
         ),
@@ -527,40 +532,85 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     );
   }
 
-  Consumer buildShareButton() {
-    return Consumer(builder: (context, ref, child) {
-      return GestureDetector(
-        onTap: () async {
-          shareEvent(widget.event);
-        },
-        child: Container(
-          height: 48,
-          width: 48,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.4),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.primaryColor.withOpacity(0.3),
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(11),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 10,
-                sigmaY: 10,
+  Consumer buildCopyButton() {
+    return Consumer(
+      builder: (context, ref, child) {
+        return GestureDetector(
+          onTap: () async {
+            Clipboard.setData(ClipboardData(text: widget.event.inviteUrl));
+            showSnackBar(message: "Copied link to clipboard");
+          },
+          child: Container(
+            height: 48,
+            width: 48,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.primaryColor.withOpacity(0.3),
               ),
-              child: Center(
-                child: SvgPicture.asset(
-                  Assets.icons.send_fill,
-                  height: 24,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(11),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: 10,
+                  sigmaY: 10,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    Assets.icons.copy,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.primaryColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
+  }
+
+  Consumer buildShareButton() {
+    return Consumer(
+      builder: (context, ref, child) {
+        return GestureDetector(
+          onTap: () async {
+            shareEvent(widget.event);
+          },
+          child: Container(
+            height: 48,
+            width: 48,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.primaryColor.withOpacity(0.3),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(11),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: 10,
+                  sigmaY: 10,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    Assets.icons.send_fill,
+                    height: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget editShareButtons() {

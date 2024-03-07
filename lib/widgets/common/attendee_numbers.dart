@@ -4,7 +4,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
 class AttendeeNumbers extends StatelessWidget {
-  final int attendees;
+  final String attendees;
   final int total;
   final Color? backgroundColor;
   const AttendeeNumbers({

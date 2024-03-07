@@ -1,4 +1,3 @@
-import 'package:country_dial_code/country_dial_code.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,30 +60,30 @@ class LocationServices extends StateNotifier<LocationModel> {
     }
   }
 
-  Future<void> updateCountryDialCode() async {
-    if (box.hasData(BoxConstants.countryDialCode)) {
-      final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
-      state = state.copyWith(countryDialCode: countryDialCode);
-      debugPrint("Country dial code: $countryDialCode");
-      return;
-    }
-    try {
-      final countryCode = await ref.read(dioServicesProvider).getCountryCode();
-      if (countryCode != null) {
-        final countryDialCode = CountryDialCode.fromCountryCode(countryCode).dialCode;
-        state = state.copyWith(countryDialCode: countryDialCode);
-        print("Country dial code: $countryDialCode");
-        box.write(BoxConstants.countryDialCode, countryDialCode);
-      }
-    } catch (e) {
-      if (box.hasData(BoxConstants.countryDialCode)) {
-        final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
-        print("Country dial code: $countryDialCode");
-        state = state.copyWith(countryDialCode: countryDialCode);
-      }
-      debugPrint("Failed to get country dial code");
-    }
-  }
+  // Future<void> updateCountryDialCode() async {
+  //   if (box.hasData(BoxConstants.countryDialCode)) {
+  //     final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
+  //     state = state.copyWith(countryDialCode: countryDialCode);
+  //     debugPrint("Country dial code: $countryDialCode");
+  //     return;
+  //   }
+  //   try {
+  //     final countryCode = await ref.read(dioServicesProvider).getCountryCode();
+  //     if (countryCode != null) {
+  //       final countryDialCode = CountryDialCode.fromCountryCode(countryCode).dialCode;
+  //       state = state.copyWith(countryDialCode: countryDialCode);
+  //       print("Country dial code: $countryDialCode");
+  //       box.write(BoxConstants.countryDialCode, countryDialCode);
+  //     }
+  //   } catch (e) {
+  //     if (box.hasData(BoxConstants.countryDialCode)) {
+  //       final countryDialCode = box.read(BoxConstants.countryDialCode) as String;
+  //       print("Country dial code: $countryDialCode");
+  //       state = state.copyWith(countryDialCode: countryDialCode);
+  //     }
+  //     debugPrint("Failed to get country dial code");
+  //   }
+  // }
 
   // Future<void> updateCurrentLocation() async {
   //   final box = GetStorage();

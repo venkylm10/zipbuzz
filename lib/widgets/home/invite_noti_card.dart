@@ -33,7 +33,7 @@ class InviteNotiCard extends ConsumerWidget {
     showSnackBar(message: "Getting event details...");
     final event = await ref.read(dbServicesProvider).getEventDetails(eventId);
     final dominantColor = await getDominantColor(event.bannerPath);
-    ref.read(guestListTagProvider.notifier).update((state) => "All");
+    ref.read(guestListTagProvider.notifier).update((state) => "Invited");
     await navigatorKey.currentState!.pushNamed(EventDetailsPage.id, arguments: {
       "event": event,
       "dominantColor": dominantColor,

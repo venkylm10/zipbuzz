@@ -41,7 +41,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
     final selectedContacts = ref.watch(newEventProvider.notifier).eventInvites;
     final contactSearchResult = ref.watch(newEventProvider.notifier).contactSearchResult;
     return Container(
-      height: MediaQuery.of(context).size.height * .75,
+      height: MediaQuery.of(context).size.height * .85,
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       color: Colors.white,
@@ -104,13 +104,13 @@ class _EventInviteState extends ConsumerState<EventInvite> {
               Expanded(
                 child: ListView(
                   children: [
-                    const SizedBox(height: 24),
-                    Text(
-                      "Invited (${selectedContacts.length})",
-                      style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                    ),
-                    const SizedBox(height: 12),
-                    buildInvitedContacts(selectedContacts),
+                    // const SizedBox(height: 24),
+                    // Text(
+                    //   "Invited (${selectedContacts.length})",
+                    //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                    // ),
+                    // const SizedBox(height: 12),
+                    // buildInvitedContacts(selectedContacts),
                     const SizedBox(height: 24),
                     Text(
                       "My Address book",
@@ -127,7 +127,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
                     const SizedBox(height: 60),
                   ],
                 ),
-              )
+              ),
             ],
           ),
           buildInviteButton(),
@@ -206,16 +206,22 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   }
 
   Widget buildSearchResult(List<Contact> contactSearchResult, List<Contact> selectedContacts) {
-    final nonSelectedSearchedContact = contactSearchResult.where((element) {
-      return !selectedContacts.contains(element);
-    }).toList();
+    // final nonSelectedSearchedContact = contactSearchResult.where((element) {
+    //   return !selectedContacts.contains(element);
+    // }).toList();
     return ListView.builder(
-      itemCount: nonSelectedSearchedContact.length,
+      itemCount: contactSearchResult.length + 1,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final contact = nonSelectedSearchedContact[index];
-        return buildContactCard(contact, isSelected: false);
+        if (index == contactSearchResult.length) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+          );
+        }
+        final contact = contactSearchResult[index];
+        final selected = selectedContacts.contains(contact);
+        return buildContactCard(contact, isSelected: selected);
       },
     );
   }

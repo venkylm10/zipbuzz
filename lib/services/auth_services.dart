@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -156,7 +157,7 @@ class AuthServices {
           final id = await _ref.read(dbServicesProvider).getUserId(
                 UserIdRequestModel(
                   email: _ref.read(authProvider).currentUser!.email ?? "",
-                  deviceToken: box.read(BoxConstants.deviceToken),
+                  deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
                 ),
               );
 
@@ -280,7 +281,7 @@ class AuthServices {
       final id = await _ref.read(dbServicesProvider).getUserId(
             UserIdRequestModel(
               email: newUser.email,
-              deviceToken: box.read(BoxConstants.deviceToken),
+              deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
             ),
           );
 

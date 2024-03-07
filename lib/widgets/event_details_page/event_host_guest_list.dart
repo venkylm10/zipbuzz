@@ -7,14 +7,20 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
-final guestListTagProvider = StateProvider<String>((ref) => "All");
+final guestListTagProvider = StateProvider<String>((ref) => "Invited");
 final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);
 
 class EventHostGuestList extends StatelessWidget {
-  const EventHostGuestList({super.key, required this.guests, required this.eventId});
+  const EventHostGuestList({
+    super.key,
+    required this.guests,
+    required this.eventId,
+    this.interative = true,
+  });
 
   final int eventId;
   final List<EventInviteMember> guests;
+  final bool interative;
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +45,10 @@ class EventHostGuestList extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final selectedTag = ref.watch(guestListTagProvider);
-        if (selectedTag == "All") {
+        if (selectedTag == "Invited") {
           return buildInviteMembers();
         }
-        if (selectedTag == "Pending") {
+        if (selectedTag == "Responded") {
           return buildPendingMembers();
         }
 
@@ -137,7 +143,7 @@ class EventHostGuestList extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.5,
                     child: Text(
-                      '@zipbuzz_user',
+                      member.phone,
                       style: AppStyles.h6
                           .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
                     ),
@@ -145,28 +151,29 @@ class EventHostGuestList extends StatelessWidget {
                 ],
               ),
               const Expanded(child: SizedBox()),
-              Consumer(builder: (context, ref, child) {
-                return GestureDetector(
-                  onTap: () async {
-                    if (isPending) {
-                      var newMember = member;
-                      newMember.status = "confirm";
-                      var updateMembers = ref.read(eventRequestMembersProvider);
-                      updateMembers.removeAt(index);
-                      updateMembers.add(newMember);
-                      ref
-                          .read(eventRequestMembersProvider.notifier)
-                          .update((state) => updateMembers);
-                      await ref
-                          .read(dioServicesProvider)
-                          .editUserStatus(eventId, member.phone, "confirm");
-                      
-                      ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
-                    }
-                  },
-                  child: buildGuestTag(),
-                );
-              })
+              if (interative)
+                Consumer(builder: (context, ref, child) {
+                  return GestureDetector(
+                    onTap: () async {
+                      if (isPending) {
+                        var newMember = member;
+                        newMember.status = "confirm";
+                        var updateMembers = ref.read(eventRequestMembersProvider);
+                        updateMembers.removeAt(index);
+                        updateMembers.add(newMember);
+                        ref
+                            .read(eventRequestMembersProvider.notifier)
+                            .update((state) => updateMembers);
+                        await ref
+                            .read(dioServicesProvider)
+                            .editUserStatus(eventId, member.phone, "confirm");
+
+                        ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
+                      }
+                    },
+                    child: buildGuestTag(),
+                  );
+                })
             ],
           ),
         ),
@@ -212,7 +219,7 @@ class EventHostGuestList extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.5,
                     child: Text(
-                      '@zipbuzz_user',
+                      member.phone,
                       style: AppStyles.h6
                           .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
                     ),
@@ -220,7 +227,7 @@ class EventHostGuestList extends StatelessWidget {
                 ],
               ),
               const Expanded(child: SizedBox()),
-              buildGuestTag()
+              if (interative) buildGuestTag()
             ],
           ),
         ),
@@ -239,7 +246,7 @@ class EventHostGuestList extends StatelessWidget {
         final selectedTag = ref.watch(guestListTagProvider);
         if (selectedTag == "Confirmed") {
           return const SizedBox();
-        } else if (selectedTag == "Pending") {
+        } else if (selectedTag == "Responded") {
           return Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -262,8 +269,8 @@ class EventHostGuestList extends StatelessWidget {
 
   SingleChildScrollView buildMemberTags() {
     const List<String> tags = [
-      "All",
-      "Pending",
+      "Invited",
+      "Responded",
       "Confirmed",
     ];
     return SingleChildScrollView(
@@ -302,7 +309,7 @@ class EventHostGuestList extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  "${tags[index]} (${tags[index] == "All" ? allLength : tags[index] == "Pending" ? pendingLength : confirmedLength})",
+                  "${tags[index]} (${tags[index] == "Invited" ? allLength : tags[index] == "Responded" ? pendingLength : confirmedLength})",
                   style: AppStyles.h5.copyWith(
                     color: selectedTag == tags[index] ? Colors.white : AppColors.greyColor,
                   ),

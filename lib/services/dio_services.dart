@@ -10,6 +10,7 @@ import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
@@ -39,6 +40,15 @@ class DioServices {
     ),
   );
   final box = GetStorage();
+
+  // make request
+  Future<void> makeRequest(MakeRequestModel model) async {
+    try {
+      await dio.post(DioConstants.makeRequests, data: model.toMap());
+    } catch (e) {
+      debugPrint("Error sending user request: $e");
+    }
+  }
 
   // increase count
   Future<void> increaseCommentCount(int eventId) async {
@@ -82,10 +92,10 @@ class DioServices {
   }
 
   Future<void> updateNotification(int notificationId, String notificationType) async {
-    print({
+    debugPrint({
       "notification_id": notificationId,
       "notification_type": notificationType,
-    });
+    }.toString());
     try {
       await dio.put(DioConstants.updateNotification, data: {
         "notification_id": notificationId,
@@ -103,7 +113,7 @@ class DioServices {
         DioConstants.phoneCheck,
         data: {"phone": phoneNumber},
       );
-      print("check phone: $phoneNumber ${res.data}");
+      debugPrint("check phone: $phoneNumber ${res.data}");
       if (res.data['message'] == "User not found") {
         return true;
       }
