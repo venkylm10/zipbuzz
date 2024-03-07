@@ -62,7 +62,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    const double rowHeight = 36;
+    const double rowHeight = 44;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
