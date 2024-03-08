@@ -3,6 +3,7 @@ class EventRequestMember {
   String phone;
   String name;
   String status;
+  int attendees;
   int id;
 
   EventRequestMember({
@@ -11,6 +12,7 @@ class EventRequestMember {
     required this.name,
     required this.status,
     required this.id,
+    required this.attendees,
   });
 
   factory EventRequestMember.fromMap(Map<String, dynamic> map) {
@@ -20,6 +22,7 @@ class EventRequestMember {
       name: map['name'] as String,
       status: map['status'] as String,
       id: map['id'] as int,
+      attendees: map['attendees'] as int,
     );
   }
 
@@ -30,6 +33,7 @@ class EventRequestMember {
       'name': name,
       'status': status,
       'id': id,
+      'attendees': attendees,
     };
   }
 }

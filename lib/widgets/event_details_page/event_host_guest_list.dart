@@ -133,15 +133,19 @@ class EventHostGuestList extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.5,
+                    ),
                     child: Text(
                       member.name,
                       style: AppStyles.h5,
                     ),
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.5,
+                    ),
                     child: Text(
                       member.phone,
                       style: AppStyles.h6
@@ -150,6 +154,21 @@ class EventHostGuestList extends StatelessWidget {
                   ),
                 ],
               ),
+              if (member.attendees > 1)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    "+${member.attendees - 1}",
+                    style: AppStyles.h4.copyWith(
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
               const Expanded(child: SizedBox()),
               if (interative)
                 Consumer(builder: (context, ref, child) {
