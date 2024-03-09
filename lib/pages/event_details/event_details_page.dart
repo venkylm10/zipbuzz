@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -8,6 +9,8 @@ import 'package:get/utils.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
@@ -212,7 +215,67 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                 style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
                               ),
                               const SizedBox(height: 16),
-                              Text(widget.event.about, style: AppStyles.h4),
+                              Builder(
+                                builder: (context) {
+                                  final splits = widget.event.about.split(" ");
+                                  return RichText(
+                                    text: TextSpan(
+                                      children: splits.map(
+                                        (e) {
+                                          var isLink = false;
+                                          var url = "";
+                                          final up2 = RegExp(
+                                              r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                                          if (up2.hasMatch(e)) {
+                                            isLink = true;
+                                            if (e.startsWith("http://") ||
+                                                e.startsWith("https://")) {
+                                              url = e;
+                                            } else {
+                                              url = "http://$e";
+                                            }
+                                            print(url);
+                                          }
+                                          return TextSpan(
+                                            children: isLink
+                                                ? [
+                                                    TextSpan(
+                                                      text: e,
+                                                      style: AppStyles.h4.copyWith(
+                                                        color: isLink
+                                                            ? Colors.blue
+                                                            : AppColors.greyColor,
+                                                        fontStyle: isLink
+                                                            ? FontStyle.italic
+                                                            : FontStyle.normal,
+                                                        decoration: isLink
+                                                            ? TextDecoration.underline
+                                                            : TextDecoration.none,
+                                                      ),
+                                                      recognizer: TapGestureRecognizer()
+                                                        ..onTap = () {
+                                                          launchUrlString(url);
+                                                        },
+                                                    ),
+                                                    const TextSpan(text: " "),
+                                                  ]
+                                                : [
+                                                    TextSpan(
+                                                      text: !isLink ? "$e " : null,
+                                                      style: AppStyles.h4.copyWith(
+                                                        color: AppColors.greyColor,
+                                                        fontStyle: FontStyle.normal,
+                                                        decoration: TextDecoration.none,
+                                                      ),
+                                                    ),
+                                                  ],
+                                          );
+                                        },
+                                      ).toList(),
+                                    ),
+                                  );
+                                },
+                              ),
                               const SizedBox(height: 16),
                               Divider(
                                 color: AppColors.greyColor.withOpacity(0.2),
@@ -322,14 +385,14 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         var data = ref.watch(eventRequestMembersProvider);
         final confirmedMembers =
             data.where((element) => element.status == "confirm").toList().length;
-        final pendingMembers = data.where((element) => element.status == "pending").toList().length;
+        final respondedMembers = data.length;
         String attendees = "";
         if (widget.isPreview) {
           attendees = "${ref.watch(newEventProvider).attendees},0,0";
         } else if (widget.rePublish) {
-          attendees = "${widget.event.eventMembers.length},$pendingMembers,$confirmedMembers";
+          attendees = "${widget.event.eventMembers.length},$respondedMembers,$confirmedMembers";
         } else {
-          attendees = "${widget.event.eventMembers.length},$pendingMembers,$confirmedMembers";
+          attendees = "${widget.event.eventMembers.length},$respondedMembers,$confirmedMembers";
         }
 
         var total = 1;

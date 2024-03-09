@@ -49,7 +49,7 @@ class EventHostGuestList extends StatelessWidget {
           return buildInviteMembers();
         }
         if (selectedTag == "Responded") {
-          return buildPendingMembers();
+          return buildRespondedMembers();
         }
 
         if (selectedTag == "Confirmed") {
@@ -60,19 +60,19 @@ class EventHostGuestList extends StatelessWidget {
     );
   }
 
-  Widget buildPendingMembers() {
+  Widget buildRespondedMembers() {
     return Consumer(builder: (context, ref, child) {
       final data = ref.watch(eventRequestMembersProvider);
-      final pendingMembers = data.where((element) => element.status == "pending").toList();
+      final responedMembers = data;
       return ListView.builder(
-        itemCount: pendingMembers.length,
+        itemCount: responedMembers.length,
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          final member = pendingMembers[index];
+          final member = responedMembers[index];
           return buildRequestMemberCard(member, context, index,
-              isPending: true, isLast: index == pendingMembers.length - 1);
+              isPending: member.status == "pending", isLast: index == responedMembers.length - 1);
         },
       );
     });
@@ -170,10 +170,11 @@ class EventHostGuestList extends StatelessWidget {
                   ),
                 ),
               const Expanded(child: SizedBox()),
-              if (interative)
+              if (interative || member.status == "confirm")
                 Consumer(builder: (context, ref, child) {
                   return GestureDetector(
                     onTap: () async {
+                      if (!interative) return;
                       if (isPending) {
                         var newMember = member;
                         newMember.status = "confirm";
@@ -273,7 +274,7 @@ class EventHostGuestList extends StatelessWidget {
               color: const Color(0xFFEAF6ED),
             ),
             child: Text(
-              "Confirm",
+              !interative ? "Confirmed" : "Confirm",
               style: AppStyles.h5.copyWith(
                 color: Colors.green.shade500,
               ),
@@ -302,11 +303,7 @@ class EventHostGuestList extends StatelessWidget {
           (index) => Consumer(builder: (context, ref, child) {
             final selectedTag = ref.watch(guestListTagProvider);
             final allLength = guests.length;
-            var pendingLength = ref
-                .watch(eventRequestMembersProvider)
-                .where((element) => element.status == "pending")
-                .toList()
-                .length;
+            var respondedLength = ref.watch(eventRequestMembersProvider).length;
             var confirmedLength = ref
                 .watch(eventRequestMembersProvider)
                 .where((element) => element.status == "confirm")
@@ -328,7 +325,7 @@ class EventHostGuestList extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  "${tags[index]} (${tags[index] == "Invited" ? allLength : tags[index] == "Responded" ? pendingLength : confirmedLength})",
+                  "${tags[index]} (${tags[index] == "Invited" ? allLength : tags[index] == "Responded" ? respondedLength : confirmedLength})",
                   style: AppStyles.h5.copyWith(
                     color: selectedTag == tags[index] ? Colors.white : AppColors.greyColor,
                   ),

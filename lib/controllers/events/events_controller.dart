@@ -174,6 +174,19 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     );
     return ref.read(dioServicesProvider).requestToJoinEvent(model);
   }
+
+    List<String> extractLinks(String text) {
+    RegExp urlPattern = RegExp(r'https?://\S+');
+    Iterable<RegExpMatch> matches = urlPattern.allMatches(text);
+    List<String> links = [];
+    for (var match in matches) {
+      if (match.group(0) != null) {
+        links.add(match.group(0)!);
+      }
+    }
+    print("links: $links");
+    return links;
+  }
 }
 
 class EventsController {

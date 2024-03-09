@@ -110,7 +110,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             "Lets start by personalize your experience...",
                             style: AppStyles.h2,
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
                           if (localUid == currentUser.uid)
                             buildTextField(
                               Assets.icons.personName,
@@ -119,7 +119,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                               currentUser.displayName ?? "Enter name",
                               keyboardType: TextInputType.text,
                             ),
-                          if (localUid == currentUser.uid) const SizedBox(height: 24),
+                          if (localUid == currentUser.uid) const SizedBox(height: 12),
                           Consumer(builder: (context, subRef, child) {
                             final userLocation = subRef.watch(userLocationProvider);
                             return buildTextField(
@@ -131,7 +131,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                               maxLength: 10,
                             );
                           }),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
                           buildTextField(
                             Assets.icons.telephone_filled,
                             "Mobile no",
@@ -141,7 +141,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             maxLength: 10,
                             prefixWidget: countryCodeSelector(),
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 12),
                           Text(
                             "Select at least 3 interests:",
                             style: AppStyles.h3.copyWith(

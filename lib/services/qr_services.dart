@@ -41,6 +41,7 @@ class QrServices {
 
   static void showQRImage(String link, EventModel event) async {
     debugPrint("Link : $link");
+    final width = MediaQuery.of(navigatorKey.currentContext!).size.width;
     final image = await QrPainter(
       data: link,
       version: QrVersions.auto,
@@ -57,7 +58,7 @@ class QrServices {
         color: Colors.white,
         dataModuleShape: QrDataModuleShape.circle,
       ),
-    ).toImage(300);
+    ).toImage(width * 0.75);
 
     final directory = await getExternalStorageDirectory();
     final filePath = '${directory!.path}/qr_code.png';
@@ -66,26 +67,23 @@ class QrServices {
         (await image.toByteData(format: ImageByteFormat.png))!.buffer.asUint8List());
 
     showDialog(
-        context: navigatorKey.currentContext!,
-        barrierDismissible: true,
-        builder: (context) {
-          final width = MediaQuery.of(context).size.width;
-          return AlertDialog(
-            backgroundColor: AppColors.primaryColor.withOpacity(0.75),
-            surfaceTintColor: Colors.transparent,
-            content: Container(
-              height: width * 0.75,
-              width: width * 0.75,
-              constraints: const BoxConstraints(
-                maxHeight: 300,
-                maxWidth: 300,
-              ),
-              child: Image.file(
-                File(filePath),
-                fit: BoxFit.contain,
-              ),
+      context: navigatorKey.currentContext!,
+      barrierDismissible: true,
+      builder: (context) {
+        final width = MediaQuery.of(context).size.width;
+        return AlertDialog(
+          backgroundColor: AppColors.primaryColor.withOpacity(0.75),
+          surfaceTintColor: Colors.transparent,
+          content: SizedBox(
+            height: width * 0.75,
+            width: width * 0.75,
+            child: Image.file(
+              File(filePath),
+              fit: BoxFit.contain,
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }
