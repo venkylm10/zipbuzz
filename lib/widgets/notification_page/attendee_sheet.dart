@@ -6,8 +6,8 @@ import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
 class AttendeeNumberResponse extends ConsumerStatefulWidget {
   const AttendeeNumberResponse({super.key, required this.notification});
@@ -18,8 +18,21 @@ class AttendeeNumberResponse extends ConsumerStatefulWidget {
 }
 
 class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse> {
-  var alert = false;
-  final numController = TextEditingController();
+  int attendees = 1;
+
+  void increment() {
+    setState(() {
+      attendees++;
+    });
+  }
+
+  void decrement() {
+    if (attendees == 1) return;
+    setState(() {
+      attendees--;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -29,45 +42,59 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Number of attendees (including yourself)",
-              style: AppStyles.h5,
-            ),
-            const SizedBox(height: 8),
-            CustomTextField(
-              controller: numController,
-              hintText: "1",
-              keyboardType: TextInputType.number,
-            ),
-            if (alert) const SizedBox(height: 8),
-            if (alert)
-              Text(
-                "*Atleast 1 attendee is required to submit the response",
-                style: AppStyles.h6.copyWith(
-                  color: AppColors.negativeRed,
-                  fontStyle: FontStyle.italic,
+            Row(
+              children: [
+                Text(
+                  "Number of attendees:",
+                  style: AppStyles.h4,
                 ),
-              ),
+                const Expanded(child: SizedBox()),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: decrement,
+                    icon: const Icon(
+                      Icons.remove,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Text(
+                  "$attendees",
+                  style: AppStyles.h2,
+                ),
+                const SizedBox(width: 20),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: increment,
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             GestureDetector(
               onTap: () async {
-                final num = int.parse(numController.text);
-                if (num <= 1) {
-                  setState(() {
-                    alert = true;
-                  });
-                  return;
-                }
                 await ref
                     .read(dioServicesProvider)
                     .updateNotification(widget.notification.id, "yes");
-                setState(() {});
                 final user = ref.read(userProvider);
                 var model = MakeRequestModel(
                   eventId: widget.notification.eventId,
                   name: user.name,
                   phoneNumber: user.mobileNumber,
-                  members: 1,
+                  members: attendees,
                 );
                 await ref.read(dioServicesProvider).makeRequest(model);
                 await ref
@@ -79,6 +106,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                   widget.notification.deviceToken,
                   widget.notification.eventId,
                 );
+                navigatorKey.currentState!.pop();
               },
               child: Container(
                 width: double.infinity,
@@ -97,6 +125,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                 ),
               ),
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

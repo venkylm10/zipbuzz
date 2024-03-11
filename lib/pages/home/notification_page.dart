@@ -93,18 +93,23 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         eventId: notification.eventId,
         eventName: notification.eventName,
         time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
-        acceptInvite: () {
-          showModalBottomSheet(
+        acceptInvite: ()async {
+          await showModalBottomSheet(
             context: navigatorKey.currentContext!,
             isScrollControlled: true,
             enableDrag: true,
             builder: (context) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: AttendeeNumberResponse(notification: notification),
+                child: AttendeeNumberResponse(
+                  notification: notification
+                ),
               );
             },
           );
+          setState(() {
+            
+          });
         },
         declineInvite: () async {
           await ref.read(dioServicesProvider).updateNotification(notification.id, "no");
