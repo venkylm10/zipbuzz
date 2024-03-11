@@ -4,7 +4,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -59,7 +58,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
           ),
         );
     ref.read(loadingTextProvider.notifier).reset();
-    ref.read(homeTabControllerProvider.notifier).updateSearching(true);
     if (location.zipcode == "zipbuzz-null") {
       ref.read(userProvider.notifier).update(
             (state) => state.copyWith(
@@ -93,7 +91,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
     }
     ref.read(loadingTextProvider.notifier).reset();
-    ref.read(homeTabControllerProvider.notifier).updateSearching(true);
     GetStorage().write(BoxConstants.id, 1);
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }

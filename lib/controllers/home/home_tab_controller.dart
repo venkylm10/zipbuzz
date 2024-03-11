@@ -19,7 +19,7 @@ final homeTabControllerProvider = StateNotifierProvider<HomeTabController, HomeT
 class HomeTabController extends StateNotifier<HomeTabState> {
   HomeTabController({required this.ref})
       : super(HomeTabState(
-          isSearching: true,
+          isSearching: false,
           index: 0,
           homeTabIndex: 0,
           previousOffset: 0,
@@ -69,7 +69,6 @@ class HomeTabController extends StateNotifier<HomeTabState> {
 
   void updatePageIndex(BuildContext context) {
     final index = ((pageScrollController.offset + 100) / MediaQuery.of(context).size.width).floor();
-
     state = state.copyWith(index: index);
   }
 

@@ -34,10 +34,15 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         if (isMounted) setState(() {});
       });
     }
+
     if (isMounted) {
       ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(() {
-        if (isMounted) ref.read(homeTabControllerProvider.notifier).updateBodyScrollController();
-        if (isMounted) setState(() {});
+        if (ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset > 200) {
+          if (ref.read(homeTabControllerProvider).isSearching) {
+            ref.read(homeTabControllerProvider.notifier).updateSearching(false);
+            setState(() {});
+          }
+        }
       });
     }
     super.initState();
@@ -91,9 +96,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       appBar: CustomAppBar(
         isSearching: isSearching,
         toggleSearching: () {
-          setState(() {
-            isSearching = !isSearching;
-          });
+          homeTabController.updateSearching(!isSearching);
+          setState(() {});
         },
         updateFavoriteEvents: () async {
           await ref.read(eventsControllerProvider.notifier).updateFavoriteEvents();
@@ -128,7 +132,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               ],
             ),
           ),
-          buildCategoryRow(),
+          if (isSearching) buildCategoryRow(),
         ],
       ),
     );
@@ -233,64 +237,58 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   Widget buildCategoryRow() {
-    final isSearching = ref.watch(homeTabControllerProvider).isSearching;
     final index = ref.watch(homeTabControllerProvider).index;
     final selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
-    return AnimatedSwitcher(
+    return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      child: !isSearching
-          ? Consumer(builder: (context, ref, child) {
-              final homeTabController = ref.watch(homeTabControllerProvider);
-              final userInterests = homeTabController.currentInterests;
-              return Container(
-                width: double.infinity,
-                color: Colors.white,
-                child: SingleChildScrollView(
-                  controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: userInterests.map((e) {
-                        final name = e.activity;
-                        final iconPath = e.iconUrl;
-                        return GestureDetector(
-                          onTap: () {
-                            onTapRowCategory(name);
-                          },
-                          child: Container(
-                            key: selectedCategory == name
-                                ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
-                                : null,
-                            margin: EdgeInsets.only(
-                              top: 5,
-                              left: index == 0 ? 12 : 2,
-                              right: index == allInterests.length - 1 ? 12 : 2,
-                              bottom: 5,
-                            ),
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: homeTabController.selectedCategory == name
-                                  ? Colors.green.withOpacity(0.15)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Opacity(
-                              opacity: ref.watch(eventsControllerProvider).selectedCategory == name
-                                  ? 1
-                                  : 0.5,
-                              child: Image.network(
-                                iconPath,
-                                height: 30,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList()),
-                ),
-              );
-            })
-          : const SizedBox(),
+      child: Consumer(
+        builder: (context, ref, child) {
+          final homeTabController = ref.watch(homeTabControllerProvider);
+          final userInterests = homeTabController.currentInterests;
+          return Container(
+            width: double.infinity,
+            color: Colors.white,
+            child: SingleChildScrollView(
+              controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: userInterests.map((e) {
+                    final name = e.activity;
+                    final iconPath = e.iconUrl;
+                    return GestureDetector(
+                      onTap: () {
+                        onTapRowCategory(name);
+                      },
+                      child: Container(
+                        key: selectedCategory == name
+                            ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
+                            : null,
+                        margin: EdgeInsets.only(
+                          top: 5,
+                          left: index == 0 ? 12 : 2,
+                          right: index == allInterests.length - 1 ? 12 : 2,
+                          bottom: 5,
+                        ),
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: homeTabController.selectedCategory == name
+                              ? Colors.green.withOpacity(0.15)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Image.network(
+                          iconPath,
+                          height: 30,
+                        ),
+                      ),
+                    );
+                  }).toList()),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -299,48 +297,47 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     return AnimatedOpacity(
       key: ref.read(homeTabControllerProvider.notifier).categoryPageKey,
       duration: const Duration(milliseconds: 500),
-      opacity: isSearching ? 1 : 0.5,
-      child: Consumer(builder: (context, ref, child) {
-        final homeTabController = ref.watch(homeTabControllerProvider);
-        final userInterests = homeTabController.currentInterests;
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
-          controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(
-              (userInterests.length / 8).ceil(),
-              (index) {
-                var interests = userInterests;
-                if (interests.length > 8) {
-                  interests = userInterests.sublist(
-                      index * 8,
-                      (index + 1) * 8 > userInterests.length
-                          ? userInterests.length
-                          : (index + 1) * 8);
-                }
-                return buildCategoryPage(index, context, interests);
-              },
+      opacity: !isSearching ? 1 : 0.5,
+      child: Consumer(
+        builder: (context, ref, child) {
+          final homeTabController = ref.watch(homeTabControllerProvider);
+          final userInterests = homeTabController.currentInterests;
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
+            controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(
+                (userInterests.length / 8).ceil(),
+                (index) {
+                  var interests = userInterests;
+                  if (interests.length > 8) {
+                    interests = userInterests.sublist(
+                        index * 8,
+                        (index + 1) * 8 > userInterests.length
+                            ? userInterests.length
+                            : (index + 1) * 8);
+                  }
+                  return buildCategoryPage(index, context, interests);
+                },
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 
   Widget buildPageIndicator() {
-    final isSearching = ref.watch(homeTabControllerProvider).isSearching;
     final index = ref.watch(homeTabControllerProvider).index;
-    return Consumer(builder: (context, ref, child) {
-      final homeTabController = ref.watch(homeTabControllerProvider);
-      final userInterests = homeTabController.currentInterests;
-      return userInterests.length > 8
-          ? AnimatedOpacity(
-              duration: const Duration(milliseconds: 500),
-              opacity: isSearching ? 1 : 0,
-              child: Row(
+    return Consumer(
+      builder: (context, ref, child) {
+        final homeTabController = ref.watch(homeTabControllerProvider);
+        final userInterests = homeTabController.currentInterests;
+        return userInterests.length > 8
+            ? Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -355,10 +352,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     ),
                   ),
                 ),
-              ),
-            )
-          : const SizedBox();
-    });
+              )
+            : const SizedBox();
+      },
+    );
   }
 
   Widget buildCategoryPage(

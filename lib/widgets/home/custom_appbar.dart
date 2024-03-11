@@ -94,16 +94,11 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                 );
               }),
               actions: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: !widget.isSearching
-                      ? GestureDetector(
-                          onTap: () async {
-                            widget.toggleSearching();
-                          },
-                          child: SvgPicture.asset(Assets.icons.search),
-                        )
-                      : const SizedBox(),
+                GestureDetector(
+                  onTap: () async {
+                    widget.toggleSearching();
+                  },
+                  child: SvgPicture.asset(Assets.icons.search),
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(

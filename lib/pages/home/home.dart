@@ -37,7 +37,6 @@ class Home extends ConsumerWidget {
           ref.read(homeTabControllerProvider.notifier).updateIndex(value);
           if (value == 0) {
             ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-            ref.read(homeTabControllerProvider.notifier).updateSearching(true);
             ref.read(newEventProvider.notifier).resetNewEvent();
           } else if (value == 1) {
             final user = ref.read(userProvider);
