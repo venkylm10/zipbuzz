@@ -42,6 +42,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   final queryController = TextEditingController();
   final categoryPageKey = GlobalKey();
   final rowCategoryKey = GlobalKey();
+  final homeButtonsKey = GlobalKey();
 
   void updateIndex(int index) {
     ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
@@ -73,6 +74,11 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   }
 
   void updateSearching(bool isSearching) {
+    if (isSearching) {
+      scrollToCalender();
+    } else {
+      scrollToInteresets();
+    }
     state = state.copyWith(isSearching: isSearching);
   }
 
@@ -132,6 +138,22 @@ class HomeTabController extends StateNotifier<HomeTabState> {
             interests: updatedInterests,
           ),
         );
+  }
+
+  void scrollToCalender() {
+    Scrollable.ensureVisible(
+      homeButtonsKey.currentContext!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void scrollToInteresets() {
+    Scrollable.ensureVisible(
+      categoryPageKey.currentContext!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 }
 

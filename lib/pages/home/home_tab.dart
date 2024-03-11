@@ -34,17 +34,15 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         if (isMounted) setState(() {});
       });
     }
-
-    if (isMounted) {
-      ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(() {
-        if (ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset > 200) {
-          if (ref.read(homeTabControllerProvider).isSearching) {
-            ref.read(homeTabControllerProvider.notifier).updateSearching(false);
-            setState(() {});
-          }
+    ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(
+      () {
+        if (ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset == 0 &&
+            ref.read(homeTabControllerProvider).isSearching) {
+          if (isMounted) ref.read(homeTabControllerProvider.notifier).updateSearching(false);
+          setState(() {});
         }
-      });
-    }
+      },
+    );
     super.initState();
   }
 
@@ -91,55 +89,66 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     topPadding = MediaQuery.of(context).padding.top;
     final homeTabController = ref.watch(homeTabControllerProvider.notifier);
     var isSearching = ref.watch(homeTabControllerProvider).isSearching;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        isSearching: isSearching,
-        toggleSearching: () {
-          homeTabController.updateSearching(!isSearching);
-          setState(() {});
-        },
-        updateFavoriteEvents: () async {
-          await ref.read(eventsControllerProvider.notifier).updateFavoriteEvents();
-          setState(() {});
-        },
-        topPadding: topPadding,
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            controller: homeTabController.bodyScrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildInterests(context),
-                buildPageIndicator(),
-                buildHomeTabButtons(),
-                const SizedBox(height: 10),
-                homeTabController.queryController.text.trim().isNotEmpty
-                    ? const EventsSearchResults()
-                    : const SizedBox(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
-                  child: Text(
-                    "My Calendar Events",
-                    style: AppStyles.h2,
+    return GestureDetector(
+      onPanUpdate: (details) {
+        if (details.delta.dy > 120 && isSearching) {
+          if (ref.read(homeTabControllerProvider).isSearching) {
+            ref.read(homeTabControllerProvider.notifier).updateSearching(false);
+            setState(() {});
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          isSearching: isSearching,
+          toggleSearching: () {
+            homeTabController.updateSearching(!isSearching);
+            setState(() {});
+          },
+          updateFavoriteEvents: () async {
+            await ref.read(eventsControllerProvider.notifier).updateFavoriteEvents();
+            setState(() {});
+          },
+          topPadding: topPadding,
+        ),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              controller: homeTabController.bodyScrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildInterests(context),
+                  buildPageIndicator(),
+                  buildHomeTabButtons(),
+                  const SizedBox(height: 10),
+                  homeTabController.queryController.text.trim().isNotEmpty
+                      ? const EventsSearchResults()
+                      : const SizedBox(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
+                    child: Text(
+                      "My Calendar Events",
+                      style: AppStyles.h2,
+                    ),
                   ),
-                ),
-                const CustomCalendar(),
-                const SizedBox(height: 200)
-              ],
+                  const CustomCalendar(),
+                  const SizedBox(height: 200)
+                ],
+              ),
             ),
-          ),
-          if (isSearching) buildCategoryRow(),
-        ],
+            if (isSearching) buildCategoryRow(),
+          ],
+        ),
       ),
     );
   }
 
   Widget buildHomeTabButtons() {
     return Row(
+      key: ref.read(homeTabControllerProvider.notifier).homeButtonsKey,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Wrap(
