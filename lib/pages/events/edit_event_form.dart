@@ -29,6 +29,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
   late TextEditingController endTimeController;
   DateTime date = DateTime.now();
   late EditEventController editEventController;
+  late TextEditingController urlController;
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     locationController = TextEditingController();
     startTimeController = TextEditingController();
     endTimeController = TextEditingController();
+    urlController = TextEditingController();
     getEventDetails();
     super.initState();
   }
@@ -101,7 +103,12 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     category = ref.read(editEventControllerProvider).category;
     startTimeController.text = event.startTime;
     endTimeController.text = event.endTime != "null" ? event.endTime : "";
+    urlController.text = event.eventUrl;
     convertDateString();
+  }
+
+  void updateUrl(String value) {
+    editEventController.editEventUrl(value);
   }
 
   @override
@@ -109,11 +116,11 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Category",
-          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        ),
-        const SizedBox(height: 16),
+        // Text(
+        //   "Category",
+        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+        // ),
+        // const SizedBox(height: 16),
         Row(
           children: [
             Text("Event category", style: AppStyles.h4),
@@ -125,11 +132,11 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
         ),
         const SizedBox(height: 4),
         categoryDropDown(),
-        broadDivider(),
-        Text(
-          "Title & Description",
-          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        ),
+        // broadDivider(),
+        // Text(
+        //   "Title & Description",
+        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+        // ),
         const SizedBox(height: 16),
         Row(
           children: [
@@ -167,11 +174,22 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
             editEventController.updateDescription(value);
           },
         ),
-        broadDivider(),
+        const SizedBox(height: 16),
         Text(
-          "Location & Time",
-          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+          "Event url",
+          style: AppStyles.h4,
         ),
+        const SizedBox(height: 4),
+        CustomTextField(
+          controller: urlController,
+          hintText: "Event url",
+          onChanged: updateUrl,
+        ),
+        // broadDivider(),
+        // Text(
+        //   "Location & Time",
+        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+        // ),
         const SizedBox(height: 16),
         Row(
           children: [

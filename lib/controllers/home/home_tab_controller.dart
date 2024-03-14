@@ -19,6 +19,7 @@ final homeTabControllerProvider = StateNotifierProvider<HomeTabController, HomeT
 class HomeTabController extends StateNotifier<HomeTabState> {
   HomeTabController({required this.ref})
       : super(HomeTabState(
+          rowInterests: false,
           isSearching: false,
           index: 0,
           homeTabIndex: 0,
@@ -44,6 +45,18 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   final rowCategoryKey = GlobalKey();
   final homeButtonsKey = GlobalKey();
 
+  void scrollToRowCategory() {
+    Scrollable.ensureVisible(
+      rowCategoryKey.currentContext!,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void updateRowInterests(bool rowInterests) {
+    state = state.copyWith(rowInterests: rowInterests);
+  }
+
   void updateIndex(int index) {
     ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
     state = state.copyWith(homeTabIndex: index);
@@ -68,9 +81,11 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     state = state.copyWith(previousOffset: bodyScrollController.offset);
   }
 
-  void updatePageIndex(BuildContext context) {
+  bool updatePageIndex(BuildContext context) {
+    int currentIndex = state.index;
     final index = ((pageScrollController.offset + 100) / MediaQuery.of(context).size.width).floor();
     state = state.copyWith(index: index);
+    return currentIndex != index;
   }
 
   void updateSearching(bool isSearching) {
@@ -165,6 +180,7 @@ class HomeTabState {
   String selectedCategory;
   InterestViewType interestViewType;
   List<InterestModel> currentInterests;
+  bool rowInterests;
 
   HomeTabState({
     required this.isSearching,
@@ -174,6 +190,7 @@ class HomeTabState {
     required this.selectedCategory,
     required this.interestViewType,
     required this.currentInterests,
+    required this.rowInterests,
   });
 
   HomeTabState copyWith({
@@ -184,8 +201,10 @@ class HomeTabState {
     String? selectedCategory,
     InterestViewType? interestViewType,
     List<InterestModel>? currentInterests,
+    bool? rowInterests,
   }) {
     return HomeTabState(
+      rowInterests: rowInterests ?? this.rowInterests,
       isSearching: isSearching ?? this.isSearching,
       index: index ?? this.index,
       homeTabIndex: homeTabIndex ?? this.homeTabIndex,

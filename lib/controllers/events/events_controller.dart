@@ -184,7 +184,6 @@ class EventsControllProvider extends StateNotifier<EventsController> {
         links.add(match.group(0)!);
       }
     }
-    print("links: $links");
     return links;
   }
 }

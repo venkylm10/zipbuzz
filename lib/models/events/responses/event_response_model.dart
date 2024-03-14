@@ -19,6 +19,7 @@ class EventResponseModel {
   List<ImageModel> images;
   final String status;
   final String userDeviceToken;
+  final String eventUrl;
   EventResponseModel({
     required this.id,
     required this.banner,
@@ -40,6 +41,7 @@ class EventResponseModel {
     this.inviteUrl = "",
     required this.status,
     required this.userDeviceToken,
+    required this.eventUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -64,6 +66,7 @@ class EventResponseModel {
       "invite_url": inviteUrl,
       "status": status,
       "user_device_token": userDeviceToken,
+      "event_url": eventUrl,
     };
   }
 
@@ -89,6 +92,7 @@ class EventResponseModel {
       inviteUrl: map['invite_url'] ?? "",
       status: map['status'],
       userDeviceToken: map['user_device_token'] ?? "",
+      eventUrl: map['event_url'] ?? "",
     );
   }
 }

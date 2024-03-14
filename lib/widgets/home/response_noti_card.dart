@@ -5,8 +5,8 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 class ResponseNotiCard extends StatelessWidget {
   const ResponseNotiCard({
     super.key,
-    required this.hostName,
-    required this.hostProfilePic,
+    required this.senderName,
+    required this.senderProfilePic,
     required this.eventId,
     required this.eventName,
     required this.positiveResponse,
@@ -14,8 +14,8 @@ class ResponseNotiCard extends StatelessWidget {
     required this.time,
   });
 
-  final String hostName;
-  final String hostProfilePic;
+  final String senderName;
+  final String senderProfilePic;
   final int eventId;
   final String eventName;
   final bool positiveResponse;
@@ -25,14 +25,14 @@ class ResponseNotiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              hostProfilePic,
+              senderProfilePic,
               height: 44,
               width: 44,
               fit: BoxFit.cover,
@@ -45,7 +45,7 @@ class ResponseNotiCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  hostName,
+                  senderName,
                   style: AppStyles.h5.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -53,7 +53,7 @@ class ResponseNotiCard extends StatelessWidget {
                 ),
                 confirmResponse
                     ? Text(
-                        "$hostName has confirmed your request for $eventName",
+                        "$senderName has confirmed your request for $eventName",
                         style: AppStyles.h5.copyWith(
                           color: AppColors.greyColor,
                         ),
@@ -63,7 +63,13 @@ class ResponseNotiCard extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: 'RSVP - ${positiveResponse ? "Yes" : "No"} ',
+                              text: '$senderName - ',
+                              style: AppStyles.h5.copyWith(
+                                color: AppColors.greyColor,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '${positiveResponse ? "Yes" : "No"} ',
                               style: AppStyles.h5.copyWith(
                                 color: positiveResponse
                                     ? AppColors.positiveGreen
@@ -71,7 +77,7 @@ class ResponseNotiCard extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: 'your invite',
+                              text: 'your invite for $eventName',
                               style: AppStyles.h5.copyWith(
                                 color: AppColors.greyColor,
                               ),

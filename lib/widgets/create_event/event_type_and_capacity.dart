@@ -75,11 +75,11 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Type & Capacity",
-          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        ),
-        const SizedBox(height: 16),
+        // Text(
+        //   "Type & Capacity",
+        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+        // ),
+        // const SizedBox(height: 16),
         Row(
           children: [
             Expanded(

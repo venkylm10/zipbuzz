@@ -65,6 +65,10 @@ class NewEvent extends StateNotifier<EventModel> {
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
 
+  void updateUrl(String val) {
+    state = state.copyWith(eventUrl: val);
+  }
+
   void updateHostId(int id) {
     state = state.copyWith(hostId: id);
   }
@@ -291,6 +295,7 @@ class NewEvent extends StateNotifier<EventModel> {
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: eventInvites.length,
+        eventUrl: state.eventUrl,
       );
 
       // print(eventPostModel.toMap());

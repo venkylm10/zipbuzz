@@ -56,7 +56,7 @@ class InviteNotiCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

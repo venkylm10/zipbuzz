@@ -25,6 +25,7 @@ class EventModel {
   final String inviteUrl;
   String status;
   String userDeviceToken;
+  String eventUrl;
   EventModel({
     required this.id,
     required this.title,
@@ -50,6 +51,7 @@ class EventModel {
     this.inviteUrl = "",
     required this.status,
     required this.userDeviceToken,
+    this.eventUrl = "",
   });
 
   EventModel copyWith({
@@ -77,6 +79,7 @@ class EventModel {
     String? inviteUrl,
     String? status,
     String? userDeviceToken,
+    String? eventUrl,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -103,6 +106,7 @@ class EventModel {
       inviteUrl: inviteUrl ?? this.inviteUrl,
       status: status ?? this.status,
       userDeviceToken: userDeviceToken ?? this.userDeviceToken,
+      eventUrl: eventUrl ?? this.eventUrl,
     );
   }
 
@@ -134,6 +138,7 @@ class EventModel {
           .map((e) => EventInviteMember.fromMap(e as Map<String, dynamic>))
           .toList(),
       userDeviceToken: map['user_device_token'] ?? "",
+      eventUrl: map['event_url'] ?? "",
     );
   }
 
@@ -162,6 +167,7 @@ class EventModel {
       'eventMembers': eventMembers.map((e) => e.toMap()).toList(),
       "invite_url": inviteUrl,
       "status": status,
+      "event_url": eventUrl,
     };
   }
 }

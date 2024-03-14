@@ -260,6 +260,7 @@ class DBServices {
             inviteUrl: res.inviteUrl,
             status: res.status,
             userDeviceToken: res.userDeviceToken,
+            eventUrl: res.eventUrl,
           );
           return eventModel;
         }).toList();
@@ -301,6 +302,7 @@ class DBServices {
       inviteUrl: res.inviteUrl,
       status: res.status,
       userDeviceToken: res.userDeviceToken,
+      eventUrl: res.eventUrl,
     );
     showSnackBar(message: "Event Details Loaded Successfully");
     return eventModel;

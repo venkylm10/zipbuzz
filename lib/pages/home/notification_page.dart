@@ -93,7 +93,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         eventId: notification.eventId,
         eventName: notification.eventName,
         time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
-        acceptInvite: ()async {
+        acceptInvite: () async {
           await showModalBottomSheet(
             context: navigatorKey.currentContext!,
             isScrollControlled: true,
@@ -101,15 +101,11 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             builder: (context) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: AttendeeNumberResponse(
-                  notification: notification
-                ),
+                child: AttendeeNumberResponse(notification: notification),
               );
             },
           );
-          setState(() {
-            
-          });
+          setState(() {});
         },
         declineInvite: () async {
           await ref.read(dioServicesProvider).updateNotification(notification.id, "no");
@@ -128,8 +124,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       final notiTime = DateTime.parse(notification.notificationTime);
       final timeDiff = currentTime.difference(notiTime);
       return ResponseNotiCard(
-        hostName: notification.senderName,
-        hostProfilePic: notification.senderProfilePicture,
+        senderName: notification.senderName,
+        senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
         eventName: notification.eventName,
         positiveResponse: true,
@@ -139,8 +135,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       final notiTime = DateTime.parse(notification.notificationTime);
       final timeDiff = currentTime.difference(notiTime);
       return ResponseNotiCard(
-        hostName: notification.senderName,
-        hostProfilePic: notification.senderProfilePicture,
+        senderName: notification.senderName,
+        senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
         eventName: notification.eventName,
         positiveResponse: false,
@@ -150,8 +146,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       final notiTime = DateTime.parse(notification.notificationTime);
       final timeDiff = currentTime.difference(notiTime);
       return ResponseNotiCard(
-        hostName: notification.senderName,
-        hostProfilePic: notification.senderProfilePicture,
+        senderName: notification.senderName,
+        senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
         eventName: notification.eventName,
         positiveResponse: false,

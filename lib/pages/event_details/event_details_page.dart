@@ -5,14 +5,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/utils.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
-import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -118,13 +115,13 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         .read(dioServicesProvider)
         .getEventMembers(EventMembersRequestModel(eventId: widget.event.id));
     widget.event.eventMembers = members;
-    for (var e in ref.read(eventRequestMembersProvider)) {
-      if (widget.event.eventMembers.firstWhereOrNull((element) => element.phone == e.phone) ==
-          null) {
-        final newMember = EventInviteMember(image: e.image, phone: e.phone, name: e.name);
-        widget.event.eventMembers.add(newMember);
-      }
-    }
+    // for (var e in ref.read(eventRequestMembersProvider)) {
+    //   if (widget.event.eventMembers.firstWhereOrNull((element) => element.phone == e.phone) ==
+    //       null) {
+    //     final newMember = EventInviteMember(image: e.image, phone: e.phone, name: e.name);
+    //     widget.event.eventMembers.add(newMember);
+    //   }
+    // }
     getEventColor();
   }
 
@@ -222,6 +219,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                 thickness: 0,
                               ),
                               const SizedBox(height: 16),
+                              buildEventUrl(),
                               Text(
                                 "Photos",
                                 style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
@@ -297,67 +295,135 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     );
   }
 
+  Widget buildEventUrl() {
+    if (widget.event.eventUrl.isEmpty) return const SizedBox();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Event url",
+          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+        ),
+        const SizedBox(height: 16),
+        buildUrlText(),
+        const SizedBox(height: 16),
+        Divider(
+          color: AppColors.greyColor.withOpacity(0.2),
+          thickness: 0,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget buildUrlText() {
+    return Builder(
+      builder: (context) {
+        final splits = widget.event.eventUrl.split(" ");
+        return RichText(
+          text: TextSpan(
+            children: splits.map(
+              (e) {
+                var isLink = false;
+                var url = "";
+                final up2 = RegExp(r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                if (up2.hasMatch(e)) {
+                  isLink = true;
+                  if (e.startsWith("http://") || e.startsWith("https://")) {
+                    url = e;
+                  } else {
+                    url = "http://$e";
+                  }
+                }
+                return TextSpan(
+                  children: isLink
+                      ? [
+                          TextSpan(
+                            text: e,
+                            style: AppStyles.h4.copyWith(
+                              color: isLink ? Colors.blue : AppColors.greyColor,
+                              fontStyle: isLink ? FontStyle.italic : FontStyle.normal,
+                              decoration: isLink ? TextDecoration.underline : TextDecoration.none,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                launchUrlString(url);
+                              },
+                          ),
+                          const TextSpan(text: " "),
+                        ]
+                      : [
+                          TextSpan(
+                            text: !isLink ? "$e " : null,
+                            style: AppStyles.h4.copyWith(
+                              color: AppColors.greyColor,
+                              fontStyle: FontStyle.normal,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ],
+                );
+              },
+            ).toList(),
+          ),
+        );
+      },
+    );
+  }
+
   Builder buildDescription() {
     return Builder(
-                              builder: (context) {
-                                final splits = widget.event.about.split(" ");
-                                return RichText(
-                                  text: TextSpan(
-                                    children: splits.map(
-                                      (e) {
-                                        var isLink = false;
-                                        var url = "";
-                                        final up2 = RegExp(
-                                            r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                                        if (up2.hasMatch(e)) {
-                                          isLink = true;
-                                          if (e.startsWith("http://") ||
-                                              e.startsWith("https://")) {
-                                            url = e;
-                                          } else {
-                                            url = "http://$e";
-                                          }
-                                        }
-                                        return TextSpan(
-                                          children: isLink
-                                              ? [
-                                                  TextSpan(
-                                                    text: e,
-                                                    style: AppStyles.h4.copyWith(
-                                                      color: isLink
-                                                          ? Colors.blue
-                                                          : AppColors.greyColor,
-                                                      fontStyle: isLink
-                                                          ? FontStyle.italic
-                                                          : FontStyle.normal,
-                                                      decoration: isLink
-                                                          ? TextDecoration.underline
-                                                          : TextDecoration.none,
-                                                    ),
-                                                    recognizer: TapGestureRecognizer()
-                                                      ..onTap = () {
-                                                        launchUrlString(url);
-                                                      },
-                                                  ),
-                                                  const TextSpan(text: " "),
-                                                ]
-                                              : [
-                                                  TextSpan(
-                                                    text: !isLink ? "$e " : null,
-                                                    style: AppStyles.h4.copyWith(
-                                                      color: AppColors.greyColor,
-                                                      fontStyle: FontStyle.normal,
-                                                      decoration: TextDecoration.none,
-                                                    ),
-                                                  ),
-                                                ],
-                                        );
-                                      },
-                                    ).toList(),
-                                  ),
-                                );
+      builder: (context) {
+        final splits = widget.event.about.split(" ");
+        return RichText(
+          text: TextSpan(
+            children: splits.map(
+              (e) {
+                var isLink = false;
+                var url = "";
+                final up2 = RegExp(r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                if (up2.hasMatch(e)) {
+                  isLink = true;
+                  if (e.startsWith("http://") || e.startsWith("https://")) {
+                    url = e;
+                  } else {
+                    url = "http://$e";
+                  }
+                }
+                return TextSpan(
+                  children: isLink
+                      ? [
+                          TextSpan(
+                            text: e,
+                            style: AppStyles.h4.copyWith(
+                              color: isLink ? Colors.blue : AppColors.greyColor,
+                              fontStyle: isLink ? FontStyle.italic : FontStyle.normal,
+                              decoration: isLink ? TextDecoration.underline : TextDecoration.none,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                launchUrlString(url);
                               },
-                            );
+                          ),
+                          const TextSpan(text: " "),
+                        ]
+                      : [
+                          TextSpan(
+                            text: !isLink ? "$e " : null,
+                            style: AppStyles.h4.copyWith(
+                              color: AppColors.greyColor,
+                              fontStyle: FontStyle.normal,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ],
+                );
+              },
+            ).toList(),
+          ),
+        );
+      },
+    );
   }
 
   Widget buildAttendeeNumber() {

@@ -67,8 +67,8 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: const EdgeInsets.all(20).copyWith(top: 10),
-          padding: const EdgeInsets.all(5),
+          margin: const EdgeInsets.symmetric(horizontal: 20).copyWith(bottom: 20),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: AppColors.calenderBg,
             borderRadius: BorderRadius.circular(20),
