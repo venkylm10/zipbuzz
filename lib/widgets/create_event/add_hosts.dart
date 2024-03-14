@@ -30,39 +30,12 @@ class _AddHostsState extends ConsumerState<AddHosts> {
         const SizedBox(height: 16),
         buildHost(user, false),
         ListView.builder(
-            itemCount: coHosts.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return buildHost(coHosts[index], true);
-            }),
-
-        // TODO: Add CO-Hosts
-        // GestureDetector(
-        //   onTap: showSnackBar,
-        //   child: Container(
-        //     height: 44,
-        //     width: double.infinity,
-        //     decoration: BoxDecoration(
-        //       color: AppColors.bgGrey,
-        //       borderRadius: BorderRadius.circular(12),
-        //       border: Border.all(color: AppColors.borderGrey),
-        //     ),
-        //     child: Row(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       crossAxisAlignment: CrossAxisAlignment.center,
-        //       children: [
-        //         SvgPicture.asset(Assets.icons.add_circle, height: 20),
-        //         const SizedBox(width: 8),
-        //         Text(
-        //           "Add Co-host",
-        //           style: AppStyles.h4.copyWith(
-        //             color: AppColors.greyColor,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
+          itemCount: coHosts.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return buildHost(coHosts[index], true);
+          },
+        ),
       ],
     );
   }

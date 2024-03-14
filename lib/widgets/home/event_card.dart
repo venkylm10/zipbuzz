@@ -6,6 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/models/events/event_request_member.dart';
+import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -219,10 +222,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                                 Positioned(
                                   bottom: 8,
                                   right: 8,
-                                  child: AttendeeNumbers(
-                                    attendees: widget.event.attendees.toString(),
-                                    total: widget.event.capacity,
-                                  ),
+                                  child: buildAttendees(),
                                 ),
                               ],
                             ),
@@ -311,6 +311,42 @@ class _EventCardState extends ConsumerState<EventCard> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<List<EventRequestMember>> getEventMembers() async {
+    print("getting event request members");
+    final data = ref.read(dioServicesProvider).getEventRequestMembers(widget.event.id);
+    final members = await ref
+        .read(dioServicesProvider)
+        .getEventMembers(EventMembersRequestModel(eventId: widget.event.id));
+    widget.event.eventMembers = members;
+    return data;
+  }
+
+  Widget buildAttendees() {
+    return FutureBuilder(
+      future: getEventMembers(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var data = snapshot.data!;
+          final confirmedMembers =
+              data.where((element) => element.status == "confirm").toList().length;
+          final respondedMembers = data.length;
+          final attendees =
+              "${widget.event.eventMembers.length},$respondedMembers,$confirmedMembers";
+          return AttendeeNumbers(
+            attendees: attendees,
+            total: widget.event.capacity,
+            backgroundColor: AppColors.greyColor.withOpacity(0.1),
+          );
+        }
+        return AttendeeNumbers(
+          attendees: "${ref.watch(newEventProvider).attendees},0,0",
+          total: widget.event.capacity,
+          backgroundColor: AppColors.greyColor.withOpacity(0.1),
+        );
+      },
     );
   }
 

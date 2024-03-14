@@ -174,24 +174,22 @@ class EventHostGuestList extends StatelessWidget {
                 Consumer(builder: (context, ref, child) {
                   return GestureDetector(
                     onTap: () async {
-                      if (!interative) return;
-                      if (isPending) {
-                        var newMember = member;
-                        newMember.status = "confirm";
-                        var updateMembers = ref.read(eventRequestMembersProvider);
-                        updateMembers.removeAt(index);
-                        updateMembers.add(newMember);
-                        ref
-                            .read(eventRequestMembersProvider.notifier)
-                            .update((state) => updateMembers);
-                        await ref
-                            .read(dioServicesProvider)
-                            .editUserStatus(eventId, member.phone, "confirm");
+                      if (!interative || !isPending) return;
+                      var newMember = member;
+                      newMember.status = "confirm";
+                      var updateMembers = ref.read(eventRequestMembersProvider);
+                      updateMembers.removeAt(index);
+                      updateMembers.add(newMember);
+                      ref
+                          .read(eventRequestMembersProvider.notifier)
+                          .update((state) => updateMembers);
+                      await ref
+                          .read(dioServicesProvider)
+                          .editUserStatus(eventId, member.phone, "confirm");
 
-                        ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
-                      }
+                      ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                     },
-                    child: buildGuestTag(),
+                    child: buildGuestTag(member.status),
                   );
                 })
             ],
@@ -247,7 +245,7 @@ class EventHostGuestList extends StatelessWidget {
                 ],
               ),
               const Expanded(child: SizedBox()),
-              if (interative) buildGuestTag()
+              if (interative) buildGuestTag("member")
             ],
           ),
         ),
@@ -260,13 +258,21 @@ class EventHostGuestList extends StatelessWidget {
     );
   }
 
-  Consumer buildGuestTag() {
+  Consumer buildGuestTag(String status) {
     return Consumer(
       builder: (context, ref, child) {
         final selectedTag = ref.watch(guestListTagProvider);
-        if (selectedTag == "Confirmed") {
-          return const SizedBox();
-        } else if (selectedTag == "Responded") {
+        if (selectedTag == "Responded") {
+          var text = "";
+          if (interative) {
+            if (status == "pending") {
+              text = "Confirm";
+            } else {
+              text = "Confirmed";
+            }
+          } else {
+            return const SizedBox();
+          }
           return Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -274,7 +280,7 @@ class EventHostGuestList extends StatelessWidget {
               color: const Color(0xFFEAF6ED),
             ),
             child: Text(
-              !interative ? "Confirmed" : "Confirm",
+              text,
               style: AppStyles.h5.copyWith(
                 color: Colors.green.shade500,
               ),

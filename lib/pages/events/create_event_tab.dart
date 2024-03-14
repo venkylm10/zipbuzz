@@ -55,7 +55,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // TODO: Removed banner selector in create event tab
+          // Removed banner selector in create event tab
           // const EventBannerSelector(),
           // const SizedBox(height: 16),
           const CreateEventForm(),

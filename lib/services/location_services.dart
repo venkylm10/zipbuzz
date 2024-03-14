@@ -27,12 +27,10 @@ class LocationServices extends StateNotifier<LocationModel> {
   Future<void> getLocationFromZipcode(String newZipcode) async {
     state = state.copyWith(zipcode: newZipcode);
     try {
-      print("getting location");
       final res = await ref
           .read(dioServicesProvider)
           .dio
           .get(DioConstants.getLocation, data: {"zipcode": newZipcode});
-      print(res.data);
       final loc = res.data['location_name'].split(",");
       final city = loc[0].toString().trim();
       var country = "";

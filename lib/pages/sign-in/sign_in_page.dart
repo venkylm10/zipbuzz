@@ -30,8 +30,6 @@ class SignInSheet extends ConsumerWidget {
     ref.read(authServicesProvider).signInWithApple();
   }
 
-
-
   void signInGuestUser(WidgetRef ref) {
     GetStorage().write(BoxConstants.guestUser, true);
     GetStorage().write(BoxConstants.id, 1);
@@ -87,7 +85,7 @@ class SignInSheet extends ConsumerWidget {
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {
-                  // TODO: Guest View Flow
+                  // Guest View Flow
                   // signInGuestUser(ref);
                   navigatorKey.currentState!.pop();
                   showPrivacySheet(context);

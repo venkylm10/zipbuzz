@@ -31,19 +31,20 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   void initState() {
     if (isMounted) {
       ref.read(homeTabControllerProvider.notifier).pageScrollController.addListener(() {
+        if (!isMounted) return;
         final check = ref.read(homeTabControllerProvider.notifier).updatePageIndex(context);
         if (check && mounted) setState(() {});
       });
     }
     ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(
       () {
+        if (!isMounted) return;
         final check =
             ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset == 0 &&
                 ref.read(homeTabControllerProvider).isSearching;
         if (check) {
           if (isMounted) ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
           if (isMounted) ref.read(homeTabControllerProvider.notifier).updateSearching(false);
-          setState(() {});
         }
         if (width == 0) {
           width = MediaQuery.of(context).size.width * 0.6;
@@ -51,11 +52,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         final rowInterests = ref.read(homeTabControllerProvider).rowInterests;
         if (ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset > width &&
             !rowInterests) {
-          ref.read(homeTabControllerProvider.notifier).updateRowInterests(true);
+          if (mounted) ref.read(homeTabControllerProvider.notifier).updateRowInterests(true);
         }
         if (ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset < width &&
             rowInterests) {
-          ref.read(homeTabControllerProvider.notifier).updateRowInterests(false);
+          if (mounted) ref.read(homeTabControllerProvider.notifier).updateRowInterests(false);
         }
       },
     );
