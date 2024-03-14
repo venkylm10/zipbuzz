@@ -81,7 +81,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${userLocation.city}, ${userLocation.country}",
+                      "${userLocation.city}${userLocation.country.isNotEmpty ? ", ${userLocation.country}" : ""}",
                       style: AppStyles.h5.copyWith(color: Colors.white),
                     ),
                     Text(
