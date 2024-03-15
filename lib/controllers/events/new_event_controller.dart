@@ -65,6 +65,10 @@ class NewEvent extends StateNotifier<EventModel> {
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
 
+  void updateEvent(EventModel event) {
+    state = event;
+  }
+
   void updateUrl(String val) {
     state = state.copyWith(eventUrl: val);
   }
@@ -164,30 +168,39 @@ class NewEvent extends StateNotifier<EventModel> {
     contactSearchResult = allContacts;
   }
 
-  void updateSelectedContact(Contact contact) {
+  void updateSelectedContact(Contact contact, {bool fix = false}) {
     if (!eventInvites.contains(contact)) {
       if (state.attendees >= state.capacity) {
         state = state.copyWith(capacity: state.capacity + 1);
       }
-      eventInvites.add(contact);
+      if (!fix) eventInvites.add(contact);
       final member = EventInviteMember(
         image: "null",
         phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
         name: contact.displayName ?? "",
       );
-      state = state.copyWith(
-        attendees: state.attendees + 1,
-        eventMembers: state.eventMembers..add(member),
-      );
+      addEventMember(member);
       return;
     }
-    eventInvites.remove(contact);
+    if (!fix) eventInvites.remove(contact);
     final member = state.eventMembers.firstWhere(
       (element) => element.phone == contact.phones!.first.value,
     );
     state = state.copyWith(
       attendees: state.attendees - 1,
       eventMembers: state.eventMembers..remove(member),
+    );
+  }
+
+  void resetEventMembers() {
+    state = state.copyWith(eventMembers: []);
+    eventInvites = [];
+  }
+
+  void addEventMember(EventInviteMember member, {bool increase = true}) {
+    state = state.copyWith(
+      attendees: increase ? state.attendees + 1 : state.attendees,
+      eventMembers: state.eventMembers..add(member),
     );
   }
 
@@ -295,7 +308,7 @@ class NewEvent extends StateNotifier<EventModel> {
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: eventInvites.length,
-        eventUrl: state.eventUrl,
+        eventUrl: state.eventUrl.isEmpty ? "zipbuzz-null" : state.eventUrl,
       );
 
       // print(eventPostModel.toMap());

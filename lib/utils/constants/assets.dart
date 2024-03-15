@@ -81,6 +81,7 @@ class AppIcons {
   final email = 'assets/icons/email.svg';
   final personName = "assets/icons/person-name.svg";
   final copy = 'assets/icons/copy.svg';
+  final clone = 'assets/icons/clone.svg';
 }
 
 class WelcomeImage {

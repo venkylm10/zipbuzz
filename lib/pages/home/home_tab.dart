@@ -423,7 +423,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   Text(
                     interest.activity,
                     softWrap: true,
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: AppStyles.h5,

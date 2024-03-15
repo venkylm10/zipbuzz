@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
+import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
@@ -23,9 +24,17 @@ import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 // ignore: must_be_immutable
 class EventCard extends ConsumerStatefulWidget {
   EventModel event;
-  final bool? focusedEvent;
+  final bool focusedEvent;
   final bool showTag;
-  EventCard({super.key, required this.event, this.focusedEvent = false, this.showTag = true});
+  final bool myEvent;
+
+  EventCard({
+    super.key,
+    required this.event,
+    this.focusedEvent = false,
+    this.showTag = true,
+    this.myEvent = false,
+  });
 
   @override
   ConsumerState<EventCard> createState() => _EventCardState();
@@ -116,7 +125,7 @@ class _EventCardState extends ConsumerState<EventCard> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!widget.focusedEvent!)
+            if (!widget.focusedEvent)
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -200,24 +209,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                                 Positioned(
                                   right: 10,
                                   top: 10,
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await addToFavorite();
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Icon(
-                                        Icons.favorite_rounded,
-                                        color: widget.event.isFavorite
-                                            ? Colors.red[500]
-                                            : Colors.grey[300],
-                                      ),
-                                    ),
-                                  ),
+                                  child: buildCardOptions(),
                                 ),
                                 Positioned(
                                   bottom: 8,
@@ -237,8 +229,8 @@ class _EventCardState extends ConsumerState<EventCard> {
                               children: [
                                 Row(
                                   children: [
-                                    if (widget.focusedEvent!) buildCategoryChip(),
-                                    if (widget.focusedEvent!) const SizedBox(width: 5),
+                                    if (widget.focusedEvent) buildCategoryChip(),
+                                    if (widget.focusedEvent) const SizedBox(width: 5),
                                     buildHostChip(),
                                   ],
                                 ),
@@ -311,6 +303,72 @@ class _EventCardState extends ConsumerState<EventCard> {
           ],
         ),
       ),
+    );
+  }
+
+  void cloneEvent() {
+    final startTime = TimeOfDay.fromDateTime(DateTime.now());
+    final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
+    ref.read(newEventProvider.notifier).updateDate(DateTime.now());
+    final clone = ref.read(newEventProvider).copyWith(
+          title: widget.event.title,
+          about: widget.event.about,
+          category: widget.event.category,
+          date: DateTime.now().toString(),
+          startTime: formatedStartTime,
+          endTime: "",
+          location: widget.event.location,
+          capacity: widget.event.capacity,
+          bannerPath: widget.event.bannerPath,
+          iconPath: widget.event.iconPath,
+          attendees: 0,
+        );
+
+    ref.read(eventTabControllerProvider.notifier).updateIndex(2);
+    ref.read(newEventProvider.notifier).updateEvent(clone);
+  }
+
+  Widget buildCardOptions() {
+    return Row(
+      children: [
+        if (widget.myEvent)
+          GestureDetector(
+            onTap: () async {
+              cloneEvent();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: SvgPicture.asset(
+                Assets.icons.clone,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.primaryColor,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+        const SizedBox(width: 8),
+        GestureDetector(
+          onTap: () async {
+            await addToFavorite();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              Icons.favorite_rounded,
+              color: widget.event.isFavorite ? Colors.red[500] : Colors.grey[300],
+            ),
+          ),
+        )
+      ],
     );
   }
 

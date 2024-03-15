@@ -10,6 +10,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -60,6 +61,24 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   int maxImages = 0;
   List<UserModel> coHosts = [];
   File? image;
+
+  void fixInviteGuests() {
+    if (widget.event.attendees == 0) {
+      ref.read(newEventProvider.notifier).resetEventMembers();
+      return;
+    }
+    if (!(widget.isPreview || widget.rePublish)) return;
+    final contacts = ref.read(newEventProvider.notifier).eventInvites;
+    for (var contact in contacts) {
+      final member = EventInviteMember(
+        image: "null",
+        phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
+        name: contact.displayName ?? "",
+      );
+      ref.read(newEventProvider.notifier).addEventMember(member, increase: false);
+    }
+    setState(() {});
+  }
 
   void pickImage() async {
     final pickedImage = await ImageServices().pickImage();
@@ -122,6 +141,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     //     widget.event.eventMembers.add(newMember);
     //   }
     // }
+    fixInviteGuests();
     getEventColor();
   }
 
@@ -296,7 +316,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   }
 
   Widget buildEventUrl() {
-    if (widget.event.eventUrl.isEmpty) return const SizedBox();
+    if (widget.event.eventUrl.isEmpty || widget.event.eventUrl == "zipbuzz-null") {
+      return const SizedBox();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -434,13 +456,19 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           isScrollControlled: true,
           enableDrag: true,
           builder: (context) {
+            var guests = widget.isPreview
+                ? ref.watch(newEventProvider).eventMembers
+                : widget.event.eventMembers;
+            if (widget.rePublish) {
+              guests = ref.read(editEventControllerProvider).eventMembers;
+            }
             return ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: SingleChildScrollView(
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   child: EventHostGuestList(
-                    guests: widget.event.eventMembers,
+                    guests: guests,
                     eventId: widget.event.id,
                     interative: false,
                   ),

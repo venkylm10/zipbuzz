@@ -31,15 +31,25 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
 
   @override
   void initState() {
+    initialise();
+    super.initState();
+  }
+
+  void initialise() {
     newEventController = ref.read(newEventProvider.notifier);
     nameController = TextEditingController();
+    nameController.text = ref.read(newEventProvider).title;
     descriptionController = TextEditingController();
+    descriptionController.text = ref.read(newEventProvider).about;
     dateController = TextEditingController();
+    dateController.text = DateFormat('d\'th,\' MMMM (EEEE)').format(date);
     locationController = TextEditingController();
+    locationController.text = ref.read(newEventProvider).location;
     startTimeController = TextEditingController();
+    startTimeController.text = ref.read(newEventProvider).startTime;
     endTimeController = TextEditingController();
+    endTimeController.text = ref.read(newEventProvider).endTime;
     urlController = TextEditingController();
-    super.initState();
   }
 
   @override
