@@ -105,7 +105,9 @@ class _EventGuestListState extends State<EventGuestList> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.25,
                         child: Text(
-                          '@zipbuzz_user',
+                          member.phone,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                           style: AppStyles.h6.copyWith(
                               fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
                         ),
