@@ -306,32 +306,7 @@ class EditEventController extends StateNotifier<EventModel> {
         await ref.read(dioServicesProvider).deleteEventImages(deletedImages);
         deletedImages.clear();
       }
-      var eventDateTime = DateTime.parse(state.date);
-      ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
-      ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-      await ref.read(eventsControllerProvider.notifier).getAllEvents();
-      ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
-      ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
-      ref.read(loadingTextProvider.notifier).reset();
-      showSnackBar(message: "Event edited successfully");
-      navigatorKey.currentState!.pop();
-      navigatorKey.currentState!.pop();
-      final image = NetworkImage(eventPostModel.banner);
-      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-        image,
-      );
-      final dominantColor = generator.dominantColor?.color;
-      final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(eventId);
-      Map<String, dynamic> args = {
-        'event': updatedEvent,
-        'isPreview': false,
-        'dominantColor': dominantColor ?? const Color(0xFF4a5759),
-        'randInt': 0,
-      };
-      await navigatorKey.currentState!.pushReplacementNamed(
-        EventDetailsPage.id,
-        arguments: args,
-      );
+      await moveToEditedEvent();
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -350,5 +325,41 @@ class EditEventController extends StateNotifier<EventModel> {
       suffix = 'th';
     }
     return DateFormat('d\'$suffix\' MMMM, y').format(date);
+  }
+
+  Future<void> moveToEditedEvent() async {
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+    try {
+      var eventDateTime = DateTime.parse(state.date);
+      ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
+      ref.read(homeTabControllerProvider.notifier).updateIndex(1);
+      await ref.read(eventsControllerProvider.notifier).getAllEvents();
+      ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
+      ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
+      ref.read(loadingTextProvider.notifier).reset();
+      showSnackBar(message: "Event edited successfully");
+      navigatorKey.currentState!.pop();
+      navigatorKey.currentState!.pop();
+      final image = NetworkImage(state.bannerPath);
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      final dominantColor = generator.dominantColor?.color;
+      final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(eventId);
+      Map<String, dynamic> args = {
+        'event': updatedEvent,
+        'isPreview': false,
+        'dominantColor': dominantColor ?? const Color(0xFF4a5759),
+        'randInt': 0,
+      };
+      ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+      await navigatorKey.currentState!.pushReplacementNamed(
+        EventDetailsPage.id,
+        arguments: args,
+      );
+    } catch (e) {
+      debugPrint("Failed to move to edited event $e");
+      ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+    }
   }
 }

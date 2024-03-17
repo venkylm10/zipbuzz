@@ -363,13 +363,24 @@ class NewEvent extends StateNotifier<EventModel> {
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
       ref.read(homeTabControllerProvider.notifier).updateIndex(0);
-      final image = NetworkImage(eventPostModel.banner);
+      await _moveToCreatedEvent();
+    } catch (e) {
+      ref.read(loadingTextProvider.notifier).reset();
+      navigatorKey.currentState!.pop();
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> _moveToCreatedEvent() async {
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+    try {
+      final image = NetworkImage(state.bannerPath);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
         image,
       );
       final dominantColor = generator.dominantColor?.color;
       ref.read(loadingTextProvider.notifier).updateLoadingText("Getting event details...");
-      final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(eventId);
+      final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(state.id);
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Event created successfully");
       Map<String, dynamic> args = {
@@ -379,15 +390,15 @@ class NewEvent extends StateNotifier<EventModel> {
         'randInt': 0,
       };
       ref.read(loadingTextProvider.notifier).reset();
+      ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
       await navigatorKey.currentState!.pushReplacementNamed(
         EventDetailsPage.id,
         arguments: args,
       );
       resetNewEvent();
     } catch (e) {
-      ref.read(loadingTextProvider.notifier).reset();
-      navigatorKey.currentState!.pop();
-      debugPrint(e.toString());
+      debugPrint("Failed to move to created event: $e");
+      ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
     }
   }
 

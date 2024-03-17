@@ -21,6 +21,7 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/widgets/event_details_page/invite_guest_alert.dart';
 
 class EventButtons extends ConsumerStatefulWidget {
   const EventButtons({
@@ -41,7 +42,6 @@ class EventButtons extends ConsumerStatefulWidget {
 class _EventButtonsState extends ConsumerState<EventButtons> {
   void publishEvent(WidgetRef ref) async {
     await ref.read(newEventProvider.notifier).publishEvent();
-    navigatorKey.currentState!.pop();
   }
 
   @override
@@ -135,89 +135,20 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                 builder: (context, ref, child) {
                   final loadingText = ref.watch(loadingTextProvider);
                   return GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       if (loadingText != null) return;
                       if (ref.read(newEventProvider).eventMembers.isEmpty) {
                         showDialog(
-                            context: navigatorKey.currentContext!,
-                            barrierDismissible: true,
-                            builder: (context) {
-                              return AlertDialog(
-                                surfaceTintColor: Colors.transparent,
-                                backgroundColor: Colors.transparent,
-                                content: Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.bgGrey,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        "You haven't invited any Guests. Do you want to continue?",
-                                        style: AppStyles.h4,
-                                      ),
-                                      const SizedBox(height: 24),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                navigatorKey.currentState!.pop();
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.primaryColor,
-                                                  borderRadius: BorderRadius.circular(360),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    "No",
-                                                    style: AppStyles.h3.copyWith(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                navigatorKey.currentState!.pop();
-                                                ref.read(newEventProvider.notifier).publishEvent();
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.primaryColor,
-                                                  borderRadius: BorderRadius.circular(360),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    "Yes",
-                                                    style: AppStyles.h3.copyWith(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
+                          context: navigatorKey.currentContext!,
+                          barrierDismissible: true,
+                          builder: (context) {
+                            return const InviteGuestAlert();
+                          },
+                        );
                         return;
                       }
 
-                      ref.read(newEventProvider.notifier).publishEvent();
+                      await ref.read(newEventProvider.notifier).publishEvent();
                     },
                     child: Container(
                       decoration: BoxDecoration(

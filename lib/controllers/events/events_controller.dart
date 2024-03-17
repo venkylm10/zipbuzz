@@ -63,8 +63,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   }
 
   Future<void> getAllEvents() async {
-    final userEventsRequestModel =
-        UserEventsRequestModel(userId: ref.read(userProvider).id);
+    final userEventsRequestModel = UserEventsRequestModel(userId: ref.read(userProvider).id);
     final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
     state = state.copyWith(allEvents: list);
     adjustEventData();
@@ -95,8 +94,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   Future<void> updateFavoriteEvents() async {
     if (!state.showingFavorites) {
       state = state.copyWith(showingFavorites: true);
-      final userEventsRequestModel =
-          UserEventsRequestModel(userId: ref.read(userProvider).id);
+      final userEventsRequestModel = UserEventsRequestModel(userId: ref.read(userProvider).id);
       final list = await ref.read(dbServicesProvider).getUserFavoriteEvents(userEventsRequestModel);
       state = state.copyWith(allEvents: list);
       adjustEventData();
@@ -175,7 +173,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     return ref.read(dioServicesProvider).requestToJoinEvent(model);
   }
 
-    List<String> extractLinks(String text) {
+  List<String> extractLinks(String text) {
     RegExp urlPattern = RegExp(r'https?://\S+');
     Iterable<RegExpMatch> matches = urlPattern.allMatches(text);
     List<String> links = [];
@@ -185,6 +183,10 @@ class EventsControllProvider extends StateNotifier<EventsController> {
       }
     }
     return links;
+  }
+
+  void updateLoadingState(bool loading) {
+    state = state.copyWith(loading: loading);
   }
 }
 
@@ -200,6 +202,7 @@ class EventsController {
   String selectedCategory = '';
   double calenderHeight = 150;
   bool showingFavorites = false;
+  bool loading = false;
 
   final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   var focusedDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -216,6 +219,7 @@ class EventsController {
     double? calenderHeight,
     bool? showingFavorites,
     DateTime? focusedDay,
+    bool? loading,
   }) {
     var res = EventsController(
       user: user ?? this.user,
@@ -231,6 +235,7 @@ class EventsController {
     res.calenderHeight = calenderHeight ?? this.calenderHeight;
     res.showingFavorites = showingFavorites ?? this.showingFavorites;
     res.focusedDay = focusedDay ?? this.focusedDay;
+    res.loading = loading ?? this.loading;
     return res;
   }
 }
