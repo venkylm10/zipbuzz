@@ -141,6 +141,14 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             maxLength: 10,
                             prefixWidget: countryCodeSelector(),
                           ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "By continuing you agree to receive event text messages from BuzzMe at this number",
+                            style: AppStyles.h5.copyWith(
+                              color: AppColors.greyColor,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             "Select at least 3 interests:",
