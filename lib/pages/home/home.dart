@@ -36,6 +36,7 @@ class Home extends ConsumerWidget {
         onTap: (value) {
           ref.read(homeTabControllerProvider.notifier).updateIndex(value);
           if (value == 0) {
+            ref.read(homeTabControllerProvider.notifier).updateSearching(false);
             ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
             ref.read(newEventProvider.notifier).resetNewEvent();
           } else if (value == 1) {
