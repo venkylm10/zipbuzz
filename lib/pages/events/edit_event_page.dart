@@ -148,7 +148,8 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
 
   void showPreview() async {
     final dominantColor = await getDominantColor();
-    navigatorKey.currentState!.pushNamed(
+    final event = ref.read(editEventControllerProvider);
+    await navigatorKey.currentState!.pushNamed(
       EventDetailsPage.id,
       arguments: {
         'event': ref.read(editEventControllerProvider),
@@ -157,5 +158,8 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
         'randInt': randInt,
       },
     );
+    ref.read(editEventControllerProvider.notifier).updateEvent(event);
+    setState(() {});
+    print("back");
   }
 }

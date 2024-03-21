@@ -64,24 +64,23 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   File? image;
 
   void fixInviteGuests() {
-    if (widget.event.attendees == 0) {
-      ref.read(newEventProvider.notifier).resetEventMembers();
-      ref.read(editEventControllerProvider.notifier).resetEventMembers();
+    if (widget.event.eventMembers.isEmpty) {
+      widget.rePublish
+          ? ref.read(newEventProvider.notifier).resetEventMembers()
+          : ref.read(editEventControllerProvider.notifier).resetEventMembers();
       return;
     }
     if (!(widget.isPreview || widget.rePublish)) return;
-    final contacts = widget.rePublish
-        ? ref.read(editEventControllerProvider.notifier).eventInvites
-        : ref.read(newEventProvider.notifier).eventInvites;
-    for (var contact in contacts) {
-      final member = EventInviteMember(
-        image: "null",
-        phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
-        name: contact.displayName ?? "",
-      );
-      widget.rePublish
-          ? ref.read(editEventControllerProvider.notifier).addEventMember(member, increase: false)
-          : ref.read(newEventProvider.notifier).addEventMember(member, increase: false);
+    if (widget.isPreview) {
+      final contacts = ref.read(newEventProvider.notifier).eventInvites;
+      for (var contact in contacts) {
+        final member = EventInviteMember(
+          image: "null",
+          phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
+          name: contact.displayName ?? "",
+        );
+        ref.read(newEventProvider.notifier).addEventMember(member, increase: false);
+      }
     }
     setState(() {});
   }

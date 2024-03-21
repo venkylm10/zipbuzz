@@ -169,7 +169,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
               ),
               const SizedBox(width: 4),
               Text(
-                "(${widget.edit ? ref.read(editEventControllerProvider).attendees : ref.read(newEventProvider).attendees}/${widget.edit ? ref.read(editEventControllerProvider).capacity : ref.read(newEventProvider).capacity})",
+                "(${widget.edit ? ref.watch(editEventControllerProvider.notifier).eventInvites.length : ref.read(newEventProvider).attendees}/${widget.edit ? ref.watch(editEventControllerProvider).capacity : ref.read(newEventProvider).capacity})",
                 style: AppStyles.h3.copyWith(
                   color: Colors.white.withOpacity(0.5),
                 ),
@@ -184,11 +184,11 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   void updateSearchResult(String query) {
     if (query.isEmpty) {
       widget.edit
-          ? ref.read(editEventControllerProvider.notifier).resetContactSearch()
+          ? ref.watch(editEventControllerProvider.notifier).resetContactSearch()
           : ref.read(newEventProvider.notifier).resetContactSearch();
     } else {
       widget.edit
-          ? ref.read(editEventControllerProvider.notifier).updateContactSearchResult(query)
+          ? ref.watch(editEventControllerProvider.notifier).updateContactSearchResult(query)
           : ref.read(newEventProvider.notifier).updateContactSearchResult(query);
     }
     setState(() {});
@@ -242,7 +242,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
     return GestureDetector(
       onTap: () {
         widget.edit
-            ? ref.read(editEventControllerProvider.notifier).updateSelectedContact(contact)
+            ? ref.watch(editEventControllerProvider.notifier).updateSelectedContact(contact)
             : ref.read(newEventProvider.notifier).updateSelectedContact(contact);
         setState(() {});
       },

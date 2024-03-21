@@ -1,6 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -25,6 +26,8 @@ class Contacts {
         );
         ref.read(newEventProvider.notifier).updateAllContacts(contacts);
         ref.read(newEventProvider.notifier).resetContactSearch();
+        ref.read(editEventControllerProvider.notifier).updateAllContacts(contacts);
+        ref.read(editEventControllerProvider.notifier).resetContactSearch();
       } else {
         showSnackBar(message: "We need contact permission to invite people");
         if (await ref.read(appPermissionsProvider).getContactsPermission()) {
@@ -47,5 +50,6 @@ class Contacts {
     final contacts = await getContacts()
         .then((value) => value.where((element) => element.phones != null).toList());
     ref.read(newEventProvider.notifier).updateAllContacts(contacts);
+    ref.read(editEventControllerProvider.notifier).updateAllContacts(contacts);
   }
 }

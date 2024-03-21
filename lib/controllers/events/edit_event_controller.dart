@@ -64,6 +64,7 @@ class EditEventController extends StateNotifier<EventModel> {
   int maxImages = 7;
   File? bannerImage;
   List<UserModel> coHosts = [];
+  List<Contact> originalInvites = [];
   List<Contact> eventInvites = [];
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
@@ -381,7 +382,6 @@ class EditEventController extends StateNotifier<EventModel> {
       }
       // sending invites
       ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
-
       final inviteePicUrls = await ref
           .read(storageServicesProvider)
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);

@@ -686,7 +686,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       builder: (context) {
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: EventInvite(edit: widget.isPreview),
+          child: EventInvite(edit: widget.rePublish,),
         );
       },
     );
