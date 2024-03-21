@@ -42,12 +42,12 @@ class QrServices {
   static void showQRImage(String link, EventModel event) async {
     debugPrint("Link : $link");
     final width = MediaQuery.of(navigatorKey.currentContext!).size.width;
-    final image = await QrPainter(
+    final image = QrImageView(
       data: link,
       version: QrVersions.auto,
+      size: width * 0.6,
       gapless: false,
       embeddedImageStyle: const QrEmbeddedImageStyle(
-        size: Size(120, 120),
         color: Colors.white,
       ),
       eyeStyle: const QrEyeStyle(
@@ -58,13 +58,7 @@ class QrServices {
         color: Colors.white,
         dataModuleShape: QrDataModuleShape.circle,
       ),
-    ).toImage(width * 0.75);
-
-    final directory = await getExternalStorageDirectory();
-    final filePath = '${directory!.path}/qr_code.png';
-
-    File(filePath).writeAsBytesSync(
-        (await image.toByteData(format: ImageByteFormat.png))!.buffer.asUint8List());
+    );
 
     showDialog(
       context: navigatorKey.currentContext!,
@@ -75,12 +69,9 @@ class QrServices {
           backgroundColor: AppColors.primaryColor.withOpacity(0.75),
           surfaceTintColor: Colors.transparent,
           content: SizedBox(
-            height: width * 0.75,
-            width: width * 0.75,
-            child: Image.file(
-              File(filePath),
-              fit: BoxFit.contain,
-            ),
+            height: width * 0.6,
+            width: width * 0.6,
+            child: image,
           ),
         );
       },
