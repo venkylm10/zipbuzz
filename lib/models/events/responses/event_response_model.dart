@@ -1,3 +1,5 @@
+import 'package:zipbuzz/models/events/event_model.dart';
+
 class EventResponseModel {
   final int id;
   final String banner;
@@ -19,7 +21,7 @@ class EventResponseModel {
   List<ImageModel> images;
   final String status;
   final String userDeviceToken;
-  final String eventUrl;
+  final List<HyperLinks> hyperlinks;
   EventResponseModel({
     required this.id,
     required this.banner,
@@ -41,7 +43,7 @@ class EventResponseModel {
     this.inviteUrl = "",
     required this.status,
     required this.userDeviceToken,
-    required this.eventUrl,
+    required this.hyperlinks,
   });
 
   Map<String, dynamic> toMap() {
@@ -66,7 +68,6 @@ class EventResponseModel {
       "invite_url": inviteUrl,
       "status": status,
       "user_device_token": userDeviceToken,
-      "event_url": eventUrl,
     };
   }
 
@@ -92,7 +93,7 @@ class EventResponseModel {
       inviteUrl: map['invite_url'] ?? "",
       status: map['status'],
       userDeviceToken: map['user_device_token'] ?? "",
-      eventUrl: map['event_url'] ?? "",
+      hyperlinks: (map['hyperlinks'] as List).map((e) => HyperLinks.fromMap(e)).toList(),
     );
   }
 }

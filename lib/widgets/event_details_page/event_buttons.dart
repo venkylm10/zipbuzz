@@ -202,45 +202,85 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     return Consumer(
       builder: (context, ref, child) {
         final loadingText = ref.watch(loadingTextProvider);
-        return GestureDetector(
-          onTap: () {
-            if (loadingText == null) {
-              ref.read(editEventControllerProvider.notifier).rePublishEvent();
-            }
-          },
-          child: Container(
-            height: 48,
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(24),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GestureDetector(
+              onTap: inviteContacts,
+              child: Container(
+                height: 48,
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        Assets.icons.people,
+                        height: 22,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Invite More Guests",
+                        style: AppStyles.h3.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            child: Center(
-              child: loadingText == null
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(Assets.icons.arrow_repeat, height: 20),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Re-Publish",
-                          style: AppStyles.h3.copyWith(
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                if (loadingText == null) {
+                  ref.read(editEventControllerProvider.notifier).rePublishEvent();
+                }
+              },
+              child: Container(
+                height: 48,
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Center(
+                  child: loadingText == null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(Assets.icons.arrow_repeat, height: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Re-Publish",
+                              style: AppStyles.h3.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Text(
+                          loadingText,
+                          style: AppStyles.h4.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ],
-                    )
-                  : Text(
-                      loadingText,
-                      style: AppStyles.h4.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                ),
+              ),
             ),
-          ),
+          ],
         );
       },
     );
@@ -558,6 +598,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                   onTap: () async {
                     ref.read(editEventControllerProvider.notifier).eventId = widget.event.id;
                     ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
+                    ref.read(editEventControllerProvider.notifier).resetInvites();
+                    ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
                     await navigatorKey.currentState!.pushNamed(EditEventPage.id);
                     ref.read(editEventControllerProvider.notifier).updateBannerImage(null);
                   },
@@ -644,7 +686,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       builder: (context) {
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: const EventInvite(),
+          child: EventInvite(edit: widget.isPreview),
         );
       },
     );

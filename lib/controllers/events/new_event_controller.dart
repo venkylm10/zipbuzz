@@ -55,6 +55,7 @@ class NewEvent extends StateNotifier<EventModel> {
             eventMembers: [],
             status: "nothing",
             userDeviceToken: "",
+            hyperlinks: [],
           ),
         );
   List<File> selectedImages = [];
@@ -64,13 +65,45 @@ class NewEvent extends StateNotifier<EventModel> {
   List<Contact> eventInvites = [];
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
+  List<TextEditingController> urlControllers = [TextEditingController()];
+  List<TextEditingController> urlNameControllers = [TextEditingController()];
+
+  void addUrlField() {
+    urlControllers.add(TextEditingController());
+    urlNameControllers.add(TextEditingController());
+  }
+
+  void removeUrlField(int index) {
+    if (urlControllers.length == 1) {
+      showSnackBar(message: "This is field optional");
+      return;
+    }
+    urlControllers.removeAt(index);
+    urlNameControllers.removeAt(index);
+  }
+
+  void updateHyperlinks() {
+    state = state.copyWith(hyperlinks: []);
+    for (var i = 0; i < urlControllers.length; i++) {
+      final url = urlControllers[i].text;
+      final name = urlNameControllers[i].text;
+      if (url.isNotEmpty && name.isNotEmpty) {
+        state = state.copyWith(
+          hyperlinks: state.hyperlinks
+            ..add(
+              HyperLinks(
+                id: 0,
+                urlName: name,
+                url: url,
+              ),
+            ),
+        );
+      }
+    }
+  }
 
   void updateEvent(EventModel event) {
     state = event;
-  }
-
-  void updateUrl(String val) {
-    state = state.copyWith(eventUrl: val);
   }
 
   void updateHostId(int id) {
@@ -308,7 +341,6 @@ class NewEvent extends StateNotifier<EventModel> {
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: eventInvites.length,
-        eventUrl: state.eventUrl.isEmpty ? "zipbuzz-null" : state.eventUrl,
       );
 
       // print(eventPostModel.toMap());
@@ -357,6 +389,10 @@ class NewEvent extends StateNotifier<EventModel> {
       showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
       debugPrint(eventInvitePostModel.toMap().toString());
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
+      // upload event urls
+      await ref
+          .read(dioServicesProvider)
+          .sendEventUrls(eventId, urlControllers, urlNameControllers);
       // upload event images
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
@@ -442,8 +478,11 @@ class NewEvent extends StateNotifier<EventModel> {
       eventMembers: [],
       status: "nothing",
       userDeviceToken: "",
+      hyperlinks: [],
     );
     eventInvites = [];
     bannerImage = null;
+    urlControllers = [TextEditingController()];
+    urlNameControllers = [TextEditingController()];
   }
 }

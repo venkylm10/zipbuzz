@@ -1,3 +1,5 @@
+import 'package:zipbuzz/models/events/event_model.dart';
+
 class FavoriteEventModel {
   int eventId;
   String image;
@@ -17,6 +19,7 @@ class FavoriteEventModel {
   String inviteUrl;
   String status;
   String userDeviceToken;
+  List<HyperLinks> hyperlinks;
   FavoriteEventModel({
     required this.eventId,
     required this.image,
@@ -36,6 +39,7 @@ class FavoriteEventModel {
     this.inviteUrl = "",
     required this.status,
     required this.userDeviceToken,
+    required this.hyperlinks,
   });
 
   Map<String, dynamic> toMap() {
@@ -81,6 +85,9 @@ class FavoriteEventModel {
       inviteUrl: map['invite_url'] ?? "",
       status: map['status'] ?? "nothing",
       userDeviceToken: map['user_device_token'] ?? "",
+      hyperlinks: (map['hyperlinks'] as List)
+          .map((e) => HyperLinks.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

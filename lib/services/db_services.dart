@@ -260,7 +260,7 @@ class DBServices {
             inviteUrl: res.inviteUrl,
             status: res.status,
             userDeviceToken: res.userDeviceToken,
-            eventUrl: res.eventUrl,
+            hyperlinks: res.hyperlinks,
           );
           return eventModel;
         }).toList();
@@ -302,7 +302,7 @@ class DBServices {
       inviteUrl: res.inviteUrl,
       status: res.status,
       userDeviceToken: res.userDeviceToken,
-      eventUrl: res.eventUrl,
+      hyperlinks: res.hyperlinks,
     );
     showSnackBar(message: "Event Details Loaded Successfully");
     return eventModel;
@@ -343,6 +343,7 @@ class DBServices {
             inviteUrl: fav.inviteUrl,
             status: fav.status,
             userDeviceToken: fav.userDeviceToken,
+            hyperlinks: fav.hyperlinks,
           );
           return eventModel;
         }).toList();

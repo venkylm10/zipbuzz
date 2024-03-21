@@ -41,6 +41,25 @@ class DioServices {
   );
   final box = GetStorage();
 
+  // send event urls
+  Future<void> sendEventUrls(int eventId, List<TextEditingController> urls,
+      List<TextEditingController> hyperLinkName) async {
+    try {
+      for (int i = 0; i < urls.length; i++) {
+        await dio.post(
+          DioConstants.sendEventUrls,
+          data: {
+            "event_id": eventId,
+            "event_url": urls[i].text,
+            "url_name": hyperLinkName[i].text,
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint("Error sending event urls: $e");
+    }
+  }
+
   // make request
   Future<void> makeRequest(MakeRequestModel model) async {
     try {

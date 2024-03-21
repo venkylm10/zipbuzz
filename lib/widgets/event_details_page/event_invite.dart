@@ -2,6 +2,7 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -14,7 +15,8 @@ final newInvitesProvider = StateProvider<List<EventInviteMember>>((ref) => []);
 
 class EventInvite extends ConsumerStatefulWidget {
   static const id = "/invite";
-  const EventInvite({super.key});
+  final bool edit;
+  const EventInvite({super.key, this.edit = false});
 
   @override
   ConsumerState<EventInvite> createState() => _EventInviteState();
@@ -38,8 +40,12 @@ class _EventInviteState extends ConsumerState<EventInvite> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedContacts = ref.watch(newEventProvider.notifier).eventInvites;
-    final contactSearchResult = ref.watch(newEventProvider.notifier).contactSearchResult;
+    final selectedContacts = widget.edit
+        ? ref.watch(editEventControllerProvider.notifier).eventInvites
+        : ref.watch(newEventProvider.notifier).eventInvites;
+    final contactSearchResult = widget.edit
+        ? ref.watch(editEventControllerProvider.notifier).contactSearchResult
+        : ref.watch(newEventProvider.notifier).contactSearchResult;
     return Container(
       height: MediaQuery.of(context).size.height * .85,
       width: MediaQuery.of(context).size.width,
@@ -163,7 +169,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
               ),
               const SizedBox(width: 4),
               Text(
-                "(${ref.read(newEventProvider).attendees}/${ref.read(newEventProvider).capacity})",
+                "(${widget.edit ? ref.read(editEventControllerProvider).attendees : ref.read(newEventProvider).attendees}/${widget.edit ? ref.read(editEventControllerProvider).capacity : ref.read(newEventProvider).capacity})",
                 style: AppStyles.h3.copyWith(
                   color: Colors.white.withOpacity(0.5),
                 ),
@@ -177,9 +183,13 @@ class _EventInviteState extends ConsumerState<EventInvite> {
 
   void updateSearchResult(String query) {
     if (query.isEmpty) {
-      ref.read(newEventProvider.notifier).resetContactSearch();
+      widget.edit
+          ? ref.read(editEventControllerProvider.notifier).resetContactSearch()
+          : ref.read(newEventProvider.notifier).resetContactSearch();
     } else {
-      ref.read(newEventProvider.notifier).updateContactSearchResult(query);
+      widget.edit
+          ? ref.read(editEventControllerProvider.notifier).updateContactSearchResult(query)
+          : ref.read(newEventProvider.notifier).updateContactSearchResult(query);
     }
     setState(() {});
   }
@@ -231,7 +241,9 @@ class _EventInviteState extends ConsumerState<EventInvite> {
     final phoneNumber = contact.phones!.first.value ?? "";
     return GestureDetector(
       onTap: () {
-        ref.read(newEventProvider.notifier).updateSelectedContact(contact);
+        widget.edit
+            ? ref.read(editEventControllerProvider.notifier).updateSelectedContact(contact)
+            : ref.read(newEventProvider.notifier).updateSelectedContact(contact);
         setState(() {});
       },
       child: Container(

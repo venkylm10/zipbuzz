@@ -25,7 +25,7 @@ class EventModel {
   final String inviteUrl;
   String status;
   String userDeviceToken;
-  String eventUrl;
+  final List<HyperLinks> hyperlinks;
   EventModel({
     required this.id,
     required this.title,
@@ -51,7 +51,7 @@ class EventModel {
     this.inviteUrl = "",
     required this.status,
     required this.userDeviceToken,
-    this.eventUrl = "",
+    required this.hyperlinks,
   });
 
   EventModel copyWith({
@@ -79,7 +79,7 @@ class EventModel {
     String? inviteUrl,
     String? status,
     String? userDeviceToken,
-    String? eventUrl,
+    List<HyperLinks>? hyperlinks,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -106,7 +106,7 @@ class EventModel {
       inviteUrl: inviteUrl ?? this.inviteUrl,
       status: status ?? this.status,
       userDeviceToken: userDeviceToken ?? this.userDeviceToken,
-      eventUrl: eventUrl ?? this.eventUrl,
+      hyperlinks: hyperlinks ?? this.hyperlinks,
     );
   }
 
@@ -138,7 +138,9 @@ class EventModel {
           .map((e) => EventInviteMember.fromMap(e as Map<String, dynamic>))
           .toList(),
       userDeviceToken: map['user_device_token'] ?? "",
-      eventUrl: map['event_url'] ?? "",
+      hyperlinks: (map['hyperlinks'] as List)
+          .map((e) => HyperLinks.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -167,7 +169,29 @@ class EventModel {
       'eventMembers': eventMembers.map((e) => e.toMap()).toList(),
       "invite_url": inviteUrl,
       "status": status,
-      "event_url": eventUrl,
+    };
+  }
+}
+
+class HyperLinks {
+  final int id;
+  final String urlName;
+  final String url;
+  HyperLinks({required this.id, required this.urlName, required this.url});
+
+  factory HyperLinks.fromMap(Map<String, dynamic> map) {
+    return HyperLinks(
+      id: map['id'] as int,
+      urlName: map['url_name'] as String,
+      url: map['url'] as String,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'url_name': urlName,
+      'url': url,
     };
   }
 }

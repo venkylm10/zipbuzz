@@ -55,6 +55,7 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   void navigateToEventDetails() async {
+    debugPrint(widget.event.id.toString());
     final dominantColor = await getDominantColor();
     ref.read(guestListTagProvider.notifier).update((state) => "Invited");
     await navigatorKey.currentState!.push(
@@ -343,7 +344,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SvgPicture.asset(
-                Assets.icons.clone,
+                Assets.icons.copy,
                 colorFilter: const ColorFilter.mode(
                   AppColors.primaryColor,
                   BlendMode.srcIn,
@@ -373,7 +374,6 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   Future<List<EventRequestMember>> getEventMembers() async {
-    print("getting event request members");
     final data = ref.read(dioServicesProvider).getEventRequestMembers(widget.event.id);
     final members = await ref
         .read(dioServicesProvider)

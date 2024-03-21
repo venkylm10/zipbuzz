@@ -8,6 +8,7 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
 class EditEventForm extends ConsumerStatefulWidget {
@@ -102,12 +103,8 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     category = ref.read(editEventControllerProvider).category;
     startTimeController.text = event.startTime;
     endTimeController.text = event.endTime != "null" ? event.endTime : "";
-    urlController.text = event.eventUrl;
+    // urlController.text = event.eventUrl; TODO: remove event url here
     convertDateString();
-  }
-
-  void updateUrl(String value) {
-    editEventController.editEventUrl(value);
   }
 
   @override
@@ -174,21 +171,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           },
         ),
         const SizedBox(height: 16),
-        Text(
-          "Event url",
-          style: AppStyles.h4,
-        ),
-        const SizedBox(height: 4),
-        CustomTextField(
-          controller: urlController,
-          hintText: "Event url",
-          onChanged: updateUrl,
-        ),
-        // broadDivider(),
-        // Text(
-        //   "Location & Time",
-        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        // ),
+        buildUrlFields(),
         const SizedBox(height: 16),
         Row(
           children: [
@@ -298,6 +281,102 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget buildUrlFields() {
+    return Consumer(
+      builder: (context, ref, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Event url",
+              style: AppStyles.h4,
+            ),
+            const SizedBox(height: 4),
+            Column(
+              children: List.generate(
+                ref.read(editEventControllerProvider.notifier).urlControllers.length,
+                (index) => Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTextField(
+                                controller: ref
+                                    .read(editEventControllerProvider.notifier)
+                                    .urlNameControllers[index],
+                                hintText: "HyperLink Name",
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextField(
+                                controller: ref
+                                    .read(editEventControllerProvider.notifier)
+                                    .urlControllers[index],
+                                hintText: "URL",
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () {
+                            ref.read(editEventControllerProvider.notifier).removeUrlField(index);
+                            setState(() {});
+                          },
+                          child: SvgPicture.asset(
+                            Assets.icons.delete_fill,
+                            height: 36,
+                            colorFilter: const ColorFilter.mode(
+                              AppColors.greyColor,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                    ),
+                    broadDivider(gap: 16),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                ref.read(editEventControllerProvider.notifier).addUrlField();
+                setState(() {});
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.bgGrey,
+                  border: Border.all(
+                    color: AppColors.borderGrey,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(Assets.icons.add_circle, height: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Add URL",
+                      style: AppStyles.h4,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      },
     );
   }
 

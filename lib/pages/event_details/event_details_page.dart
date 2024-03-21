@@ -66,17 +66,22 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   void fixInviteGuests() {
     if (widget.event.attendees == 0) {
       ref.read(newEventProvider.notifier).resetEventMembers();
+      ref.read(editEventControllerProvider.notifier).resetEventMembers();
       return;
     }
     if (!(widget.isPreview || widget.rePublish)) return;
-    final contacts = ref.read(newEventProvider.notifier).eventInvites;
+    final contacts = widget.rePublish
+        ? ref.read(editEventControllerProvider.notifier).eventInvites
+        : ref.read(newEventProvider.notifier).eventInvites;
     for (var contact in contacts) {
       final member = EventInviteMember(
         image: "null",
         phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
         name: contact.displayName ?? "",
       );
-      ref.read(newEventProvider.notifier).addEventMember(member, increase: false);
+      widget.rePublish
+          ? ref.read(editEventControllerProvider.notifier).addEventMember(member, increase: false)
+          : ref.read(newEventProvider.notifier).addEventMember(member, increase: false);
     }
     setState(() {});
   }
@@ -224,7 +229,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     const SizedBox(height: 16),
                                     Text(
                                       "Event details",
-                                      style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                                      style: AppStyles.h5.copyWith(
+                                        color: AppColors.lightGreyColor,
+                                      ),
                                     ),
                                     const SizedBox(height: 16),
                                     EventDetails(event: widget.event),
@@ -236,7 +243,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     const SizedBox(height: 16),
                                     Text(
                                       "Event description",
-                                      style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                                      style: AppStyles.h5.copyWith(
+                                        color: AppColors.lightGreyColor,
+                                      ),
                                     ),
                                     const SizedBox(height: 16),
                                     buildDescription(),
@@ -245,11 +254,27 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                       color: AppColors.greyColor.withOpacity(0.2),
                                       thickness: 0,
                                     ),
+                                    Consumer(builder: (context, ref, child) {
+                                      final newEvent = ref.watch(newEventProvider);
+                                      var num = widget.event.eventMembers.length;
+                                      if (widget.isPreview) {
+                                        num = newEvent.eventMembers.length;
+                                      }
+                                      return Text(
+                                        "Guest list ($num)",
+                                        style: AppStyles.h5.copyWith(
+                                          color: AppColors.lightGreyColor,
+                                        ),
+                                      );
+                                    }),
                                     const SizedBox(height: 16),
-                                    buildEventUrl(),
+                                    buildGuestList(),
+                                    const SizedBox(height: 16),
                                     Text(
                                       "Photos",
-                                      style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                                      style: AppStyles.h5.copyWith(
+                                        color: AppColors.lightGreyColor,
+                                      ),
                                     ),
                                     const SizedBox(height: 16),
                                     buildPhotos(widget.isPreview, widget.rePublish, ref),
@@ -264,8 +289,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                         const SizedBox(height: 16),
                                         Text(
                                           "Hosts",
-                                          style: AppStyles.h5
-                                              .copyWith(color: AppColors.lightGreyColor),
+                                          style: AppStyles.h5.copyWith(
+                                            color: AppColors.lightGreyColor,
+                                          ),
                                         ),
                                         const SizedBox(height: 16),
                                         Column(
@@ -284,21 +310,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                         )
                                       ],
                                     ),
-                                    const SizedBox(height: 16),
-                                    Consumer(builder: (context, ref, child) {
-                                      final newEvent = ref.watch(newEventProvider);
-                                      var num = widget.event.eventMembers.length;
-                                      if (widget.isPreview) {
-                                        num = newEvent.eventMembers.length;
-                                      }
-                                      return Text(
-                                        "Guest list ($num)",
-                                        style:
-                                            AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                                      );
-                                    }),
-                                    const SizedBox(height: 16),
-                                    buildGuestList(),
                                     const SizedBox(height: 16),
                                   ],
                                 ),
@@ -357,136 +368,108 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     );
   }
 
-  Widget buildEventUrl() {
-    if (widget.event.eventUrl.isEmpty || widget.event.eventUrl == "zipbuzz-null") {
-      return const SizedBox();
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Event url",
-          style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        ),
-        const SizedBox(height: 16),
-        buildUrlText(),
-        const SizedBox(height: 16),
-        Divider(
-          color: AppColors.greyColor.withOpacity(0.2),
-          thickness: 0,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
   Widget buildUrlText() {
-    return Builder(
-      builder: (context) {
-        final splits = widget.event.eventUrl.split(" ");
-        return RichText(
-          text: TextSpan(
-            children: splits.map(
-              (e) {
-                var isLink = false;
-                var url = "";
-                final up2 = RegExp(r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                if (up2.hasMatch(e)) {
-                  isLink = true;
+    if (widget.event.hyperlinks.isEmpty) return const SizedBox();
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Builder(
+        builder: (context) {
+          final splits = widget.event.hyperlinks;
+          return RichText(
+            text: TextSpan(
+              children: splits.map(
+                (hyperLink) {
+                  var e = hyperLink.url;
+                  var url = "";
                   if (e.startsWith("http://") || e.startsWith("https://")) {
                     url = e;
                   } else {
                     url = "http://$e";
                   }
-                }
-                return TextSpan(
-                  children: isLink
-                      ? [
-                          TextSpan(
-                            text: e,
-                            style: AppStyles.h4.copyWith(
-                              color: isLink ? Colors.blue : AppColors.greyColor,
-                              fontStyle: isLink ? FontStyle.italic : FontStyle.normal,
-                              decoration: isLink ? TextDecoration.underline : TextDecoration.none,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                launchUrlString(url);
-                              },
-                          ),
-                          const TextSpan(text: " "),
-                        ]
-                      : [
-                          TextSpan(
-                            text: !isLink ? "$e " : null,
-                            style: AppStyles.h4.copyWith(
-                              color: AppColors.greyColor,
-                              fontStyle: FontStyle.normal,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ],
-                );
-              },
-            ).toList(),
-          ),
-        );
-      },
+                  return TextSpan(
+                    children: [
+                      TextSpan(
+                        text: hyperLink.urlName,
+                        style: AppStyles.h4.copyWith(
+                          color: Colors.blue,
+                          fontStyle: FontStyle.italic,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            launchUrlString(url);
+                          },
+                      ),
+                      const TextSpan(text: " "),
+                    ],
+                  );
+                },
+              ).toList(),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Builder buildDescription() {
-    return Builder(
-      builder: (context) {
-        final splits = widget.event.about.split(" ");
-        return RichText(
-          text: TextSpan(
-            children: splits.map(
-              (e) {
-                var isLink = false;
-                var url = "";
-                final up2 = RegExp(r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                if (up2.hasMatch(e)) {
-                  isLink = true;
-                  if (e.startsWith("http://") || e.startsWith("https://")) {
-                    url = e;
-                  } else {
-                    url = "http://$e";
-                  }
-                }
-                return TextSpan(
-                  children: isLink
-                      ? [
-                          TextSpan(
-                            text: e,
-                            style: AppStyles.h4.copyWith(
-                              color: isLink ? Colors.blue : AppColors.greyColor,
-                              fontStyle: isLink ? FontStyle.italic : FontStyle.normal,
-                              decoration: isLink ? TextDecoration.underline : TextDecoration.none,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                launchUrlString(url);
-                              },
-                          ),
-                          const TextSpan(text: " "),
-                        ]
-                      : [
-                          TextSpan(
-                            text: !isLink ? "$e " : null,
-                            style: AppStyles.h4.copyWith(
-                              color: AppColors.greyColor,
-                              fontStyle: FontStyle.normal,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ],
-                );
-              },
-            ).toList(),
-          ),
-        );
-      },
+  Widget buildDescription() {
+    return Column(
+      children: [
+        Builder(
+          builder: (context) {
+            final splits = widget.event.about.split(" ");
+            return RichText(
+              text: TextSpan(
+                children: splits.map(
+                  (e) {
+                    var isLink = false;
+                    var url = "";
+                    final up2 = RegExp(r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                    if (up2.hasMatch(e)) {
+                      isLink = true;
+                      if (e.startsWith("http://") || e.startsWith("https://")) {
+                        url = e;
+                      } else {
+                        url = "http://$e";
+                      }
+                    }
+                    return TextSpan(
+                      children: isLink
+                          ? [
+                              TextSpan(
+                                text: e,
+                                style: AppStyles.h4.copyWith(
+                                  color: isLink ? Colors.blue : AppColors.greyColor,
+                                  fontStyle: isLink ? FontStyle.italic : FontStyle.normal,
+                                  decoration:
+                                      isLink ? TextDecoration.underline : TextDecoration.none,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    launchUrlString(url);
+                                  },
+                              ),
+                              const TextSpan(text: " "),
+                            ]
+                          : [
+                              TextSpan(
+                                text: !isLink ? "$e " : null,
+                                style: AppStyles.h4.copyWith(
+                                  color: AppColors.greyColor,
+                                  fontStyle: FontStyle.normal,
+                                  decoration: TextDecoration.none,
+                                ),
+                              ),
+                            ],
+                    );
+                  },
+                ).toList(),
+              ),
+            );
+          },
+        ),
+        buildUrlText(),
+      ],
     );
   }
 
@@ -580,6 +563,11 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         if (widget.isPreview) {
           return EventGuestList(
             guests: newEvent.eventMembers,
+          );
+        }
+        if (widget.rePublish) {
+          return EventGuestList(
+            guests: ref.watch(editEventControllerProvider).eventMembers,
           );
         }
         if (widget.event.hostId != userId) {

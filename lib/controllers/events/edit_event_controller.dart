@@ -6,6 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
@@ -54,6 +56,7 @@ class EditEventController extends StateNotifier<EventModel> {
             eventMembers: [],
             status: "nothing",
             userDeviceToken: "",
+            hyperlinks: [],
           ),
         );
   int eventId = 1;
@@ -65,9 +68,52 @@ class EditEventController extends StateNotifier<EventModel> {
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
   List<String> deletedImages = [];
+  List<TextEditingController> urlControllers = [TextEditingController()];
+  List<TextEditingController> urlNameControllers = [TextEditingController()];
 
-  void editEventUrl(String val) {
-    state = state.copyWith(eventUrl: val);
+  void addUrlField() {
+    urlControllers.add(TextEditingController());
+    urlNameControllers.add(TextEditingController());
+  }
+
+  void removeUrlField(int index) {
+    if (urlControllers.length == 1) {
+      showSnackBar(message: "This is field optional");
+      return;
+    }
+    urlControllers.removeAt(index);
+    urlNameControllers.removeAt(index);
+  }
+
+  void updateHyperlinks() {
+    state = state.copyWith(hyperlinks: []);
+    for (var i = 0; i < urlControllers.length; i++) {
+      final url = urlControllers[i].text;
+      final name = urlNameControllers[i].text;
+      if (url.isNotEmpty && name.isNotEmpty) {
+        state = state.copyWith(
+          hyperlinks: state.hyperlinks
+            ..add(
+              HyperLinks(
+                id: 0,
+                urlName: name,
+                url: url,
+              ),
+            ),
+        );
+      }
+    }
+  }
+
+  void initialiseHyperLinks() {
+    if (state.hyperlinks.isNotEmpty) {
+      urlControllers.clear();
+      urlNameControllers.clear();
+      for (var i = 0; i < state.hyperlinks.length; i++) {
+        urlControllers.add(TextEditingController(text: state.hyperlinks[i].url));
+        urlNameControllers.add(TextEditingController(text: state.hyperlinks[i].urlName));
+      }
+    }
   }
 
   void removeEventImageUrl(String url) {
@@ -75,6 +121,10 @@ class EditEventController extends StateNotifier<EventModel> {
     updatedUrls.remove(url);
     deletedImages.add(url);
     state = state.copyWith(imageUrls: updatedUrls);
+  }
+
+  void resetInvites() {
+    eventInvites = [];
   }
 
   void updateEvent(EventModel event) {
@@ -176,17 +226,40 @@ class EditEventController extends StateNotifier<EventModel> {
     contactSearchResult = allContacts;
   }
 
-  void updateSelectedContact(Contact contact) {
+  void updateSelectedContact(Contact contact, {bool fix = false}) {
     if (!eventInvites.contains(contact)) {
       if (state.attendees >= state.capacity) {
         state = state.copyWith(capacity: state.capacity + 1);
       }
-      eventInvites.add(contact);
-      state = state.copyWith(attendees: state.attendees + 1);
+      if (!fix) eventInvites.add(contact);
+      final member = EventInviteMember(
+        image: "null",
+        phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
+        name: contact.displayName ?? "",
+      );
+      addEventMember(member);
       return;
     }
-    eventInvites.remove(contact);
-    state = state.copyWith(attendees: state.attendees - 1);
+    if (!fix) eventInvites.remove(contact);
+    final member = state.eventMembers.firstWhere(
+      (element) => element.phone == contact.phones!.first.value,
+    );
+    state = state.copyWith(
+      attendees: state.attendees - 1,
+      eventMembers: state.eventMembers..remove(member),
+    );
+  }
+
+  void addEventMember(EventInviteMember member, {bool increase = true}) {
+    state = state.copyWith(
+      attendees: increase ? state.attendees + 1 : state.attendees,
+      eventMembers: state.eventMembers..add(member),
+    );
+  }
+
+  void resetEventMembers() {
+    state = state.copyWith(eventMembers: []);
+    eventInvites = [];
   }
 
   void updateContactSearchResult(String query) {
@@ -306,6 +379,42 @@ class EditEventController extends StateNotifier<EventModel> {
         await ref.read(dioServicesProvider).deleteEventImages(deletedImages);
         deletedImages.clear();
       }
+      // sending invites
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
+
+      final inviteePicUrls = await ref
+          .read(storageServicesProvider)
+          .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
+      final phoneNumbers = eventInvites.map((e) {
+        final number = (e.phones!.first.value ?? "")
+            .replaceAll("-", "")
+            .replaceAll(" ", "")
+            .replaceAll("(", "")
+            .replaceAll(")", "");
+        return number;
+      }).toList();
+      final eventInvitePostModel = EventInvitePostModel(
+        phoneNumbers: phoneNumbers,
+        images: inviteePicUrls,
+        names: eventInvites.map((e) {
+          return e.displayName ?? "";
+        }).toList(),
+        senderName: ref.read(userProvider).name,
+        eventName: eventPostModel.name,
+        eventDescription: eventPostModel.description,
+        eventDate: state.date,
+        eventLocation: eventPostModel.venue,
+        eventStart: eventPostModel.startTime,
+        eventEnd: eventPostModel.endTime,
+        eventId: eventId,
+        banner: bannerUrl,
+        hostId: ref.read(userProvider).id,
+        notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
+      );
+      showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
+      debugPrint(eventInvitePostModel.toMap().toString());
+      await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
+      ref.read(loadingTextProvider.notifier).reset();
       await moveToEditedEvent();
     } catch (e) {
       debugPrint(e.toString());

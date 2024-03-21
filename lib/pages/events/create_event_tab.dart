@@ -127,6 +127,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
         'dominantColor': dominantColor,
         'randInt': randInt,
       };
+      ref.read(newEventProvider.notifier).updateHyperlinks();
       await navigatorKey.currentState!.pushNamed(
         EventDetailsPage.id,
         arguments: args,

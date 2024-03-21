@@ -14,7 +14,6 @@ class EventPostModel {
     required this.eventType,
     required this.capacity,
     required this.filledCapacity,
-    required this.eventUrl,
   });
   late final String banner;
   late final String category;
@@ -30,7 +29,6 @@ class EventPostModel {
   late final bool eventType;
   late final int capacity;
   late final int filledCapacity;
-  late final String eventUrl;
 
   EventPostModel.fromMap(Map<String, dynamic> json) {
     banner = json['banner'];
@@ -47,7 +45,6 @@ class EventPostModel {
     eventType = json['event_type'];
     capacity = json['capacity'];
     filledCapacity = json['filled_capacity'];
-    eventUrl = json['event_url'];
   }
 
   Map<String, dynamic> toMap() {
@@ -66,7 +63,6 @@ class EventPostModel {
     data['event_type'] = eventType;
     data['capacity'] = capacity;
     data['filled_capacity'] = filledCapacity;
-    data['event_url'] = eventUrl;
     return data;
   }
 }
