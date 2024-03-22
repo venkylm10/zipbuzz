@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
+import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -588,91 +590,127 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     return Consumer(builder: (context, ref, child) {
       return Container(
         width: double.infinity,
-        height: 48,
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: Center(
-          child: Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () async {
-                    ref.read(editEventControllerProvider.notifier).eventId = widget.event.id;
-                    ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
-                    ref.read(editEventControllerProvider.notifier).resetInvites();
-                    ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
-                    await navigatorKey.currentState!.pushNamed(EditEventPage.id);
-                    ref.read(editEventControllerProvider.notifier).updateBannerImage(null);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            Assets.icons.edit,
-                            height: 24,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.white,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Edit",
-                            style: AppStyles.h3.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            GestureDetector(
+              onTap: () {
+                inviteMoreGuests();
+              },
+              child: Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        Assets.icons.people,
+                        height: 22,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Invite More Guests",
+                        style: AppStyles.h3.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () async {
-                    shareEvent(widget.event);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.bgGrey,
-                      border: Border.all(color: AppColors.borderGrey),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            Assets.icons.send_fill,
-                            height: 24,
-                            colorFilter: ColorFilter.mode(
-                              Colors.grey.shade800,
-                              BlendMode.srcIn,
-                            ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 48,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        editEvent();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                Assets.icons.edit,
+                                height: 24,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Edit",
+                                style: AppStyles.h3.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Share",
-                            style: AppStyles.h3.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        shareEvent(widget.event);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.bgGrey,
+                          border: Border.all(color: AppColors.borderGrey),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                Assets.icons.send_fill,
+                                height: 24,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.grey.shade800,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Share",
+                                style: AppStyles.h3.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
       );
     });
@@ -686,10 +724,58 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       builder: (context) {
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: EventInvite(edit: widget.rePublish,),
+          child: EventInvite(
+            edit: widget.rePublish,
+          ),
         );
       },
     );
+  }
+
+  void editEvent() async {
+    ref.read(editEventControllerProvider.notifier).eventId = widget.event.id;
+    ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
+    ref.read(editEventControllerProvider.notifier).resetInvites();
+    ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
+    await navigatorKey.currentState!.pushNamed(EditEventPage.id);
+    ref.read(editEventControllerProvider.notifier).updateBannerImage(null);
+  }
+
+  void inviteMoreGuests() async {
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+    ref.read(editEventControllerProvider.notifier).eventId = widget.event.id;
+    ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
+    ref.read(editEventControllerProvider.notifier).resetInvites();
+    ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
+    await showPreview();
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+    ref.read(editEventControllerProvider.notifier).updateBannerImage(null);
+  }
+
+  Future<void> showPreview() async {
+    final dominantColor = await getDominantColor();
+    final event = ref.read(editEventControllerProvider);
+    navigatorKey.currentState!.pushNamed(
+      EventDetailsPage.id,
+      arguments: {
+        'event': ref.read(editEventControllerProvider),
+        'rePublish': true,
+        'dominantColor': dominantColor,
+        'randInt': 0,
+      },
+    );
+    await Future.delayed(const Duration(milliseconds: 500));
+    inviteContacts();
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+    ref.read(editEventControllerProvider.notifier).updateEvent(event);
+  }
+
+  Future<Color> getDominantColor() async {
+    Color dominantColor = Colors.green;
+    final image = NetworkImage(ref.read(editEventControllerProvider).bannerPath);
+    final generator = await PaletteGenerator.fromImageProvider(image);
+    dominantColor = generator.dominantColor!.color;
+    return dominantColor;
   }
 
   void shareEvent(EventModel event) {
