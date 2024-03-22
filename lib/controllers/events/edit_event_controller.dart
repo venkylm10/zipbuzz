@@ -448,7 +448,7 @@ class EditEventController extends StateNotifier<EventModel> {
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Event edited successfully");
       navigatorKey.currentState!.pop();
-      navigatorKey.currentState!.pop();
+      // navigatorKey.currentState!.pop();
       final image = NetworkImage(state.bannerPath);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
         image,
