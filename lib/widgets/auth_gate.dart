@@ -73,7 +73,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       return;
     }
     ref.read(loadingTextProvider.notifier).reset();
-    if (ref.read(userProvider).mobileNumber == "+11234567890") {
+    final mobileNumber = ref.read(userProvider).mobileNumber;
+    if (mobileNumber == "+11234567890" || mobileNumber == "zipbuzz-null") {
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
     }

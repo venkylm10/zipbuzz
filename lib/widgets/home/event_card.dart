@@ -322,7 +322,8 @@ class _EventCardState extends ConsumerState<EventCard> {
           capacity: widget.event.capacity,
           bannerPath: widget.event.bannerPath,
           iconPath: widget.event.iconPath,
-          attendees: 0,
+          attendees: widget.event.eventMembers.length,
+          eventMembers: widget.event.eventMembers,
         );
 
     ref.read(eventTabControllerProvider.notifier).updateIndex(2);

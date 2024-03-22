@@ -156,6 +156,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   }
 
   void scrollToCalender() {
+    if (homeButtonsKey.currentContext == null) return;
     Scrollable.ensureVisible(
       homeButtonsKey.currentContext!,
       duration: const Duration(milliseconds: 500),
@@ -164,6 +165,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   }
 
   void scrollToInteresets() {
+    if (categoryPageKey.currentContext == null) return;
     Scrollable.ensureVisible(
       categoryPageKey.currentContext!,
       duration: const Duration(milliseconds: 500),
