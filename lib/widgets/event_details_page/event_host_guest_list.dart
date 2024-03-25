@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final guestListTagProvider = StateProvider<String>((ref) => "Invited");
 final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);
@@ -186,7 +188,7 @@ class EventHostGuestList extends StatelessWidget {
                       await ref
                           .read(dioServicesProvider)
                           .editUserStatus(eventId, member.phone, "confirm");
-
+                      showSnackBar(message: "${member.name} was confirmed for the event.");
                       ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                     },
                     child: buildGuestTag(member.status),
