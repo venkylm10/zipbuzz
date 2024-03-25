@@ -41,6 +41,7 @@ class EventDetailsPage extends ConsumerStatefulWidget {
   final int randInt;
   final bool isPreview;
   final bool rePublish;
+  final bool clone;
   Color dominantColor;
   EventDetailsPage({
     super.key,
@@ -49,6 +50,7 @@ class EventDetailsPage extends ConsumerStatefulWidget {
     this.isPreview = false,
     this.rePublish = false,
     required this.dominantColor,
+    this.clone = false,
   });
 
   @override
@@ -562,16 +564,19 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         if (widget.isPreview) {
           return EventGuestList(
             guests: newEvent.eventMembers,
+            clone: widget.clone,
           );
         }
         if (widget.rePublish) {
           return EventGuestList(
             guests: ref.watch(editEventControllerProvider).eventMembers,
+            clone: widget.clone,
           );
         }
         if (widget.event.hostId != userId) {
           return EventGuestList(
             guests: widget.event.eventMembers,
+            clone: widget.clone,
           );
         }
         return EventHostGuestList(

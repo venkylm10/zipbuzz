@@ -65,6 +65,7 @@ class _EventCardState extends ConsumerState<EventCard> {
           dominantColor: dominantColor,
           isPreview: false,
           rePublish: false,
+          clone: false,
         ),
       ),
     );
@@ -308,6 +309,7 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   void cloneEvent() {
+    ref.read(newEventProvider.notifier).cloneEvent = true;
     final startTime = TimeOfDay.fromDateTime(DateTime.now());
     final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
     ref.read(newEventProvider.notifier).updateDate(DateTime.now());

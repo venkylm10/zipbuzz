@@ -67,6 +67,7 @@ class NewEvent extends StateNotifier<EventModel> {
   List<Contact> contactSearchResult = [];
   List<TextEditingController> urlControllers = [TextEditingController()];
   List<TextEditingController> urlNameControllers = [TextEditingController()];
+  bool cloneEvent = false;
 
   void addUrlField() {
     urlControllers.add(TextEditingController());
@@ -199,6 +200,15 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void resetContactSearch() {
     contactSearchResult = allContacts;
+  }
+
+  void removeInviteMember(String phone) {
+    final members = state.eventMembers;
+    members.removeWhere((element) => element.phone == phone);
+    state = state.copyWith(
+      eventMembers: members,
+      attendees: state.attendees - 1,
+    );
   }
 
   void updateSelectedContact(Contact contact, {bool fix = false}) {

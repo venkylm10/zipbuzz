@@ -101,12 +101,14 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
           final rePublish = args['rePublish'] ?? false;
           final dominantColor = args['dominantColor'] as Color;
           final randInt = args['randInt'] as int?;
+          final clone = args['clone'] ?? false;
           return EventDetailsPage(
             event: event,
             isPreview: isPreview,
             dominantColor: dominantColor,
             randInt: randInt ?? 0,
             rePublish: rePublish,
+            clone: clone,
           );
         },
       );
