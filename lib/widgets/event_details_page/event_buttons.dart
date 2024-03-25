@@ -95,7 +95,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                 // Event Invite button
                 Expanded(
                   child: GestureDetector(
-                    onTap: inviteContacts,
+                    onTap: () => inviteContacts(false),
                     child: Container(
                       height: 48,
                       decoration: BoxDecoration(
@@ -208,7 +208,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             GestureDetector(
-              onTap: inviteContacts,
+              onTap: () => inviteContacts(true),
               child: Container(
                 height: 48,
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -716,7 +716,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     });
   }
 
-  void inviteContacts() async {
+  void inviteContacts(bool edit) async {
     await showModalBottomSheet(
       context: navigatorKey.currentContext!,
       isScrollControlled: true,
@@ -724,7 +724,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       builder: (context) {
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: const EventInvite(edit: true),
+          child: EventInvite(edit: edit),
         );
       },
     );
@@ -763,7 +763,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       },
     );
     await Future.delayed(const Duration(milliseconds: 500));
-    inviteContacts();
+    inviteContacts(true);
     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
     ref.read(editEventControllerProvider.notifier).updateEvent(event);
   }
