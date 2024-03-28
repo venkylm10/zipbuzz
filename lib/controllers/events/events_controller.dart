@@ -203,6 +203,7 @@ class EventsController {
   double calenderHeight = 150;
   bool showingFavorites = false;
   bool loading = false;
+  TextEditingController activitySearchController = TextEditingController();
 
   final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   var focusedDay = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);

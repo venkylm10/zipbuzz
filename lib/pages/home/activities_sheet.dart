@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
-class ActivitiesSheet extends StatelessWidget {
+class ActivitiesSheet extends StatefulWidget {
   const ActivitiesSheet({super.key});
 
   @override
+  State<ActivitiesSheet> createState() => _ActivitiesSheetState();
+}
+
+class _ActivitiesSheetState extends State<ActivitiesSheet> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
-      ),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.85,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,69 +60,103 @@ class ActivitiesSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: GridView.count(
-                crossAxisCount: 4,
-                childAspectRatio: 0.7,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: List.generate(
-                  allInterests.length,
-                  (index) {
-                    final interest = allInterests[index];
-                    return Consumer(builder: (context, ref, child) {
-                      // ignore: unused_local_variable
-                      final homeTabController = ref.watch(homeTabControllerProvider);
-                      final selected = ref
-                          .watch(homeTabControllerProvider.notifier)
-                          .containsInterest(interest.activity);
-                      return GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(homeTabControllerProvider.notifier)
-                              .toggleHomeTabInterest(interest);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: selected
-                                ? AppColors.primaryColor.withOpacity(0.3)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                constraints: const BoxConstraints(minHeight: 50),
-                                child: Image.network(
-                                  interest.iconUrl,
-                                  height: 40,
-                                ),
-                              ),
-                              Text(
-                                interest.activity,
-                                softWrap: true,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: AppStyles.h5.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    });
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Consumer(builder: (context, ref, child) {
+                return CustomTextField(
+                  controller: ref.read(eventsControllerProvider).activitySearchController,
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: SvgPicture.asset(
+                      Assets.icons.searchBarIcon,
+                      height: 28,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.primaryColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  borderRadius: 24,
+                  onChanged: (val) {
+                    setState(() {});
                   },
-                ),
-              ),
+                );
+              }),
             ),
+            Consumer(builder: (context, ref2, child) {
+              final interests = allInterests
+                  .where(
+                    (element) => element.activity.toLowerCase().contains(
+                          ref2
+                              .read(eventsControllerProvider)
+                              .activitySearchController
+                              .text
+                              .toLowerCase(),
+                        ),
+                  )
+                  .toList();
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: GridView.count(
+                  crossAxisCount: 4,
+                  childAspectRatio: 0.7,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: List.generate(
+                    interests.length,
+                    (index) {
+                      final interest = interests[index];
+                      return Consumer(builder: (context, ref, child) {
+                        final selected = ref
+                            .watch(homeTabControllerProvider.notifier)
+                            .containsInterest(interest.activity);
+                        return GestureDetector(
+                          onTap: () {
+                            ref
+                                .read(homeTabControllerProvider.notifier)
+                                .toggleHomeTabInterest(interest);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: selected
+                                  ? AppColors.primaryColor.withOpacity(0.3)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  constraints: const BoxConstraints(minHeight: 50),
+                                  child: Image.network(
+                                    interest.iconUrl,
+                                    height: 40,
+                                  ),
+                                ),
+                                Text(
+                                  interest.activity,
+                                  softWrap: true,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: AppStyles.h5.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                  ),
+                ),
+              );
+            }),
             const SizedBox(height: 16),
           ],
         ),
