@@ -235,6 +235,10 @@ class DBServices {
         final userEvents = list.where((element) => element['host_zipcode'] == userZipcode).toList();
         final events = userEvents.map((e) {
           final res = EventResponseModel.fromMap(e);
+          // for (var e in interestIcons.entries.toList()) {
+          //   print("[${e.key}] : ${e.value}");
+          // }
+          // print(res.category);
           final eventModel = EventModel(
             id: res.id,
             title: res.name,
@@ -266,7 +270,7 @@ class DBServices {
         }).toList();
         return events;
       } catch (e) {
-        debugPrint(e.toString());
+        debugPrint("Error In Getting Events: $e");
         return [];
       }
     }

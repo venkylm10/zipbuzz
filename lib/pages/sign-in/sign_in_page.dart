@@ -154,11 +154,12 @@ class SignInButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                iconPath,
-                height: 24,
-              ),
-              const SizedBox(width: 16),
+              if (iconPath != "zipbuzz-null")
+                SvgPicture.asset(
+                  iconPath,
+                  height: 24,
+                ),
+              if (iconPath != "zipbuzz-null") const SizedBox(width: 16),
               Text(
                 title,
                 style: AppStyles.h3.copyWith(
