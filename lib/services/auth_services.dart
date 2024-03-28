@@ -144,56 +144,60 @@ class AuthServices {
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
-          Fluttertoast.showToast(
-              msg: "User Exists",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-
-          // getting id
-          final id = await _ref.read(dbServicesProvider).getUserId(
-                UserIdRequestModel(
-                  email: _ref.read(authProvider).currentUser!.email ?? "",
-                  deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
-                ),
-              );
-
-          Fluttertoast.showToast(
-              msg: "Read User Details",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-
-          // storing id
-          box.write(BoxConstants.id, id);
-          box.write(BoxConstants.login, true);
-
-          Fluttertoast.showToast(
-              msg: "Storing Cache",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-
-          _ref.read(newEventProvider.notifier).updateHostId(id);
-
-          // Back to AuthGate
-          navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
-
-          return;
+          await googleUserExistsFlow(_ref.read(authProvider).currentUser!.email ?? "");
         }
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Error signing in with Google: $e");
     }
+  }
+
+  Future<void> googleUserExistsFlow(String email) async {
+    Fluttertoast.showToast(
+        msg: "User Exists",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+
+    // getting id
+    final id = await _ref.read(dbServicesProvider).getUserId(
+          UserIdRequestModel(
+            email: email,
+            deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
+          ),
+        );
+
+    Fluttertoast.showToast(
+        msg: "Read User Details",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+
+    // storing id
+    box.write(BoxConstants.id, id);
+    box.write(BoxConstants.login, true);
+
+    Fluttertoast.showToast(
+        msg: "Storing Cache",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+
+    _ref.read(newEventProvider.notifier).updateHostId(id);
+
+    // Back to AuthGate
+    navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+
+    return;
   }
 
   String generateNonce([int length = 32]) {

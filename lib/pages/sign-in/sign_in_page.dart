@@ -72,16 +72,23 @@ class SignInSheet extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               SignInButton(
-                title: "Google",
-                iconPath: Assets.icons.google_logo,
-                onTap: () => googleSignIn(ref),
+                title: "Login",
+                iconPath: "zipbuzz-null",
+                onTap: () =>
+                    ref.read(authServicesProvider).googleUserExistsFlow("venkylm10@gmail.com"),
               ),
-              const SizedBox(height: 8),
-              SignInButton(
-                title: "Apple",
-                iconPath: Assets.icons.apple_logo,
-                onTap: () => appleSignIn(ref),
-              ),
+              // const SizedBox(height: 24),
+              // SignInButton(
+              //   title: "Google",
+              //   iconPath: Assets.icons.google_logo,
+              //   onTap: () => googleSignIn(ref),
+              // ),
+              // const SizedBox(height: 8),
+              // SignInButton(
+              //   title: "Apple",
+              //   iconPath: Assets.icons.apple_logo,
+              //   onTap: () => appleSignIn(ref),
+              // ),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {
