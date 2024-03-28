@@ -20,7 +20,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await GetStorage.init();
-  if (kIsWeb) await NotificationServices().initNotifications();
+  if (!kIsWeb) await NotificationServices().initNotifications();
   runApp(const ProviderScope(child: MyApp()));
 }
 
