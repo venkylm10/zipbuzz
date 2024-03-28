@@ -22,6 +22,7 @@ class PersonalisePage extends ConsumerStatefulWidget {
 }
 
 class _PersonalisePageState extends ConsumerState<PersonalisePage> {
+  bool agree = false;
   @override
   void initState() {
     initialise();
@@ -141,14 +142,6 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             maxLength: 10,
                             prefixWidget: countryCodeSelector(),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "By continuing you agree to receive event text messages from BuzzMe at this number",
-                            style: AppStyles.h5.copyWith(
-                              color: AppColors.greyColor,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
                           const SizedBox(height: 12),
                           Text(
                             "Select at least 3 interests:",
@@ -160,6 +153,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                           const SizedBox(height: 8),
                           buildInterests(context, ref),
                           const SizedBox(height: 24),
+                          buildCheckBox(),
+                          const SizedBox(height: 12),
                           buildSubmitButton(personaliseController),
                           const SizedBox(height: 24),
                         ],
@@ -172,6 +167,36 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Row buildCheckBox() {
+    return Row(
+      children: [
+        Checkbox(
+          value: agree,
+          activeColor: AppColors.primaryColor,
+          side: const BorderSide(
+            color: AppColors.greyColor,
+            width: 1.5,
+            style: BorderStyle.solid,
+          ),
+          onChanged: (val) {
+            setState(() {
+              agree = val!;
+            });
+          },
+        ),
+        Expanded(
+          child: Text(
+            "By continuing you agree to receive event text messages from BuzzMe at this number",
+            style: AppStyles.h5.copyWith(
+              color: AppColors.greyColor,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -230,6 +255,10 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
         padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 8),
         child: InkWell(
           onTap: () {
+            // if (!agree) {
+            //   showSnackBar(message: "We need mobile number to send you event updates");
+            //   return;
+            // }
             if (loadingText == null) {
               personaliseController.sumbitInterests();
             }
