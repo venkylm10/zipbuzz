@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -57,6 +58,7 @@ class SignInSheet extends ConsumerWidget {
             ),
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(32),
+              bottom: kIsWeb ? Radius.circular(32) : Radius.zero,
             ),
           ),
           child: Column(

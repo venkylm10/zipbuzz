@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,6 +11,7 @@ import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
+import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
@@ -109,7 +111,11 @@ class _AuthGateState extends ConsumerState<AuthGate> {
       return;
     }
     await ref.read(dioServicesProvider).updateOnboardingDetails();
-    navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);
+    if (kIsWeb) {
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(WebSignInPage.id, (route) => false);
+    } else {
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);
+    }
   }
 
   Future<void> updateInterestsData() async {

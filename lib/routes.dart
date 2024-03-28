@@ -9,6 +9,7 @@ import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/pages/settings/faqs_page.dart';
+import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
 
@@ -91,7 +92,14 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
           return ChatPage(event: event);
         },
       );
-
+    case WebSignInPage.id:
+      return PageTransition(
+        child: const WebSignInPage(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
     case EventDetailsPage.id:
       return MaterialPageRoute(
         builder: (context) {

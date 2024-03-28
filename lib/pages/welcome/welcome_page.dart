@@ -6,27 +6,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 
-final onboardingDetailsProvider = StateProvider((ref) => <OnboardingPageModel>[
-      // OnboardingPageModel(
-      //   imageUrl: Assets.welcomeImage.welcome1,
-      //   heading: 'An event of every kind for everyone',
-      //   subheading: 'Discover, participate & organise fun social events in you areas of interest',
-      //   pageIndex: 0,
-      // ),
-      // OnboardingPageModel(
-      //   imageUrl: Assets.welcomeImage.welcome2,
-      //   heading: "Near or far, don't miss out any adventure",
-      //   subheading:
-      //       'Go on hikes, treks and other outdoor activities with people who share your interests',
-      //   pageIndex: 1,
-      // ),
-      // OnboardingPageModel(
-      //   imageUrl: Assets.welcomeImage.welcome3,
-      //   heading: "New connections & adventures",
-      //   subheading: 'Hang out with friends and neighbors who share your interests and passions',
-      //   pageIndex: 2,
-      // ),
-    ]);
+final onboardingDetailsProvider = StateProvider((ref) => <OnboardingPageModel>[]);
 
 class WelcomePage extends ConsumerStatefulWidget {
   static const id = '/welcome';

@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,20 +20,25 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await GetStorage.init();
-  await NotificationServices().initNotifications();
+  if (kIsWeb) await NotificationServices().initNotifications();
   runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  void initUxCam() {
+    if (kIsWeb) return;
+    FlutterUxcam
+        .optIntoSchematicRecordings(); // Confirm that you have user permission for screen recording
+    FlutterUxConfig config =
+        FlutterUxConfig(userAppKey: "cnh8esuvyrp6r0o", enableAutomaticScreenNameTagging: false);
+    FlutterUxcam.startWithConfiguration(config);
+  }
+
   @override
   Widget build(BuildContext context) {
-    FlutterUxcam.optIntoSchematicRecordings(); // Confirm that you have user permission for screen recording
-    FlutterUxConfig config = FlutterUxConfig(
-        userAppKey: "cnh8esuvyrp6r0o",
-        enableAutomaticScreenNameTagging: false);
-    FlutterUxcam.startWithConfiguration(config);
+    initUxCam();
     return MaterialApp(
       navigatorKey: navigatorKey,
       scaffoldMessengerKey: scaffoldMessengerKey,
