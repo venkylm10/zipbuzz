@@ -7,6 +7,8 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -309,6 +311,7 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   void cloneEvent() {
+    ref.read(homeTabControllerProvider.notifier).updateIndex(1);
     ref.read(newEventProvider.notifier).cloneEvent = true;
     final startTime = TimeOfDay.fromDateTime(DateTime.now());
     final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
@@ -333,9 +336,11 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   Widget buildCardOptions() {
+    final hostId = widget.event.hostId;
+    final userId = ref.read(userProvider).id;
     return Row(
       children: [
-        if (widget.myEvent)
+        if (hostId == userId)
           GestureDetector(
             onTap: () async {
               cloneEvent();

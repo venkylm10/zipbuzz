@@ -117,6 +117,7 @@ class _ActivitiesSheetState extends State<ActivitiesSheet> {
                             ref
                                 .read(homeTabControllerProvider.notifier)
                                 .toggleHomeTabInterest(interest);
+                            setState(() {});
                           },
                           child: Container(
                             padding: const EdgeInsets.all(4),

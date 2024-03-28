@@ -110,13 +110,13 @@ class _EventInviteState extends ConsumerState<EventInvite> {
               Expanded(
                 child: ListView(
                   children: [
-                    // const SizedBox(height: 24),
-                    // Text(
-                    //   "Invited (${selectedContacts.length})",
-                    //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-                    // ),
-                    // const SizedBox(height: 12),
-                    // buildInvitedContacts(selectedContacts),
+                    const SizedBox(height: 24),
+                    Text(
+                      "Invited (${selectedContacts.length})",
+                      style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
+                    ),
+                    const SizedBox(height: 12),
+                    buildInvitedContacts(selectedContacts),
                     const SizedBox(height: 24),
                     Text(
                       "My Address book",

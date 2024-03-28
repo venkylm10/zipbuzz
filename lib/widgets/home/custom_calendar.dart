@@ -87,7 +87,7 @@ class _CustomCalendarState extends ConsumerState<CustomCalendar> {
               ),
               selectedDayPredicate: (day) => isSameDay(day, focusedDay),
               onDaySelected: onDaySelected,
-              startingDayOfWeek: StartingDayOfWeek.monday,
+              startingDayOfWeek: StartingDayOfWeek.sunday,
               rowHeight: rowHeight,
               availableGestures: AvailableGestures.horizontalSwipe,
               calendarBuilders: customCalendarBuilders(),

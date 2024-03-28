@@ -246,7 +246,7 @@ class EventHostGuestList extends StatelessWidget {
                 ],
               ),
               const Expanded(child: SizedBox()),
-              if (interative) buildGuestTag("member")
+              buildGuestTag("Guest")
             ],
           ),
         ),
@@ -263,11 +263,13 @@ class EventHostGuestList extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final selectedTag = ref.watch(guestListTagProvider);
-        if (selectedTag == "Responded") {
+        if (selectedTag == "Responded" || status == "Guest") {
           var text = "";
           if (interative) {
             if (status == "pending") {
               text = "Confirm";
+            } else if (status == "Guest") {
+              text = "Invited";
             } else {
               text = "Confirmed";
             }

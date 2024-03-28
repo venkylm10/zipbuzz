@@ -3,8 +3,10 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -375,38 +377,46 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       padding: const EdgeInsets.only(top: 16),
       child: Builder(
         builder: (context) {
-          final splits = widget.event.hyperlinks;
-          return RichText(
-            text: TextSpan(
-              children: splits.map(
-                (hyperLink) {
-                  var e = hyperLink.url;
-                  var url = "";
-                  if (e.startsWith("http://") || e.startsWith("https://")) {
-                    url = e;
-                  } else {
-                    url = "http://$e";
-                  }
-                  return TextSpan(
+          final hyperlinks = widget.event.hyperlinks;
+          return Wrap(
+            children: hyperlinks.map(
+              (hyperLink) {
+                var e = hyperLink.url;
+                var url = "";
+                if (e.startsWith("http://") || e.startsWith("https://")) {
+                  url = e;
+                } else {
+                  url = "http://$e";
+                }
+                return GestureDetector(
+                  onTap: () {
+                    launchUrlString(url);
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextSpan(
-                        text: hyperLink.urlName,
+                      SvgPicture.asset(
+                        Assets.icons.linkClip,
+                        height: 16,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.blue,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      Text(
+                        "${hyperLink.urlName} ",
                         style: AppStyles.h4.copyWith(
                           color: Colors.blue,
                           fontStyle: FontStyle.italic,
                           decoration: TextDecoration.underline,
+                          decorationColor: Colors.blue,
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            launchUrlString(url);
-                          },
                       ),
-                      const TextSpan(text: " "),
                     ],
-                  );
-                },
-              ).toList(),
-            ),
+                  ),
+                );
+              },
+            ).toList(),
           );
         },
       ),
