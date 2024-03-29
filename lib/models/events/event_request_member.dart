@@ -5,6 +5,7 @@ class EventRequestMember {
   String status;
   int attendees;
   int id;
+  int userId;
 
   EventRequestMember({
     required this.image,
@@ -13,6 +14,7 @@ class EventRequestMember {
     required this.status,
     required this.id,
     required this.attendees,
+    required this.userId,
   });
 
   factory EventRequestMember.fromMap(Map<String, dynamic> map) {
@@ -23,6 +25,7 @@ class EventRequestMember {
       status: map['status'] as String,
       id: map['id'] as int,
       attendees: map['attendees'] as int,
+      userId: map['user_id'] as int
     );
   }
 
@@ -34,6 +37,7 @@ class EventRequestMember {
       'status': status,
       'id': id,
       'attendees': attendees,
+      'user_id': userId
     };
   }
 }

@@ -324,7 +324,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                         eventId: widget.event.id,
                         name: user.name,
                         phoneNumber: user.mobileNumber,
-                        image: user.imageUrl);
+                        image: user.imageUrl, userId: user.id);
                     final res = await ref.read(dioServicesProvider).requestToJoinEvent(model);
                     if (res) {
                       showSnackBar(message: "Request sent successfully");

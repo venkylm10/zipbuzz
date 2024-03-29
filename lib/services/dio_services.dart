@@ -256,6 +256,7 @@ class DioServices {
 
   Future<int> getUserId(UserIdRequestModel userIdRequestModel) async {
     try {
+      print(userIdRequestModel.toMap());
       final response = await dio.get(DioConstants.getUserId, data: userIdRequestModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         return response.data['user_id'];
@@ -480,11 +481,11 @@ class DioServices {
     }
   }
 
-  Future<void> editUserStatus(int eventId, String phoneNumber, String status) async {
+  Future<void> editUserStatus(int eventId, int userId, String status) async {
     try {
       await dio.put(
         DioConstants.editUserStatus,
-        data: {"event_id": eventId, "phone_number": phoneNumber, "status": status},
+        data: {"event_id": eventId, "user_id": userId, "status": status},
       );
       debugPrint("Updated user status");
     } catch (e) {

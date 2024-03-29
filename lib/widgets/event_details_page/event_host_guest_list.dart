@@ -186,7 +186,7 @@ class EventHostGuestList extends StatelessWidget {
                           .update((state) => updateMembers);
                       await ref
                           .read(dioServicesProvider)
-                          .editUserStatus(eventId, member.phone, "confirm");
+                          .editUserStatus(eventId, member.userId, "confirm");
                       showSnackBar(message: "${member.name} was confirmed for the event.");
                       ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                     },

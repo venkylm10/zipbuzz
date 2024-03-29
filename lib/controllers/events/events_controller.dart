@@ -169,6 +169,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
       name: user.name,
       phoneNumber: user.mobileNumber,
       image: user.imageUrl,
+      userId: user.id
     );
     return ref.read(dioServicesProvider).requestToJoinEvent(model);
   }

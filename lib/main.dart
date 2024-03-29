@@ -20,7 +20,9 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await GetStorage.init();
-  if (!kIsWeb) await NotificationServices().initNotifications();
+  if (!kIsWeb){
+    await NotificationServices().initNotifications();
+  }
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -29,10 +31,8 @@ class MyApp extends StatelessWidget {
 
   void initUxCam() {
     if (kIsWeb) return;
-    FlutterUxcam
-        .optIntoSchematicRecordings(); // Confirm that you have user permission for screen recording
-    FlutterUxConfig config =
-        FlutterUxConfig(userAppKey: "cnh8esuvyrp6r0o", enableAutomaticScreenNameTagging: false);
+    FlutterUxcam.optIntoSchematicRecordings(); // Confirm that you have user permission for screen recording
+    FlutterUxConfig config = FlutterUxConfig(userAppKey: "cnh8esuvyrp6r0o", enableAutomaticScreenNameTagging: false);
     FlutterUxcam.startWithConfiguration(config);
   }
 

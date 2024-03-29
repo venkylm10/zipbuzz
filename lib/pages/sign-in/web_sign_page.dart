@@ -36,10 +36,10 @@ class WebSignInPage extends StatelessWidget {
                 },
               ),
             ),
-            const Align(
+            Align(
               alignment: Alignment.center,
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(horizontal: size.width*0.25),
                 child: SignInSheet(),
               ),
             ),
