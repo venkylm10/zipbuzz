@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 
-GestureDetector backButton({void Function()? onTap}) {
-  return GestureDetector(
+InkWell backButton({void Function()? onTap}) {
+  return InkWell(
     onTap: () => onTap ?? navigatorKey.currentState!.pop(),
     child: Container(
       height: 32,

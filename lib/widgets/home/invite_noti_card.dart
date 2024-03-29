@@ -82,7 +82,7 @@ class InviteNotiCard extends ConsumerWidget {
                   ),
                   softWrap: true,
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () => navigateToEventDetails(ref),
                   child: RichText(
                     softWrap: true,
@@ -108,7 +108,7 @@ class InviteNotiCard extends ConsumerWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: acceptInvite,
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -129,7 +129,7 @@ class InviteNotiCard extends ConsumerWidget {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: declineInvite,
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),

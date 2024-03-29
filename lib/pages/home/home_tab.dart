@@ -1,3 +1,5 @@
+import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
@@ -171,7 +173,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           runSpacing: 8,
           spacing: 8,
           children: [
-            GestureDetector(
+            InkWell(
               onTap: () async {
                 await showModalBottomSheet(
                   context: context,
@@ -211,7 +213,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 ),
               ),
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 ref.read(homeTabControllerProvider.notifier).updateIndex(1);
                 ref.read(eventTabControllerProvider.notifier).updateIndex(2);
@@ -232,7 +234,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 ),
               ),
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 ref.read(homeTabControllerProvider.notifier).updateIndex(1);
                 ref.read(eventTabControllerProvider.notifier).updateIndex(0);
@@ -273,46 +275,49 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 return Container(
                   width: double.infinity,
                   color: Colors.white,
-                  child: SingleChildScrollView(
-                    controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: userInterests.map((e) {
-                          final name = e.activity;
-                          final iconPath = e.iconUrl;
-                          return GestureDetector(
-                            key: selectedCategory == name
-                                ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
-                                : null,
-                            onTap: () {
-                              onTapRowCategory(name);
-                            },
-                            child: Container(
+                  child: ScrollConfiguration(
+                    behavior: MyCustomScrollBehavior(),
+                    child: SingleChildScrollView(
+                      controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: userInterests.map((e) {
+                            final name = e.activity;
+                            final iconPath = e.iconUrl;
+                            return InkWell(
                               key: selectedCategory == name
                                   ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
                                   : null,
-                              margin: EdgeInsets.only(
-                                top: 5,
-                                left: index == 0 ? 12 : 2,
-                                right: index == allInterests.length - 1 ? 12 : 2,
-                                bottom: 5,
+                              onTap: () {
+                                onTapRowCategory(name);
+                              },
+                              child: Container(
+                                key: selectedCategory == name
+                                    ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
+                                    : null,
+                                margin: EdgeInsets.only(
+                                  top: 5,
+                                  left: index == 0 ? 12 : 2,
+                                  right: index == allInterests.length - 1 ? 12 : 2,
+                                  bottom: 5,
+                                ),
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: homeTabController.selectedCategory == name
+                                      ? Colors.green.withOpacity(0.15)
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Image.network(
+                                  iconPath,
+                                  height: 30,
+                                ),
                               ),
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: homeTabController.selectedCategory == name
-                                    ? Colors.green.withOpacity(0.15)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Image.network(
-                                iconPath,
-                                height: 30,
-                              ),
-                            ),
-                          );
-                        }).toList()),
+                            );
+                          }).toList()),
+                    ),
                   ),
                 );
               },
@@ -331,26 +336,34 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         builder: (context, ref, child) {
           final homeTabController = ref.watch(homeTabControllerProvider);
           final userInterests = homeTabController.currentInterests;
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
-            controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                (userInterests.length / 8).ceil(),
-                (index) {
-                  var interests = userInterests;
-                  if (interests.length > 8) {
-                    interests = userInterests.sublist(
-                        index * 8,
-                        (index + 1) * 8 > userInterests.length
-                            ? userInterests.length
-                            : (index + 1) * 8);
-                  }
-                  return buildCategoryPage(index, context, interests);
-                },
+          return SizedBox(
+            width: kIsWeb
+                ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94 - 60
+                : null,
+            child: ScrollConfiguration(
+              behavior: MyCustomScrollBehavior(),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
+                controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(
+                    (userInterests.length / 8).ceil(),
+                    (index) {
+                      var interests = userInterests;
+                      if (interests.length > 8) {
+                        interests = userInterests.sublist(
+                            index * 8,
+                            (index + 1) * 8 > userInterests.length
+                                ? userInterests.length
+                                : (index + 1) * 8);
+                      }
+                      return buildCategoryPage(index, context, interests);
+                    },
+                  ),
+                ),
               ),
             ),
           );
@@ -394,7 +407,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   ) {
     final width = MediaQuery.of(context).size.width;
     return Container(
-      width: width,
+      width:
+          kIsWeb ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94 : width,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20).copyWith(top: 10),
       child: GridView.count(
         crossAxisCount: 4,
@@ -407,7 +421,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           interests.length,
           (index) {
             final interest = interests[index];
-            return GestureDetector(
+            return InkWell(
               onTap: () => onTapGridCategory(interest.activity),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -436,4 +450,14 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       ),
     );
   }
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.stylus,
+        PointerDeviceKind.unknown,
+      };
 }

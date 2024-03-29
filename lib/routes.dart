@@ -101,24 +101,26 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
         reverseDuration: const Duration(milliseconds: 250),
       );
     case EventDetailsPage.id:
-      return MaterialPageRoute(
-        builder: (context) {
-          final args = settings.arguments as Map<String, dynamic>;
-          final event = args['event'];
-          final isPreview = args['isPreview'] ?? false;
-          final rePublish = args['rePublish'] ?? false;
-          final dominantColor = args['dominantColor'] as Color;
-          final randInt = args['randInt'] as int?;
-          final clone = args['clone'] ?? false;
-          return EventDetailsPage(
-            event: event,
-            isPreview: isPreview,
-            dominantColor: dominantColor,
-            randInt: randInt ?? 0,
-            rePublish: rePublish,
-            clone: clone,
-          );
-        },
+      final args = settings.arguments as Map<String, dynamic>;
+      final event = args['event'];
+      final isPreview = args['isPreview'] ?? false;
+      final rePublish = args['rePublish'] ?? false;
+      final dominantColor = args['dominantColor'] as Color;
+      final randInt = args['randInt'] as int?;
+      final clone = args['clone'] ?? false;
+      return PageTransition(
+        child: EventDetailsPage(
+          event: event,
+          isPreview: isPreview,
+          dominantColor: dominantColor,
+          randInt: randInt ?? 0,
+          rePublish: rePublish,
+          clone: clone,
+        ),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
       );
 
     default:

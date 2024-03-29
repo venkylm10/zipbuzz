@@ -19,8 +19,7 @@ class EventsTab extends ConsumerWidget {
     final tabTitles = ref.read(eventTabControllerProvider.notifier).tabTitles;
     return PopScope(
       canPop: false,
-      onPopInvoked: (value) =>
-          ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
+      onPopInvoked: (value) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -49,7 +48,7 @@ class EventsTab extends ConsumerWidget {
                     children: List.generate(
                       tabs.length,
                       (index) => Expanded(
-                        child: GestureDetector(
+                        child: InkWell(
                           onTap: () {
                             updateIndex(index, ref);
                           },
@@ -57,9 +56,7 @@ class EventsTab extends ConsumerWidget {
                             padding: const EdgeInsets.all(12),
                             margin: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
-                              color: selectedTab == index
-                                  ? AppColors.bgGrey
-                                  : Colors.transparent,
+                              color: selectedTab == index ? AppColors.bgGrey : Colors.transparent,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Center(

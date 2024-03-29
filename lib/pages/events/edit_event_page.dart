@@ -10,6 +10,7 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
+import 'package:zipbuzz/widgets/common/custom_bezel.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
 import 'package:zipbuzz/widgets/create_event/edit_event_photos.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
@@ -47,51 +48,53 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: backButton(),
-          title: Text(
-            "Editing Event",
-            style: AppStyles.h2.copyWith(
-              color: AppColors.primaryColor,
-              fontWeight: FontWeight.w600,
+    return CustomBezel(
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            leading: backButton(),
+            title: Text(
+              "Editing Event",
+              style: AppStyles.h2.copyWith(
+                color: AppColors.primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+            centerTitle: true,
+            forceMaterialTransparency: true,
           ),
-          centerTitle: true,
-          forceMaterialTransparency: true,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const EditEventBannerSelector(),
-                const SizedBox(height: 16),
-                const EditEventForm(),
-                broadDivider(),
-                const AddHosts(),
-                broadDivider(),
-                const EventTypeAndCapacity(rePublish: true),
-                broadDivider(),
-                const EditEventPhotos(),
-                broadDivider(),
-                const CreateEventGuestListType(),
-                const SizedBox(height: 32),
-                EventHostGuestList(
-                    guests: ref.watch(editEventControllerProvider).eventMembers,
-                    eventId: ref.watch(editEventControllerProvider).id),
-                broadDivider(),
-                const SizedBox(height: 16),
-                buildSaveButton(),
-                const SizedBox(height: 32),
-              ],
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const EditEventBannerSelector(),
+                  const SizedBox(height: 16),
+                  const EditEventForm(),
+                  broadDivider(),
+                  const AddHosts(),
+                  broadDivider(),
+                  const EventTypeAndCapacity(rePublish: true),
+                  broadDivider(),
+                  const EditEventPhotos(),
+                  broadDivider(),
+                  const CreateEventGuestListType(),
+                  const SizedBox(height: 32),
+                  EventHostGuestList(
+                      guests: ref.watch(editEventControllerProvider).eventMembers,
+                      eventId: ref.watch(editEventControllerProvider).id),
+                  broadDivider(),
+                  const SizedBox(height: 16),
+                  buildSaveButton(),
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
           ),
         ),
@@ -160,6 +163,5 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
     );
     ref.read(editEventControllerProvider.notifier).updateEvent(event);
     setState(() {});
-    print("back");
   }
 }

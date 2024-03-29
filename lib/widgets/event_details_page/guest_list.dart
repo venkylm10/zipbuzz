@@ -30,8 +30,8 @@ class _EventGuestListState extends ConsumerState<EventGuestList> {
     );
   }
 
-  GestureDetector loadMoreButton() {
-    return GestureDetector(
+  InkWell loadMoreButton() {
+    return InkWell(
       onTap: () {
         setState(() {
           if (subListLength + 8 > widget.guests.length) {
@@ -129,7 +129,7 @@ class _EventGuestListState extends ConsumerState<EventGuestList> {
                       top: 0,
                       child: Transform.translate(
                         offset: const Offset(4, -4),
-                        child: GestureDetector(
+                        child: InkWell(
                           onTap: () {
                             ref.read(newEventProvider.notifier).removeInviteMember(member.phone);
                           },

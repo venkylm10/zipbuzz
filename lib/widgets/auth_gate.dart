@@ -100,13 +100,14 @@ class _AuthGateState extends ConsumerState<AuthGate> {
 
   void buildNextScreen() async {
     bool? login = box.read(BoxConstants.login) as bool?;
-    bool? guest = box.read(BoxConstants.guestUser) as bool?;
+    // bool? guest = box.read(BoxConstants.guestUser) as bool?;
     await Future.delayed(const Duration(milliseconds: 500));
     await updateInterestsData();
-    if (guest != null) {
-      await setUpGuestData();
-      return;
-    } else if (login != null) {
+    // if (guest != null) {
+    //   await setUpGuestData();
+    //   return;
+    // } else
+    if (login != null) {
       await getLoggedInUserData();
       return;
     }

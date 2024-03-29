@@ -40,7 +40,7 @@ class _InviteGuestAlertState extends ConsumerState<InviteGuestAlert> {
             Row(
               children: [
                 Expanded(
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () {
                       navigatorKey.currentState!.pop();
                     },
@@ -63,7 +63,7 @@ class _InviteGuestAlertState extends ConsumerState<InviteGuestAlert> {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () {
                       navigatorKey.currentState!.pop();
                       publishEvent();

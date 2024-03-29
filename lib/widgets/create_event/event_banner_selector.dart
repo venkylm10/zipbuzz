@@ -41,7 +41,7 @@ class _EventBannerSelectorState extends ConsumerState<EventBannerSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () => pickImage(),
       child: image == null
           ? Container(

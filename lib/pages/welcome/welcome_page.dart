@@ -155,7 +155,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
+                InkWell(
                   onTap: skip,
                   child: Text(
                     'Skip',
@@ -178,7 +178,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                     ),
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: next,
                   child: Text(
                     currentPage == pageDetails.length - 1 ? 'Finish' : 'Next',

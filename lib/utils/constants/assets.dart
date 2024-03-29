@@ -105,6 +105,10 @@ class Images {
 
   // profile
   final profile = 'assets/images/profile.png';
+
+  // ipad_border
+  final ipad_border = 'assets/images/ipad_border.png';
+  final border_ratio = 1484 / 2000;
 }
 
 var allInterests = <InterestModel>[];

@@ -84,7 +84,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
               ],
             ),
             const SizedBox(height: 24),
-            GestureDetector(
+            InkWell(
               onTap: () async {
                 await ref
                     .read(dioServicesProvider)

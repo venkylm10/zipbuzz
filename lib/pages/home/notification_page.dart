@@ -8,6 +8,7 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
+import 'package:zipbuzz/widgets/common/custom_bezel.dart';
 import 'package:zipbuzz/widgets/home/invite_noti_card.dart';
 import 'package:zipbuzz/widgets/home/response_noti_card.dart';
 import 'package:zipbuzz/widgets/notification_page/attendee_sheet.dart';
@@ -25,59 +26,61 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: backButton(),
-          title: Text(
-            "Notifications",
-            style: AppStyles.h2.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.primaryColor,
+    return CustomBezel(
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            leading: backButton(),
+            title: Text(
+              "Notifications",
+              style: AppStyles.h2.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.primaryColor,
+              ),
             ),
+            centerTitle: true,
+            elevation: 0,
           ),
-          centerTitle: true,
-          elevation: 0,
-        ),
-        body: FutureBuilder(
-          future: ref.read(dioServicesProvider).getNotifications(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                ),
-              );
-            }
-            final notifications = snapshot.data as List<NotificationData>;
-            if (notifications.isEmpty) {
-              return Center(
-                child: Text(
-                  "No Notifications",
-                  style: AppStyles.h4.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.lightGreyColor,
-                    fontStyle: FontStyle.italic,
+          body: FutureBuilder(
+            future: ref.read(dioServicesProvider).getNotifications(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
+                );
+              }
+              final notifications = snapshot.data as List<NotificationData>;
+              if (notifications.isEmpty) {
+                return Center(
+                  child: Text(
+                    "No Notifications",
+                    style: AppStyles.h4.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.lightGreyColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                );
+              }
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16).copyWith(bottom: 0),
+                  child: Column(
+                    children: notifications
+                        .map(
+                          (e) => buildNotificationCard(e),
+                        )
+                        .toList(),
                   ),
                 ),
               );
-            }
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16).copyWith(bottom: 0),
-                child: Column(
-                  children: notifications
-                      .map(
-                        (e) => buildNotificationCard(e),
-                      )
-                      .toList(),
-                ),
-              ),
-            );
-          },
+            },
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -27,10 +28,15 @@ class LocationServices extends StateNotifier<LocationModel> {
   Future<void> getLocationFromZipcode(String newZipcode) async {
     state = state.copyWith(zipcode: newZipcode);
     try {
-      final res = await ref
-          .read(dioServicesProvider)
-          .dio
-          .get(DioConstants.getLocation, data: {"zipcode": newZipcode});
+      final res = kIsWeb
+          ? await ref
+              .read(dioServicesProvider)
+              .dio
+              .post(DioConstants.getLocationWeb, data: {"zipcode": newZipcode})
+          : await ref
+              .read(dioServicesProvider)
+              .dio
+              .get(DioConstants.getLocation, data: {"zipcode": newZipcode});
       final loc = res.data['location_name'].split(",");
       final city = loc[0].toString().trim();
       var country = "";

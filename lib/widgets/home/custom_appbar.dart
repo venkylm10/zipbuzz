@@ -94,21 +94,21 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                 );
               }),
               actions: [
-                GestureDetector(
+                InkWell(
                   onTap: () async {
                     widget.toggleSearching();
                   },
                   child: SvgPicture.asset(Assets.icons.search),
                 ),
                 const SizedBox(width: 12),
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     navigatorKey.currentState!.pushNamed(NotificationPage.id);
                   },
                   child: SvgPicture.asset(Assets.icons.notification),
                 ),
                 const SizedBox(width: 12),
-                GestureDetector(
+                InkWell(
                   onTap: () async {
                     widget.toggleSearching();
                     if (GetStorage().read(BoxConstants.guestUser) != null) {
@@ -189,7 +189,7 @@ class AppBarSearchField extends ConsumerWidget {
               ),
             ),
           ),
-          suffixIcon: GestureDetector(
+          suffixIcon: InkWell(
             onTap: () {
               ref.read(homeTabControllerProvider.notifier).queryController.clear();
               ref.read(homeTabControllerProvider.notifier).refresh();

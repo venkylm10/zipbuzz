@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/widgets/common/custom_bezel.dart';
 
 class WebSignInPage extends StatelessWidget {
   static const id = '/web_sign_in';
@@ -12,11 +12,8 @@ class WebSignInPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SizedBox(
-        height: size.height < 400 ? 400 : size.height,
-        width: size.width < 300 ? 300 : size.width,
+      body: CustomBezel(
         child: Stack(
           children: [
             Positioned.fill(
@@ -27,8 +24,9 @@ class WebSignInPage extends StatelessWidget {
                     fadeInDuration: const Duration(milliseconds: 1000),
                     imageUrl: pageDetails.last.imageUrl,
                     placeholder: (context, url) {
-                      return Container(
-                        color: Colors.black,
+                      return Image.asset(
+                        Assets.welcomeImage.welcome3,
+                        fit: BoxFit.cover,
                       );
                     },
                     fit: BoxFit.cover,
@@ -38,10 +36,14 @@ class WebSignInPage extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.center,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width*0.25),
-                child: SignInSheet(),
-              ),
+              child: Builder(builder: (context) {
+                final height = MediaQuery.of(context).size.height;
+                final width = height * 1484 / 2000; // don't change
+                return Padding(
+                  padding: EdgeInsets.all(width * 0.1),
+                  child: const SignInSheet(),
+                );
+              }),
             ),
           ],
         ),

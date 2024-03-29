@@ -105,7 +105,7 @@ class UserSocials extends ConsumerWidget {
           style: AppStyles.h4,
         ),
         const Expanded(child: SizedBox()),
-        GestureDetector(
+        InkWell(
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(12),

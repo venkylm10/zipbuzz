@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 
@@ -64,7 +66,9 @@ class QrServices {
       context: navigatorKey.currentContext!,
       barrierDismissible: true,
       builder: (context) {
-        final width = MediaQuery.of(context).size.width;
+        final width = kIsWeb
+            ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94
+            : MediaQuery.of(context).size.width;
         return AlertDialog(
           backgroundColor: AppColors.primaryColor.withOpacity(0.75),
           surfaceTintColor: Colors.transparent,

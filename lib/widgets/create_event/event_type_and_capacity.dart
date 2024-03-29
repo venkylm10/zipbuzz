@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -83,7 +85,7 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
         Row(
           children: [
             Expanded(
-              child: GestureDetector(
+              child: InkWell(
                 onTap: () => updateEventType(false),
                 child: Container(
                   padding: const EdgeInsets.all(4),
@@ -122,7 +124,7 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: GestureDetector(
+              child: InkWell(
                 onTap: () => updateEventType(true),
                 child: Container(
                   padding: const EdgeInsets.all(4),
@@ -175,11 +177,13 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
                 color: AppColors.bgGrey,
               ),
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * .4,
+                width: kIsWeb
+                    ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.4
+                    : MediaQuery.of(context).size.width * .4,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    GestureDetector(
+                    InkWell(
                       onTap: decreaseCapacity,
                       child: const Padding(
                         padding: EdgeInsets.all(16.0),
@@ -213,7 +217,7 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
                         ),
                       ),
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: increaseCapacity,
                       child: const Padding(
                         padding: EdgeInsets.all(16.0),

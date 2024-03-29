@@ -10,6 +10,7 @@ import 'package:zipbuzz/services/chat_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/custom_bezel.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
@@ -74,40 +75,42 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  widget.event.bannerPath,
-                  height: 40,
-                  width: 40,
-                  fit: BoxFit.cover,
+    return CustomBezel(
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    widget.event.bannerPath,
+                    height: 40,
+                    width: 40,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                widget.event.title,
-                overflow: TextOverflow.ellipsis,
-                style: AppStyles.h3.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Text(
+                  widget.event.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppStyles.h3.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            titleSpacing: -10,
+            elevation: 1,
           ),
-          titleSpacing: -10,
-          elevation: 1,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16).copyWith(top: 0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              buildChat(),
-              buildSendTextField(),
-            ],
+          body: Padding(
+            padding: const EdgeInsets.all(16).copyWith(top: 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                buildChat(),
+                buildSendTextField(),
+              ],
+            ),
           ),
         ),
       ),
@@ -391,7 +394,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           child: CustomTextField(
             controller: messageController,
             hintText: "Type a message ..",
-            suffixIcon: GestureDetector(
+            suffixIcon: InkWell(
               onTap: () => sendMessage(),
               child: Padding(
                 padding: EdgeInsets.only(right: 16, bottom: maxLines == null ? 8 : 16),

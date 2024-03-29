@@ -181,7 +181,7 @@ class _LocationCheckPageState extends ConsumerState<LocationCheckPage> {
       children: allInterests.sublist(0, 10).map(
         (e) {
           final name = e.activity;
-          return GestureDetector(
+          return InkWell(
             onTap: () {
               FocusScope.of(context).unfocus();
               editProfileController.updateInterest(name);

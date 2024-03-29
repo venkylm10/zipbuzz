@@ -63,7 +63,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         ),
         if (selectedImages.isEmpty) const SizedBox(height: 16),
         if (selectedImages.isEmpty)
-          GestureDetector(
+          InkWell(
             onTap: () {
               addImages();
             },
@@ -115,7 +115,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: GestureDetector(
+                        child: InkWell(
                           onTap: () => removeImage(image: selectedImages[index]),
                           child: SizedBox(
                             height: 36,
@@ -150,7 +150,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
         ),
         if (selectedImages.isNotEmpty) const SizedBox(height: 16),
         if (selectedImages.isNotEmpty)
-          GestureDetector(
+          InkWell(
             onTap: () {
               addImages();
             },

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -99,9 +100,13 @@ class DioServices {
   // notification
   Future<List<NotificationData>> getNotifications() async {
     try {
-      final response = await dio.get(DioConstants.getNotifications, data: {
-        "user_id": ref.read(userProvider).id,
-      });
+      final response = kIsWeb
+          ? await dio.post(DioConstants.getNotificationsWeb, data: {
+              "user_id": ref.read(userProvider).id,
+            })
+          : await dio.get(DioConstants.getNotifications, data: {
+              "user_id": ref.read(userProvider).id,
+            });
       final list = response.data['notification_data'] as List;
       return list.map((e) => NotificationData.fromMap(e)).toList();
     } catch (e) {
@@ -128,10 +133,15 @@ class DioServices {
   // phone check
   Future<bool> checkPhone(String phoneNumber) async {
     try {
-      final res = await dio.get(
-        DioConstants.phoneCheck,
-        data: {"phone": phoneNumber},
-      );
+      final res = kIsWeb
+          ? await dio.post(
+              DioConstants.phoneCheck,
+              data: {"phone": phoneNumber},
+            )
+          : await dio.get(
+              DioConstants.phoneCheck,
+              data: {"phone": phoneNumber},
+            );
       debugPrint("check phone: $phoneNumber ${res.data}");
       if (res.data['message'] == "User not found") {
         return true;
@@ -256,8 +266,15 @@ class DioServices {
 
   Future<int> getUserId(UserIdRequestModel userIdRequestModel) async {
     try {
-      print(userIdRequestModel.toMap());
-      final response = await dio.get(DioConstants.getUserId, data: userIdRequestModel.toMap());
+      final response = kIsWeb
+          ? await dio.post(
+              DioConstants.getUserId,
+              data: userIdRequestModel.toMap(),
+            )
+          : await dio.get(
+              DioConstants.getUserId,
+              data: userIdRequestModel.toMap(),
+            );
       if (response.data[DioConstants.status] == DioConstants.success) {
         return response.data['user_id'];
       } else {
@@ -273,8 +290,9 @@ class DioServices {
     debugPrint("GETTING USER DATA");
 
     try {
-      final response =
-          await dio.get(DioConstants.getUserDetails, data: userDetailsRequestModel.toMap());
+      final response = kIsWeb
+          ? await dio.post(DioConstants.getUserDetailsWeb, data: userDetailsRequestModel.toMap())
+          : await dio.get(DioConstants.getUserDetails, data: userDetailsRequestModel.toMap());
       debugPrint("GETTING USER DATA COMPLETE");
       return response.data as Map<String, dynamic>;
     } catch (error) {
@@ -323,7 +341,9 @@ class DioServices {
     try {
       debugPrint("GETTING ALL EVENTS");
       final data = userEventsRequestModel.toMap();
-      final response = await dio.get(DioConstants.getAllEvents, data: data);
+      final response = kIsWeb
+          ? await dio.post(DioConstants.getAllEvents, data: data)
+          : await dio.get(DioConstants.getAllEvents, data: data);
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
         debugPrint("GETTING ALL EVENTS SUCCESSFULL");
@@ -359,8 +379,10 @@ class DioServices {
   Future<List> getUserFavoriteEvents(UserEventsRequestModel userEventsRequestModel) async {
     try {
       debugPrint("GETTING USER EVENTS");
-      final response =
-          await dio.get(DioConstants.getUserFavoriteEvents, data: userEventsRequestModel.toMap());
+      final response = kIsWeb
+          ? await dio.post(DioConstants.getUserFavoriteEventsWeb,
+              data: userEventsRequestModel.toMap())
+          : await dio.get(DioConstants.getUserFavoriteEvents, data: userEventsRequestModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['favorite_events'] as List;
         debugPrint("GETTING USER EVENTS SUCCESSFULL");
@@ -452,8 +474,9 @@ class DioServices {
   Future<List<EventInviteMember>> getEventMembers(
       EventMembersRequestModel eventMembersRequestModel) async {
     try {
-      final res =
-          await dio.get(DioConstants.getEventMembers, data: eventMembersRequestModel.toMap());
+      final res = kIsWeb
+          ? await dio.post(DioConstants.getEventMembers, data: eventMembersRequestModel.toMap())
+          : await dio.get(DioConstants.getEventMembers, data: eventMembersRequestModel.toMap());
       if (res.data[DioConstants.status] == DioConstants.success) {
         return EventMembersResponseModel.fromMap(res.data).eventMembers;
       } else {
@@ -467,7 +490,9 @@ class DioServices {
 
   Future<List<EventRequestMember>> getEventRequestMembers(int eventId) async {
     try {
-      final res = await dio.get(DioConstants.getEventRequests, data: {"event_id": eventId});
+      final res = kIsWeb
+          ? await dio.post(DioConstants.getEventRequestsWeb, data: {"event_id": eventId})
+          : await dio.get(DioConstants.getEventRequests, data: {"event_id": eventId});
       if (res.data[DioConstants.status] == DioConstants.success) {
         final list = res.data['event_members'] as List;
         final requests = list.map((e) => EventRequestMember.fromMap(e)).toList();

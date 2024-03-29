@@ -1,4 +1,5 @@
 import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -48,7 +49,9 @@ class _EventInviteState extends ConsumerState<EventInvite> {
         : ref.watch(newEventProvider.notifier).contactSearchResult;
     return Container(
       height: MediaQuery.of(context).size.height * .85,
-      width: MediaQuery.of(context).size.width,
+      width: kIsWeb
+          ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94
+          : MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       color: Colors.white,
       child: Stack(
@@ -89,7 +92,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
                     colorFilter: const ColorFilter.mode(AppColors.lightGreyColor, BlendMode.srcIn),
                   ),
                 ),
-                suffixIcon: GestureDetector(
+                suffixIcon: InkWell(
                   onTap: () {
                     searchController.text = "";
                     updateSearchResult("");
@@ -145,7 +148,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   Align buildInviteButton() {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: GestureDetector(
+      child: InkWell(
         onTap: () => navigatorKey.currentState!.pop(),
         child: Container(
           width: double.infinity,
@@ -239,7 +242,7 @@ class _EventInviteState extends ConsumerState<EventInvite> {
   Widget buildContactCard(Contact contact, {bool isSelected = false}) {
     final name = contact.displayName ?? "";
     final phoneNumber = contact.phones!.first.value ?? "";
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         widget.edit
             ? ref.watch(editEventControllerProvider.notifier).updateSelectedContact(contact)

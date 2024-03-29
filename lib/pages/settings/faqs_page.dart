@@ -18,19 +18,13 @@ class _FAQsPageState extends State<FAQsPage> {
   int currentQuestion = 2;
   final faqs = [
     {"question": "What is an event?", "answer": "Explaining an event."},
-    {
-      "question": "How do I create an event?",
-      "answer": "Steps to create an event."
-    },
+    {"question": "How do I create an event?", "answer": "Steps to create an event."},
     {
       "question": "Is there a fee for using the app?",
       "answer":
           "The app is typically free to download and use for basic features like event discovery. However, there may be fees associated with ticket purchases or premium features. Check the app's pricing or subscription details for more information."
     },
-    {
-      "question": "How can I find events near me?",
-      "answer": "Explaining how to find events."
-    },
+    {"question": "How can I find events near me?", "answer": "Explaining how to find events."},
     {
       "question": "Can I buy tickets or register for events through the app?",
       "answer": "Explaining about the event registerations and payments."
@@ -56,7 +50,7 @@ class _FAQsPageState extends State<FAQsPage> {
         ),
         centerTitle: true,
         actions: [
-          GestureDetector(
+          InkWell(
             onTap: () {},
             child: Container(
               height: 36,
@@ -106,8 +100,7 @@ class _FAQsPageState extends State<FAQsPage> {
                     borderRadius: BorderRadius.circular(24),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: AppColors.lightGreyColor),
+                    borderSide: const BorderSide(color: AppColors.lightGreyColor),
                     borderRadius: BorderRadius.circular(24),
                   ),
                   errorBorder: OutlineInputBorder(
@@ -132,9 +125,8 @@ class _FAQsPageState extends State<FAQsPage> {
                       title: Text(
                         question,
                         style: AppStyles.h4.copyWith(
-                            fontWeight: currentQuestion == index
-                                ? FontWeight.w600
-                                : FontWeight.normal),
+                            fontWeight:
+                                currentQuestion == index ? FontWeight.w600 : FontWeight.normal),
                       ),
                       shape: RoundedRectangleBorder(
                         side: BorderSide.none,

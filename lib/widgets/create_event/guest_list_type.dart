@@ -22,7 +22,7 @@ class CreateEventGuestListType extends ConsumerWidget {
           style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
         ),
         const SizedBox(height: 16),
-        GestureDetector(
+        InkWell(
           onTap: () => togglePrivacy(ref),
           child: Container(
             padding: const EdgeInsets.all(8),

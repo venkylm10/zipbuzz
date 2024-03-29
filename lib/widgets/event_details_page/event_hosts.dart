@@ -50,7 +50,7 @@ class _EventHostsState extends ConsumerState<EventHosts> {
         buildHost(widget.event.hostId, widget.event.hostName, widget.event.hostPic),
         const SizedBox(height: 12),
         !widget.isPreview
-            ? GestureDetector(
+            ? InkWell(
                 onTap: () => navigateToChatPage(),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),

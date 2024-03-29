@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,8 +20,10 @@ class ActivitiesSheet extends StatefulWidget {
 class _ActivitiesSheetState extends State<ActivitiesSheet> {
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.85,
+      height:  height * 0.85,
+      width: kIsWeb ? height * Assets.images.border_ratio * 0.94: null,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -46,7 +49,7 @@ class _ActivitiesSheetState extends State<ActivitiesSheet> {
                   ),
                 ),
                 const Expanded(child: SizedBox()),
-                GestureDetector(
+                InkWell(
                   onTap: () {
                     navigatorKey.currentState!.pop();
                   },
@@ -112,7 +115,7 @@ class _ActivitiesSheetState extends State<ActivitiesSheet> {
                         final selected = ref
                             .watch(homeTabControllerProvider.notifier)
                             .containsInterest(interest.activity);
-                        return GestureDetector(
+                        return InkWell(
                           onTap: () {
                             ref
                                 .read(homeTabControllerProvider.notifier)

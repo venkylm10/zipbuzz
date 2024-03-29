@@ -14,7 +14,7 @@ class EventQRCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      return GestureDetector(
+      return InkWell(
         onTap: () async {
           // deepLink Url
           // final uri = await ref

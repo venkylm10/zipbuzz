@@ -64,7 +64,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                 // Event Link button
                 if (!widget.isPreview)
                   Expanded(
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: showSnackBar,
                       child: Container(
                         height: 48,
@@ -94,7 +94,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                 if (!widget.isPreview) const SizedBox(width: 8),
                 // Event Invite button
                 Expanded(
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () => inviteContacts(false),
                     child: Container(
                       height: 48,
@@ -136,7 +136,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               child: Consumer(
                 builder: (context, ref, child) {
                   final loadingText = ref.watch(loadingTextProvider);
-                  return GestureDetector(
+                  return InkWell(
                     onTap: () async {
                       if (loadingText != null) return;
                       if (ref.read(newEventProvider).eventMembers.isEmpty) {
@@ -207,7 +207,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            GestureDetector(
+            InkWell(
               onTap: () => inviteContacts(true),
               child: Container(
                 height: 48,
@@ -242,7 +242,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               ),
             ),
             const SizedBox(height: 8),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 if (loadingText == null) {
                   ref.read(editEventControllerProvider.notifier).rePublishEvent();
@@ -315,7 +315,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
           children: [
             Expanded(
               child: Consumer(builder: (context, ref, child) {
-                return GestureDetector(
+                return InkWell(
                   onTap: () async {
                     widget.event.status = "requested";
                     setState(() {});
@@ -467,8 +467,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     );
   }
 
-  GestureDetector buildAddToFavoriteButton() {
-    return GestureDetector(
+  InkWell buildAddToFavoriteButton() {
+    return InkWell(
       onTap: () {
         addToFavorite();
       },
@@ -508,7 +508,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
   Consumer buildCopyButton() {
     return Consumer(
       builder: (context, ref, child) {
-        return GestureDetector(
+        return InkWell(
           onTap: () async {
             Clipboard.setData(ClipboardData(text: widget.event.inviteUrl));
             showSnackBar(message: "Copied link to clipboard");
@@ -551,7 +551,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
   Consumer buildShareButton() {
     return Consumer(
       builder: (context, ref, child) {
-        return GestureDetector(
+        return InkWell(
           onTap: () async {
             shareEvent(widget.event);
           },
@@ -594,7 +594,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            GestureDetector(
+            InkWell(
               onTap: () {
                 inviteMoreGuests();
               },
@@ -635,7 +635,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               child: Row(
                 children: [
                   Expanded(
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: () async {
                         editEvent();
                       },
@@ -672,7 +672,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: () async {
                         shareEvent(widget.event);
                       },

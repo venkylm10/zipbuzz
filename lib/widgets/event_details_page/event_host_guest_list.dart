@@ -173,7 +173,7 @@ class EventHostGuestList extends StatelessWidget {
               const Expanded(child: SizedBox()),
               if (interative || member.status == "confirm")
                 Consumer(builder: (context, ref, child) {
-                  return GestureDetector(
+                  return InkWell(
                     onTap: () async {
                       if (!interative || !isPending) return;
                       var newMember = member;
@@ -318,7 +318,7 @@ class EventHostGuestList extends StatelessWidget {
                 .where((element) => element.status == "confirm")
                 .toList()
                 .length;
-            return GestureDetector(
+            return InkWell(
               onTap: () {
                 ref.read(guestListTagProvider.notifier).update((state) => tags[index]);
               },

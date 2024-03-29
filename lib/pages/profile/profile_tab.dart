@@ -194,8 +194,8 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     );
   }
 
-  GestureDetector buildEditButton(UserModel user) {
-    return GestureDetector(
+  InkWell buildEditButton(UserModel user) {
+    return InkWell(
       onTap: () => editProfile(user),
       child: Container(
         height: 32,
@@ -297,7 +297,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
               final iconPath = interest.iconUrl;
               final color = interestColors[interest.activity]!;
               final present = myInterests.contains(interest.activity);
-              return GestureDetector(
+              return InkWell(
                 onTap: () async {
                   updateInterests(interest);
                 },
@@ -352,7 +352,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        GestureDetector(
+        InkWell(
           onTap: () {
             ref.read(editProfileControllerProvider).toggleInterestView();
             setState(() {});

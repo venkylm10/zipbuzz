@@ -302,7 +302,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
       children: allInterests.sublist(0, 10).map(
         (e) {
           final name = e.activity;
-          return GestureDetector(
+          return InkWell(
             onTap: () {
               FocusScope.of(context).unfocus();
               personaliseController.updateInterests(name);

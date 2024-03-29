@@ -75,11 +75,10 @@ class SettingsTiles extends StatelessWidget {
     );
   }
 
-  Padding buildSettingsTile(String label, String iconPath,
-      {void Function()? onTap}) {
+  Padding buildSettingsTile(String label, String iconPath, {void Function()? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
         child: Row(
           children: [

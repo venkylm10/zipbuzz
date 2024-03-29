@@ -92,7 +92,7 @@ class SignInSheet extends ConsumerWidget {
                 onTap: () => appleSignIn(ref),
               ),
               const SizedBox(height: 8),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   // Guest View Flow
                   // signInGuestUser(ref);
@@ -150,7 +150,7 @@ class SignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
       child: Container(
         height: 56,

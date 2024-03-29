@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
@@ -61,14 +62,16 @@ class _EventCardState extends ConsumerState<EventCard> {
     final dominantColor = await getDominantColor();
     ref.read(guestListTagProvider.notifier).update((state) => "Invited");
     await navigatorKey.currentState!.push(
-      MaterialPageRoute(
-        builder: (context) => EventDetailsPage(
+      PageTransition(
+        child: EventDetailsPage(
           event: widget.event,
           dominantColor: dominantColor,
           isPreview: false,
           rePublish: false,
           clone: false,
         ),
+        type: PageTransitionType.fade,
+        duration: const Duration(milliseconds: 300),
       ),
     );
     if (isMounted) setState(() {});
@@ -121,7 +124,7 @@ class _EventCardState extends ConsumerState<EventCard> {
   Widget build(BuildContext context) {
     final date = DateTime.parse(widget.event.date);
     final status = getUserTag(widget.event.status);
-    return GestureDetector(
+    return InkWell(
       onTap: () => navigateToEventDetails(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -341,7 +344,7 @@ class _EventCardState extends ConsumerState<EventCard> {
     return Row(
       children: [
         if (hostId == userId)
-          GestureDetector(
+          InkWell(
             onTap: () async {
               cloneEvent();
             },
@@ -361,7 +364,7 @@ class _EventCardState extends ConsumerState<EventCard> {
             ),
           ),
         const SizedBox(width: 8),
-        GestureDetector(
+        InkWell(
           onTap: () async {
             await addToFavorite();
           },

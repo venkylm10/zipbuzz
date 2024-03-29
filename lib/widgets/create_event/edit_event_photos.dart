@@ -69,7 +69,7 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
         Consumer(builder: (context, ref, child) {
           final urls = ref.watch(editEventControllerProvider).imageUrls;
           if (urls.isEmpty && selectedImages.isEmpty) {
-            return GestureDetector(
+            return InkWell(
               onTap: () {
                 addImages();
               },
@@ -131,7 +131,7 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
                         ),
                         Align(
                           alignment: Alignment.center,
-                          child: GestureDetector(
+                          child: InkWell(
                             onTap: () {
                               if (index < urls.length) {
                                 removeImageUrl(imageUrl: urls[index]);
@@ -179,7 +179,7 @@ class _EditEventPhotosState extends ConsumerState<EditEventPhotos> {
           return Column(
             children: [
               const SizedBox(height: 16),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   addImages();
                 },

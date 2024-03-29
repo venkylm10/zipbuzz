@@ -228,7 +228,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           ],
         ),
         const SizedBox(height: 4),
-        GestureDetector(
+        InkWell(
           onTap: () {
             updateDate();
           },
@@ -267,7 +267,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           children: [
             // start time
             Expanded(
-              child: GestureDetector(
+              child: InkWell(
                 onTap: () {
                   updateTime();
                 },
@@ -285,7 +285,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             const SizedBox(width: 8),
             // end time
             Expanded(
-              child: GestureDetector(
+              child: InkWell(
                 onTap: () {
                   updateTime(isEnd: true);
                 },
@@ -346,7 +346,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        GestureDetector(
+                        InkWell(
                           onTap: () {
                             ref.read(newEventProvider.notifier).removeUrlField(index);
                             setState(() {});
@@ -368,7 +368,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                 ),
               ),
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 ref.read(newEventProvider.notifier).addUrlField();
                 setState(() {});
