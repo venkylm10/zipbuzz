@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -122,7 +123,7 @@ class DBServices {
         description: user.about,
         username: user.name,
         isAmbassador: false,
-        deviceToken: box.read(BoxConstants.deviceToken),
+        deviceToken: kIsWeb ? "zipbuzz-null" : box.read(BoxConstants.deviceToken),
       );
 
       final userSocials = UserSocialsModel(
@@ -145,7 +146,7 @@ class DBServices {
         throw "FAILED TO CREATE USER";
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("FAILED TO CREATE USER $e");
     }
   }
 

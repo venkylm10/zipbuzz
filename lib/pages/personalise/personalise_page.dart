@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,6 +12,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
+import 'package:zipbuzz/widgets/common/custom_bezel.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 
 class PersonalisePage extends ConsumerStatefulWidget {
@@ -41,129 +43,132 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     final currentUser = ref.read(authProvider).currentUser!;
     final localUid = ref.read(userProvider).email.split("@").first;
     final personaliseController = ref.read(personaliseControllerProvider);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: SizedBox(
-          height: size.height,
-          width: size.height,
-          child: Stack(
-            children: [
-              // Background Gradients
-              Container(
-                height: size.height,
-                width: size.width,
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.primaryColor.withOpacity(0.3),
-                      Colors.transparent,
-                    ],
-                    radius: 0.8,
-                    center: Alignment.topRight,
-                    focalRadius: 0,
-                  ),
-                ),
-              ),
-              Container(
-                height: size.height,
-                width: size.width,
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.primaryColor.withOpacity(0.2),
-                      Colors.transparent,
-                    ],
-                    radius: 0.8,
-                    center: Alignment.bottomLeft,
-                    focalRadius: 0,
-                  ),
-                ),
-              ),
-              // Form
-              Positioned(
-                top: 0,
-                left: 0,
-                child: SizedBox(
+    final webWidth = size.height * Assets.images.border_ratio * 0.88;
+    return CustomBezel(
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: SizedBox(
+            height: size.height,
+            width: kIsWeb ? webWidth : size.width,
+            child: Stack(
+              children: [
+                // Background Gradients
+                Container(
                   height: size.height,
-                  width: size.width,
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 54),
-                          Text(
-                            "Hi ${localUid == currentUser.uid ? personaliseController.nameController.text : currentUser.displayName ?? ""}!",
-                            style: AppStyles.extraLarge.copyWith(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.bold,
+                  width: kIsWeb ? webWidth : size.width,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [
+                        AppColors.primaryColor.withOpacity(0.3),
+                        Colors.transparent,
+                      ],
+                      radius: 0.8,
+                      center: Alignment.topRight,
+                      focalRadius: 0,
+                    ),
+                  ),
+                ),
+                Container(
+                  height: size.height,
+                  width: kIsWeb ? webWidth : size.width,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [
+                        AppColors.primaryColor.withOpacity(0.2),
+                        Colors.transparent,
+                      ],
+                      radius: 0.8,
+                      center: Alignment.bottomLeft,
+                      focalRadius: 0,
+                    ),
+                  ),
+                ),
+                // Form
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: SizedBox(
+                    height: size.height,
+                    width: kIsWeb ? webWidth : size.width,
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 54),
+                            Text(
+                              "Hi ${localUid == currentUser.uid ? personaliseController.nameController.text : currentUser.displayName ?? ""}!",
+                              style: AppStyles.extraLarge.copyWith(
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              softWrap: true,
                             ),
-                            softWrap: true,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Lets start by personalize your experience...",
-                            style: AppStyles.h2,
-                          ),
-                          const SizedBox(height: 12),
-                          if (localUid == currentUser.uid)
+                            const SizedBox(height: 8),
+                            Text(
+                              "Lets start by personalize your experience...",
+                              style: AppStyles.h2,
+                            ),
+                            const SizedBox(height: 12),
+                            if (localUid == currentUser.uid)
+                              buildTextField(
+                                Assets.icons.personName,
+                                "Name",
+                                personaliseController.nameController,
+                                currentUser.displayName ?? "Enter name",
+                                keyboardType: TextInputType.text,
+                              ),
+                            if (localUid == currentUser.uid) const SizedBox(height: 12),
+                            Consumer(builder: (context, subRef, child) {
+                              final userLocation = subRef.watch(userLocationProvider);
+                              return buildTextField(
+                                Assets.icons.geo,
+                                "Zipcode",
+                                personaliseController.zipcodeController,
+                                userLocation.zipcode,
+                                keyboardType: TextInputType.number,
+                                maxLength: 10,
+                              );
+                            }),
+                            const SizedBox(height: 12),
                             buildTextField(
-                              Assets.icons.personName,
-                              "Name",
-                              personaliseController.nameController,
-                              currentUser.displayName ?? "Enter name",
-                              keyboardType: TextInputType.text,
-                            ),
-                          if (localUid == currentUser.uid) const SizedBox(height: 12),
-                          Consumer(builder: (context, subRef, child) {
-                            final userLocation = subRef.watch(userLocationProvider);
-                            return buildTextField(
-                              Assets.icons.geo,
-                              "Zipcode",
-                              personaliseController.zipcodeController,
-                              userLocation.zipcode,
-                              keyboardType: TextInputType.number,
+                              Assets.icons.telephone_filled,
+                              "Mobile no",
+                              personaliseController.mobileController,
+                              currentUser.phoneNumber ?? "9998887776",
+                              keyboardType: TextInputType.phone,
                               maxLength: 10,
-                            );
-                          }),
-                          const SizedBox(height: 12),
-                          buildTextField(
-                            Assets.icons.telephone_filled,
-                            "Mobile no",
-                            personaliseController.mobileController,
-                            currentUser.phoneNumber ?? "9998887776",
-                            keyboardType: TextInputType.phone,
-                            maxLength: 10,
-                            prefixWidget: countryCodeSelector(),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            "Select at least 3 interests:",
-                            style: AppStyles.h3.copyWith(
-                              color: AppColors.primaryColor,
-                              fontWeight: FontWeight.w600,
+                              prefixWidget: countryCodeSelector(),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          buildInterests(context, ref),
-                          const SizedBox(height: 24),
-                          buildCheckBox(),
-                          const SizedBox(height: 12),
-                          buildSubmitButton(personaliseController),
-                          const SizedBox(height: 24),
-                        ],
+                            const SizedBox(height: 12),
+                            Text(
+                              "Select at least 3 interests:",
+                              style: AppStyles.h3.copyWith(
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            buildInterests(context, ref),
+                            const SizedBox(height: 24),
+                            buildCheckBox(),
+                            const SizedBox(height: 12),
+                            buildSubmitButton(personaliseController),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -335,76 +340,79 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     );
   }
 
-  Row buildTextField(
+  Widget buildTextField(
       String iconPath, String label, TextEditingController controller, String hintText,
       {TextInputType? keyboardType, int? maxLength, Widget? prefixWidget}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SvgPicture.asset(
-          iconPath,
-          height: 32,
-          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: AppStyles.h3),
-              const SizedBox(height: 8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (prefixWidget != null) prefixWidget,
-                  if (prefixWidget != null) const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      cursorColor: AppColors.primaryColor,
-                      style: AppStyles.h4,
-                      keyboardType: keyboardType,
-                      maxLength: maxLength,
-                      onChanged: (value) {
-                        if (value.length == maxLength) {
-                          //close keyboard
-                          FocusScope.of(context).requestFocus(FocusNode());
-                        }
-                      },
-                      decoration: InputDecoration(
-                        counter: const SizedBox(),
-                        hintText: hintText,
-                        hintStyle: AppStyles.h4.copyWith(
-                          color: AppColors.lightGreyColor,
-                        ),
-                        contentPadding: const EdgeInsets.all(16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
+    return SizedBox(
+      width: MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94 - 48,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SvgPicture.asset(
+            iconPath,
+            height: 32,
+            colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: AppStyles.h3),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (prefixWidget != null) prefixWidget,
+                    if (prefixWidget != null) const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        cursorColor: AppColors.primaryColor,
+                        style: AppStyles.h4,
+                        keyboardType: keyboardType,
+                        maxLength: maxLength,
+                        onChanged: (value) {
+                          if (value.length == maxLength) {
+                            //close keyboard
+                            FocusScope.of(context).requestFocus(FocusNode());
+                          }
+                        },
+                        decoration: InputDecoration(
+                          counter: const SizedBox(),
+                          hintText: hintText,
+                          hintStyle: AppStyles.h4.copyWith(
                             color: AppColors.lightGreyColor,
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.lightGreyColor,
+                          contentPadding: const EdgeInsets.all(16),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.lightGreyColor,
+                            ),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.lightGreyColor,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.lightGreyColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppColors.lightGreyColor,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
