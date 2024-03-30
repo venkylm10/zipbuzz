@@ -361,8 +361,11 @@ class DioServices {
     try {
       debugPrint("GETTING EVENT DETAILS");
       final userId = box.read(BoxConstants.id) as int;
-      final response = await dio
-          .get(DioConstants.getEventDetails, data: {"event_id": eventId, "user_id": userId});
+      final response = kIsWeb
+          ? await dio
+              .post(DioConstants.getEventDetails, data: {"event_id": eventId, "user_id": userId})
+          : await dio
+              .get(DioConstants.getEventDetails, data: {"event_id": eventId, "user_id": userId});
       if (response.data[DioConstants.status] == DioConstants.success) {
         debugPrint("GETTING EVENT DETAILS SUCCESSFULL");
         return (response.data['event_details'] as List)[0] as Map<String, dynamic>;
