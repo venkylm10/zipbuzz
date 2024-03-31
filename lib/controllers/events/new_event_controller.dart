@@ -383,8 +383,7 @@ class NewEvent extends StateNotifier<EventModel> {
         return e.displayName ?? "";
       }).toList();
       for (var e in state.eventMembers) {
-        final phone =
-            e.phone.replaceAll("-", "").replaceAll(" ", "").replaceAll("(", "").replaceAll(")", "");
+        final phone = e.phone.replaceAll(RegExp(r'[\s()-]+'), "");
         if (!phoneNumbers.contains(phone)) {
           phoneNumbers.add(e.phone);
           inviteePicUrls.add(e.image);
