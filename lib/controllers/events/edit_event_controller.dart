@@ -64,7 +64,6 @@ class EditEventController extends StateNotifier<EventModel> {
   int maxImages = 7;
   File? bannerImage;
   List<UserModel> coHosts = [];
-  List<Contact> originalInvites = [];
   List<Contact> eventInvites = [];
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
@@ -225,6 +224,10 @@ class EditEventController extends StateNotifier<EventModel> {
 
   void resetContactSearch() {
     contactSearchResult = allContacts;
+  }
+
+  void updateSelectedContactsList(List<Contact> contacts) {
+    eventInvites = contacts;
   }
 
   void updateSelectedContact(Contact contact, {bool fix = false}) {

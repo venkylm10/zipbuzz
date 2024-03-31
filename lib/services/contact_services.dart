@@ -1,6 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/utils.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
@@ -51,5 +52,17 @@ class Contacts {
         .then((value) => value.where((element) => element.phones != null).toList());
     ref.read(newEventProvider.notifier).updateAllContacts(contacts);
     ref.read(editEventControllerProvider.notifier).updateAllContacts(contacts);
+  }
+
+  List<Contact> getMatchingContacts(List<String> numbers) {
+    final contacts = ref.read(editEventControllerProvider.notifier).allContacts;
+    final matchingContacts = contacts.where((element) {
+      final contactNumbers = element.phones!.map((e) {
+        var phone = e.value ?? "";
+        return phone.replaceAll(RegExp(r'[\s()-]+'), "");
+      }).toList();
+      return contactNumbers.any((element) => numbers.contains(element));
+    }).toList();
+    return matchingContacts;
   }
 }

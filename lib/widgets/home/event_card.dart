@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -12,6 +13,7 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -318,6 +320,9 @@ class _EventCardState extends ConsumerState<EventCard> {
     ref.read(newEventProvider.notifier).cloneEvent = true;
     final startTime = TimeOfDay.fromDateTime(DateTime.now());
     final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
+    final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
+    final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
+    ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
     ref.read(newEventProvider.notifier).updateDate(DateTime.now());
     final clone = ref.read(newEventProvider).copyWith(
           title: widget.event.title,

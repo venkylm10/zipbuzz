@@ -247,6 +247,11 @@ class NewEvent extends StateNotifier<EventModel> {
     );
   }
 
+  void updateSelectedContactsList(List<Contact> contacts) {
+    eventInvites.clear();
+    eventInvites.addAll(contacts);
+  }
+
   void updateContactSearchResult(String query) {
     contactSearchResult = allContacts.where(
       (element) {
@@ -371,18 +376,16 @@ class NewEvent extends StateNotifier<EventModel> {
           .read(storageServicesProvider)
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
       final phoneNumbers = eventInvites.map((e) {
-        final number = (e.phones!.first.value ?? "")
-            .replaceAll("-", "")
-            .replaceAll(" ", "")
-            .replaceAll("(", "")
-            .replaceAll(")", "");
+        final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
         return number;
       }).toList();
       final names = eventInvites.map((e) {
         return e.displayName ?? "";
       }).toList();
       for (var e in state.eventMembers) {
-        if (!phoneNumbers.contains(e.phone)) {
+        final phone =
+            e.phone.replaceAll("-", "").replaceAll(" ", "").replaceAll("(", "").replaceAll(")", "");
+        if (!phoneNumbers.contains(phone)) {
           phoneNumbers.add(e.phone);
           inviteePicUrls.add(e.image);
           names.add(e.name);

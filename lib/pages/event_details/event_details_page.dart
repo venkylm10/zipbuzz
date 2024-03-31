@@ -522,16 +522,21 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       },
       child: Consumer(builder: (context, ref, child) {
         var data = ref.watch(eventRequestMembersProvider);
-        final confirmedMembers =
-            data.where((element) => element.status == "confirm").toList().length;
-        final respondedMembers = data.length;
+        final confirmedMembers = data.where((element) => element.status == "confirm").toList();
+        final respondedMembers = data.where((element) => element.status == "responded").toList();
         String attendees = "";
         if (widget.isPreview) {
           attendees = "${ref.watch(newEventProvider).attendees},0,0";
-        } else if (widget.rePublish) {
-          attendees = "${widget.event.eventMembers.length},$respondedMembers,$confirmedMembers";
         } else {
-          attendees = "${widget.event.eventMembers.length},$respondedMembers,$confirmedMembers";
+          var responded = 0;
+          for (var e in respondedMembers) {
+            responded = responded + e.attendees;
+          }
+          var confirmed = 0;
+          for (var e in confirmedMembers) {
+            confirmed = confirmed + e.attendees;
+          }
+          attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
         }
 
         var total = 1;

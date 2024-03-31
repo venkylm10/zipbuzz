@@ -13,6 +13,7 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_invite.dart';
@@ -324,7 +325,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                         eventId: widget.event.id,
                         name: user.name,
                         phoneNumber: user.mobileNumber,
-                        image: user.imageUrl, userId: user.id);
+                        image: user.imageUrl,
+                        userId: user.id);
                     final res = await ref.read(dioServicesProvider).requestToJoinEvent(model);
                     if (res) {
                       showSnackBar(message: "Request sent successfully");
@@ -735,6 +737,9 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
+    final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
+    final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
+    ref.read(editEventControllerProvider.notifier).updateSelectedContactsList(matchingContacts);
     await navigatorKey.currentState!.pushNamed(EditEventPage.id);
     ref.read(editEventControllerProvider.notifier).updateBannerImage(null);
   }
