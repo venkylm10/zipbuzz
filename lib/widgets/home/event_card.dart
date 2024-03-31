@@ -404,11 +404,17 @@ class _EventCardState extends ConsumerState<EventCard> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var data = snapshot.data!;
-          final confirmedMembers =
-              data.where((element) => element.status == "confirm").toList().length;
-          final respondedMembers = data.length;
-          final attendees =
-              "${widget.event.eventMembers.length},$respondedMembers,$confirmedMembers";
+          final confirmedMembers = data.where((element) => element.status == "confirm").toList();
+          final respondedMembers = data.where((element) => element.status == "responded").toList();
+          var responded = 0;
+          var confirmed = 0;
+          for (var e in respondedMembers) {
+            responded = responded + e.attendees;
+          }
+          for (var e in confirmedMembers) {
+            confirmed = confirmed + e.attendees;
+          }
+          final attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
           return AttendeeNumbers(
             attendees: attendees,
             total: widget.event.capacity,
