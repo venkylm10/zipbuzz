@@ -45,6 +45,11 @@ class DioServices {
   // send event urls
   Future<void> sendEventUrls(int eventId, List<TextEditingController> urls,
       List<TextEditingController> hyperLinkName) async {
+    if (urls.length == 1) {
+      if (urls.first.text.trim().isEmpty || hyperLinkName.first.text.trim().isEmpty) {
+        return;
+      }
+    }
     try {
       for (int i = 0; i < urls.length; i++) {
         await dio.post(

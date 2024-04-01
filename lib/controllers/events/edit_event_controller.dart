@@ -9,6 +9,8 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
+import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
@@ -418,6 +420,12 @@ class EditEventController extends StateNotifier<EventModel> {
       debugPrint(eventInvitePostModel.toMap().toString());
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       ref.read(loadingTextProvider.notifier).reset();
+      final interests =
+          ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
+      if (!interests) {
+        final interest = allInterests.firstWhere((element) => element.activity == state.category);
+        updateInterests(interest);
+      }
       await moveToEditedEvent();
     } catch (e) {
       debugPrint(e.toString());
@@ -437,6 +445,20 @@ class EditEventController extends StateNotifier<EventModel> {
       suffix = 'th';
     }
     return DateFormat('d\'$suffix\' MMMM, y').format(date);
+  }
+
+  void updateInterests(InterestModel interest) async {
+    ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
+    await ref.read(dioServicesProvider).updateUserInterests(
+          UserInterestsUpdateModel(
+            userId: ref.read(userProvider).id,
+            interests: ref
+                .read(homeTabControllerProvider)
+                .currentInterests
+                .map((e) => e.activity)
+                .toList(),
+          ),
+        );
   }
 
   Future<void> moveToEditedEvent() async {

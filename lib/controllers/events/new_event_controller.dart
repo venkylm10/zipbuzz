@@ -9,6 +9,8 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
+import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
@@ -418,7 +420,12 @@ class NewEvent extends StateNotifier<EventModel> {
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-      ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+      final interests =
+          ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
+      if (!interests) {
+        final interest = allInterests.firstWhere((element) => element.activity == state.category);
+        updateInterests(interest);
+      }
       await _moveToCreatedEvent();
     } catch (e) {
       ref.read(loadingTextProvider.notifier).reset();
@@ -456,6 +463,20 @@ class NewEvent extends StateNotifier<EventModel> {
       debugPrint("Failed to move to created event: $e");
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
     }
+  }
+
+  void updateInterests(InterestModel interest) async {
+    ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
+    await ref.read(dioServicesProvider).updateUserInterests(
+          UserInterestsUpdateModel(
+            userId: ref.read(userProvider).id,
+            interests: ref
+                .read(homeTabControllerProvider)
+                .currentInterests
+                .map((e) => e.activity)
+                .toList(),
+          ),
+        );
   }
 
   String formatWithSuffix(DateTime date) {

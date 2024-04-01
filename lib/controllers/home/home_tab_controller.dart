@@ -110,12 +110,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   }
 
   bool containsInterest(String activity) {
-    for (final interest in state.currentInterests) {
-      if (interest.activity == activity) {
-        return true;
-      }
-    }
-    return false;
+    return state.currentInterests.any((interest) => interest.activity == activity);
   }
 
   void toggleHomeTabInterest(InterestModel interest) {
@@ -128,6 +123,10 @@ class HomeTabController extends StateNotifier<HomeTabState> {
       state = state.copyWith(currentInterests: interests);
       return;
     }
+    addInterest(interest);
+  }
+
+  void addInterest(InterestModel interest) {
     final interests = state.currentInterests;
     interests.add(interest);
     state = state.copyWith(currentInterests: interests);
