@@ -404,7 +404,7 @@ class _EventCardState extends ConsumerState<EventCard> {
         if (snapshot.hasData) {
           var data = snapshot.data!;
           final confirmedMembers = data.where((element) => element.status == "confirm").toList();
-          final respondedMembers = data.where((element) => element.status == "responded").toList();
+          final respondedMembers = data.where((element) => element.status == "pending").toList();
           var responded = 0;
           var confirmed = 0;
           for (var e in respondedMembers) {

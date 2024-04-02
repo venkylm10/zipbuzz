@@ -384,14 +384,14 @@ class NewEvent extends StateNotifier<EventModel> {
       final names = eventInvites.map((e) {
         return e.displayName ?? "";
       }).toList();
-      for (var e in state.eventMembers) {
-        final phone = e.phone.replaceAll(RegExp(r'[\s()-]+'), "");
-        if (!phoneNumbers.contains(phone)) {
-          phoneNumbers.add(e.phone);
-          inviteePicUrls.add(e.image);
-          names.add(e.name);
-        }
-      }
+      // for (var e in state.eventMembers) {
+      //   final phone = e.phone.replaceAll(RegExp(r'[\s()-]+'), "");
+      //   if (!phoneNumbers.contains(phone)) {
+      //     phoneNumbers.add(e.phone);
+      //     inviteePicUrls.add(e.image);
+      //     names.add(e.name);
+      //   }
+      // }
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,
         images: inviteePicUrls,

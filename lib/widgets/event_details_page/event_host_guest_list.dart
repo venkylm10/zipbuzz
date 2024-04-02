@@ -312,12 +312,15 @@ class EventHostGuestList extends StatelessWidget {
           (index) => Consumer(builder: (context, ref, child) {
             final selectedTag = ref.watch(guestListTagProvider);
             final allLength = guests.length;
-            var respondedLength = ref.watch(eventRequestMembersProvider).length;
-            var confirmedLength = ref
-                .watch(eventRequestMembersProvider)
-                .where((element) => element.status == "confirm")
-                .toList()
-                .length;
+            var respondedLength = 0;
+            var confirmedLength = 0;
+            for (var e in ref.watch(eventRequestMembersProvider)) {
+              if (e.status == "pending") {
+                respondedLength += e.attendees;
+              } else if (e.status == "confirm") {
+                confirmedLength += e.attendees;
+              }
+            }
             return InkWell(
               onTap: () {
                 ref.read(guestListTagProvider.notifier).update((state) => tags[index]);

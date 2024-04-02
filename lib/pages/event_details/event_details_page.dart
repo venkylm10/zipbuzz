@@ -523,7 +523,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       child: Consumer(builder: (context, ref, child) {
         var data = ref.watch(eventRequestMembersProvider);
         final confirmedMembers = data.where((element) => element.status == "confirm").toList();
-        final respondedMembers = data.where((element) => element.status == "responded").toList();
+        final respondedMembers = data.where((element) => element.status == "pending").toList();
         String attendees = "";
         if (widget.isPreview) {
           attendees = "${ref.watch(newEventProvider).attendees},0,0";
