@@ -111,7 +111,7 @@ class _EventGuestListState extends ConsumerState<EventGuestList> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.25,
                               child: Text(
-                                member.phone,
+                                member.phone != "zipbuzz-null" ? member.phone : "",
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: AppStyles.h6.copyWith(

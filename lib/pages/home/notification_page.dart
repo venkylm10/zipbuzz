@@ -114,10 +114,10 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           );
           final inInterests = ref
               .read(homeTabControllerProvider.notifier)
-              .containsInterest("category"); // TODO: Change this to the actual interest
+              .containsInterest(notification.eventCategory);
           if (!inInterests) {
-            final interest = allInterests.firstWhere((element) =>
-                element.activity == "category"); // TODO: Change this to the actual interest
+            final interest = allInterests
+                .firstWhere((element) => element.activity == notification.eventCategory);
             updateInterests(interest);
           }
           setState(() {});

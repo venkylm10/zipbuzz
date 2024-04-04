@@ -7,6 +7,7 @@ class NotificationData {
   int eventId;
   String eventName;
   String deviceToken;
+  String eventCategory;
   NotificationData({
     required this.id,
     required this.senderName,
@@ -16,6 +17,7 @@ class NotificationData {
     required this.eventId,
     required this.eventName,
     required this.deviceToken,
+    required this.eventCategory,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,6 +30,7 @@ class NotificationData {
       'event_id': eventId,
       'event_name': eventName,
       'device_token': deviceToken,
+      'event_category': eventCategory,
     };
   }
 
@@ -41,6 +44,7 @@ class NotificationData {
       eventId: map['event_id'],
       eventName: map['event_name'],
       deviceToken: map['device_token'],
+      eventCategory: map['event_category'],
     );
   }
 }

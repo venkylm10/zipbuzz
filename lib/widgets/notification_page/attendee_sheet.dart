@@ -91,6 +91,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                     .updateNotification(widget.notification.id, "yes");
                 final user = ref.read(userProvider);
                 var model = MakeRequestModel(
+                  userId: user.id,
                   eventId: widget.notification.eventId,
                   name: user.name,
                   phoneNumber: user.mobileNumber,
