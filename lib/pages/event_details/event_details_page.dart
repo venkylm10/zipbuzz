@@ -1,18 +1,16 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
@@ -34,8 +32,11 @@ import 'package:zipbuzz/widgets/common/event_chip.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_buttons.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_details.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_hosts.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_images.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_qrcode.dart';
+import 'package:zipbuzz/widgets/event_details_page/event_urls.dart';
 import 'package:zipbuzz/widgets/event_details_page/guest_list.dart';
+import 'package:zipbuzz/widgets/home/bottom_bar.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends ConsumerStatefulWidget {
@@ -45,6 +46,7 @@ class EventDetailsPage extends ConsumerStatefulWidget {
   final bool isPreview;
   final bool rePublish;
   final bool clone;
+  final bool showBottomBar;
   Color dominantColor;
   EventDetailsPage({
     super.key,
@@ -54,6 +56,7 @@ class EventDetailsPage extends ConsumerStatefulWidget {
     this.rePublish = false,
     required this.dominantColor,
     this.clone = false,
+    this.showBottomBar = false,
   });
 
   @override
@@ -340,6 +343,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
             isPreview: widget.isPreview,
             rePublish: widget.rePublish,
           ),
+          bottomNavigationBar: widget.showBottomBar
+              ? BottomBar(
+                  selectedTab: ref.watch(homeTabControllerProvider).homeTabIndex,
+                  pop: true,
+                )
+              : null,
         ),
       ),
     );
@@ -371,58 +380,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
               )
             : const SizedBox();
       },
-    );
-  }
-
-  Widget buildUrlText() {
-    if (widget.event.hyperlinks.isEmpty) return const SizedBox();
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Builder(
-        builder: (context) {
-          final hyperlinks = widget.event.hyperlinks;
-          return Wrap(
-            children: hyperlinks.map(
-              (hyperLink) {
-                var e = hyperLink.url;
-                var url = "";
-                if (e.startsWith("http://") || e.startsWith("https://")) {
-                  url = e;
-                } else {
-                  url = "http://$e";
-                }
-                return InkWell(
-                  onTap: () {
-                    launchUrlString(url);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        Assets.icons.linkClip,
-                        height: 16,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.blue,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      Text(
-                        "${hyperLink.urlName} ",
-                        style: AppStyles.h4.copyWith(
-                          color: Colors.blue,
-                          fontStyle: FontStyle.italic,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.blue,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ).toList(),
-          );
-        },
-      ),
     );
   }
 
@@ -482,7 +439,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
             );
           },
         ),
-        buildUrlText(),
+        widget.event.hyperlinks.isEmpty
+            ? const SizedBox()
+            : EventUrls(hyperlinks: widget.event.hyperlinks),
       ],
     );
   }
@@ -771,66 +730,13 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         ? ref.watch(editEventControllerProvider.notifier).selectedImages
         : ref.watch(newEventProvider.notifier).selectedImages;
     final imageUrls = widget.event.imageUrls;
-    return isPreview || rePublish
-        ? Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: StaggeredGrid.count(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              children: List.generate(
-                rePublish ? imageUrls.length + imageFiles.length : imageFiles.length,
-                (index) => StaggeredGridTile.count(
-                  crossAxisCellCount: index % (maxImages - 1) == 0
-                      ? 2
-                      : 1, // change this maxImages in newEventProvider
-                  mainAxisCellCount: 1,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: rePublish
-                        ? index < imageUrls.length
-                            ? CachedNetworkImage(
-                                imageUrl: imageUrls[index],
-                                fit: BoxFit.cover,
-                              )
-                            : Image.file(
-                                imageFiles[index - imageUrls.length],
-                                fit: BoxFit.cover,
-                              )
-                        : Image.file(
-                            imageFiles[index],
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ),
-              ),
-            ),
-          )
-        : Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: StaggeredGrid.count(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              children: List.generate(
-                imageUrls.length,
-                (index) => StaggeredGridTile.count(
-                  crossAxisCellCount: index % (maxImages - 1) == 0 ? 2 : 1,
-                  mainAxisCellCount: 1,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      imageUrls[index],
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
+    return EventImages(
+      isPreview: isPreview,
+      rePublish: rePublish,
+      ref: ref,
+      imageFiles: imageFiles,
+      imageUrls: imageUrls,
+      maxImages: maxImages,
+    );
   }
 }

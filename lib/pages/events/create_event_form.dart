@@ -19,7 +19,6 @@ class CreateEventForm extends ConsumerStatefulWidget {
 }
 
 class _CreateEventFormState extends ConsumerState<CreateEventForm> {
-  String category = allInterests.first.activity;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController dateController;
@@ -121,7 +120,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     descriptionController.text = dummy.about;
     date = DateTime.parse(dummy.date);
     locationController.text = dummy.location;
-    category = ref.watch(newEventProvider).category;
   }
 
   @override
@@ -411,6 +409,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         interests.add(e.activity);
       }
     }
+    final category = ref.watch(newEventProvider).category;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
       decoration: BoxDecoration(
@@ -454,11 +453,9 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         items: interests
             .map(
               (e) => DropdownMenuItem(
-                onTap: () {
-                  setState(() {
-                    category = e;
-                  });
-                },
+                // onTap: () {
+                //   updateCategory(category: e);
+                // },
                 value: e,
                 child: Row(
                   children: [

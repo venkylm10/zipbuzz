@@ -108,6 +108,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
       final dominantColor = args['dominantColor'] as Color;
       final randInt = args['randInt'] as int?;
       final clone = args['clone'] ?? false;
+      final showBottomBar = args['showBottomBar'] ?? false;
       return PageTransition(
         child: EventDetailsPage(
           event: event,
@@ -116,6 +117,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
           randInt: randInt ?? 0,
           rePublish: rePublish,
           clone: clone,
+          showBottomBar: showBottomBar,
         ),
         type: PageTransitionType.fade,
         settings: settings,

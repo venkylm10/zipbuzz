@@ -121,9 +121,10 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
   void showPreview() async {
     if (ref.read(newEventProvider.notifier).validateNewEvent()) {
       final dominantColor = await getDominantColor();
+      final hyperlinks = ref.read(newEventProvider).hyperlinks;
       final clone = ref.read(newEventProvider.notifier).cloneEvent;
       Map<String, dynamic> args = {
-        'event': ref.read(newEventProvider),
+        'event': ref.read(newEventProvider).copyWith(hyperlinks: hyperlinks),
         'isPreview': true,
         'dominantColor': dominantColor,
         'randInt': randInt,

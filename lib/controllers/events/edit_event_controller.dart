@@ -418,7 +418,7 @@ class EditEventController extends StateNotifier<EventModel> {
       );
       showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
       debugPrint(eventInvitePostModel.toMap().toString());
-      await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
+      ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       ref.read(loadingTextProvider.notifier).reset();
       final interests =
           ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);

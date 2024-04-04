@@ -314,21 +314,20 @@ class _EventCardState extends ConsumerState<EventCard> {
     );
   }
 
-  void cloneEvent() {
+  void cloneEvent() async {
     ref.read(homeTabControllerProvider.notifier).updateIndex(1);
     ref.read(newEventProvider.notifier).cloneEvent = true;
-    final startTime = TimeOfDay.fromDateTime(DateTime.now());
-    final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
+    // final startTime = TimeOfDay.fromDateTime(DateTime.now());
+    // final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
     final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
     final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
     ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
-    ref.read(newEventProvider.notifier).updateDate(DateTime.now());
+    // ref.read(newEventProvider.notifier).updateDate(DateTime.now());
+    ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
     final clone = ref.read(newEventProvider).copyWith(
           title: widget.event.title,
           about: widget.event.about,
           category: widget.event.category,
-          date: DateTime.now().toString(),
-          startTime: formatedStartTime,
           endTime: "",
           location: widget.event.location,
           capacity: widget.event.capacity,
@@ -337,9 +336,11 @@ class _EventCardState extends ConsumerState<EventCard> {
           attendees: widget.event.eventMembers.length,
           eventMembers: widget.event.eventMembers,
         );
-
+    showSnackBar(message: "Cloning event", duration: 1);
+    await Future.delayed(const Duration(seconds: 1));
     ref.read(eventTabControllerProvider.notifier).updateIndex(2);
     ref.read(newEventProvider.notifier).updateEvent(clone);
+    ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
   }
 
   Widget buildCardOptions() {

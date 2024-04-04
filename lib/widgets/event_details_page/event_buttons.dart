@@ -150,7 +150,6 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                         );
                         return;
                       }
-
                       await ref.read(newEventProvider.notifier).publishEvent();
                     },
                     child: Container(

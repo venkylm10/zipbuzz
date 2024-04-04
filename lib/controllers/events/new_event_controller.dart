@@ -410,7 +410,7 @@ class NewEvent extends StateNotifier<EventModel> {
       );
       showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
       debugPrint(eventInvitePostModel.toMap().toString());
-      await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
+      ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       // upload event urls
       await ref
           .read(dioServicesProvider)
@@ -451,10 +451,11 @@ class NewEvent extends StateNotifier<EventModel> {
         'isPreview': false,
         'dominantColor': dominantColor ?? const Color(0xFF4a5759),
         'randInt': 0,
+        'showBottomBar': true,
       };
       ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
-      await navigatorKey.currentState!.pushReplacementNamed(
+      await navigatorKey.currentState!.pushNamed(
         EventDetailsPage.id,
         arguments: args,
       );

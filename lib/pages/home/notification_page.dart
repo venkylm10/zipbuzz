@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
+import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/notification_services.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -108,6 +112,14 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
               );
             },
           );
+          final inInterests = ref
+              .read(homeTabControllerProvider.notifier)
+              .containsInterest("category"); // TODO: Change this to the actual interest
+          if (!inInterests) {
+            final interest = allInterests.firstWhere((element) =>
+                element.activity == "category"); // TODO: Change this to the actual interest
+            updateInterests(interest);
+          }
           setState(() {});
         },
         declineInvite: () async {
@@ -158,5 +170,19 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
       );
     }
+  }
+
+  void updateInterests(InterestModel interest) async {
+    ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
+    await ref.read(dioServicesProvider).updateUserInterests(
+          UserInterestsUpdateModel(
+            userId: ref.read(userProvider).id,
+            interests: ref
+                .read(homeTabControllerProvider)
+                .currentInterests
+                .map((e) => e.activity)
+                .toList(),
+          ),
+        );
   }
 }
