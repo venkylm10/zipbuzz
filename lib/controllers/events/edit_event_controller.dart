@@ -67,11 +67,16 @@ class EditEventController extends StateNotifier<EventModel> {
   File? bannerImage;
   List<UserModel> coHosts = [];
   List<Contact> eventInvites = [];
+  List<String> oldInviteNumbers = [];
   List<Contact> allContacts = [];
   List<Contact> contactSearchResult = [];
   List<String> deletedImages = [];
   List<TextEditingController> urlControllers = [TextEditingController()];
   List<TextEditingController> urlNameControllers = [TextEditingController()];
+
+  void updateOldInvites(List<String> numbers) {
+    oldInviteNumbers = numbers;
+  }
 
   void addUrlField() {
     urlControllers.add(TextEditingController());
@@ -386,18 +391,17 @@ class EditEventController extends StateNotifier<EventModel> {
         deletedImages.clear();
       }
       // sending invites
-      ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
+      // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final inviteePicUrls = await ref
           .read(storageServicesProvider)
           .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
-      final phoneNumbers = eventInvites.map((e) {
-        final number = (e.phones!.first.value ?? "")
-            .replaceAll("-", "")
-            .replaceAll(" ", "")
-            .replaceAll("(", "")
-            .replaceAll(")", "");
-        return number;
-      }).toList();
+      final phoneNumbers = eventInvites
+          .map((e) {
+            final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
+            return number;
+          })
+          .where((element) => !oldInviteNumbers.contains(element))
+          .toList();
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,
         images: inviteePicUrls,
@@ -416,7 +420,7 @@ class EditEventController extends StateNotifier<EventModel> {
         hostId: ref.read(userProvider).id,
         notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
-      showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
+      // showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
       debugPrint(eventInvitePostModel.toMap().toString());
       ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       ref.read(loadingTextProvider.notifier).reset();

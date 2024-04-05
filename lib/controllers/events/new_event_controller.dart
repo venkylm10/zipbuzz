@@ -372,7 +372,7 @@ class NewEvent extends StateNotifier<EventModel> {
 
       var eventDateTime = DateTime.parse(state.date);
       var formattedDate = formatWithSuffix(eventDateTime);
-      ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
+      // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
 
       final inviteePicUrls = await ref
           .read(storageServicesProvider)
@@ -455,7 +455,7 @@ class NewEvent extends StateNotifier<EventModel> {
       };
       ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
-      await navigatorKey.currentState!.pushNamed(
+      await navigatorKey.currentState!.pushReplacementNamed(
         EventDetailsPage.id,
         arguments: args,
       );

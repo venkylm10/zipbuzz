@@ -737,6 +737,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
     final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
+    ref.read(editEventControllerProvider.notifier).updateOldInvites(numbers);
     final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
     ref.read(editEventControllerProvider.notifier).updateSelectedContactsList(matchingContacts);
     await navigatorKey.currentState!.pushNamed(EditEventPage.id);
