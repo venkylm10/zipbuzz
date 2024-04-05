@@ -455,7 +455,7 @@ class NewEvent extends StateNotifier<EventModel> {
       };
       ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
-      await navigatorKey.currentState!.pushNamed(
+      await navigatorKey.currentState!.pushReplacementNamed(
         EventDetailsPage.id,
         arguments: args,
       );

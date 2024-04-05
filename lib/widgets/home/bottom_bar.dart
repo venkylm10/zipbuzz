@@ -7,6 +7,7 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
 class BottomBar extends ConsumerWidget {
@@ -31,6 +32,9 @@ class BottomBar extends ConsumerWidget {
       unselectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.greyColor),
       fixedColor: AppColors.primaryColor,
       onTap: (value) {
+        if (pop) {
+          navigatorKey.currentState!.pop();
+        }
         ref.read(homeTabControllerProvider.notifier).updateIndex(value);
         if (value == 0) {
           ref.read(homeTabControllerProvider.notifier).updateSearching(false);
@@ -45,7 +49,6 @@ class BottomBar extends ConsumerWidget {
           ref.read(eventsControllerProvider.notifier).getAllEvents();
           ref.read(newEventProvider.notifier).resetNewEvent();
         }
-        pop ? Navigator.pop(context) : null;
       },
       items: [
         BottomNavigationBarItem(

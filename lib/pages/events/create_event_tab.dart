@@ -131,7 +131,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
         'clone': clone,
       };
       ref.read(newEventProvider.notifier).updateHyperlinks();
-      await navigatorKey.currentState!.pushNamed(
+      navigatorKey.currentState!.pushNamed(
         EventDetailsPage.id,
         arguments: args,
       );
