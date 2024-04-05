@@ -54,13 +54,25 @@ class Contacts {
   }
 
   List<Contact> getMatchingContacts(List<String> numbers) {
+    final flattedNumbers = numbers.map((e) {
+      var phone = e.replaceAll(RegExp(r'[\s()-]+'), "");
+      if (phone.length > 10) {
+        phone = phone.substring(phone.length - 10);
+      }
+      return phone;
+    }).toList();
     final contacts = ref.read(editEventControllerProvider.notifier).allContacts;
     final matchingContacts = contacts.where((element) {
       final contactNumbers = element.phones!.map((e) {
-        var phone = e.value ?? "";
-        return phone.replaceAll(RegExp(r'[\s()-]+'), "");
+        var phone = (e.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
+        if (phone.length > 10) {
+          phone = phone.substring(phone.length - 10);
+        }
+        return phone;
       }).toList();
-      return contactNumbers.any((element) => numbers.contains(element));
+      return contactNumbers.any((element) {
+        return flattedNumbers.contains(element);
+      });
     }).toList();
     return matchingContacts;
   }

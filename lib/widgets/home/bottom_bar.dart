@@ -32,9 +32,6 @@ class BottomBar extends ConsumerWidget {
       unselectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.greyColor),
       fixedColor: AppColors.primaryColor,
       onTap: (value) {
-        if (pop) {
-          navigatorKey.currentState!.pop();
-        }
         ref.read(homeTabControllerProvider.notifier).updateIndex(value);
         if (value == 0) {
           ref.read(homeTabControllerProvider.notifier).updateSearching(false);
@@ -48,6 +45,9 @@ class BottomBar extends ConsumerWidget {
         } else {
           ref.read(eventsControllerProvider.notifier).getAllEvents();
           ref.read(newEventProvider.notifier).resetNewEvent();
+        }
+        if (pop) {
+          navigatorKey.currentState!.pop();
         }
       },
       items: [
