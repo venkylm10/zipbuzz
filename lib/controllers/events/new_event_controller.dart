@@ -408,7 +408,7 @@ class NewEvent extends StateNotifier<EventModel> {
         hostId: ref.read(userProvider).id,
         notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
-      showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
+      // showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}");
       debugPrint(eventInvitePostModel.toMap().toString());
       ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       // upload event urls
@@ -461,6 +461,7 @@ class NewEvent extends StateNotifier<EventModel> {
       );
       resetNewEvent();
     } catch (e) {
+      ref.read(loadingTextProvider.notifier).reset();
       debugPrint("Failed to move to created event: $e");
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
     }
