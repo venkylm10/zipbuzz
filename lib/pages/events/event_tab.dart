@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
@@ -10,6 +11,9 @@ class EventsTab extends ConsumerWidget {
 
   void updateIndex(int index, WidgetRef ref) {
     ref.read(eventTabControllerProvider.notifier).updateIndex(index);
+    if (index != 2) {
+      ref.read(newEventProvider.notifier).resetNewEvent();
+    }
   }
 
   @override

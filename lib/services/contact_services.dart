@@ -55,7 +55,7 @@ class Contacts {
 
   List<Contact> getMatchingContacts(List<String> numbers) {
     final flattedNumbers = numbers.map((e) {
-      var phone = e.replaceAll(RegExp(r'[\s()-]+'), "");
+      var phone = e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
       if (phone.length > 10) {
         phone = phone.substring(phone.length - 10);
       }
@@ -64,7 +64,7 @@ class Contacts {
     final contacts = ref.read(editEventControllerProvider.notifier).allContacts;
     final matchingContacts = contacts.where((element) {
       final contactNumbers = element.phones!.map((e) {
-        var phone = (e.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
+        var phone = (e.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
         if (phone.length > 10) {
           phone = phone.substring(phone.length - 10);
         }
