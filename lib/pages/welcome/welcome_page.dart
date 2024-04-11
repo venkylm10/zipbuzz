@@ -90,6 +90,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
                   children: [
                     SizedBox(
                       height: double.infinity,
+                      width: double.infinity,
                       child: CachedNetworkImage(
                         imageUrl: pageDetails[index].imageUrl,
                         placeholder: (context, url) {

@@ -14,11 +14,11 @@ class BottomBar extends ConsumerWidget {
   const BottomBar({
     super.key,
     required this.selectedTab,
-    this.pop = false,
+    this.pop,
   });
 
   final int selectedTab;
-  final bool pop;
+  final VoidCallback? pop;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,9 +46,7 @@ class BottomBar extends ConsumerWidget {
           ref.read(eventsControllerProvider.notifier).getAllEvents();
           ref.read(newEventProvider.notifier).resetNewEvent();
         }
-        if (pop) {
-          navigatorKey.currentState!.pop();
-        }
+        pop != null ? pop!() : null;
       },
       items: [
         BottomNavigationBarItem(

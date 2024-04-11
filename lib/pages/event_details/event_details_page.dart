@@ -13,6 +13,7 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
+import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
@@ -346,7 +347,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           bottomNavigationBar: widget.showBottomBar
               ? BottomBar(
                   selectedTab: ref.watch(homeTabControllerProvider).homeTabIndex,
-                  pop: true,
+                  pop: () {
+                    navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
+                  },
                 )
               : null,
         ),

@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -319,9 +320,7 @@ class _EventCardState extends ConsumerState<EventCard> {
     ref.read(newEventProvider.notifier).cloneEvent = true;
     // final startTime = TimeOfDay.fromDateTime(DateTime.now());
     // final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
-    final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
-    final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
-    ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
+    await fixCloneEventContacts();
     // ref.read(newEventProvider.notifier).updateDate(DateTime.now());
     ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
     final clone = ref.read(newEventProvider).copyWith(
@@ -336,11 +335,19 @@ class _EventCardState extends ConsumerState<EventCard> {
           attendees: widget.event.eventMembers.length,
           eventMembers: widget.event.eventMembers,
         );
-    showSnackBar(message: "Cloning event", duration: 1);
-    await Future.delayed(const Duration(seconds: 1));
+
     ref.read(eventTabControllerProvider.notifier).updateIndex(2);
     ref.read(newEventProvider.notifier).updateEvent(clone);
     ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
+  }
+
+  Future<void> fixCloneEventContacts() async {
+    showSnackBar(message: "Cloning event", duration: 1);
+    final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
+    final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
+    await Future.delayed(const Duration(milliseconds: 500));
+    ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   Widget buildCardOptions() {

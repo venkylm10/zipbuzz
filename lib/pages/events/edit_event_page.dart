@@ -159,6 +159,7 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
         'rePublish': true,
         'dominantColor': dominantColor,
         'randInt': randInt,
+        'showBottomBar': true,
       },
     );
     ref.read(editEventControllerProvider.notifier).updateEvent(event);
