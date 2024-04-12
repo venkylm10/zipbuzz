@@ -5,7 +5,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';

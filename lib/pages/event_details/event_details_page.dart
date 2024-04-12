@@ -174,185 +174,182 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
-          backgroundColor: widget.dominantColor,
-          appBar: buildAppBar(),
-          extendBodyBehindAppBar: true,
-          body: Stack(
-            children: [
-              SizedBox(
-                height: size.height,
-                width: size.width,
-                child: NotificationListener<ScrollUpdateNotification>(
-                  onNotification: (notification) => animateMargin(),
-                  child: SingleChildScrollView(
-                    controller: bodyScrollController,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        buildBanner(),
-                        Transform.translate(
-                          offset: const Offset(0, -40),
-                          child: AnimatedPadding(
-                            padding: EdgeInsets.symmetric(horizontal: horizontalMargin),
-                            duration: const Duration(milliseconds: 100),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        widget.event.title,
-                                        style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-                                        softWrap: true,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Wrap(
-                                        direction: Axis.horizontal,
-                                        alignment: WrapAlignment.start,
-                                        spacing: 8,
-                                        runSpacing: 8,
-                                        children: [
-                                          EventChip(
-                                            eventColor: eventColor,
-                                            interest: widget.event.category,
-                                            iconPath: widget.event.iconPath,
-                                          ),
-                                          buildAttendeeNumber(),
-                                          if (!widget.isPreview) EventQRCode(event: widget.event),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Divider(
-                                        color: AppColors.greyColor.withOpacity(0.2),
-                                        thickness: 0,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        "Event details",
-                                        style: AppStyles.h5.copyWith(
-                                          color: AppColors.lightGreyColor,
+            backgroundColor: widget.dominantColor,
+            appBar: buildAppBar(),
+            extendBodyBehindAppBar: true,
+            body: Stack(
+              children: [
+                SizedBox(
+                  height: size.height,
+                  width: size.width,
+                  child: NotificationListener<ScrollUpdateNotification>(
+                    onNotification: (notification) => animateMargin(),
+                    child: SingleChildScrollView(
+                      controller: bodyScrollController,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          buildBanner(),
+                          Transform.translate(
+                            offset: const Offset(0, -40),
+                            child: AnimatedPadding(
+                              padding: EdgeInsets.symmetric(horizontal: horizontalMargin),
+                              duration: const Duration(milliseconds: 100),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          widget.event.title,
+                                          style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+                                          softWrap: true,
                                         ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      EventDetails(event: widget.event),
-                                      const SizedBox(height: 16),
-                                      Divider(
-                                        color: AppColors.greyColor.withOpacity(0.2),
-                                        thickness: 0,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        "Event description",
-                                        style: AppStyles.h5.copyWith(
-                                          color: AppColors.lightGreyColor,
+                                        const SizedBox(height: 10),
+                                        Wrap(
+                                          direction: Axis.horizontal,
+                                          alignment: WrapAlignment.start,
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            EventChip(
+                                              eventColor: eventColor,
+                                              interest: widget.event.category,
+                                              iconPath: widget.event.iconPath,
+                                            ),
+                                            buildAttendeeNumber(),
+                                            if (!widget.isPreview) EventQRCode(event: widget.event),
+                                          ],
                                         ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      buildDescription(),
-                                      const SizedBox(height: 16),
-                                      Divider(
-                                        color: AppColors.greyColor.withOpacity(0.2),
-                                        thickness: 0,
-                                      ),
-                                      Consumer(builder: (context, ref, child) {
-                                        final newEvent = ref.watch(newEventProvider);
-                                        var num = widget.event.eventMembers.length;
-                                        if (widget.isPreview) {
-                                          num = newEvent.eventMembers.length;
-                                        }
-                                        return Text(
-                                          "Guest list ($num)",
+                                        const SizedBox(height: 16),
+                                        Divider(
+                                          color: AppColors.greyColor.withOpacity(0.2),
+                                          thickness: 0,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          "Event details",
                                           style: AppStyles.h5.copyWith(
                                             color: AppColors.lightGreyColor,
                                           ),
-                                        );
-                                      }),
-                                      const SizedBox(height: 16),
-                                      buildGuestList(),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        "Photos",
-                                        style: AppStyles.h5.copyWith(
-                                          color: AppColors.lightGreyColor,
                                         ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      buildPhotos(widget.isPreview, widget.rePublish, ref),
-                                      const SizedBox(height: 16),
-                                      Divider(
-                                        color: AppColors.greyColor.withOpacity(0.2),
-                                        thickness: 0,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            "Hosts",
+                                        const SizedBox(height: 16),
+                                        EventDetails(event: widget.event),
+                                        const SizedBox(height: 16),
+                                        Divider(
+                                          color: AppColors.greyColor.withOpacity(0.2),
+                                          thickness: 0,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          "Event description",
+                                          style: AppStyles.h5.copyWith(
+                                            color: AppColors.lightGreyColor,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16),
+                                        buildDescription(),
+                                        const SizedBox(height: 16),
+                                        Divider(
+                                          color: AppColors.greyColor.withOpacity(0.2),
+                                          thickness: 0,
+                                        ),
+                                        Consumer(builder: (context, ref, child) {
+                                          final newEvent = ref.watch(newEventProvider);
+                                          var num = widget.event.eventMembers.length;
+                                          if (widget.isPreview) {
+                                            num = newEvent.eventMembers.length;
+                                          }
+                                          return Text(
+                                            "Guest list ($num)",
                                             style: AppStyles.h5.copyWith(
                                               color: AppColors.lightGreyColor,
                                             ),
+                                          );
+                                        }),
+                                        const SizedBox(height: 16),
+                                        buildGuestList(),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          "Photos",
+                                          style: AppStyles.h5.copyWith(
+                                            color: AppColors.lightGreyColor,
                                           ),
-                                          const SizedBox(height: 16),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              EventHosts(
-                                                event: widget.event,
-                                                isPreview: widget.isPreview,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        buildPhotos(widget.isPreview, widget.rePublish, ref),
+                                        const SizedBox(height: 16),
+                                        Divider(
+                                          color: AppColors.greyColor.withOpacity(0.2),
+                                          thickness: 0,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              "Hosts",
+                                              style: AppStyles.h5.copyWith(
+                                                color: AppColors.lightGreyColor,
                                               ),
-                                              const SizedBox(height: 16),
-                                              Divider(
-                                                color: AppColors.greyColor.withOpacity(0.2),
-                                                thickness: 0,
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(height: 16),
-                                    ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                EventHosts(
+                                                  event: widget.event,
+                                                  isPreview: widget.isPreview,
+                                                ),
+                                                const SizedBox(height: 16),
+                                                Divider(
+                                                  color: AppColors.greyColor.withOpacity(0.2),
+                                                  thickness: 0,
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                // Friends registered notifier
-                                // const FriendsRegisteredBox()
-                              ],
+                                  // Friends registered notifier
+                                  // const FriendsRegisteredBox()
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: widget.isPreview ? 100 : 40),
-                      ],
+                          SizedBox(height: widget.isPreview ? 100 : 40),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              buildLoader(),
-            ],
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: EventButtons(
-            event: widget.event,
-            isPreview: widget.isPreview,
-            rePublish: widget.rePublish,
-          ),
-          bottomNavigationBar: widget.showBottomBar
-              ? BottomBar(
-                  selectedTab: ref.watch(homeTabControllerProvider).homeTabIndex,
-                  pop: () {
-                    navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
-                  },
-                )
-              : null,
-        ),
+                buildLoader(),
+              ],
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: EventButtons(
+              event: widget.event,
+              isPreview: widget.isPreview,
+              rePublish: widget.rePublish,
+            ),
+            bottomNavigationBar: BottomBar(
+              selectedTab: ref.watch(homeTabControllerProvider).homeTabIndex,
+              pop: () {
+                navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
+              },
+            )),
       ),
     );
   }
