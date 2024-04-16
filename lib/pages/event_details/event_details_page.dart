@@ -737,6 +737,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       imageFiles: imageFiles,
       imageUrls: imageUrls,
       maxImages: maxImages,
+      clone: widget.clone,
     );
   }
 }

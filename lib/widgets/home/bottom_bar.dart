@@ -35,6 +35,7 @@ class BottomBar extends ConsumerWidget {
         if (value == 0) {
           ref.read(homeTabControllerProvider.notifier).updateSearching(false);
           ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
+          ref.read(homeTabControllerProvider).rowInterests = false;
           ref.read(newEventProvider.notifier).resetNewEvent();
         } else if (value == 1) {
           final user = ref.read(userProvider);

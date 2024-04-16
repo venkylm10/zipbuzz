@@ -315,11 +315,11 @@ class _EventCardState extends ConsumerState<EventCard> {
   }
 
   void cloneEvent() async {
-    ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-    ref.read(newEventProvider.notifier).cloneEvent = true;
     // final startTime = TimeOfDay.fromDateTime(DateTime.now());
     // final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
     await fixCloneEventContacts();
+    ref.read(homeTabControllerProvider.notifier).updateIndex(1);
+    ref.read(newEventProvider.notifier).cloneEvent = true;
     // ref.read(newEventProvider.notifier).updateDate(DateTime.now());
     ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
     final clone = ref.read(newEventProvider).copyWith(
@@ -333,10 +333,12 @@ class _EventCardState extends ConsumerState<EventCard> {
           iconPath: widget.event.iconPath,
           attendees: widget.event.eventMembers.length,
           eventMembers: widget.event.eventMembers,
+          imageUrls: widget.event.imageUrls,
         );
 
     ref.read(eventTabControllerProvider.notifier).updateIndex(2);
     ref.read(newEventProvider.notifier).updateEvent(clone);
+    ref.read(newEventProvider.notifier).cloneHyperLinks(widget.event.hyperlinks);
     ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
   }
 

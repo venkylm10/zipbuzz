@@ -71,6 +71,16 @@ class NewEvent extends StateNotifier<EventModel> {
   List<TextEditingController> urlNameControllers = [TextEditingController()];
   bool cloneEvent = false;
 
+  void cloneHyperLinks(List<HyperLinks> hyperlinks) {
+    if (hyperlinks.isEmpty) return;
+    urlControllers = [];
+    urlNameControllers = [];
+    for (var i = 0; i < hyperlinks.length; i++) {
+      urlControllers.add(TextEditingController(text: hyperlinks[i].url));
+      urlNameControllers.add(TextEditingController(text: hyperlinks[i].urlName));
+    }
+  }
+
   void addUrlField() {
     urlControllers.add(TextEditingController());
     urlNameControllers.add(TextEditingController());

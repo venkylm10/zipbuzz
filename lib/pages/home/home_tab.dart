@@ -335,7 +335,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       child: Consumer(
         builder: (context, ref, child) {
           final homeTabController = ref.watch(homeTabControllerProvider);
-          final userInterests = homeTabController.currentInterests;
+          final userInterests = homeTabController.currentInterests
+            ..sort((a, b) => a.activity.compareTo(b.activity));
           return SizedBox(
             width: kIsWeb
                 ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94 - 60

@@ -752,12 +752,21 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     ref.read(loadingTextProvider.notifier).reset();
   }
 
+  Future<void> fixInviteMoreContacts() async {
+    final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
+    final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
+    await Future.delayed(const Duration(milliseconds: 500));
+    ref.read(editEventControllerProvider.notifier).updateSelectedContactsList(matchingContacts);
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
   void inviteMoreGuests() async {
     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
     ref.read(editEventControllerProvider.notifier).eventId = widget.event.id;
     ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
+    await fixInviteMoreContacts();
     await showPreview();
     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
     ref.read(editEventControllerProvider.notifier).updateBannerImage(null);

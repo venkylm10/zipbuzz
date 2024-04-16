@@ -103,7 +103,6 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     category = ref.read(editEventControllerProvider).category;
     startTimeController.text = event.startTime;
     endTimeController.text = event.endTime != "null" ? event.endTime : "";
-    // urlController.text = event.eventUrl; TODO: remove event url here
     convertDateString();
   }
 

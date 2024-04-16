@@ -250,6 +250,7 @@ class DioServices {
       for (var item in (response.data['category_data'] as List)) {
         list.add(InterestModel.fromMap(item as Map<String, dynamic>));
       }
+      list.sort((a, b) => a.activity.compareTo(b.activity));
       return list;
     } catch (error) {
       debugPrint('Error in getMasterInterests: ${error.toString()}');

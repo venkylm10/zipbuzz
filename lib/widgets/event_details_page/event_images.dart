@@ -11,6 +11,7 @@ class EventImages extends StatelessWidget {
   final List<File> imageFiles;
   final List<String> imageUrls;
   final int maxImages;
+  final bool clone;
   const EventImages({
     super.key,
     required this.isPreview,
@@ -19,6 +20,7 @@ class EventImages extends StatelessWidget {
     required this.imageFiles,
     required this.imageUrls,
     required this.maxImages,
+    required this.clone,
   });
 
   @override
@@ -33,7 +35,7 @@ class EventImages extends StatelessWidget {
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               children: List.generate(
-                rePublish ? imageUrls.length + imageFiles.length : imageFiles.length,
+                imageUrls.length + imageFiles.length,
                 (index) => StaggeredGridTile.count(
                   crossAxisCellCount: index % (maxImages - 1) == 0
                       ? 2
@@ -41,18 +43,13 @@ class EventImages extends StatelessWidget {
                   mainAxisCellCount: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: rePublish
-                        ? index < imageUrls.length
-                            ? CachedNetworkImage(
-                                imageUrl: imageUrls[index],
-                                fit: BoxFit.cover,
-                              )
-                            : Image.file(
-                                imageFiles[index - imageUrls.length],
-                                fit: BoxFit.cover,
-                              )
+                    child: index < imageUrls.length
+                        ? CachedNetworkImage(
+                            imageUrl: imageUrls[index],
+                            fit: BoxFit.cover,
+                          )
                         : Image.file(
-                            imageFiles[index],
+                            imageFiles[index - imageUrls.length],
                             fit: BoxFit.cover,
                           ),
                   ),
@@ -84,6 +81,5 @@ class EventImages extends StatelessWidget {
               ),
             ),
           );
-    
   }
 }
