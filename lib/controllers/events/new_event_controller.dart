@@ -426,6 +426,11 @@ class NewEvent extends StateNotifier<EventModel> {
           .read(dioServicesProvider)
           .sendEventUrls(eventId, urlControllers, urlNameControllers);
       // upload event images
+      if (state.imageUrls.isNotEmpty) {
+        for (var i = 0; i < state.imageUrls.length; i++) {
+          await ref.read(dioServicesProvider).addClonedImage(eventId, state.imageUrls[i]);
+        }
+      }
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);

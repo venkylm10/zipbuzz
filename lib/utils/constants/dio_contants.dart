@@ -38,6 +38,7 @@ class DioConstants {
   static const String increaseDecision = "/events/decision_increase/";
   static const String makeRequests = "/events/event_request/";
   static const String sendEventUrls = "/events/event_hyperlinks/";
+  static const String addClonedImageApi = "/events/event_images_url/";
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

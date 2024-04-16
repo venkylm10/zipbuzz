@@ -36,7 +36,7 @@ class EventChip extends StatelessWidget {
           Text(
             interest,
             style: AppStyles.h5.copyWith(
-              color: eventColor,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

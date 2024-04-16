@@ -352,38 +352,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
             ),
             const SizedBox(height: 24),
-            // if (editProfileController.userClone.isAmbassador)
-            // Container(
-            //   padding: const EdgeInsets.symmetric(
-            //     horizontal: 10,
-            //     vertical: 6,
-            //   ),
-            //   decoration: BoxDecoration(
-            //     color: AppColors.primaryColor.withOpacity(0.1),
-            //     borderRadius: BorderRadius.circular(20),
-            //   ),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     mainAxisSize: MainAxisSize.min,
-            //     children: [
-            //       SvgPicture.asset(
-            //         Assets.icons.check,
-            //         colorFilter: const ColorFilter.mode(
-            //           AppColors.primaryColor,
-            //           BlendMode.srcIn,
-            //         ),
-            //         height: 20,
-            //       ),
-            //       const SizedBox(width: 5),
-            //       Text(
-            //         "Brand Ambassador",
-            //         style: AppStyles.h5.copyWith(
-            //           color: AppColors.primaryColor,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ],
@@ -428,7 +396,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     Text(
                       "${interest.category}/${interest.activity}",
                       style: AppStyles.h4.copyWith(
-                        color: present ? color : Colors.grey[800],
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     if (present)
@@ -437,8 +405,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                           const SizedBox(width: 8),
                           SvgPicture.asset(
                             Assets.icons.remove,
-                            colorFilter: ColorFilter.mode(
-                              color,
+                            colorFilter: const ColorFilter.mode(
+                              AppColors.textColor,
                               BlendMode.srcIn,
                             ),
                           )

@@ -319,7 +319,8 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                       Text(
                         interest.activity,
                         style: AppStyles.h4.copyWith(
-                          color: present ? color : Colors.grey[800],
+                          fontWeight: present ? FontWeight.w500 : FontWeight.normal,
+                          color: !present ? AppColors.greyColor : null,
                         ),
                       ),
                       if (present)

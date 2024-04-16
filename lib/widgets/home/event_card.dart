@@ -509,7 +509,9 @@ class _EventCardState extends ConsumerState<EventCard> {
           const SizedBox(width: 5),
           Text(
             widget.event.category,
-            style: AppStyles.h5.copyWith(color: eventColor),
+            style: AppStyles.h5.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

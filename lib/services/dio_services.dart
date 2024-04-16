@@ -542,4 +542,11 @@ class DioServices {
 
     return false;
   }
+
+  Future<void> addClonedImage(int eventId, String imageUrl) async {
+    await dio.post(DioConstants.addClonedImageApi, data: {
+      "event_id": eventId,
+      "media_url": imageUrl,
+    });
+  }
 }
