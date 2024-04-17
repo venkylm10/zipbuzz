@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -14,19 +13,18 @@ class UpcomingEvents extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userId = ref.read(userProvider).id;
     var ownUpcomingEvents = <EventModel>[];
     ownUpcomingEvents.addAll(ref
         .watch(eventsControllerProvider)
         .upcomingEvents
-        .where((element) => element.hostId == userId));
+        .where((element) => element.status != "nothing"));
     return ownUpcomingEvents.isNotEmpty
         ? Column(
             children: ownUpcomingEvents
                 .map(
                   (e) => EventCard(
                     event: e,
-                    showTag: false,
+                    showTag: true,
                     myEvent: true,
                   ),
                 )

@@ -19,7 +19,7 @@ class EventsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTab = ref.watch(eventTabControllerProvider);
-    final tabs = ref.watch(eventTabControllerProvider.notifier).tabs;
+    final tabs = ref.read(eventTabControllerProvider.notifier).tabs;
     final tabTitles = ref.read(eventTabControllerProvider.notifier).tabTitles;
     return PopScope(
       canPop: false,

@@ -272,15 +272,14 @@ class DioServices {
 
   Future<int> getUserId(UserIdRequestModel userIdRequestModel) async {
     try {
-      final response = kIsWeb
-          ? await dio.post(
-              DioConstants.getUserId,
-              data: userIdRequestModel.toMap(),
-            )
-          : await dio.get(
-              DioConstants.getUserId,
-              data: userIdRequestModel.toMap(),
-            );
+      final response = await dio.post(
+        DioConstants.getUserId,
+        data: userIdRequestModel.toMap(),
+      );
+      // : await dio.get(
+      //     DioConstants.getUserId,
+      //     data: userIdRequestModel.toMap(),
+      //   );
       if (response.data[DioConstants.status] == DioConstants.success) {
         return response.data['user_id'];
       } else {

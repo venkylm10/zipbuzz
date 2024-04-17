@@ -64,6 +64,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           lastDate: DateTime.utc(2026),
         ) ??
         DateTime.now();
+    editEventController.updateDate(date);
     dateController.text = DateFormat('d\'th,\' MMMM (EEEE)').format(date);
     setState(() {});
   }
