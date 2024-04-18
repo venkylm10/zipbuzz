@@ -96,6 +96,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                   name: user.name,
                   phoneNumber: user.mobileNumber,
                   members: attendees,
+                  userDecision: true,
                 );
                 await ref.read(dioServicesProvider).makeRequest(model);
                 await ref

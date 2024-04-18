@@ -385,6 +385,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   Widget buildDescription() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Builder(
           builder: (context) {

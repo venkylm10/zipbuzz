@@ -4,6 +4,7 @@ class MakeRequestModel {
   String phoneNumber;
   int members;
   int userId;
+  bool userDecision;
 
   MakeRequestModel({
     required this.userId,
@@ -11,6 +12,7 @@ class MakeRequestModel {
     required this.name,
     required this.phoneNumber,
     required this.members,
+    this.userDecision = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class MakeRequestModel {
       'name': name,
       'phone_number': phoneNumber,
       'members': members,
+      "user_decision": userDecision ? "yes" : "no",
     };
   }
 
@@ -30,6 +33,7 @@ class MakeRequestModel {
       name: map['name'],
       phoneNumber: map['phone_number'],
       members: map['members'],
+      userDecision: map['user_decision'] == "yes",
     );
   }
 }

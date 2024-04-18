@@ -172,27 +172,30 @@ class EventHostGuestList extends StatelessWidget {
                 ),
               const Expanded(child: SizedBox()),
               if (interative || member.status == "confirm")
-                Consumer(builder: (context, ref, child) {
-                  return InkWell(
-                    onTap: () async {
-                      if (!interative || !isPending) return;
-                      var newMember = member;
-                      newMember.status = "confirm";
-                      var updateMembers = ref.read(eventRequestMembersProvider);
-                      updateMembers.removeAt(index);
-                      updateMembers.add(newMember);
-                      ref
-                          .read(eventRequestMembersProvider.notifier)
-                          .update((state) => updateMembers);
-                      await ref
-                          .read(dioServicesProvider)
-                          .editUserStatus(eventId, member.userId, "confirm");
-                      showSnackBar(message: "${member.name} was confirmed for the event.");
-                      ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
-                    },
-                    child: buildGuestTag(member.status),
-                  );
-                })
+                Consumer(
+                  builder: (context, ref, child) {
+                    return InkWell(
+                      onTap: () async {
+                        if (!interative || !isPending) return;
+                        if (member.status == "declined") return;
+                        var newMember = member;
+                        newMember.status = "confirm";
+                        var updateMembers = ref.read(eventRequestMembersProvider);
+                        updateMembers.removeAt(index);
+                        updateMembers.add(newMember);
+                        ref
+                            .read(eventRequestMembersProvider.notifier)
+                            .update((state) => updateMembers);
+                        await ref
+                            .read(dioServicesProvider)
+                            .editUserStatus(eventId, member.userId, "confirm");
+                        showSnackBar(message: "${member.name} was confirmed for the event.");
+                        ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
+                      },
+                      child: buildGuestTag(member.status),
+                    );
+                  },
+                )
             ],
           ),
         ),
@@ -268,6 +271,8 @@ class EventHostGuestList extends StatelessWidget {
           if (interative) {
             if (status == "pending") {
               text = "Confirm";
+            } else if (status == "declined") {
+              text = "Declined";
             } else if (status == "Guest") {
               text = "Invited";
             } else {
@@ -280,12 +285,14 @@ class EventHostGuestList extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: const Color(0xFFEAF6ED),
+              color: status == "declined"
+                  ? const Color.fromARGB(255, 238, 201, 198)
+                  : const Color(0xFFEAF6ED),
             ),
             child: Text(
               text,
               style: AppStyles.h5.copyWith(
-                color: Colors.green.shade500,
+                color: status == "declined" ? Colors.red.shade500 : Colors.green.shade500,
               ),
             ),
           );
