@@ -296,8 +296,14 @@ class DioServices {
 
     try {
       final response = kIsWeb
-          ? await dio.post(DioConstants.getUserDetailsWeb, data: userDetailsRequestModel.toMap())
-          : await dio.get(DioConstants.getUserDetails, data: userDetailsRequestModel.toMap());
+          ? await dio.post(
+              DioConstants.getUserDetailsWeb,
+              data: userDetailsRequestModel.toMap(),
+            )
+          : await dio.get(
+              DioConstants.getUserDetails,
+              data: userDetailsRequestModel.toMap(),
+            );
       debugPrint("GETTING USER DATA COMPLETE");
       return response.data as Map<String, dynamic>;
     } catch (error) {
@@ -342,13 +348,13 @@ class DioServices {
     }
   }
 
-  Future<List> getAllEvents(UserEventsRequestModel userEventsRequestModel) async {
+  Future<List> fetchEvents(UserEventsRequestModel userEventsRequestModel) async {
     try {
       debugPrint("GETTING ALL EVENTS");
       final data = userEventsRequestModel.toMap();
       final response = kIsWeb
-          ? await dio.post(DioConstants.getAllEvents, data: data)
-          : await dio.get(DioConstants.getAllEvents, data: data);
+          ? await dio.post(DioConstants.fetchEvents, data: data)
+          : await dio.get(DioConstants.fetchEvents, data: data);
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
         debugPrint("GETTING ALL EVENTS SUCCESSFULL");

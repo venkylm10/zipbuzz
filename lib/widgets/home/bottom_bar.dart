@@ -43,7 +43,7 @@ class BottomBar extends ConsumerWidget {
           ref.read(newEventProvider.notifier).updateHostName(user.name);
           ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
         } else {
-          ref.read(eventsControllerProvider.notifier).getAllEvents();
+          ref.read(eventsControllerProvider.notifier).fetchEvents();
           ref.read(newEventProvider.notifier).resetNewEvent();
         }
         pop != null ? pop!() : null;

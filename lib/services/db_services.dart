@@ -231,7 +231,7 @@ class DBServices {
     if (box.read(BoxConstants.guestUser) == null) {
       try {
         final userZipcode = _ref.read(userLocationProvider).zipcode;
-        final list = await _dioServices.getAllEvents(userEventsRequestModel);
+        final list = await _dioServices.fetchEvents(userEventsRequestModel);
         final userEvents = list.where((element) => element['host_zipcode'] == userZipcode).toList();
         final events = userEvents.map((e) {
           final res = EventResponseModel.fromMap(e);

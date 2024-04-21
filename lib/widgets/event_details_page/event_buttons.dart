@@ -302,7 +302,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     } else {
       await ref.read(eventsControllerProvider.notifier).removeEventFromFavorites(widget.event.id);
     }
-    await ref.read(eventsControllerProvider.notifier).getAllEvents();
+    await ref.read(eventsControllerProvider.notifier).fetchEvents();
   }
 
   Widget eventJoinButton() {

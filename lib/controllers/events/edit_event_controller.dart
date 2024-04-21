@@ -471,9 +471,9 @@ class EditEventController extends StateNotifier<EventModel> {
       var eventDateTime = DateTime.parse(state.date);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-      await ref.read(eventsControllerProvider.notifier).getAllEvents();
-      ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
-      ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
+      // await ref.read(eventsControllerProvider.notifier).fetchEvents();
+      // ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
+      // ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Event edited successfully");
       navigatorKey.currentState!.pop();

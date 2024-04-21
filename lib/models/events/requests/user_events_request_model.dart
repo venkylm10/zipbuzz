@@ -1,16 +1,14 @@
 class UserEventsRequestModel {
   final int userId;
-  const UserEventsRequestModel({required this.userId});
+  final String month;
+  final List<String> category;
+  const UserEventsRequestModel({required this.userId, required this.month, required this.category});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'user_id': userId,
+      'month': month,
+      'category': category,
     };
-  }
-
-  factory UserEventsRequestModel.fromMap(Map<String, dynamic> map) {
-    return UserEventsRequestModel(
-      userId: map['user_id'] as int,
-    );
   }
 }

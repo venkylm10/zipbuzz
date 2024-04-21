@@ -14,7 +14,7 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/widgets/home/custom_appbar.dart';
-import 'package:zipbuzz/widgets/home/custom_calendar.dart';
+import 'package:zipbuzz/widgets/home/home_calendar.dart';
 import 'package:zipbuzz/widgets/home/event_search_results.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -150,7 +150,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                       style: AppStyles.h2,
                     ),
                   ),
-                  const CustomCalendar(),
+                  const HomeCalender(),
                   const SizedBox(height: 200)
                 ],
               ),
@@ -195,6 +195,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                       ),
                     );
                 debugPrint("Updated homeTab interests");
+                ref.read(eventsControllerProvider.notifier).fetchEvents();
                 setState(() {});
               },
               child: Container(

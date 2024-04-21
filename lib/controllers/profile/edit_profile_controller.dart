@@ -50,7 +50,7 @@ class EditProfileController {
     image = updatedImage;
   }
 
-  void updateUserClone(){
+  void updateUserClone() {
     userClone = ref.read(userProvider).getClone();
   }
 
@@ -124,10 +124,9 @@ class EditProfileController {
       }
       if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating Location..");
-          await ref
-              .read(userLocationProvider.notifier)
-              .getLocationFromZipcode(zipcodeController.text.trim());
-        
+        await ref
+            .read(userLocationProvider.notifier)
+            .getLocationFromZipcode(zipcodeController.text.trim());
       }
 
       var profileUrl = ref.read(userProvider).imageUrl;
@@ -173,7 +172,7 @@ class EditProfileController {
           .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Getting new events...");
-      await ref.read(eventsControllerProvider.notifier).getAllEvents();
+      await ref.read(eventsControllerProvider.notifier).fetchEvents();
       ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Updated successfully");

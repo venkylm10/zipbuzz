@@ -23,7 +23,7 @@ class EventsSearchResults extends StatelessWidget {
         ),
         Consumer(
           builder: (context, ref, child) {
-            final allEvents = ref.watch(eventsControllerProvider).allEvents;
+            final allEvents = ref.watch(eventsControllerProvider).currentMonthEvents;
             // ignore: unused_local_variable
             final homeTabController = ref.read(homeTabControllerProvider);
             final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;

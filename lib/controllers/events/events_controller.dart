@@ -62,17 +62,24 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     state = state.copyWith(selectedCategory: category ?? '');
   }
 
-  Future<void> getAllEvents() async {
-    final userEventsRequestModel = UserEventsRequestModel(userId: ref.read(userProvider).id);
+  Future<void> fetchEvents() async {
+    final day = currentDay;
+    var month = day.month.toString();
+    month = month.length == 1 ? '0$month' : month;
+    final year = day.year.toString();
+    final userEventsRequestModel = UserEventsRequestModel(
+        userId: ref.read(userProvider).id,
+        month: "$year-$month",
+        category: ref.read(userProvider).interests);
     final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
-    state = state.copyWith(allEvents: list);
+    state = state.copyWith(currentMonthEvents: list);
     adjustEventData();
   }
 
   void updateEventsMap() {
     state = state.copyWith(eventsMap: {});
     Map<DateTime, List<EventModel>> map = {};
-    for (final event in state.allEvents) {
+    for (final event in state.currentMonthEvents) {
       final date = getDateTimeFromEventData(event.date);
       if (map.containsKey(date)) {
         map[date]!.add(event);
@@ -94,14 +101,22 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   Future<void> updateFavoriteEvents() async {
     if (!state.showingFavorites) {
       state = state.copyWith(showingFavorites: true);
-      final userEventsRequestModel = UserEventsRequestModel(userId: ref.read(userProvider).id);
+      final day = currentDay;
+      var month = day.month.toString();
+      month = month.length == 1 ? '0$month' : month;
+      final year = day.year.toString();
+      final userEventsRequestModel = UserEventsRequestModel(
+        userId: ref.read(userProvider).id,
+        month: "$year-$month",
+        category: ref.read(userProvider).interests,
+      );
       final list = await ref.read(dbServicesProvider).getUserFavoriteEvents(userEventsRequestModel);
-      state = state.copyWith(allEvents: list);
+      state = state.copyWith(currentMonthEvents: list);
       adjustEventData();
       return;
     }
     state = state.copyWith(showingFavorites: false);
-    getAllEvents();
+    fetchEvents();
   }
 
   Future<void> addEventToFavorites(int eventId) async {
@@ -113,9 +128,9 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     final model = AddEventToFavoriteModelClass(eventId: eventId, userId: ref.read(userProvider).id);
     await ref.read(dioServicesProvider).removeEventFromFavorite(model);
     if (state.showingFavorites) {
-      var events = state.allEvents;
+      var events = state.currentMonthEvents;
       events.removeWhere((element) => element.id == eventId);
-      state = state.copyWith(allEvents: events);
+      state = state.copyWith(currentMonthEvents: events);
       adjustEventData();
     }
   }
@@ -165,12 +180,11 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   Future<bool> requestToJoinEvent(int eventId) async {
     final user = ref.read(userProvider);
     final model = JoinEventRequestModel(
-      eventId: eventId,
-      name: user.name,
-      phoneNumber: user.mobileNumber,
-      image: user.imageUrl,
-      userId: user.id
-    );
+        eventId: eventId,
+        name: user.name,
+        phoneNumber: user.mobileNumber,
+        image: user.imageUrl,
+        userId: user.id);
     return ref.read(dioServicesProvider).requestToJoinEvent(model);
   }
 
@@ -189,13 +203,19 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   void updateLoadingState(bool loading) {
     state = state.copyWith(loading: loading);
   }
+
+  DateTime currentDay = DateTime.now();
+
+  void updateCurrentDay(DateTime day) async {
+    currentDay = day;
+  }
 }
 
 class EventsController {
   final UserModel? user;
   final Ref ref;
   EventsController({required this.ref, required this.user});
-  List<EventModel> allEvents = [];
+  List<EventModel> currentMonthEvents = [];
   List<EventModel> upcomingEvents = [];
   List<EventModel> pastEvents = [];
   List<EventModel> focusedEvents = [];
@@ -212,7 +232,7 @@ class EventsController {
   EventsController copyWith({
     UserModel? user,
     Ref? ref,
-    List<EventModel>? allEvents,
+    List<EventModel>? currentMonthEvents,
     List<EventModel>? upcomingEvents,
     List<EventModel>? pastEvents,
     List<EventModel>? focusedEvents,
@@ -228,7 +248,7 @@ class EventsController {
       ref: ref ?? this.ref,
     );
 
-    res.allEvents = allEvents ?? this.allEvents;
+    res.currentMonthEvents = currentMonthEvents ?? this.currentMonthEvents;
     res.upcomingEvents = upcomingEvents ?? this.upcomingEvents;
     res.pastEvents = pastEvents ?? this.pastEvents;
     res.focusedEvents = focusedEvents ?? this.focusedEvents;
@@ -241,321 +261,3 @@ class EventsController {
     return res;
   }
 }
-
-// final guestEventsList = <EventModel>[
-//   EventModel(
-//     id: 1,
-//     title: "A Madcap House Party Extravaganza",
-//     hostId: 2,
-//     coHostIds: [],
-//     eventMembers: [
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//     ],
-//     location: "420 Gala St, San Jose 95125",
-//     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-//     startTime: "8:00 AM",
-//     endTime: "12:00 PM",
-//     attendees: 15,
-//     category: "Hiking",
-//     isFavorite: false,
-//     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[0]]!,
-//     iconPath: allInterests["Hiking"]!,
-//     about:
-//         "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year!",
-//     isPrivate: true,
-//     capacity: 20,
-//     imageUrls: [],
-//     privateGuestList: false,
-//     hostName: "Zipbuzz User",
-//     hostPic: Defaults().profilePictureUrl,
-//   ),
-//   EventModel(
-//     id: 1,
-//     title: "A Madcap House Party Extravaganza",
-//     hostId: 1,
-//     coHostIds: [],
-//     eventMembers: [
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//     ],
-//     location: "420 Gala St, San Jose 95125",
-//     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-//     startTime: "8:00 AM",
-//     endTime: "12:00 PM",
-//     attendees: 15,
-//     category: "Sports",
-//     isFavorite: false,
-//     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[1]]!,
-//     iconPath: allInterests["Sports"]!,
-//     about:
-//         "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year!",
-//     isPrivate: true,
-//     capacity: 20,
-//     imageUrls: [],
-//     privateGuestList: false,
-//     hostName: "Zipbuzz User",
-//     hostPic: Defaults().profilePictureUrl,
-//   ),
-//   EventModel(
-//     id: 1,
-//     title: "A Madcap House Party Extravaganza",
-//     hostId: 1,
-//     coHostIds: [],
-//     eventMembers: [
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//     ],
-//     location: "420 Gala St, San Jose 95125",
-//     date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-//     startTime: "8:00 AM",
-//     endTime: "12:00 PM",
-//     attendees: 15,
-//     category: "Hiking",
-//     isFavorite: false,
-//     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[2]]!,
-//     iconPath: allInterests["Hiking"]!,
-//     about:
-//         "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year!",
-//     isPrivate: true,
-//     capacity: 20,
-//     imageUrls: [],
-//     privateGuestList: false,
-//     hostName: "Zipbuzz User",
-//     hostPic: Defaults().profilePictureUrl,
-//   ),
-//   EventModel(
-//     id: 1,
-//     title: "A Madcap House Party Extravaganza",
-//     hostId: 2,
-//     coHostIds: [],
-//     eventMembers: [
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//     ],
-//     location: "420 Gala St, San Jose 95125",
-//     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: 1))),
-//     startTime: "8:00 AM",
-//     endTime: "12:00 PM",
-//     attendees: 15,
-//     category: "Fitness",
-//     isFavorite: false,
-//     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[0]]!,
-//     iconPath: allInterests["Fitness"]!,
-//     about:
-//         "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year!",
-//     isPrivate: true,
-//     capacity: 20,
-//     imageUrls: [],
-//     privateGuestList: false,
-//     hostName: "Zipbuzz User",
-//     hostPic: Defaults().profilePictureUrl,
-//   ),
-//   EventModel(
-//     id: 1,
-//     title: "A Madcap House Party Extravaganza",
-//     hostId: 1,
-//     coHostIds: [],
-//     eventMembers: [
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//     ],
-//     location: "420 Gala St, San Jose 95125",
-//     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: 1))),
-//     startTime: "8:00 AM",
-//     endTime: "12:00 PM",
-//     attendees: 15,
-//     category: "Parties",
-//     isFavorite: false,
-//     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[1]]!,
-//     iconPath: allInterests["Parties"]!,
-//     about:
-//         "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year!",
-//     isPrivate: true,
-//     capacity: 20,
-//     imageUrls: [],
-//     privateGuestList: false,
-//     hostName: "Zipbuzz User",
-//     hostPic: Defaults().profilePictureUrl,
-//   ),
-//   EventModel(
-//     id: 1,
-//     title: "A Madcap House Party Extravaganza",
-//     hostId: 1,
-//     coHostIds: [],
-//     eventMembers: [
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//     ],
-//     location: "420 Gala St, San Jose 95125",
-//     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -1))),
-//     startTime: "8:00 AM",
-//     endTime: "12:00 PM",
-//     attendees: 15,
-//     category: "Fitness",
-//     isFavorite: false,
-//     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[2]]!,
-//     iconPath: allInterests["Fitness"]!,
-//     about:
-//         "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year!",
-//     isPrivate: true,
-//     capacity: 20,
-//     imageUrls: [],
-//     privateGuestList: false,
-//     hostName: "Zipbuzz User",
-//     hostPic: Defaults().profilePictureUrl,
-//   ),
-//   EventModel(
-//     id: 1,
-//     title: "A Madcap House Party Extravaganza",
-//     hostId: 1,
-//     coHostIds: [],
-//     eventMembers: [
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//       EventInviteMember(
-//           image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Alex Lee"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "John"),
-//       EventInviteMember(image: Defaults().contactAvatarUrl, phone: "+18765432109", name: "Jack"),
-//     ],
-//     location: "420 Gala St, San Jose 95125",
-//     date: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -1))),
-//     startTime: "8:00 AM",
-//     endTime: "12:00 PM",
-//     attendees: 15,
-//     category: "Parties",
-//     isFavorite: false,
-//     bannerPath: Defaults().bannerUrls[Defaults().bannerPaths[3]]!,
-//     iconPath: allInterests["Parties"]!,
-//     about:
-//         "Get ready to turn up the color dial and paint the town in a kaleidoscope of hues at the most vibrant house party of the year!",
-//     isPrivate: true,
-//     capacity: 20,
-//     imageUrls: [],
-//     privateGuestList: false,
-//     hostName: "Zipbuzz User",
-//     hostPic: Defaults().profilePictureUrl,
-//   ),
-// ];
