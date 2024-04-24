@@ -233,6 +233,7 @@ class NewEvent extends StateNotifier<EventModel> {
         image: "null",
         phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
         name: contact.displayName ?? "",
+        status: 'invited',
       );
       addEventMember(member);
       return;
@@ -484,6 +485,12 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void updateInterests(InterestModel interest) async {
     ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
+    final contains = ref.read(userProvider).interests.contains(interest.activity);
+    if (!contains) {
+      var interests = ref.read(userProvider).interests;
+      interests.add(interest.activity);
+      ref.read(userProvider).copyWith(interests: interests);
+    }
     await ref.read(dioServicesProvider).updateUserInterests(
           UserInterestsUpdateModel(
             userId: ref.read(userProvider).id,

@@ -2,11 +2,13 @@ class EventInviteMember {
   String image;
   String phone;
   String name;
+  String status;
 
   EventInviteMember({
     required this.image,
     required this.phone,
     required this.name,
+    required this.status,
   });
 
   factory EventInviteMember.fromMap(Map<String, dynamic> map) {
@@ -14,6 +16,7 @@ class EventInviteMember {
       image: map['image'] as String,
       phone: map['phone'] as String,
       name: map['name'] as String,
+      status: map['status'] as String,
     );
   }
 
@@ -22,6 +25,7 @@ class EventInviteMember {
       'image': image,
       'phone': phone,
       'name': name,
+      'status': status,
     };
   }
 }

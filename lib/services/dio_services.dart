@@ -37,10 +37,25 @@ class DioServices {
   Dio dio = Dio(
     BaseOptions(
       baseUrl: DioConstants.baseUrl,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${GetStorage().read(BoxConstants.accessToken)}',
+      },
     ),
   );
   final box = GetStorage();
+
+  static Future<void> getToken() async {
+    final res = await Dio(
+      BaseOptions(
+        baseUrl: DioConstants.baseUrl,
+        headers: {'Content-Type': 'application/json'},
+      ),
+    ).get(DioConstants.getTokenApi);
+
+    final token = res.data['token'] as String;
+    GetStorage().write(BoxConstants.accessToken, token);
+  }
 
   // send event urls
   Future<void> sendEventUrls(int eventId, List<TextEditingController> urls,
@@ -357,6 +372,7 @@ class DioServices {
           : await dio.get(DioConstants.fetchEvents, data: data);
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
+        // print(response.data['data']);
         debugPrint("GETTING ALL EVENTS SUCCESSFULL");
         return list;
       } else {
@@ -365,6 +381,27 @@ class DioServices {
     } catch (e) {
       debugPrint("FAILED TO GET ALL EVENTS$e");
       throw 'FAILED TO GET ALL EVENTS';
+    }
+  }
+
+  Future<List> fetchUserEvents() async {
+    try {
+      debugPrint("GETTING USER EVENTS");
+      final data = {
+        'user_id': ref.read(userProvider).id,
+      };
+      final response = await dio.get(DioConstants.fetchUserEvents, data: data);
+      if (response.data[DioConstants.status] == DioConstants.success) {
+        final list = response.data['data'] as List;
+        // print(response.data['data']);
+        debugPrint("GETTING USER EVENTS SUCCESSFULL");
+        return list;
+      } else {
+        throw 'FAILED TO GET USER EVENTS';
+      }
+    } catch (e) {
+      debugPrint("FAILED TO GET USER EVENTS$e");
+      throw 'FAILED TO GET USER EVENTS';
     }
   }
 

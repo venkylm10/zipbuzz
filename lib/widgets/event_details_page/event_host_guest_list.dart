@@ -82,7 +82,8 @@ class EventHostGuestList extends StatelessWidget {
   Widget buildConfirmedMembers() {
     return Consumer(builder: (context, ref, child) {
       var data = ref.watch(eventRequestMembersProvider);
-      final confirmedMembers = data.where((element) => element.status == "confirm").toList();
+      final confirmedMembers =
+          data.where((element) => element.status == "confirm" || element.status == 'host').toList();
       return ListView.builder(
         itemCount: confirmedMembers.length,
         shrinkWrap: true,
@@ -178,6 +179,7 @@ class EventHostGuestList extends StatelessWidget {
                       onTap: () async {
                         if (!interative || !isPending) return;
                         if (member.status == "declined") return;
+                        if (member.status == "host") return;
                         var newMember = member;
                         newMember.status = "confirm";
                         var updateMembers = ref.read(eventRequestMembersProvider);
@@ -271,6 +273,8 @@ class EventHostGuestList extends StatelessWidget {
           if (interative) {
             if (status == "pending") {
               text = "Confirm";
+            } else if (status == 'host') {
+              text = "Host";
             } else if (status == "declined") {
               text = "Declined";
             } else if (status == "Guest") {

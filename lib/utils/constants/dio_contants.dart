@@ -1,5 +1,6 @@
 class DioConstants {
   static const String baseUrl = "https://admin.zipbuzz.me";
+  static const String getTokenApi = "/users/user_token/";
   static const String onboardingDetails = "/users/onboard_images/";
   static const String createUser = "/users/create_user/";
   static const String getUserId = "/users/sign_in/";
@@ -39,6 +40,7 @@ class DioConstants {
   static const String makeRequests = "/events/event_request/";
   static const String sendEventUrls = "/events/event_hyperlinks/";
   static const String addClonedImageApi = "/events/event_images_url/";
+  static const String fetchUserEvents = '/events/user_events/';
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

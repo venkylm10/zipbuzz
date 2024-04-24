@@ -87,6 +87,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           image: "null",
           phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
           name: contact.displayName ?? "",
+          status: 'status',
         );
         ref.read(newEventProvider.notifier).addEventMember(member, increase: false);
       }

@@ -34,30 +34,6 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     state = state.copyWith(focusedEvents: state.eventsMap[state.focusedDay] ?? []);
   }
 
-  void updateUpcomingEvents() {
-    state = state.copyWith(upcomingEvents: []);
-    var events = <EventModel>[];
-    state.eventsMap.forEach((key, value) {
-      if (key.isAfter(state.today) || key.isAtSameMomentAs(state.today)) {
-        events.addAll(value);
-      }
-    });
-
-    events.sort((a, b) => a.date.compareTo(b.date));
-    state = state.copyWith(upcomingEvents: events);
-  }
-
-  void updatePastEvents() {
-    var events = <EventModel>[];
-    state.eventsMap.forEach((key, value) {
-      if (key.isBefore(state.today)) {
-        events.addAll(value);
-      }
-    });
-    events.sort((a, b) => b.date.compareTo(a.date));
-    state = state.copyWith(pastEvents: events);
-  }
-
   void selectCategory({String? category = ''}) {
     state = state.copyWith(selectedCategory: category ?? '');
   }
@@ -77,9 +53,9 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   }
 
   void updateEventsMap() {
-    state = state.copyWith(eventsMap: {});
+    state = state.copyWith(userEventsMap: {});
     Map<DateTime, List<EventModel>> map = {};
-    for (final event in state.currentMonthEvents) {
+    for (final event in state.userEvents) {
       final date = getDateTimeFromEventData(event.date);
       if (map.containsKey(date)) {
         map[date]!.add(event);
@@ -87,7 +63,55 @@ class EventsControllProvider extends StateNotifier<EventsController> {
         map[date] = [event];
       }
     }
-    state = state.copyWith(eventsMap: map);
+    state = state.copyWith(userEventsMap: map);
+  }
+
+  void updateUpcomingUserEvents() {
+    var events = <EventModel>[];
+    state.userEventsMap.forEach((key, value) {
+      if (key.isAfter(state.today) || key.isAtSameMomentAs(state.today)) {
+        events.addAll(value);
+      }
+    });
+    events.sort((a, b) => a.date.compareTo(b.date));
+    state = state.copyWith(userUpcomingEvents: events);
+  }
+
+  void updatePastUserEvents() {
+    var events = <EventModel>[];
+    state.userEventsMap.forEach((key, value) {
+      if (key.isBefore(state.today)) {
+        events.addAll(value);
+      }
+    });
+    events.sort((a, b) => b.date.compareTo(a.date));
+    state = state.copyWith(userPastEvents: events);
+  }
+
+  Future<void> fetchUserEvents() async {
+    final list = await ref.read(dbServicesProvider).getUserEvents();
+    state = state.copyWith(userEvents: list);
+    adjustUserEvents();
+  }
+
+  void updateUserEventsMap() {
+    state = state.copyWith(userEventsMap: {});
+    Map<DateTime, List<EventModel>> map = {};
+    for (final event in state.userEvents) {
+      final date = getDateTimeFromEventData(event.date);
+      if (map.containsKey(date)) {
+        map[date]!.add(event);
+      } else {
+        map[date] = [event];
+      }
+    }
+    state = state.copyWith(userEventsMap: map);
+  }
+
+  void adjustUserEvents() {
+    updateUserEventsMap();
+    updateUpcomingUserEvents();
+    updatePastUserEvents();
   }
 
   DateTime getDateTimeFromEventData(String date) {
@@ -138,8 +162,6 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   void adjustEventData() {
     updateEventsMap();
     updateFocusedEvents();
-    updateUpcomingEvents();
-    updatePastEvents();
   }
 
   void refresh() {
@@ -216,10 +238,12 @@ class EventsController {
   final Ref ref;
   EventsController({required this.ref, required this.user});
   List<EventModel> currentMonthEvents = [];
-  List<EventModel> upcomingEvents = [];
-  List<EventModel> pastEvents = [];
+  List<EventModel> userEvents = [];
+  List<EventModel> userUpcomingEvents = [];
+  List<EventModel> userPastEvents = [];
   List<EventModel> focusedEvents = [];
   Map<DateTime, List<EventModel>> eventsMap = {};
+  Map<DateTime, List<EventModel>> userEventsMap = {};
   String selectedCategory = '';
   double calenderHeight = 150;
   bool showingFavorites = false;
@@ -233,10 +257,12 @@ class EventsController {
     UserModel? user,
     Ref? ref,
     List<EventModel>? currentMonthEvents,
-    List<EventModel>? upcomingEvents,
-    List<EventModel>? pastEvents,
+    List<EventModel>? userEvents,
+    List<EventModel>? userUpcomingEvents,
+    List<EventModel>? userPastEvents,
     List<EventModel>? focusedEvents,
     Map<DateTime, List<EventModel>>? eventsMap,
+    Map<DateTime, List<EventModel>>? userEventsMap,
     String? selectedCategory,
     double? calenderHeight,
     bool? showingFavorites,
@@ -247,10 +273,11 @@ class EventsController {
       user: user ?? this.user,
       ref: ref ?? this.ref,
     );
-
+    res.userEvents = userEvents ?? this.userEvents;
+    res.userEventsMap = userEventsMap ?? this.userEventsMap;
     res.currentMonthEvents = currentMonthEvents ?? this.currentMonthEvents;
-    res.upcomingEvents = upcomingEvents ?? this.upcomingEvents;
-    res.pastEvents = pastEvents ?? this.pastEvents;
+    res.userUpcomingEvents = userUpcomingEvents ?? this.userUpcomingEvents;
+    res.userPastEvents = userPastEvents ?? this.userPastEvents;
     res.focusedEvents = focusedEvents ?? this.focusedEvents;
     res.eventsMap = eventsMap ?? this.eventsMap;
     res.selectedCategory = selectedCategory ?? this.selectedCategory;

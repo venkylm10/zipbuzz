@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/pages/events/focused_events.dart';
-import 'package:zipbuzz/pages/events/upcoming_events.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
@@ -87,7 +86,7 @@ class _CustomCalendarState extends ConsumerState<HomeCalender> {
 
   Consumer _upcomingEventsTitle() {
     return Consumer(builder: (context, ref, child) {
-      final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
+      final upcomingEvents = ref.watch(eventsControllerProvider).userUpcomingEvents;
       return upcomingEvents.isNotEmpty
           ? Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),

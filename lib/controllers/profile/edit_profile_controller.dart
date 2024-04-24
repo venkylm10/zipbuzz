@@ -173,7 +173,6 @@ class EditProfileController {
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Getting new events...");
       await ref.read(eventsControllerProvider.notifier).fetchEvents();
-      ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Updated successfully");
       image = null;

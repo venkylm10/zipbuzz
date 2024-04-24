@@ -123,6 +123,12 @@ class HomeTabController extends StateNotifier<HomeTabState> {
       state = state.copyWith(currentInterests: interests);
       return;
     }
+    final contains = ref.read(userProvider).interests.contains(interest.activity);
+    if (!contains) {
+      var interests = ref.read(userProvider).interests;
+      interests.add(interest.activity);
+      ref.read(userProvider).copyWith(interests: interests);
+    }
     addInterest(interest);
   }
 
