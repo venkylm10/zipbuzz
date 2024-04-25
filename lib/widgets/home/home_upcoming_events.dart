@@ -11,7 +11,7 @@ class HomeUpcomingEvents extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final upcomingEvents = ref.watch(eventsControllerProvider).userUpcomingEvents;
+        final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
         // ignore: unused_local_variable
         final homeTabController = ref.read(homeTabControllerProvider);
         final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
