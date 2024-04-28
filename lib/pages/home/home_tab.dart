@@ -288,9 +288,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                             final name = e.activity;
                             final iconPath = e.iconUrl;
                             return InkWell(
-                              key: selectedCategory == name
-                                  ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
-                                  : null,
                               onTap: () {
                                 onTapRowCategory(name);
                               },

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
@@ -72,7 +73,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   List<UserModel> coHosts = [];
   File? image;
 
-  void fixInviteGuests() {
+  void fixInviteGuests() async {
+    await Future.delayed(const Duration(milliseconds: 300));
     if (widget.event.eventMembers.isEmpty) {
       widget.rePublish
           ? ref.read(newEventProvider.notifier).resetEventMembers()
@@ -144,11 +146,17 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   void initialise() async {
     maxImages = ref.read(newEventProvider.notifier).maxImages;
+    getEventColor();
+    fixInviteGuests();
+    if (widget.isPreview || widget.rePublish || widget.clone) {
+      return;
+    }
     await ref.read(dbServicesProvider).getEventRequestMembers(widget.event.id);
     final members = await ref
         .read(dioServicesProvider)
         .getEventMembers(EventMembersRequestModel(eventId: widget.event.id));
     widget.event.eventMembers = members;
+
     // for (var e in ref.read(eventRequestMembersProvider)) {
     //   if (widget.event.eventMembers.firstWhereOrNull((element) => element.phone == e.phone) ==
     //       null) {
@@ -156,8 +164,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     //     widget.event.eventMembers.add(newMember);
     //   }
     // }
-    fixInviteGuests();
-    getEventColor();
   }
 
   @override

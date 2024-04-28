@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
@@ -201,6 +202,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
 
     Map<String, Color> colors = {};
     for (var item in list) {
+      // print(item.color);
       colors.addEntries([MapEntry(item.activity, hexStringToColor(item.color))]);
     }
 
@@ -218,6 +220,9 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   Color hexStringToColor(String hexColor) {
     if (hexColor.startsWith('0x') || hexColor.startsWith('0X')) {
       hexColor = hexColor.substring(2);
+    }
+    if (hexColor.length == 6) {
+      hexColor = "ff$hexColor";
     }
     int hexValue = int.parse(hexColor, radix: 16);
     return Color(hexValue);
