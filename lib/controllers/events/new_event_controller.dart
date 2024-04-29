@@ -422,7 +422,7 @@ class NewEvent extends StateNotifier<EventModel> {
       );
       // showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}");
       debugPrint(eventInvitePostModel.toMap().toString());
-      ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
+      await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       // upload event urls
       await ref
           .read(dioServicesProvider)
