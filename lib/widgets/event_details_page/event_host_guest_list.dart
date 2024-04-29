@@ -279,7 +279,7 @@ class EventHostGuestList extends StatelessWidget {
             text = "Host";
           } else if (status == "declined") {
             text = "Declined";
-          } else if (status == "Guest") {
+          } else if (status == "invited") {
             text = "Invited";
           } else {
             text = "Confirmed";
