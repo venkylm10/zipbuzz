@@ -22,6 +22,7 @@ import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -454,9 +455,7 @@ class NewEvent extends StateNotifier<EventModel> {
     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
     try {
       final image = NetworkImage(state.bannerPath);
-      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-        image,
-      );
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(image);
       final dominantColor = generator.dominantColor?.color;
       ref.read(loadingTextProvider.notifier).updateLoadingText("Getting event details...");
       final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(state.id);

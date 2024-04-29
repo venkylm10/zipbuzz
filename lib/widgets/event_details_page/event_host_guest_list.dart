@@ -251,7 +251,7 @@ class EventHostGuestList extends StatelessWidget {
                 ],
               ),
               const Expanded(child: SizedBox()),
-              buildGuestTag("Guest")
+              buildGuestTag(member.status)
             ],
           ),
         ),
@@ -268,41 +268,40 @@ class EventHostGuestList extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final selectedTag = ref.watch(guestListTagProvider);
-        if (selectedTag == "Responded" || status == "Guest") {
-          var text = "";
-          if (interative) {
-            if (status == "pending") {
-              text = "Confirm";
-            } else if (status == 'host') {
-              text = "Host";
-            } else if (status == "declined") {
-              text = "Declined";
-            } else if (status == "Guest") {
-              text = "Invited";
-            } else {
-              text = "Confirmed";
-            }
+        if (selectedTag == "Confirmed") {
+          return const SizedBox();
+        }
+        var text = "";
+        if (interative) {
+          if (status == "pending") {
+            text = "Confirm";
+          } else if (status == 'host') {
+            text = "Host";
+          } else if (status == "declined") {
+            text = "Declined";
+          } else if (status == "Guest") {
+            text = "Invited";
           } else {
-            return const SizedBox();
+            text = "Confirmed";
           }
-          return Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: status == "declined"
-                  ? const Color.fromARGB(255, 238, 201, 198)
-                  : const Color(0xFFEAF6ED),
-            ),
-            child: Text(
-              text,
-              style: AppStyles.h5.copyWith(
-                color: status == "declined" ? Colors.red.shade500 : Colors.green.shade500,
-              ),
-            ),
-          );
         } else {
           return const SizedBox();
         }
+        return Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: status == "declined"
+                ? const Color.fromARGB(255, 238, 201, 198)
+                : const Color(0xFFEAF6ED),
+          ),
+          child: Text(
+            text,
+            style: AppStyles.h5.copyWith(
+              color: status == "declined" ? Colors.red.shade500 : Colors.green.shade500,
+            ),
+          ),
+        );
       },
     );
   }

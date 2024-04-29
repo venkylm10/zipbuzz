@@ -103,7 +103,6 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   }
 
   void updateUserEventsMap() {
-    state = state.copyWith(userEventsMap: {});
     Map<DateTime, List<EventModel>> map = {};
     for (final event in state.userEvents) {
       final date = getDateTimeFromEventData(event.date);
