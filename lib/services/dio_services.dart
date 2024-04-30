@@ -475,7 +475,7 @@ class DioServices {
     }
   }
 
-  void sendEventInvite(EventInvitePostModel eventInvitePostModel) async {
+  Future<void> sendEventInvite(EventInvitePostModel eventInvitePostModel) async {
     if (eventInvitePostModel.phoneNumbers.isNotEmpty) {
       try {
         debugPrint("SENDING EVENT INVITE");
