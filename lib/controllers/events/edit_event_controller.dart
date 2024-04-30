@@ -22,6 +22,7 @@ import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
@@ -244,11 +245,10 @@ class EditEventController extends StateNotifier<EventModel> {
       }
       if (!fix) eventInvites.add(contact);
       final member = EventInviteMember(
-        image: "null",
-        phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
-        name: contact.displayName ?? "",
-        status: "invited"
-      );
+          image: "null",
+          phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
+          name: contact.displayName ?? "",
+          status: "invited");
       addEventMember(member);
       return;
     }
@@ -393,9 +393,7 @@ class EditEventController extends StateNotifier<EventModel> {
       }
       // sending invites
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
-      final inviteePicUrls = await ref
-          .read(storageServicesProvider)
-          .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
+      final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
       final phoneNumbers = eventInvites
           .map((e) {
             final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
@@ -423,7 +421,7 @@ class EditEventController extends StateNotifier<EventModel> {
       );
       // showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}", duration: 5);
       debugPrint(eventInvitePostModel.toMap().toString());
-      ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
+      await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
       ref.read(loadingTextProvider.notifier).reset();
       final interests =
           ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);

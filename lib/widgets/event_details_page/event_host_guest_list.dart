@@ -327,6 +327,8 @@ class EventHostGuestList extends StatelessWidget {
             for (var e in ref.watch(eventRequestMembersProvider)) {
               if (e.status == "pending") {
                 respondedLength += e.attendees;
+              } else if (e.status == "declined") {
+                respondedLength += e.attendees;
               } else if (e.status == "confirm") {
                 confirmedLength += e.attendees;
               } else if (e.status == 'host') {

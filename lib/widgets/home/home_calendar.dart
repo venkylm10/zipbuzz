@@ -86,7 +86,10 @@ class _CustomCalendarState extends ConsumerState<HomeCalender> {
 
   Consumer _upcomingEventsTitle() {
     return Consumer(builder: (context, ref, child) {
-      final upcomingEvents = ref.watch(eventsControllerProvider).userUpcomingEvents;
+      final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents.where((element) {
+        final date = DateTime.parse(element.date);
+        return !date.isAtSameMomentAs(ref.watch(eventsControllerProvider).focusedDay);
+      });
       return upcomingEvents.isNotEmpty
           ? Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
