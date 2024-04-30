@@ -329,6 +329,9 @@ class EventHostGuestList extends StatelessWidget {
                 respondedLength += e.attendees;
               } else if (e.status == "confirm") {
                 confirmedLength += e.attendees;
+              } else if (e.status == 'host') {
+                confirmedLength += e.attendees;
+                respondedLength += e.attendees;
               }
             }
             return InkWell(

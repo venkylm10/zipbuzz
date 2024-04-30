@@ -385,10 +385,7 @@ class NewEvent extends StateNotifier<EventModel> {
       var eventDateTime = DateTime.parse(state.date);
       var formattedDate = formatWithSuffix(eventDateTime);
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
-
-      final inviteePicUrls = await ref
-          .read(storageServicesProvider)
-          .uploadInviteePics(hostId: state.hostId, eventId: 1, contacts: eventInvites);
+      final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
       final phoneNumbers = eventInvites.map((e) {
         final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
         return number;
