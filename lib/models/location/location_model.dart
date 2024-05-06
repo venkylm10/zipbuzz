@@ -4,12 +4,13 @@ class LocationModel {
     required this.country,
     required this.countryDialCode,
     required this.zipcode,
+    this.neighborhood = "",
   });
   final String city;
+  final String neighborhood;
   final String country;
   final String countryDialCode;
   final String zipcode;
-
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -29,18 +30,19 @@ class LocationModel {
     );
   }
 
-
   LocationModel copyWith({
     String? city,
     String? country,
     String? countryDialCode,
     String? zipcode,
+    String? neighborhood,
   }) {
     return LocationModel(
       city: city ?? this.city,
       country: country ?? this.country,
       countryDialCode: countryDialCode ?? this.countryDialCode,
       zipcode: zipcode ?? this.zipcode,
+      neighborhood: neighborhood ?? this.neighborhood,
     );
   }
 }
