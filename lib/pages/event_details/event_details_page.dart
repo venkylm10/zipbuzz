@@ -463,6 +463,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   Widget buildAttendeeNumber() {
     return InkWell(
       onTap: () {
+        if (widget.isPreview || widget.rePublish) return;
         showModalBottomSheet(
           context: navigatorKey.currentContext!,
           isScrollControlled: true,
