@@ -400,7 +400,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                         ),
                         Text(
                           "(${widget.event.attendees}/${widget.event.capacity})",
-                          style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                          style: AppStyles.h4.copyWith(color: Colors.white),
                         ),
                       ],
                     ),
@@ -448,7 +448,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                         ),
                         Text(
                           "(${widget.event.attendees}/${widget.event.capacity})",
-                          style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                          style: AppStyles.h4.copyWith(color: Colors.white),
                         ),
                       ],
                     ),
