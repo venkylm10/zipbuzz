@@ -766,6 +766,14 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
+    ref.read(editEventControllerProvider.notifier).updateOldInvites(widget.event.eventMembers
+        .map(
+          (e) => e.phone
+              .replaceAll(RegExp(r'[\s()-]+'), "")
+              .replaceAll(" ", "")
+              .substring(e.phone.length - 10),
+        )
+        .toList());
     await fixInviteMoreContacts();
     await showPreview();
     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);

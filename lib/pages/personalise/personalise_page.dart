@@ -304,7 +304,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: allInterests.sublist(0, 10).map(
+      children: unsortedInterests.sublist(0, 10).map(
         (e) {
           final name = e.activity;
           return InkWell(

@@ -394,17 +394,20 @@ class EditEventController extends StateNotifier<EventModel> {
       // sending invites
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
-      final phoneNumbers = eventInvites
-          .map((e) {
-            final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
-            return number;
-          })
-          .where((e) => oldInviteNumbers.any((f) => e != f))
+      final newInvitees = eventInvites.where((e) {
+        var number = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        number = number.substring(number.length - 10);
+        final contains = oldInviteNumbers.contains(number);
+        return !contains;
+      });
+      final phoneNumbers = newInvitees
+          .map(
+              (e) => e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", ""))
           .toList();
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,
-        images: inviteePicUrls,
-        names: eventInvites.map((e) {
+        images: newInvitees.map((e) => Defaults().contactAvatarUrl).toList(),
+        names: newInvitees.map((e) {
           return e.displayName ?? "";
         }).toList(),
         senderName: ref.read(userProvider).name,

@@ -44,7 +44,7 @@ class EventInvitePostModel {
       'event_start': eventStart,
       'event_end': eventEnd,
       'event_id': eventId,
-      'banner': banner,
+      'banner_url': banner,
       'host_id': hostId,
       'notification_data': notificationData.toMap(),
     };

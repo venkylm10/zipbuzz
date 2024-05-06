@@ -113,6 +113,8 @@ class Images {
 
 var allInterests = <InterestModel>[];
 
+var unsortedInterests = <InterestModel>[];
+
 var interestIcons = <String, String>{};
 
 var interestBanners = <String, String>{};
