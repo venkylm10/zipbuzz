@@ -332,7 +332,9 @@ class _EventCardState extends ConsumerState<EventCard> {
           bannerPath: widget.event.bannerPath,
           iconPath: widget.event.iconPath,
           attendees: widget.event.eventMembers.length,
-          eventMembers: widget.event.eventMembers,
+          eventMembers: widget.event.eventMembers.where((element) {
+            return element.phone != ref.read(userProvider).mobileNumber;
+          }).toList(),
           imageUrls: widget.event.imageUrls,
         );
 
@@ -412,15 +414,17 @@ class _EventCardState extends ConsumerState<EventCard> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var data = snapshot.data!;
-          final confirmedMembers = data.where((element) => element.status == "confirm").toList();
-          final respondedMembers = data.where((element) => element.status == "pending").toList();
           var responded = 0;
           var confirmed = 0;
-          for (var e in respondedMembers) {
-            responded = responded + e.attendees;
+          final responedMembers = data;
+          final confirmedMembers = data.where((element) {
+            return element.status == "confirm" || element.status == 'host';
+          }).toList();
+          for (var e in responedMembers) {
+            responded += e.attendees;
           }
           for (var e in confirmedMembers) {
-            confirmed = confirmed + e.attendees;
+            confirmed += e.attendees;
           }
           final attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
           return AttendeeNumbers(

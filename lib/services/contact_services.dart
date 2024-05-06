@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -54,6 +55,7 @@ class Contacts {
   }
 
   List<Contact> getMatchingContacts(List<String> numbers) {
+    Set<String> numbers = {};
     final flattedNumbers = numbers.map((e) {
       var phone = e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
       if (phone.length > 10) {
@@ -70,9 +72,18 @@ class Contacts {
         }
         return phone;
       }).toList();
-      return contactNumbers.any((element) {
+      final contains = contactNumbers.any((element) {
         return flattedNumbers.contains(element);
       });
+      if (contains) {
+        numbers.add(contactNumbers.first);
+        if (ref.read(userProvider).mobileNumber == contactNumbers.first) {
+          return false;
+        }
+        print(contactNumbers.first);
+        return true;
+      }
+      return false;
     }).toList();
     return matchingContacts;
   }

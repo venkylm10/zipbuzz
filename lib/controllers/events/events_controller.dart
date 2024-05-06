@@ -97,9 +97,11 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   }
 
   Future<void> fetchUserEvents() async {
+    state = state.copyWith(loading: true);
     final list = await ref.read(dbServicesProvider).getUserEvents();
     state = state.copyWith(userEvents: list);
     adjustUserEvents();
+    state = state.copyWith(loading: false);
   }
 
   void updateUserEventsMap() {

@@ -399,7 +399,7 @@ class EditEventController extends StateNotifier<EventModel> {
             final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
             return number;
           })
-          .where((element) => !oldInviteNumbers.contains(element))
+          .where((e) => oldInviteNumbers.any((f) => e != f))
           .toList();
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/utils.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -12,6 +13,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
@@ -110,9 +112,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.ratio16x9,
             lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Cropper',
-        ),
+        IOSUiSettings(title: 'Cropper'),
         WebUiSettings(
           context: navigatorKey.currentContext!,
         ),
@@ -156,7 +156,13 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         .read(dioServicesProvider)
         .getEventMembers(EventMembersRequestModel(eventId: widget.event.id));
     widget.event.eventMembers = members;
-
+    final joined = ref
+        .read(eventRequestMembersProvider)
+        .firstWhereOrNull((element) => element.id == ref.read(userProvider).id);
+    if (joined != null) {
+      widget.event.status = "confirmed";
+      setState(() {});
+    }
     // for (var e in ref.read(eventRequestMembersProvider)) {
     //   if (widget.event.eventMembers.firstWhereOrNull((element) => element.phone == e.phone) ==
     //       null) {
@@ -489,8 +495,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       },
       child: Consumer(builder: (context, ref, child) {
         var data = ref.watch(eventRequestMembersProvider);
-        final confirmedMembers = data.where((element) => element.status == "confirm").toList();
-        final respondedMembers = data.where((element) => element.status == "pending").toList();
+        final confirmedMembers = data
+            .where((element) => element.status == "confirm" || element.status == 'host')
+            .toList();
+        final respondedMembers = data;
         String attendees = "";
         if (widget.isPreview) {
           attendees = "${ref.watch(newEventProvider).attendees},0,0";
