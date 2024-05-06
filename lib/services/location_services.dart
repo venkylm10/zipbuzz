@@ -38,11 +38,11 @@ class LocationServices extends StateNotifier<LocationModel> {
               .dio
               .get(DioConstants.getLocation, data: {"zipcode": newZipcode});
       final loc = res.data['location_name'].split(",");
-      final city = loc[0].toString().trim();
       var country = "";
-      if (loc.length > 1) {
-        country = loc[1].toString().trim();
-      }
+      var neightborhood = "";
+      neightborhood = loc[0].toString().trim();
+      country = loc[1].toString().trim();
+      final city = loc[2].toString().trim();
       ref.read(userProvider.notifier).update((state) {
         return state.copyWith(
           zipcode: newZipcode,
@@ -53,6 +53,7 @@ class LocationServices extends StateNotifier<LocationModel> {
       state = state.copyWith(
         city: city,
         country: country,
+        neighborhood: neightborhood,
       );
       box.write(BoxConstants.location, newZipcode);
     } on DioException catch (e) {

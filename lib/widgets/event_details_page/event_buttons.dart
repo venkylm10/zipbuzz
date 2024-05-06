@@ -384,7 +384,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               child: Consumer(builder: (context, ref, child) {
                 return Container(
                   decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
+                    color: AppColors.greyColor,
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Center(
@@ -432,7 +432,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               child: Consumer(builder: (context, ref, child) {
                 return Container(
                   decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
+                    color: AppColors.greyColor,
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Center(

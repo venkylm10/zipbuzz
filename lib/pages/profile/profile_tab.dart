@@ -91,10 +91,10 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                           user.name,
                           style: AppStyles.h1.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          user.handle,
-                          style: AppStyles.h4.copyWith(color: AppColors.greyColor),
-                        ),
+                        // Text(
+                        //   user.handle,
+                        //   style: AppStyles.h4.copyWith(color: AppColors.greyColor),
+                        // ),
                         // const SizedBox(height: 8),
                         // if (user.isAmbassador) buildAmbassadorTag(),
                       ],
@@ -178,7 +178,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Version: 0.1.41",
+                      "Version: 0.1.45",
                       style: AppStyles.h5.copyWith(
                         fontStyle: FontStyle.italic,
                       ),

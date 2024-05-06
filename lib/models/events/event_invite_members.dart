@@ -12,7 +12,6 @@ class EventInviteMember {
   });
 
   factory EventInviteMember.fromMap(Map<String, dynamic> map) {
-    print("status in EventInviteMember: ${map['status']}");
     return EventInviteMember(
       image: map['image'] as String,
       phone: map['phone'] as String,

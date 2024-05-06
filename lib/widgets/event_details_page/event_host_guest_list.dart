@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
@@ -130,31 +132,24 @@ class EventHostGuestList extends StatelessWidget {
                     width: 32),
               ),
               const SizedBox(width: 8),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.5,
-                    ),
-                    child: Text(
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                       member.name,
                       style: AppStyles.h5,
                     ),
-                  ),
-                  Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.5,
-                    ),
-                    child: Text(
-                      member.phone,
-                      style: AppStyles.h6
-                          .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
-                    ),
-                  ),
-                ],
+                    if (member.phone != 'zipbuzz-null')
+                      Text(
+                        member.phone,
+                        style: AppStyles.h6
+                            .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
+                      ),
+                  ],
+                ),
               ),
               if (member.attendees > 1)
                 Container(
@@ -171,7 +166,6 @@ class EventHostGuestList extends StatelessWidget {
                     ),
                   ),
                 ),
-              const Expanded(child: SizedBox()),
               if (interative || member.status == "confirm")
                 Consumer(
                   builder: (context, ref, child) {
@@ -183,16 +177,16 @@ class EventHostGuestList extends StatelessWidget {
                         var newMember = member;
                         newMember.status = "confirm";
                         var updateMembers = ref.read(eventRequestMembersProvider);
-                        updateMembers.removeAt(index);
+                        updateMembers.removeWhere((element) => element.userId == newMember.userId);
                         updateMembers.add(newMember);
                         ref
                             .read(eventRequestMembersProvider.notifier)
                             .update((state) => updateMembers);
+                        showSnackBar(message: "${member.name} was confirmed for the event.");
+                        ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                         await ref
                             .read(dioServicesProvider)
                             .editUserStatus(eventId, member.userId, "confirm");
-                        showSnackBar(message: "${member.name} was confirmed for the event.");
-                        ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                       },
                       child: buildGuestTag(member.status),
                     );
@@ -228,29 +222,25 @@ class EventHostGuestList extends StatelessWidget {
                     width: 32),
               ),
               const SizedBox(width: 8),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: Text(
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                       member.name,
                       style: AppStyles.h5,
                     ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: Text(
-                      member.phone,
-                      style: AppStyles.h6
-                          .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
-                    ),
-                  ),
-                ],
+                    if (member.phone != 'zipbuzz-null')
+                      Text(
+                        member.phone,
+                        style: AppStyles.h6
+                            .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
+                      ),
+                  ],
+                ),
               ),
-              const Expanded(child: SizedBox()),
               buildGuestTag(member.status)
             ],
           ),
@@ -324,17 +314,16 @@ class EventHostGuestList extends StatelessWidget {
             final allLength = guests.length;
             var respondedLength = 0;
             var confirmedLength = 0;
-            for (var e in ref.watch(eventRequestMembersProvider)) {
-              if (e.status == "pending") {
-                respondedLength += e.attendees;
-              } else if (e.status == "declined") {
-                respondedLength += e.attendees;
-              } else if (e.status == "confirm") {
-                confirmedLength += e.attendees;
-              } else if (e.status == 'host') {
-                confirmedLength += e.attendees;
-                respondedLength += e.attendees;
-              }
+            final data = ref.watch(eventRequestMembersProvider);
+            final responedMembers = data;
+            final confirmedMembers = data.where((element) {
+              return element.status == "confirm" || element.status == 'host';
+            }).toList();
+            for (var e in responedMembers) {
+              respondedLength += e.attendees;
+            }
+            for (var e in confirmedMembers) {
+              confirmedLength += e.attendees;
             }
             return InkWell(
               onTap: () {
