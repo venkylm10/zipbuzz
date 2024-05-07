@@ -393,7 +393,6 @@ class EditEventController extends StateNotifier<EventModel> {
       }
       // sending invites
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
-      final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
       final newInvitees = eventInvites.where((e) {
         var number = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
         number = number.substring(number.length - 10);
