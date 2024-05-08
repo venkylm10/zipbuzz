@@ -25,6 +25,7 @@ import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
@@ -265,6 +266,7 @@ class DioServices {
       for (var item in (response.data['category_data'] as List)) {
         list.add(InterestModel.fromMap(item as Map<String, dynamic>));
       }
+      unsortedInterests = list;
       list.sort((a, b) => a.activity.compareTo(b.activity));
       return list;
     } catch (error) {

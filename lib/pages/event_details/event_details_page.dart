@@ -84,18 +84,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       return;
     }
     if (!(widget.isPreview || widget.rePublish)) return;
-    if (widget.isPreview) {
-      final contacts = ref.read(newEventProvider.notifier).eventInvites;
-      for (var contact in contacts) {
-        final member = EventInviteMember(
-          image: "null",
-          phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
-          name: contact.displayName ?? "",
-          status: 'status',
-        );
-        ref.read(newEventProvider.notifier).addEventMember(member, increase: false);
-      }
-    }
     setState(() {});
   }
 
@@ -463,6 +451,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   Widget buildAttendeeNumber() {
     return InkWell(
       onTap: () {
+        if (widget.isPreview || widget.rePublish) return;
         showModalBottomSheet(
           context: navigatorKey.currentContext!,
           isScrollControlled: true,

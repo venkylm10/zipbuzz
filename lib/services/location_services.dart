@@ -41,8 +41,8 @@ class LocationServices extends StateNotifier<LocationModel> {
       var country = "";
       var neightborhood = "";
       neightborhood = loc[0].toString().trim();
-      country = loc[1].toString().trim();
-      final city = loc[2].toString().trim();
+      final city = loc[1].toString().trim();
+      country = loc[2].toString().trim();
       ref.read(userProvider.notifier).update((state) {
         return state.copyWith(
           zipcode: newZipcode,

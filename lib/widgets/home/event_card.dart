@@ -348,6 +348,8 @@ class _EventCardState extends ConsumerState<EventCard> {
     showSnackBar(message: "Cloning event", duration: 1);
     final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
     final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
+    print("matched contacts: ${matchingContacts.length}");
+    print("guests length: ${widget.event.eventMembers.length}");
     await Future.delayed(const Duration(milliseconds: 500));
     ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
     await Future.delayed(const Duration(milliseconds: 500));
