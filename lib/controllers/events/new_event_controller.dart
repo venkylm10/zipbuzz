@@ -222,6 +222,16 @@ class NewEvent extends StateNotifier<EventModel> {
       eventMembers: members,
       attendees: state.attendees - 1,
     );
+    eventInvites.removeWhere(
+      (element) {
+        var number =
+            element.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        number = number.substring(number.length - 10);
+        phone = phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        phone = phone.substring(phone.length - 10);
+        return phone == number;
+      },
+    );
   }
 
   void updateSelectedContact(Contact contact, {bool fix = false}) {
@@ -232,7 +242,7 @@ class NewEvent extends StateNotifier<EventModel> {
       if (!fix) eventInvites.add(contact);
       final member = EventInviteMember(
         image: "null",
-        phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
+        phone: contact.phones!.first.value!.replaceAll("-", "").replaceAll(" ", ""),
         name: contact.displayName ?? "",
         status: 'invited',
       );
@@ -241,7 +251,14 @@ class NewEvent extends StateNotifier<EventModel> {
     }
     if (!fix) eventInvites.remove(contact);
     final member = state.eventMembers.firstWhere(
-      (element) => element.phone == contact.phones!.first.value,
+      (element) {
+        var number =
+            contact.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        number = number.substring(number.length - 10);
+        var phone = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        phone = phone.substring(phone.length - 10);
+        return phone == number;
+      },
     );
     state = state.copyWith(
       attendees: state.attendees - 1,
@@ -272,8 +289,9 @@ class NewEvent extends StateNotifier<EventModel> {
         var name = (element.displayName ?? "").toLowerCase().contains(query);
         var number = false;
         if (element.phones!.isNotEmpty) {
-          final phoneNumber =
-              (element.phones!.first.value ?? "").replaceAll("-", "").replaceAll(" ", "");
+          final phoneNumber = (element.phones!.first.value ?? "")
+              .replaceAll(RegExp(r'[\s()-]+'), "")
+              .replaceAll(" ", "");
           number = phoneNumber.contains(query);
         }
         return name || number;
