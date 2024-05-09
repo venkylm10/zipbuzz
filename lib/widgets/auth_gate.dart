@@ -107,12 +107,14 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     //   await setUpGuestData();
     //   return;
     // } else
-    if (login != null) {
+    if (login != null && login) {
       await getLoggedInUserData();
       return;
     }
+    print("User not logged In");
     await ref.read(dioServicesProvider).updateOnboardingDetails();
     if (kIsWeb) {
+      print("web");
       navigatorKey.currentState!.pushNamedAndRemoveUntil(WebSignInPage.id, (route) => false);
     } else {
       navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);

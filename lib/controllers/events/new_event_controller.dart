@@ -15,7 +15,6 @@ import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';

@@ -3,15 +3,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
+import 'package:zipbuzz/services/chat_services.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+
+import '../../models/events/join_request_model.dart';
 
 class AttendeeNumberResponse extends ConsumerStatefulWidget {
-  const AttendeeNumberResponse({super.key, required this.notification});
+  const AttendeeNumberResponse(
+      {super.key, required this.notification, this.inviteReply = true, this.onSubmit});
   final NotificationData notification;
+  final bool inviteReply;
+  final VoidCallback? onSubmit;
 
   @override
   ConsumerState<AttendeeNumberResponse> createState() => _AttendeeNumberResponseState();
@@ -19,6 +27,7 @@ class AttendeeNumberResponse extends ConsumerStatefulWidget {
 
 class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse> {
   int attendees = 1;
+  final commentController = TextEditingController();
 
   void increment() {
     setState(() {
@@ -42,6 +51,12 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (widget.inviteReply)
+              CustomTextField(
+                controller: commentController,
+                hintText: "Comment (optional)",
+              ),
+            if (widget.inviteReply) const SizedBox(height: 16),
             Row(
               children: [
                 Text(
@@ -86,29 +101,49 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
             const SizedBox(height: 24),
             InkWell(
               onTap: () async {
-                await ref
-                    .read(dioServicesProvider)
-                    .updateNotification(widget.notification.id, "yes");
                 final user = ref.read(userProvider);
-                var model = MakeRequestModel(
-                  userId: user.id,
-                  eventId: widget.notification.eventId,
-                  name: user.name,
-                  phoneNumber: user.mobileNumber,
-                  members: attendees,
-                  userDecision: true,
-                );
-                await ref.read(dioServicesProvider).makeRequest(model);
-                await ref
-                    .read(dioServicesProvider)
-                    .increaseDecision(widget.notification.eventId, "yes");
-                NotificationServices.sendMessageNotification(
-                  widget.notification.eventName,
-                  "${user.name} RSVP'd Yes to the event",
-                  widget.notification.deviceToken,
-                  widget.notification.eventId,
-                );
+                if (widget.inviteReply) {
+                  await ref
+                      .read(dioServicesProvider)
+                      .updateNotification(widget.notification.id, "yes");
+                  var model = MakeRequestModel(
+                    userId: user.id,
+                    eventId: widget.notification.eventId,
+                    name: user.name,
+                    phoneNumber: user.mobileNumber,
+                    members: attendees,
+                    userDecision: true,
+                  );
+                  await ref.read(dioServicesProvider).makeRequest(model);
+                  await ref
+                      .read(dioServicesProvider)
+                      .increaseDecision(widget.notification.eventId, "yes");
+                  NotificationServices.sendMessageNotification(
+                    widget.notification.eventName,
+                    "${user.name} RSVP'd Yes to the event",
+                    widget.notification.deviceToken,
+                    widget.notification.eventId,
+                  );
+                } else {
+                  // TODO: Attendee Number
+                  var model = JoinEventRequestModel(
+                      eventId: widget.notification.id,
+                      name: user.name,
+                      phoneNumber: user.mobileNumber,
+                      image: user.imageUrl,
+                      userId: user.id);
+                  await ref.read(dioServicesProvider).requestToJoinEvent(model);
+                }
                 navigatorKey.currentState!.pop();
+                if (widget.onSubmit != null) widget.onSubmit!();
+                if (commentController.text.trim().isNotEmpty) {
+                  final event = await ref
+                      .read(dbServicesProvider)
+                      .getEventDetails(widget.notification.eventId);
+                  await ref
+                      .read(chatServicesProvider)
+                      .sendMessage(event: event, message: commentController.text);
+                }
               },
               child: Container(
                 width: double.infinity,

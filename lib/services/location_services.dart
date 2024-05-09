@@ -38,6 +38,7 @@ class LocationServices extends StateNotifier<LocationModel> {
               .dio
               .get(DioConstants.getLocation, data: {"zipcode": newZipcode});
       final loc = res.data['location_name'].split(",");
+      print(loc);
       var country = "";
       var neightborhood = "";
       neightborhood = loc[0].toString().trim();

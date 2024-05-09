@@ -10,11 +10,10 @@ import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/models/events/join_request_model.dart';
+import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/services/contact_services.dart';
-import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_invite.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -25,6 +24,8 @@ import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/invite_guest_alert.dart';
+
+import '../notification_page/attendee_sheet.dart';
 
 class EventButtons extends ConsumerStatefulWidget {
   const EventButtons({
@@ -317,19 +318,38 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               child: Consumer(builder: (context, ref, child) {
                 return InkWell(
                   onTap: () async {
-                    widget.event.status = "requested";
-                    setState(() {});
                     final user = ref.read(userProvider);
-                    var model = JoinEventRequestModel(
-                        eventId: widget.event.id,
-                        name: user.name,
-                        phoneNumber: user.mobileNumber,
-                        image: user.imageUrl,
-                        userId: user.id);
-                    final res = await ref.read(dioServicesProvider).requestToJoinEvent(model);
-                    if (res) {
-                      showSnackBar(message: "Request sent successfully");
-                    }
+                    final event = widget.event;
+                    final data = NotificationData(
+                      id: event.id,
+                      senderName: user.name,
+                      senderProfilePicture: user.imageUrl,
+                      notificationType: "request",
+                      notificationTime: DateTime.now().toUtc().toString(),
+                      eventId: event.id,
+                      eventName: event.title,
+                      deviceToken: event.userDeviceToken,
+                      eventCategory: event.category,
+                    );
+                    await showModalBottomSheet(
+                      context: navigatorKey.currentContext!,
+                      isScrollControlled: true,
+                      enableDrag: true,
+                      builder: (context) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: AttendeeNumberResponse(
+                            notification: data,
+                            inviteReply: false,
+                            onSubmit: () {
+                              widget.event.status = "requested";
+                              setState(() {});
+                              showSnackBar(message: "Request sent successfully");
+                            },
+                          ),
+                        );
+                      },
+                    );
                   },
                   child: Container(
                     decoration: BoxDecoration(

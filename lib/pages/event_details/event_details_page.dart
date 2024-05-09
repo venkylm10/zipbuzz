@@ -14,7 +14,6 @@ import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';

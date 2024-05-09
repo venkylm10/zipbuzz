@@ -29,13 +29,14 @@ class ChatServices {
     final senderId = currentUser.id;
     final messageId = DateTime.now().microsecondsSinceEpoch.toString();
     final newMessage = Message(
-        id: messageId,
-        senderId: senderId,
-        senderName: currentUser.name,
-        senderPic: currentUser.imageUrl,
-        eventId: event.id,
-        message: message,
-        timeStamp: DateTime.now().toUtc().toString());
+      id: messageId,
+      senderId: senderId,
+      senderName: currentUser.name,
+      senderPic: currentUser.imageUrl,
+      eventId: event.id,
+      message: message,
+      timeStamp: DateTime.now().toUtc().toString(),
+    );
     await _dbServices.sendMessage(
         eventId: event.id, messageId: messageId, message: newMessage.toMap());
     debugPrint("MESSAGE SENT");

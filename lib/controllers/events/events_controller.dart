@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
