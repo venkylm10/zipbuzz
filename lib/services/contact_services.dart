@@ -71,7 +71,7 @@ class Contacts {
         }
         return phone;
       }).toList();
-      final contains = flattedNumbers.contains(contactNumbers.first);
+      final contains = contactNumbers.any((element) => flattedNumbers.contains(element));
       if (contains) {
         if (foundNumbers.contains(contactNumbers.first)) {
           return false;
