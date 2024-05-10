@@ -175,6 +175,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         },
         child: Scaffold(
             backgroundColor: widget.dominantColor,
+            resizeToAvoidBottomInset: false,
             appBar: buildAppBar(),
             extendBodyBehindAppBar: true,
             body: Stack(

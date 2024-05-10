@@ -54,6 +54,7 @@ class Contacts {
   }
 
   List<Contact> getMatchingContacts(List<String> numbers) {
+    final foundNumbers = <String>[];
     final flattedNumbers = numbers.map((e) {
       var phone = e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
       if (phone.length > 10) {
@@ -70,9 +71,16 @@ class Contacts {
         }
         return phone;
       }).toList();
-      return contactNumbers.any((element) {
-        return flattedNumbers.contains(element);
-      });
+      final contains = flattedNumbers.contains(contactNumbers.first);
+      if (contains) {
+        if (foundNumbers.contains(contactNumbers.first)) {
+          return false;
+        } else {
+          foundNumbers.add(contactNumbers.first);
+          return true;
+        }
+      }
+      return false;
     }).toList();
     return matchingContacts;
   }

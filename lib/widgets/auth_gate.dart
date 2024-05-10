@@ -10,9 +10,9 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
-import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -77,7 +77,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     ref.read(loadingTextProvider.notifier).reset();
     final mobileNumber = ref.read(userProvider).mobileNumber;
     if (mobileNumber == "+11234567890" || mobileNumber == "zipbuzz-null") {
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
+      await ref.read(authServicesProvider).signOut();
       return;
     }
     ref.read(contactsServicesProvider).updateAllContacts();
@@ -103,18 +103,12 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     // bool? guest = box.read(BoxConstants.guestUser) as bool?;
     await Future.delayed(const Duration(milliseconds: 500));
     await updateInterestsData();
-    // if (guest != null) {
-    //   await setUpGuestData();
-    //   return;
-    // } else
     if (login != null && login) {
       await getLoggedInUserData();
       return;
     }
-    print("User not logged In");
     await ref.read(dioServicesProvider).updateOnboardingDetails();
     if (kIsWeb) {
-      print("web");
       navigatorKey.currentState!.pushNamedAndRemoveUntil(WebSignInPage.id, (route) => false);
     } else {
       navigatorKey.currentState!.pushNamedAndRemoveUntil(WelcomePage.id, (route) => false);

@@ -324,7 +324,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                       id: event.id,
                       senderName: user.name,
                       senderProfilePicture: user.imageUrl,
-                      notificationType: "request",
+                      notificationType: 'zipbuzz-null',
                       notificationTime: DateTime.now().toUtc().toString(),
                       eventId: event.id,
                       eventName: event.title,

@@ -16,6 +16,7 @@ class CustomTextField extends StatelessWidget {
   final double? borderRadius;
   final CrossAxisAlignment? crossAxisAlignment;
   final TextInputType? keyboardType;
+  final FocusNode? focusNode;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -30,6 +31,7 @@ class CustomTextField extends StatelessWidget {
     this.borderRadius = 12,
     this.crossAxisAlignment,
     this.keyboardType,
+    this.focusNode,
   });
 
   Widget? buildCounter() {
@@ -66,6 +68,7 @@ class CustomTextField extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              focusNode: focusNode,
               cursorColor: AppColors.primaryColor,
               style: AppStyles.h4,
               inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
