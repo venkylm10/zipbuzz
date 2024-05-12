@@ -316,10 +316,10 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     await ref.read(eventsControllerProvider.notifier).fetchEvents();
   }
 
-  Widget eventJoinButton(bool requested) {
+  Widget eventJoinButton(bool invited) {
     return Container(
       width: double.infinity,
-      height: requested ? 100 : 48,
+      height: invited ? 100 : 48,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Center(
         child: Column(
@@ -328,7 +328,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               height: 48,
               child: Row(
                 children: [
-                  requested ? buildRejectButton() : buildJoinButton(),
+                  invited ? buildRejectButton() : buildJoinButton(invited: invited),
                   const SizedBox(width: 8),
                   buildShareButton(),
                   const SizedBox(width: 8),
@@ -338,15 +338,15 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                 ],
               ),
             ),
-            SizedBox(height: requested ? 4 : 0),
-            requested ? buildJoinButton() : const SizedBox(),
+            SizedBox(height: invited ? 4 : 0),
+            invited ? buildJoinButton(invited: invited) : const SizedBox(),
           ],
         ),
       ),
     );
   }
 
-  Expanded buildJoinButton({bool requested = false}) {
+  Expanded buildJoinButton({bool invited = false}) {
     return Expanded(
       child: Consumer(builder: (context, ref, child) {
         return InkWell(
@@ -387,6 +387,14 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                       await ref
                           .read(dioServicesProvider)
                           .increaseDecision(notification.eventId, "yes");
+                      if (invited) {
+                        NotificationServices.sendMessageNotification(
+                          notification.eventName,
+                          "${user.name} RSVP'd Yes to the event",
+                          notification.deviceToken,
+                          notification.eventId,
+                        );
+                      }
                       if (commentController.text.trim().isNotEmpty) {
                         final event = widget.event;
                         await ref
@@ -488,6 +496,13 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                       await ref
                           .read(dioServicesProvider)
                           .increaseDecision(notification.eventId, "no");
+                      final user = ref.read(userProvider);
+                      NotificationServices.sendMessageNotification(
+                        notification.eventName,
+                        "${user.name} RSVP'd No to the event",
+                        notification.deviceToken,
+                        notification.eventId,
+                      );
                       Navigator.of(context).pop();
                     },
                   ),
