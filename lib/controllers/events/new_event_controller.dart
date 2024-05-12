@@ -372,6 +372,9 @@ class NewEvent extends StateNotifier<EventModel> {
       state = state.copyWith(bannerPath: bannerUrl);
       debugPrint("New Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
+      state = state.copyWith(
+        privateGuestList: state.isPrivate ? state.privateGuestList : false,
+      );
       final eventPostModel = EventPostModel(
         banner: bannerUrl,
         category: state.category,

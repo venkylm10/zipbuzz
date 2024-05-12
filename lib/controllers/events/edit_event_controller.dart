@@ -362,6 +362,9 @@ class EditEventController extends StateNotifier<EventModel> {
       state = state.copyWith(bannerPath: bannerUrl);
       debugPrint("Updated Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
+      state = state.copyWith(
+        privateGuestList: state.isPrivate ? state.privateGuestList : false,
+      );
       final eventPostModel = EditEventRequestModel(
         eventId: eventId,
         banner: bannerUrl,
@@ -378,6 +381,8 @@ class EditEventController extends StateNotifier<EventModel> {
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: state.attendees,
+        isPrivate: state.isPrivate,
+        guestList: !state.privateGuestList,
       );
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Editing Event...");

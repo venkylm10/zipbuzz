@@ -10,7 +10,7 @@ import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 
 class EventTypeAndCapacity extends ConsumerStatefulWidget {
   const EventTypeAndCapacity({super.key, this.rePublish = false});
-  final bool? rePublish;
+  final bool rePublish;
 
   @override
   ConsumerState<EventTypeAndCapacity> createState() => _EventTypeAndCapacityState();
@@ -24,7 +24,7 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
   late EditEventController editEventController;
 
   void updateEventType(bool value) {
-    if (widget.rePublish!) {
+    if (widget.rePublish) {
       editEventController.updateEventType(value);
       return;
     }
@@ -32,14 +32,14 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
   }
 
   void increaseCapacity() {
-    if (widget.rePublish!) {
+    if (widget.rePublish) {
       editEventController.increaseCapacity();
     }
     newEvent.increaseCapacity();
   }
 
   void decreaseCapacity() {
-    if (widget.rePublish!) {
+    if (widget.rePublish) {
       editEventController.decreaseCapacity();
     }
     newEvent.decreaseCapacity();
@@ -51,7 +51,7 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
     } else {
       capacityController.text = newCapacity.toString();
     }
-    if (widget.rePublish!) {
+    if (widget.rePublish) {
       editEventController.onChangeCapacity(value);
     }
     newEvent.onChangeCapacity(value);
@@ -67,10 +67,10 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
 
   @override
   Widget build(BuildContext context) {
-    newCapacity = widget.rePublish!
+    newCapacity = widget.rePublish
         ? ref.watch(editEventControllerProvider).capacity
         : ref.watch(newEventProvider).capacity;
-    newIsPrivate = widget.rePublish!
+    newIsPrivate = widget.rePublish
         ? ref.watch(editEventControllerProvider).isPrivate
         : ref.watch(newEventProvider).isPrivate;
     capacityController.text = newCapacity.toString();
@@ -163,7 +163,10 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
           ],
         ),
         const SizedBox(height: 16),
-        if (newIsPrivate) const CreateEventGuestListType(),
+        if (newIsPrivate)
+          CreateEventGuestListType(
+            rePublish: widget.rePublish,
+          ),
         if (newIsPrivate) const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
