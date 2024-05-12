@@ -58,7 +58,6 @@ class EventCalendar extends ConsumerWidget {
   void updateCurrentDay(WidgetRef ref, DateTime day) async {
     await Future.delayed(const Duration(milliseconds: 500));
     if (ref.read(eventsControllerProvider.notifier).currentDay != day) {
-      print(day.toString());
       print("current month: ${DateFormat.yMMMM().format(day)}");
       ref.read(eventsControllerProvider.notifier).updateCurrentDay(day);
       onDaySelected(day, day, ref);

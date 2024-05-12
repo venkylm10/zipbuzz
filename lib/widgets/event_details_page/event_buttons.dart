@@ -26,8 +26,11 @@ import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/invite_guest_alert.dart';
 
+import '../../models/events/posts/make_request_model.dart';
 import '../../models/interests/requests/user_interests_update_model.dart';
 import '../../models/interests/responses/interest_model.dart';
+import '../../services/chat_services.dart';
+import '../../services/db_services.dart';
 import '../../services/dio_services.dart';
 import '../../services/notification_services.dart';
 import '../notification_page/attendee_sheet.dart';
@@ -202,6 +205,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       return eventRequestedButton();
     } else if (widget.event.status == "confirmed") {
       return eventJoinedButton();
+    } else if (widget.event.status == "rejected") {
+      return eventRejectedButton();
     }
     return eventJoinButton(widget.event.status == "invited");
   }
@@ -323,7 +328,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               height: 48,
               child: Row(
                 children: [
-                  requested ? buildDeclineButton() : buildJoinButton(),
+                  requested ? buildRejectButton() : buildJoinButton(),
                   const SizedBox(width: 8),
                   buildShareButton(),
                   const SizedBox(width: 8),
@@ -348,7 +353,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
           onTap: () async {
             final user = ref.read(userProvider);
             final event = widget.event;
-            final data = NotificationData(
+            final notification = NotificationData(
               id: event.id,
               senderName: user.name,
               senderProfilePicture: user.imageUrl,
@@ -367,12 +372,31 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: AttendeeNumberResponse(
-                    notification: data,
-                    inviteReply: requested,
-                    onSubmit: () {
+                    notification: notification,
+                    onSubmit: (attendees, commentController) async {
+                      final user = ref.read(userProvider);
+                      var model = MakeRequestModel(
+                        userId: user.id,
+                        eventId: notification.eventId,
+                        name: user.name,
+                        phoneNumber: user.mobileNumber,
+                        members: attendees,
+                        userDecision: true,
+                      );
+                      await ref.read(dioServicesProvider).makeRequest(model);
+                      await ref
+                          .read(dioServicesProvider)
+                          .increaseDecision(notification.eventId, "yes");
+                      if (commentController.text.trim().isNotEmpty) {
+                        final event = widget.event;
+                        await ref
+                            .read(chatServicesProvider)
+                            .sendMessage(event: event, message: commentController.text);
+                      }
+                      Navigator.of(context).pop();
                       widget.event.status = "requested";
                       setState(() {});
-                      showSnackBar(message: "Request sent successfully");
+                      showSnackBar(message: "Requested to join event");
                     },
                   ),
                 );
@@ -380,10 +404,10 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             );
             final inInterests = ref
                 .read(homeTabControllerProvider.notifier)
-                .containsInterest(widget.event.category);
+                .containsInterest(notification.eventCategory);
             if (!inInterests) {
-              final interest =
-                  allInterests.firstWhere((element) => element.activity == widget.event.category);
+              final interest = allInterests
+                  .firstWhere((element) => element.activity == notification.eventCategory);
               updateInterests(interest);
             }
           },
@@ -432,14 +456,14 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         );
   }
 
-  Widget buildDeclineButton() {
+  Widget buildRejectButton() {
     return Expanded(
       child: Consumer(builder: (context, ref, child) {
         return InkWell(
           onTap: () async {
             final user = ref.read(userProvider);
             final event = widget.event;
-            final data = NotificationData(
+            final notification = NotificationData(
               id: event.id,
               senderName: user.name,
               senderProfilePicture: user.imageUrl,
@@ -450,12 +474,25 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               deviceToken: event.userDeviceToken,
               eventCategory: event.category,
             );
-            await ref.read(dioServicesProvider).increaseDecision(data.eventId, "no");
-            NotificationServices.sendMessageNotification(
-              data.eventName,
-              "${user.name} RSVP'd No to the event",
-              data.deviceToken,
-              data.eventId,
+            showModalBottomSheet(
+              context: navigatorKey.currentContext!,
+              isScrollControlled: true,
+              enableDrag: true,
+              builder: (context) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: AttendeeNumberResponse(
+                    notification: notification,
+                    addComment: false,
+                    onSubmit: (attendees, commentController) async {
+                      await ref
+                          .read(dioServicesProvider)
+                          .increaseDecision(notification.eventId, "no");
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                );
+              },
             );
             widget.event.status = "rejected";
             setState(() {});
@@ -512,6 +549,45 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                           style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
                         ),
                       ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(width: 8),
+            buildShareButton(),
+            const SizedBox(width: 8),
+            buildCopyButton(),
+            const SizedBox(width: 8),
+            buildAddToFavoriteButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget eventRejectedButton() {
+    return Container(
+      width: double.infinity,
+      height: 48,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Center(
+        child: Row(
+          children: [
+            Expanded(
+              child: Consumer(builder: (context, ref, child) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.greyColor,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Rejected",
+                      style: AppStyles.h3.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 );

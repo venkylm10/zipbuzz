@@ -17,6 +17,10 @@ import 'package:zipbuzz/widgets/home/invite_noti_card.dart';
 import 'package:zipbuzz/widgets/home/response_noti_card.dart';
 import 'package:zipbuzz/widgets/notification_page/attendee_sheet.dart';
 
+import '../../models/events/posts/make_request_model.dart';
+import '../../services/chat_services.dart';
+import '../../services/db_services.dart';
+
 class NotificationPage extends ConsumerStatefulWidget {
   static const id = "/notification_page";
   const NotificationPage({super.key});
@@ -108,7 +112,40 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             builder: (context) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: AttendeeNumberResponse(notification: notification),
+                child: AttendeeNumberResponse(
+                  notification: notification,
+                  onSubmit: (attendees, commentController) async {
+                    final user = ref.read(userProvider);
+                    var model = MakeRequestModel(
+                      userId: user.id,
+                      eventId: notification.eventId,
+                      name: user.name,
+                      phoneNumber: user.mobileNumber,
+                      members: attendees,
+                      userDecision: true,
+                    );
+                    await ref.read(dioServicesProvider).makeRequest(model);
+                    await ref
+                        .read(dioServicesProvider)
+                        .increaseDecision(notification.eventId, "yes");
+
+                    NotificationServices.sendMessageNotification(
+                      notification.eventName,
+                      "${user.name} RSVP'd Yes to the event",
+                      notification.deviceToken,
+                      notification.eventId,
+                    );
+
+                    if (commentController.text.trim().isNotEmpty) {
+                      final event =
+                          await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
+                      await ref
+                          .read(chatServicesProvider)
+                          .sendMessage(event: event, message: commentController.text);
+                    }
+                    Navigator.of(context).pop();
+                  },
+                ),
               );
             },
           );
@@ -123,15 +160,32 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           setState(() {});
         },
         declineInvite: () async {
-          await ref.read(dioServicesProvider).updateNotification(notification.id, "no");
-          setState(() {});
-          await ref.read(dioServicesProvider).increaseDecision(notification.eventId, "no");
-          final user = ref.read(userProvider);
-          NotificationServices.sendMessageNotification(
-            notification.eventName,
-            "${user.name} RSVP'd No to the event",
-            notification.deviceToken,
-            notification.eventId,
+          showModalBottomSheet(
+            context: navigatorKey.currentContext!,
+            isScrollControlled: true,
+            enableDrag: true,
+            builder: (context) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: AttendeeNumberResponse(
+                  notification: notification,
+                  addComment: false,
+                  onSubmit: (attendees, commentController) async {
+                    await ref
+                        .read(dioServicesProvider)
+                        .increaseDecision(notification.eventId, "no");
+                    final user = ref.read(userProvider);
+                    NotificationServices.sendMessageNotification(
+                      notification.eventName,
+                      "${user.name} RSVP'd No to the event",
+                      notification.deviceToken,
+                      notification.eventId,
+                    );
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+            },
           );
         },
       );
