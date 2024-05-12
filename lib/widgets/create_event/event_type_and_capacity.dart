@@ -162,9 +162,9 @@ class _EventTypeAndCapacityState extends ConsumerState<EventTypeAndCapacity> {
             ),
           ],
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         if (newIsPrivate) const CreateEventGuestListType(),
-        if (newIsPrivate) const SizedBox(height: 14),
+        if (newIsPrivate) const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,

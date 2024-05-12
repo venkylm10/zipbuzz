@@ -322,6 +322,18 @@ class _EventCardState extends ConsumerState<EventCard> {
     ref.read(newEventProvider.notifier).cloneEvent = true;
     // ref.read(newEventProvider.notifier).updateDate(DateTime.now());
     ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
+    final eventMembers = widget.event.eventMembers.where((element) {
+      var num = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+      num = num.length > 10 ? num.substring(num.length - 10) : num;
+      var userNumber = ref
+          .read(userProvider)
+          .mobileNumber
+          .replaceAll(RegExp(r'[\s()-]+'), "")
+          .replaceAll(" ", "");
+      userNumber =
+          userNumber.length > 10 ? userNumber.substring(userNumber.length - 10) : userNumber;
+      return num != userNumber;
+    }).toList();
     final clone = ref.read(newEventProvider).copyWith(
           title: widget.event.title,
           about: widget.event.about,
@@ -331,10 +343,8 @@ class _EventCardState extends ConsumerState<EventCard> {
           capacity: widget.event.capacity,
           bannerPath: widget.event.bannerPath,
           iconPath: widget.event.iconPath,
-          attendees: widget.event.eventMembers.length,
-          eventMembers: widget.event.eventMembers.where((element) {
-            return element.phone != ref.read(userProvider).mobileNumber;
-          }).toList(),
+          attendees: eventMembers.length,
+          eventMembers: eventMembers,
           imageUrls: widget.event.imageUrls,
         );
 
@@ -346,10 +356,22 @@ class _EventCardState extends ConsumerState<EventCard> {
 
   Future<void> fixCloneEventContacts() async {
     showSnackBar(message: "Cloning event", duration: 1);
-    final numbers = widget.event.eventMembers.map((e) => e.phone).toList();
+    final numbers = widget.event.eventMembers
+        .where((e) {
+          var num = e.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+          num = num.length > 10 ? num.substring(num.length - 10) : num;
+          var userNumber = ref
+              .read(userProvider)
+              .mobileNumber
+              .replaceAll(RegExp(r'[\s()-]+'), "")
+              .replaceAll(" ", "");
+          userNumber =
+              userNumber.length > 10 ? userNumber.substring(userNumber.length - 10) : userNumber;
+          return num != userNumber;
+        })
+        .map((e) => e.phone)
+        .toList();
     final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
-    print("matched contacts: ${matchingContacts.length}");
-    print("guests length: ${widget.event.eventMembers.length}");
     await Future.delayed(const Duration(milliseconds: 500));
     ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
     await Future.delayed(const Duration(milliseconds: 500));

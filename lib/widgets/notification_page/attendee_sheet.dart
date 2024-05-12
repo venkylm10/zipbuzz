@@ -107,11 +107,6 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
             InkWell(
               onTap: () async {
                 final user = ref.read(userProvider);
-                if (widget.inviteReply) {
-                  await ref
-                      .read(dioServicesProvider)
-                      .updateNotification(widget.notification.id, "yes");
-                }
                 var model = MakeRequestModel(
                   userId: user.id,
                   eventId: widget.notification.eventId,

@@ -411,7 +411,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20).copyWith(top: 10),
       child: GridView.count(
         crossAxisCount: 4,
-        childAspectRatio: 1,
+        childAspectRatio: 0.95,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         shrinkWrap: true,

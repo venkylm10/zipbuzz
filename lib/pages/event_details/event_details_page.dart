@@ -168,6 +168,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final hosted = widget.event.hostId == ref.read(userProvider).id;
     return CustomBezel(
       child: GestureDetector(
         onTap: () {
@@ -264,21 +265,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                           color: AppColors.greyColor.withOpacity(0.2),
                                           thickness: 0,
                                         ),
-                                        Consumer(builder: (context, ref, child) {
-                                          final newEvent = ref.watch(newEventProvider);
-                                          var num = widget.event.eventMembers.length;
-                                          if (widget.isPreview) {
-                                            num = newEvent.eventMembers.length;
-                                          }
-                                          return Text(
-                                            "Guest list ($num)",
-                                            style: AppStyles.h5.copyWith(
-                                              color: AppColors.lightGreyColor,
-                                            ),
-                                          );
-                                        }),
-                                        const SizedBox(height: 16),
-                                        buildGuestList(),
+                                        if (!widget.event.privateGuestList || hosted)
+                                          buildGuestListTitle(),
+                                        if (!widget.event.privateGuestList || hosted)
+                                          const SizedBox(height: 16),
+                                        if (!widget.event.privateGuestList || hosted)
+                                          buildGuestList(),
                                         const SizedBox(height: 16),
                                         Text(
                                           "Photos",
@@ -353,6 +345,22 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
             )),
       ),
     );
+  }
+
+  Consumer buildGuestListTitle() {
+    return Consumer(builder: (context, ref, child) {
+      final newEvent = ref.watch(newEventProvider);
+      var num = widget.event.eventMembers.length;
+      if (widget.isPreview) {
+        num = newEvent.eventMembers.length;
+      }
+      return Text(
+        "Guest list ($num)",
+        style: AppStyles.h5.copyWith(
+          color: AppColors.lightGreyColor,
+        ),
+      );
+    });
   }
 
   Widget buildLoader() {
@@ -449,9 +457,11 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   }
 
   Widget buildAttendeeNumber() {
+    final hosted = widget.event.hostId == ref.read(userProvider).id;
     return InkWell(
       onTap: () {
         if (widget.isPreview || widget.rePublish) return;
+        if (!(!widget.event.privateGuestList || hosted)) return;
         showModalBottomSheet(
           context: navigatorKey.currentContext!,
           isScrollControlled: true,

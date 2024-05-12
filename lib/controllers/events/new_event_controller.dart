@@ -52,8 +52,8 @@ class NewEvent extends StateNotifier<EventModel> {
             coHostIds: [],
             capacity: 10,
             isPrivate: false,
-            imageUrls: [],
             privateGuestList: false,
+            imageUrls: [],
             eventMembers: [],
             status: "nothing",
             userDeviceToken: "",
@@ -387,6 +387,8 @@ class NewEvent extends StateNotifier<EventModel> {
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: eventInvites.length,
+        guestList: !state.privateGuestList,
+        isPrivate: state.isPrivate,
       );
 
       // print(eventPostModel.toMap());
@@ -484,6 +486,7 @@ class NewEvent extends StateNotifier<EventModel> {
         'randInt': 0,
         'showBottomBar': true,
       };
+      await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
       ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
       await navigatorKey.currentState!.pushReplacementNamed(
@@ -492,8 +495,8 @@ class NewEvent extends StateNotifier<EventModel> {
       );
       resetNewEvent();
     } catch (e) {
-      ref.read(loadingTextProvider.notifier).reset();
       debugPrint("Failed to move to created event: $e");
+      ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
     }
   }

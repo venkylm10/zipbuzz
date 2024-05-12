@@ -22,6 +22,9 @@ class EventResponseModel {
   final String status;
   final String userDeviceToken;
   final List<HyperLinks> hyperlinks;
+  final bool isPrivate;
+  final bool guestList;
+
   EventResponseModel({
     required this.id,
     required this.banner,
@@ -44,6 +47,8 @@ class EventResponseModel {
     required this.status,
     required this.userDeviceToken,
     required this.hyperlinks,
+    required this.isPrivate,
+    required this.guestList,
   });
 
   Map<String, dynamic> toMap() {
@@ -68,6 +73,9 @@ class EventResponseModel {
       "invite_url": inviteUrl,
       "status": status,
       "user_device_token": userDeviceToken,
+      "hyperlinks": hyperlinks.map((hyperlink) => hyperlink.toMap()).toList(),
+      'is_private': isPrivate,
+      'guest_list': guestList,
     };
   }
 
@@ -94,6 +102,8 @@ class EventResponseModel {
       status: map['status'],
       userDeviceToken: map['user_device_token'] ?? "",
       hyperlinks: (map['hyperlinks'] as List).map((e) => HyperLinks.fromMap(e)).toList(),
+      isPrivate: map['is_private'] as bool,
+      guestList: map['guest_list'] as bool,
     );
   }
 }

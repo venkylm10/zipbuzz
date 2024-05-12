@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/event_details/event_details_page.dart';
@@ -25,6 +26,10 @@ import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/invite_guest_alert.dart';
 
+import '../../models/interests/requests/user_interests_update_model.dart';
+import '../../models/interests/responses/interest_model.dart';
+import '../../services/dio_services.dart';
+import '../../services/notification_services.dart';
 import '../notification_page/attendee_sheet.dart';
 
 class EventButtons extends ConsumerStatefulWidget {
@@ -198,7 +203,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     } else if (widget.event.status == "confirmed") {
       return eventJoinedButton();
     }
-    return eventJoinButton();
+    return eventJoinButton(widget.event.status == "invited");
   }
 
   Widget eventRePublishButtons() {
@@ -306,89 +311,173 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     await ref.read(eventsControllerProvider.notifier).fetchEvents();
   }
 
-  Widget eventJoinButton() {
+  Widget eventJoinButton(bool requested) {
     return Container(
       width: double.infinity,
-      height: 48,
+      height: requested ? 100 : 48,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Center(
-        child: Row(
+        child: Column(
           children: [
-            Expanded(
-              child: Consumer(builder: (context, ref, child) {
-                return InkWell(
-                  onTap: () async {
-                    final user = ref.read(userProvider);
-                    final event = widget.event;
-                    final data = NotificationData(
-                      id: event.id,
-                      senderName: user.name,
-                      senderProfilePicture: user.imageUrl,
-                      notificationType: 'zipbuzz-null',
-                      notificationTime: DateTime.now().toUtc().toString(),
-                      eventId: event.id,
-                      eventName: event.title,
-                      deviceToken: event.userDeviceToken,
-                      eventCategory: event.category,
-                    );
-                    await showModalBottomSheet(
-                      context: navigatorKey.currentContext!,
-                      isScrollControlled: true,
-                      enableDrag: true,
-                      builder: (context) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: AttendeeNumberResponse(
-                            notification: data,
-                            inviteReply: false,
-                            onSubmit: () {
-                              widget.event.status = "requested";
-                              setState(() {});
-                              showSnackBar(message: "Request sent successfully");
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(Assets.icons.add_fill, height: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Join ",
-                            style: AppStyles.h3.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            "(${widget.event.attendees}/${widget.event.capacity})",
-                            style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }),
+            SizedBox(
+              height: 48,
+              child: Row(
+                children: [
+                  requested ? buildDeclineButton() : buildJoinButton(),
+                  const SizedBox(width: 8),
+                  buildShareButton(),
+                  const SizedBox(width: 8),
+                  buildCopyButton(),
+                  const SizedBox(width: 8),
+                  buildAddToFavoriteButton(),
+                ],
+              ),
             ),
-            const SizedBox(width: 8),
-            buildShareButton(),
-            const SizedBox(width: 8),
-            buildCopyButton(),
-            const SizedBox(width: 8),
-            buildAddToFavoriteButton(),
+            SizedBox(height: requested ? 4 : 0),
+            requested ? buildJoinButton() : const SizedBox(),
           ],
         ),
       ),
+    );
+  }
+
+  Expanded buildJoinButton({bool requested = false}) {
+    return Expanded(
+      child: Consumer(builder: (context, ref, child) {
+        return InkWell(
+          onTap: () async {
+            final user = ref.read(userProvider);
+            final event = widget.event;
+            final data = NotificationData(
+              id: event.id,
+              senderName: user.name,
+              senderProfilePicture: user.imageUrl,
+              notificationType: 'zipbuzz-null',
+              notificationTime: DateTime.now().toUtc().toString(),
+              eventId: event.id,
+              eventName: event.title,
+              deviceToken: event.userDeviceToken,
+              eventCategory: event.category,
+            );
+            await showModalBottomSheet(
+              context: navigatorKey.currentContext!,
+              isScrollControlled: true,
+              enableDrag: true,
+              builder: (context) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: AttendeeNumberResponse(
+                    notification: data,
+                    inviteReply: requested,
+                    onSubmit: () {
+                      widget.event.status = "requested";
+                      setState(() {});
+                      showSnackBar(message: "Request sent successfully");
+                    },
+                  ),
+                );
+              },
+            );
+            final inInterests = ref
+                .read(homeTabControllerProvider.notifier)
+                .containsInterest(widget.event.category);
+            if (!inInterests) {
+              final interest =
+                  allInterests.firstWhere((element) => element.activity == widget.event.category);
+              updateInterests(interest);
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(Assets.icons.add_fill, height: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Join ",
+                    style: AppStyles.h3.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    "(${widget.event.attendees}/${widget.event.capacity})",
+                    style: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  void updateInterests(InterestModel interest) async {
+    ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
+    await ref.read(dioServicesProvider).updateUserInterests(
+          UserInterestsUpdateModel(
+            userId: ref.read(userProvider).id,
+            interests: ref
+                .read(homeTabControllerProvider)
+                .currentInterests
+                .map((e) => e.activity)
+                .toList(),
+          ),
+        );
+  }
+
+  Widget buildDeclineButton() {
+    return Expanded(
+      child: Consumer(builder: (context, ref, child) {
+        return InkWell(
+          onTap: () async {
+            final user = ref.read(userProvider);
+            final event = widget.event;
+            final data = NotificationData(
+              id: event.id,
+              senderName: user.name,
+              senderProfilePicture: user.imageUrl,
+              notificationType: 'zipbuzz-null',
+              notificationTime: DateTime.now().toUtc().toString(),
+              eventId: event.id,
+              eventName: event.title,
+              deviceToken: event.userDeviceToken,
+              eventCategory: event.category,
+            );
+            await ref.read(dioServicesProvider).increaseDecision(data.eventId, "no");
+            NotificationServices.sendMessageNotification(
+              data.eventName,
+              "${user.name} RSVP'd No to the event",
+              data.deviceToken,
+              data.eventId,
+            );
+            widget.event.status = "rejected";
+            setState(() {});
+            showSnackBar(message: "Rejected event invite");
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.greyColor,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Center(
+              child: Text(
+                "Decline",
+                style: AppStyles.h3.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 
