@@ -15,7 +15,6 @@ import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
@@ -53,8 +52,8 @@ class NewEvent extends StateNotifier<EventModel> {
             coHostIds: [],
             capacity: 10,
             isPrivate: false,
-            imageUrls: [],
             privateGuestList: false,
+            imageUrls: [],
             eventMembers: [],
             status: "nothing",
             userDeviceToken: "",
@@ -373,6 +372,9 @@ class NewEvent extends StateNotifier<EventModel> {
       state = state.copyWith(bannerPath: bannerUrl);
       debugPrint("New Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
+      state = state.copyWith(
+        privateGuestList: state.isPrivate ? state.privateGuestList : false,
+      );
       final eventPostModel = EventPostModel(
         banner: bannerUrl,
         category: state.category,
@@ -388,6 +390,8 @@ class NewEvent extends StateNotifier<EventModel> {
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: eventInvites.length,
+        guestList: !state.privateGuestList,
+        isPrivate: state.isPrivate,
       );
 
       // print(eventPostModel.toMap());
@@ -485,6 +489,7 @@ class NewEvent extends StateNotifier<EventModel> {
         'randInt': 0,
         'showBottomBar': true,
       };
+      await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
       ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
       await navigatorKey.currentState!.pushReplacementNamed(
@@ -493,8 +498,8 @@ class NewEvent extends StateNotifier<EventModel> {
       );
       resetNewEvent();
     } catch (e) {
-      ref.read(loadingTextProvider.notifier).reset();
       debugPrint("Failed to move to created event: $e");
+      ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
     }
   }

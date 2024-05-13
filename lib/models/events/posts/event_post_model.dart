@@ -14,37 +14,45 @@ class EventPostModel {
     required this.eventType,
     required this.capacity,
     required this.filledCapacity,
+    required this.guestList,
+    required this.isPrivate,
   });
-  late final String banner;
-  late final String category;
-  late final String name;
-  late final String description;
-  late final String date;
-  late final String venue;
-  late final String startTime;
-  late final String endTime;
-  late final int hostId;
-  late final String hostName;
-  late final String hostPic;
-  late final bool eventType;
-  late final int capacity;
-  late final int filledCapacity;
+  final String banner;
+  final String category;
+  final String name;
+  final String description;
+  final String date;
+  final String venue;
+  final String startTime;
+  final String endTime;
+  final int hostId;
+  final String hostName;
+  final String hostPic;
+  final bool eventType;
+  final int capacity;
+  final int filledCapacity;
+  final bool guestList;
+  final bool isPrivate;
 
-  EventPostModel.fromMap(Map<String, dynamic> json) {
-    banner = json['banner'];
-    category = json['category'];
-    name = json['name'];
-    description = json['description'];
-    date = json['date'];
-    venue = json['venue'];
-    startTime = json['start_time'];
-    endTime = json['end_time'];
-    hostId = json['host_id'];
-    hostName = json['host_name'];
-    hostPic = json['host_pic'];
-    eventType = json['event_type'];
-    capacity = json['capacity'];
-    filledCapacity = json['filled_capacity'];
+  factory EventPostModel.fromMap(Map<String, dynamic> json) {
+    return EventPostModel(
+      banner: json['banner'],
+      category: json['category'],
+      name: json['name'],
+      description: json['description'],
+      date: json['date'],
+      venue: json['venue'],
+      startTime: json['start_time'],
+      endTime: json['end_time'],
+      hostId: json['host_id'],
+      hostName: json['host_name'],
+      hostPic: json['host_pic'],
+      eventType: json['event_type'],
+      capacity: json['capacity'],
+      filledCapacity: json['filled_capacity'],
+      guestList: json['guest_list'],
+      isPrivate: json['is_private'],
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -63,6 +71,8 @@ class EventPostModel {
     data['event_type'] = eventType;
     data['capacity'] = capacity;
     data['filled_capacity'] = filledCapacity;
+    data['guest_list'] = guestList;
+    data['is_private'] = isPrivate;
     return data;
   }
 }

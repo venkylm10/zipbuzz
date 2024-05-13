@@ -254,10 +254,10 @@ class DBServices {
             bannerPath: res.banner,
             iconPath: interestIcons[res.category]!,
             about: res.description,
-            isPrivate: res.eventType,
+            isPrivate: res.isPrivate,
+            privateGuestList: !res.guestList,
             capacity: res.capacity,
             imageUrls: res.images.map((e) => e.imageUrl).toList(),
-            privateGuestList: true,
             hostName: res.hostName,
             hostPic: res.hostPic,
             eventMembers: [],
@@ -268,7 +268,7 @@ class DBServices {
           );
           return eventModel;
         }).toList();
-        return events;
+        return events..sort((a, b) => a.date.compareTo(b.date));
       } catch (e) {
         debugPrint("Error In Getting Events: $e");
         return [];
@@ -303,10 +303,10 @@ class DBServices {
             bannerPath: res.banner,
             iconPath: interestIcons[res.category]!,
             about: res.description,
-            isPrivate: res.eventType,
+            isPrivate: res.isPrivate,
+            privateGuestList: !res.guestList,
             capacity: res.capacity,
             imageUrls: res.images.map((e) => e.imageUrl).toList(),
-            privateGuestList: true,
             hostName: res.hostName,
             hostPic: res.hostPic,
             eventMembers: [],
@@ -317,7 +317,7 @@ class DBServices {
           );
           return eventModel;
         }).toList();
-        return events;
+        return events..sort((a, b) => a.date.compareTo(b.date));
       } catch (e) {
         debugPrint("Error In Getting Events: $e");
         return [];
@@ -345,10 +345,10 @@ class DBServices {
       bannerPath: res.banner,
       iconPath: interestIcons[res.category]!,
       about: res.description,
-      isPrivate: res.eventType,
+      isPrivate: res.isPrivate,
+      privateGuestList: !res.guestList,
       capacity: res.capacity,
       imageUrls: res.images.map((e) => e.imageUrl).toList(),
-      privateGuestList: true,
       hostName: res.hostName,
       hostPic: res.hostPic,
       eventMembers: [],
@@ -400,7 +400,8 @@ class DBServices {
           );
           return eventModel;
         }).toList();
-        return await Future.wait(events);
+        return await Future.wait(events)
+          ..sort((a, b) => a.date.compareTo(b.date));
       } catch (e) {
         debugPrint("Error getting favorite events: $e");
         return [];

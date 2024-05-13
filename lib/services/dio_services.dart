@@ -265,8 +265,8 @@ class DioServices {
       var list = <InterestModel>[];
       for (var item in (response.data['category_data'] as List)) {
         list.add(InterestModel.fromMap(item as Map<String, dynamic>));
+        unsortedInterests.add(InterestModel.fromMap(item));
       }
-      unsortedInterests = list;
       list.sort((a, b) => a.activity.compareTo(b.activity));
       return list;
     } catch (error) {

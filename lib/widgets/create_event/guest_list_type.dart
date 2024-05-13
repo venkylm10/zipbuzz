@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 
 class CreateEventGuestListType extends ConsumerWidget {
-  const CreateEventGuestListType({super.key});
+  final bool rePublish;
+  const CreateEventGuestListType({super.key, this.rePublish = false});
 
   void togglePrivacy(WidgetRef ref) {
-    ref.read(newEventProvider.notifier).toggleGuestListPrivacy();
+    rePublish
+        ? ref.read(editEventControllerProvider.notifier).toggleGuestListPrivacy()
+        : ref.read(newEventProvider.notifier).toggleGuestListPrivacy();
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPrivate = ref.watch(newEventProvider).privateGuestList;
+    final isPrivate = rePublish
+        ? ref.watch(editEventControllerProvider).privateGuestList
+        : ref.watch(newEventProvider).privateGuestList;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,14 +36,14 @@ class CreateEventGuestListType extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
               color: AppColors.bgGrey,
               border: Border.all(
-                color: !isPrivate ? AppColors.borderGrey : AppColors.primaryColor,
+                color: isPrivate ? AppColors.borderGrey : AppColors.primaryColor,
               ),
             ),
             child: Row(
               children: [
                 Radio(
                   value: true,
-                  groupValue: isPrivate,
+                  groupValue: !isPrivate,
                   toggleable: true,
                   activeColor: AppColors.primaryColor,
                   onChanged: (value) {

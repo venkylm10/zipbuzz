@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
@@ -54,6 +55,12 @@ class Contacts {
   }
 
   List<Contact> getMatchingContacts(List<String> numbers) {
+    final foundNumbers = <String>[];
+    var userNumber =
+        ref.read(userProvider).mobileNumber.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+    if (userNumber.length > 10) {
+      userNumber = userNumber.substring(userNumber.length - 10);
+    }
     final flattedNumbers = numbers.map((e) {
       var phone = e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
       if (phone.length > 10) {
@@ -70,9 +77,19 @@ class Contacts {
         }
         return phone;
       }).toList();
-      return contactNumbers.any((element) {
-        return flattedNumbers.contains(element);
-      });
+      if (userNumber == contactNumbers.first) {
+        return false;
+      }
+      final contains = flattedNumbers.contains(contactNumbers.first);
+      if (contains) {
+        if (foundNumbers.contains(contactNumbers.first)) {
+          return false;
+        } else {
+          foundNumbers.add(contactNumbers.first);
+          return true;
+        }
+      }
+      return false;
     }).toList();
     return matchingContacts;
   }

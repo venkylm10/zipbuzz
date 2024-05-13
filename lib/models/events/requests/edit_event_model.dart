@@ -14,6 +14,8 @@ class EditEventRequestModel {
   final String hostName;
   final int capacity;
   final int filledCapacity;
+  final bool isPrivate;
+  final bool guestList;
 
   EditEventRequestModel({
     required this.eventId,
@@ -31,6 +33,8 @@ class EditEventRequestModel {
     required this.hostName,
     required this.capacity,
     required this.filledCapacity,
+    required this.isPrivate,
+    required this.guestList,
   });
 
   Map<String, dynamic> toMap() {
@@ -50,6 +54,8 @@ class EditEventRequestModel {
       'host_name': hostName,
       'capacity': capacity,
       'filled_capacity': filledCapacity,
+      'is_private': isPrivate,
+      'guest_list': guestList,
     };
   }
 
@@ -70,6 +76,8 @@ class EditEventRequestModel {
       hostName: map['host_name'] as String,
       capacity: map['capacity'] as int,
       filledCapacity: map['filled_capacity'] as int,
+      isPrivate: map['is_private'] as bool,
+      guestList: map['guest_list'] as bool,
     );
   }
 }

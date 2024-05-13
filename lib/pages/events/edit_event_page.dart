@@ -14,7 +14,6 @@ import 'package:zipbuzz/widgets/common/custom_bezel.dart';
 import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
 import 'package:zipbuzz/widgets/create_event/edit_event_photos.dart';
 import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
-import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
 import 'package:zipbuzz/widgets/edit_event/event_banner.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
 
@@ -84,8 +83,7 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
                   broadDivider(),
                   const EditEventPhotos(),
                   broadDivider(),
-                  const CreateEventGuestListType(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
                   EventHostGuestList(
                       guests: ref.watch(editEventControllerProvider).eventMembers,
                       eventId: ref.watch(editEventControllerProvider).id),
