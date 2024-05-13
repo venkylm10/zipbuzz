@@ -346,6 +346,8 @@ class _EventCardState extends ConsumerState<EventCard> {
           attendees: eventMembers.length,
           eventMembers: eventMembers,
           imageUrls: widget.event.imageUrls,
+          isPrivate: widget.event.isPrivate,
+          privateGuestList: widget.event.privateGuestList,
         );
 
     ref.read(eventTabControllerProvider.notifier).updateIndex(2);

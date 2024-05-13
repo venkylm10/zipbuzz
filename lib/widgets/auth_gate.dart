@@ -10,9 +10,9 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
+import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
-import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -77,7 +77,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     ref.read(loadingTextProvider.notifier).reset();
     final mobileNumber = ref.read(userProvider).mobileNumber;
     if (mobileNumber == "+11234567890" || mobileNumber == "zipbuzz-null") {
-      await ref.read(authServicesProvider).signOut();
+      navigatorKey.currentState!.pushReplacementNamed(PersonalisePage.id);
       return;
     }
     ref.read(contactsServicesProvider).updateAllContacts();

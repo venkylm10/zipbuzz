@@ -30,7 +30,6 @@ import '../../models/events/posts/make_request_model.dart';
 import '../../models/interests/requests/user_interests_update_model.dart';
 import '../../models/interests/responses/interest_model.dart';
 import '../../services/chat_services.dart';
-import '../../services/db_services.dart';
 import '../../services/dio_services.dart';
 import '../../services/notification_services.dart';
 import '../notification_page/attendee_sheet.dart';
@@ -373,38 +372,44 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                   borderRadius: BorderRadius.circular(20),
                   child: AttendeeNumberResponse(
                     notification: notification,
-                    onSubmit: (attendees, commentController) async {
-                      final user = ref.read(userProvider);
-                      var model = MakeRequestModel(
-                        userId: user.id,
-                        eventId: notification.eventId,
-                        name: user.name,
-                        phoneNumber: user.mobileNumber,
-                        members: attendees,
-                        userDecision: true,
-                      );
-                      await ref.read(dioServicesProvider).makeRequest(model);
-                      await ref
-                          .read(dioServicesProvider)
-                          .increaseDecision(notification.eventId, "yes");
-                      if (invited) {
-                        NotificationServices.sendMessageNotification(
-                          notification.eventName,
-                          "${user.name} RSVP'd Yes to the event",
-                          notification.deviceToken,
-                          notification.eventId,
-                        );
-                      }
-                      if (commentController.text.trim().isNotEmpty) {
-                        final event = widget.event;
-                        await ref
-                            .read(chatServicesProvider)
-                            .sendMessage(event: event, message: commentController.text);
-                      }
+                    onSubmit: (context, attendees, commentController) async {
                       Navigator.of(context).pop();
-                      widget.event.status = "requested";
-                      setState(() {});
-                      showSnackBar(message: "Requested to join event");
+                      ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                      try {
+                        final user = ref.read(userProvider);
+                        var model = MakeRequestModel(
+                          userId: user.id,
+                          eventId: notification.eventId,
+                          name: user.name,
+                          phoneNumber: user.mobileNumber,
+                          members: attendees,
+                          userDecision: true,
+                        );
+                        await ref.read(dioServicesProvider).makeRequest(model);
+                        await ref
+                            .read(dioServicesProvider)
+                            .increaseDecision(notification.eventId, "yes");
+                        if (invited) {
+                          NotificationServices.sendMessageNotification(
+                            notification.eventName,
+                            "${user.name} RSVP'd Yes to the event",
+                            notification.deviceToken,
+                            notification.eventId,
+                          );
+                        }
+                        if (commentController.text.trim().isNotEmpty) {
+                          final event = widget.event;
+                          await ref
+                              .read(chatServicesProvider)
+                              .sendMessage(event: event, message: commentController.text);
+                        }
+                        widget.event.status = "requested";
+                        setState(() {});
+                        showSnackBar(message: "Requested to join event");
+                      } catch (e) {
+                        debugPrint("Error acception the request: $e");
+                      }
+                      ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                     },
                   ),
                 );
@@ -482,7 +487,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               deviceToken: event.userDeviceToken,
               eventCategory: event.category,
             );
-            showModalBottomSheet(
+            await showModalBottomSheet(
               context: navigatorKey.currentContext!,
               isScrollControlled: true,
               enableDrag: true,
@@ -492,26 +497,41 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                   child: AttendeeNumberResponse(
                     notification: notification,
                     addComment: false,
-                    onSubmit: (attendees, commentController) async {
-                      await ref
-                          .read(dioServicesProvider)
-                          .increaseDecision(notification.eventId, "no");
-                      final user = ref.read(userProvider);
-                      NotificationServices.sendMessageNotification(
-                        notification.eventName,
-                        "${user.name} RSVP'd No to the event",
-                        notification.deviceToken,
-                        notification.eventId,
-                      );
+                    onSubmit: (context, attendees, commentController) async {
                       Navigator.of(context).pop();
+                      ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                      try {
+                        final user = ref.read(userProvider);
+                        var model = MakeRequestModel(
+                          userId: user.id,
+                          eventId: notification.eventId,
+                          name: user.name,
+                          phoneNumber: user.mobileNumber,
+                          members: attendees,
+                          userDecision: false,
+                        );
+                        await ref.read(dioServicesProvider).makeRequest(model);
+                        await ref
+                            .read(dioServicesProvider)
+                            .increaseDecision(notification.eventId, "no");
+                        NotificationServices.sendMessageNotification(
+                          notification.eventName,
+                          "${user.name} RSVP'd No to the event",
+                          notification.deviceToken,
+                          notification.eventId,
+                        );
+                      } catch (e) {
+                        debugPrint("Error rejecting event invite: $e");
+                      }
+                      ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                      widget.event.status = "rejected";
+                      setState(() {});
+                      showSnackBar(message: "Rejected event invite");
                     },
                   ),
                 );
               },
             );
-            widget.event.status = "rejected";
-            setState(() {});
-            showSnackBar(message: "Rejected event invite");
           },
           child: Container(
             decoration: BoxDecoration(
