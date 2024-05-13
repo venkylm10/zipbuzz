@@ -173,10 +173,11 @@ class EventCalendar extends ConsumerWidget {
         final dayEvents = eventMaps[formatedDay] ?? [];
         final formatedEvents = (dayEvents.length > 6 ? dayEvents.sublist(0, 6) : dayEvents);
         final displayEvents = formatedEvents.where((e) {
-          final containsInterest =
-              ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
+          // final containsInterest =
+          //     ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
           final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-          var display = containsInterest && containsQuery;
+          // var display = containsInterest && containsQuery;
+          var display = containsQuery;
 
           if (selectedCategory.isNotEmpty) {
             display = display && e.category == selectedCategory;

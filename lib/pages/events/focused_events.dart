@@ -19,11 +19,12 @@ class FocusedEvents extends StatelessWidget {
               ? Column(
                   children: focusedEvents.map(
                     (e) {
-                      final containsInterest =
-                          ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
+                      // final containsInterest =
+                      //     ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
                       final containsQuery =
                           ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-                      var display = containsInterest && containsQuery;
+                      // var display = containsInterest && containsQuery;
+                      var display = containsQuery;
                       if (selectedCategory.isNotEmpty) {
                         display = display && e.category == selectedCategory;
                       }
