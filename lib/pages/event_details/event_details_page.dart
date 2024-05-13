@@ -546,6 +546,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       builder: (context, ref, child) {
         final userId = GetStorage().read(BoxConstants.id);
         final newEvent = ref.watch(newEventProvider);
+        final editEvent = ref.watch(editEventControllerProvider);
         if (widget.isPreview) {
           return EventGuestList(
             guests: newEvent.eventMembers,
@@ -554,7 +555,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         }
         if (widget.rePublish) {
           return EventGuestList(
-            guests: ref.watch(editEventControllerProvider).eventMembers,
+            guests: editEvent.eventMembers,
             clone: widget.clone,
           );
         }
