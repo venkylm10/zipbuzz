@@ -17,7 +17,7 @@ class AttendeeNumberResponse extends ConsumerStatefulWidget {
   });
   final NotificationData notification;
   final bool inviteReply;
-  final Function(int attendees, TextEditingController commentController) onSubmit;
+  final Function(BuildContext context, int attendees, TextEditingController commentController) onSubmit;
   final EventModel? event;
   final bool addComment;
 
@@ -102,7 +102,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
             ),
             const SizedBox(height: 24),
             InkWell(
-              onTap: () => widget.onSubmit(attendees, commentController),
+              onTap: () => widget.onSubmit(context, attendees, commentController),
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),

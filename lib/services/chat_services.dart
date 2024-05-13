@@ -24,31 +24,35 @@ class ChatServices {
         _dbServices = dbServices;
 
   Future<void> sendMessage({required EventModel event, required String message}) async {
-    debugPrint("SENDING MESSAGE");
-    final currentUser = _ref.read(userProvider);
-    final senderId = currentUser.id;
-    final messageId = DateTime.now().microsecondsSinceEpoch.toString();
-    final newMessage = Message(
-      id: messageId,
-      senderId: senderId,
-      senderName: currentUser.name,
-      senderPic: currentUser.imageUrl,
-      eventId: event.id,
-      message: message,
-      timeStamp: DateTime.now().toUtc().toString(),
-    );
-    await _dbServices.sendMessage(
-        eventId: event.id, messageId: messageId, message: newMessage.toMap());
-    debugPrint("MESSAGE SENT");
-    _ref.read(dioServicesProvider).increaseCommentCount(event.id);
-    final host = (GetStorage().read(BoxConstants.deviceToken) as String) == event.userDeviceToken;
-    if (!host) {
-      NotificationServices.sendMessageNotification(
-        event.title,
-        "${currentUser.name}: $message",
-        event.userDeviceToken,
-        event.id,
+    try {
+      debugPrint("SENDING MESSAGE");
+      final currentUser = _ref.read(userProvider);
+      final senderId = currentUser.id;
+      final messageId = DateTime.now().microsecondsSinceEpoch.toString();
+      final newMessage = Message(
+        id: messageId,
+        senderId: senderId,
+        senderName: currentUser.name,
+        senderPic: currentUser.imageUrl,
+        eventId: event.id,
+        message: message,
+        timeStamp: DateTime.now().toUtc().toString(),
       );
+      await _dbServices.sendMessage(
+          eventId: event.id, messageId: messageId, message: newMessage.toMap());
+      debugPrint("MESSAGE SENT");
+      _ref.read(dioServicesProvider).increaseCommentCount(event.id);
+      final host = await NotificationServices().getToken() == event.userDeviceToken;
+      if (!host) {
+        NotificationServices.sendMessageNotification(
+          event.title,
+          "${currentUser.name}: $message",
+          event.userDeviceToken,
+          event.id,
+        );
+      }
+    } catch (e) {
+      throw 'Error sending message: $e';
     }
   }
 
