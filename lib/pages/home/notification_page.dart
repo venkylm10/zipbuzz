@@ -139,7 +139,6 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                     final user = ref.read(userProvider);
                     await ref.read(dioServicesProvider).updateUserNotificationYN(
                         notification.senderId, user.id, "yes", notification.eventId);
-                    print("yes/no");
                     await ref
                         .read(dioServicesProvider)
                         .updateUserNotification(notification.id, "requested");

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -14,14 +16,12 @@ final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref
 class EventHostGuestList extends StatelessWidget {
   const EventHostGuestList({
     super.key,
-    required this.hostId,
+    required this.event,
     required this.guests,
-    required this.eventId,
     this.interative = true,
   });
 
-  final int hostId;
-  final int eventId;
+  final EventModel event;
   final List<EventInviteMember> guests;
   final bool interative;
 
@@ -186,10 +186,16 @@ class EventHostGuestList extends StatelessWidget {
                         ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                         await ref
                             .read(dioServicesProvider)
-                            .editUserStatus(eventId, member.userId, "confirm");
+                            .editUserStatus(event.id, member.userId, "confirm");
                         await ref
                             .read(dioServicesProvider)
-                            .updateRespondedNotification(member.userId, hostId, eventId);
+                            .updateRespondedNotification(member.userId, event.hostId, event.id);
+                        NotificationServices.sendMessageNotification(
+                          event.title,
+                          "${event.hostName} has confirmed your invitation to ${event.title}.",
+                          event.userDeviceToken,
+                          event.id,
+                        );
                       },
                       child: buildGuestTag(member.status),
                     );

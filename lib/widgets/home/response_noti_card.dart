@@ -115,7 +115,7 @@ class ResponseNotiCard extends ConsumerWidget {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: '$senderName - RSVP ',
+                                    text: "$senderName - RSVP'd ",
                                     style: AppStyles.h5.copyWith(
                                       color: AppColors.greyColor,
                                     ),
@@ -129,7 +129,7 @@ class ResponseNotiCard extends ConsumerWidget {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: 'your invite for $eventName',
+                                    text: ' to your invite for $eventName',
                                     style: AppStyles.h5.copyWith(
                                       color: AppColors.greyColor,
                                     ),

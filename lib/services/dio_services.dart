@@ -179,10 +179,8 @@ class DioServices {
       "notification_type": 'accepted',
       "event_id": eventId,
     };
-    print(data);
     try {
       await dio.put(DioConstants.updateNotification, data: data);
-      print("Accepted Notification sent");
     } catch (e) {
       debugPrint(e.toString());
       rethrow;
