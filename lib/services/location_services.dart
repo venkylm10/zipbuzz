@@ -43,7 +43,7 @@ class LocationServices extends StateNotifier<LocationModel> {
       var neightborhood = "";
       neightborhood = loc[0].trim();
       final city = loc[1].trim();
-      country = loc[2].trim();
+      country = loc.length > 2 ? loc[2].trim() : "";
       ref.read(userProvider.notifier).update((state) {
         return state.copyWith(
           zipcode: newZipcode,

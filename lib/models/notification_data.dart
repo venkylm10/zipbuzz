@@ -8,8 +8,10 @@ class NotificationData {
   String eventName;
   String deviceToken;
   String eventCategory;
+  int senderId;
   NotificationData({
     required this.id,
+    required this.senderId,
     required this.senderName,
     required this.senderProfilePicture,
     required this.notificationType,
@@ -37,6 +39,7 @@ class NotificationData {
   factory NotificationData.fromMap(Map<String, dynamic> map) {
     return NotificationData(
       id: map['id'],
+      senderId: map['sender_id'],
       senderName: map['sender_name'],
       senderProfilePicture: map['sender_profile_picture'],
       notificationType: map['notification_type'],

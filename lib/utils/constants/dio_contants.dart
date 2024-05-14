@@ -28,12 +28,13 @@ class DioConstants {
   static const String getEventRequests = "/events/event_request/";
   static const String getEventRequestsWeb = "/events/event_request_web/";
   static const String editUserStatus = "/events/event_request/";
+  static const String updateNotification = "/users/update_notification/";
   static const String getLocation = "/users/user_location/";
   static const String getLocationWeb = "/users/user_location_web/";
   static const String phoneCheck = "/users/phone_check/";
   static const String getNotifications = "/users/user_notification/";
   static const String getNotificationsWeb = "/users/user_notification_web/";
-  static const String updateNotification = "/users/user_notification/";
+  static const String userNotification = "/users/user_notification/";
   static const String updateEventImages = "/events/event_images/";
   static const String increaseComment = "/events/comment_increase/";
   static const String increaseDecision = "/events/decision_increase/";
@@ -41,6 +42,7 @@ class DioConstants {
   static const String sendEventUrls = "/events/event_hyperlinks/";
   static const String addClonedImageApi = "/events/event_images_url/";
   static const String fetchUserEvents = '/events/user_events/';
+  static const String fetchUserEventsWeb = '/events/user_events_web/';
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

@@ -19,6 +19,7 @@ class InviteNotiCard extends ConsumerWidget {
     required this.time,
     required this.acceptInvite,
     required this.declineInvite,
+    required this.rebuildCall,
   });
 
   final String hostName;
@@ -28,6 +29,7 @@ class InviteNotiCard extends ConsumerWidget {
   final String time;
   final VoidCallback acceptInvite;
   final VoidCallback declineInvite;
+  final VoidCallback rebuildCall;
 
   void navigateToEventDetails(WidgetRef ref) async {
     showSnackBar(message: "Getting event details...");
@@ -41,6 +43,7 @@ class InviteNotiCard extends ConsumerWidget {
       "rePublish": false,
       "randInt": 0,
     });
+    rebuildCall();
   }
 
   Future<Color> getDominantColor(String bannerPath) async {

@@ -120,6 +120,9 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         eventId: notification.eventId,
         eventName: notification.eventName,
         time: timeago.format(notiTime, locale: 'en_short'),
+        rebuildCall: () {
+          setState(() {});
+        },
         acceptInvite: () async {
           await showModalBottomSheet(
             context: navigatorKey.currentContext!,
@@ -133,6 +136,13 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   onSubmit: (context, attendees, commentController) async {
                     Navigator.of(context).pop();
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                    final user = ref.read(userProvider);
+                    await ref.read(dioServicesProvider).updateUserNotificationYN(
+                        notification.senderId, user.id, "yes", notification.eventId);
+                    print("yes/no");
+                    await ref
+                        .read(dioServicesProvider)
+                        .updateUserNotification(notification.id, "requested");
                     try {
                       final user = ref.read(userProvider);
                       var model = MakeRequestModel(
@@ -166,20 +176,20 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                       debugPrint("Error requesting to join: $e");
                     }
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                    final inInterests = ref
+                        .read(homeTabControllerProvider.notifier)
+                        .containsInterest(notification.eventCategory);
+                    if (!inInterests) {
+                      final interest = allInterests
+                          .firstWhere((element) => element.activity == notification.eventCategory);
+                      updateInterests(interest);
+                    }
+                    setState(() {});
                   },
                 ),
               );
             },
           );
-          final inInterests = ref
-              .read(homeTabControllerProvider.notifier)
-              .containsInterest(notification.eventCategory);
-          if (!inInterests) {
-            final interest = allInterests
-                .firstWhere((element) => element.activity == notification.eventCategory);
-            updateInterests(interest);
-          }
-          setState(() {});
         },
         declineInvite: () async {
           showModalBottomSheet(
@@ -195,6 +205,12 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   onSubmit: (context, attendees, commentController) async {
                     Navigator.of(context).pop();
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                    final user = ref.read(userProvider);
+                    await ref.read(dioServicesProvider).updateUserNotificationYN(
+                        notification.senderId, user.id, "no", notification.eventId);
+                    await ref
+                        .read(dioServicesProvider)
+                        .updateUserNotification(notification.id, "declined");
                     try {
                       final user = ref.read(userProvider);
                       var model = MakeRequestModel(
@@ -219,6 +235,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                       debugPrint("Error declining invite: $e");
                     }
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                    setState(() {});
                   },
                 ),
               );
@@ -226,7 +243,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           );
         },
       );
-    } else if (notification.notificationType == "yes") {
+    } else if (notification.notificationType == "requested" ||
+        notification.notificationType == "declined") {
       final time = notification.notificationTime.endsWith('Z')
           ? notification.notificationTime
           : "${notification.notificationTime}Z";
@@ -236,37 +254,41 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
         eventName: notification.eventName,
-        positiveResponse: true,
-        time: timeago.format(notiTime, locale: 'en_short'),
-      );
-    } else if (notification.notificationType == "no") {
-      final time = notification.notificationTime.endsWith('Z')
-          ? notification.notificationTime
-          : "${notification.notificationTime}Z";
-      final notiTime = DateTime.parse(time);
-      return ResponseNotiCard(
-        senderName: notification.senderName,
-        senderProfilePic: notification.senderProfilePicture,
-        eventId: notification.eventId,
-        eventName: notification.eventName,
-        positiveResponse: false,
-        time: timeago.format(notiTime, locale: 'en_short'),
-      );
-    } else {
-      final time = notification.notificationTime.endsWith('Z')
-          ? notification.notificationTime
-          : "${notification.notificationTime}Z";
-      final notiTime = DateTime.parse(time);
-      return ResponseNotiCard(
-        senderName: notification.senderName,
-        senderProfilePic: notification.senderProfilePicture,
-        eventId: notification.eventId,
-        eventName: notification.eventName,
-        positiveResponse: false,
         confirmResponse: true,
+        positiveResponse: notification.notificationType == "requested",
         time: timeago.format(notiTime, locale: 'en_short'),
+      );
+    } else if (notification.notificationType == "yes" || notification.notificationType == "no") {
+      final time = notification.notificationTime.endsWith('Z')
+          ? notification.notificationTime
+          : "${notification.notificationTime}Z";
+      final notiTime = DateTime.parse(time);
+      return ResponseNotiCard(
+        senderName: notification.senderName,
+        senderProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        eventName: notification.eventName,
+        confirmResponse: false,
+        positiveResponse: notification.notificationType == "yes",
+        time: timeago.format(notiTime, locale: 'en_short'),
+      );
+    } else if (notification.notificationType == "accepted") {
+      final time = notification.notificationTime.endsWith('Z')
+          ? notification.notificationTime
+          : "${notification.notificationTime}Z";
+      final notiTime = DateTime.parse(time);
+      return ResponseNotiCard(
+        senderName: notification.senderName,
+        senderProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        eventName: notification.eventName,
+        confirmResponse: false,
+        positiveResponse: notification.notificationType == "accepted",
+        time: timeago.format(notiTime, locale: 'en_short'),
+        accepted: true,
       );
     }
+    return const SizedBox();
   }
 
   Widget buildLoader() {

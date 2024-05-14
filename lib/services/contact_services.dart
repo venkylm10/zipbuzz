@@ -1,5 +1,5 @@
 import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
@@ -16,6 +16,7 @@ class Contacts {
   const Contacts({required this.ref});
 
   Future<List<Contact>> getContacts() async {
+    if (kIsWeb) return <Contact>[];
     try {
       var contacts = <Contact>[];
       if (await ref.read(appPermissionsProvider).getContactsPermission()) {
@@ -48,6 +49,7 @@ class Contacts {
   }
 
   Future<void> updateAllContacts() async {
+    if (kIsWeb) return;
     final contacts = await getContacts()
         .then((value) => value.where((element) => element.phones != null).toList());
     ref.read(newEventProvider.notifier).updateAllContacts(contacts);
