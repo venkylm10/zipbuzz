@@ -41,10 +41,11 @@ class NewEvent extends StateNotifier<EventModel> {
             startTime: "",
             endTime: "",
             attendees: 0,
-            category: "Hiking",
+            category: 'Please select',
             isFavorite: false,
             bannerPath: "",
-            iconPath: "", // updating this just after getting allInterests from the API
+            iconPath: "",
+            // updating this just after getting allInterests from the API
             about: "",
             hostId: ref.read(userProvider).id,
             hostName: ref.read(userProvider).name,
@@ -152,7 +153,9 @@ class NewEvent extends StateNotifier<EventModel> {
   }
 
   void updateCategory(String category) {
-    state = state.copyWith(category: category, iconPath: interestIcons[category]!);
+    state = state.copyWith(
+        category: category,
+        iconPath: interestIcons[category] ?? interestIcons[allInterests.first.activity]);
   }
 
   void onChangeCapacity(String value) {
@@ -315,6 +318,10 @@ class NewEvent extends StateNotifier<EventModel> {
   }
 
   bool validateNewEvent() {
+    if (state.category == 'Please select') {
+      showSnackBar(message: "Please select event category");
+      return false;
+    }
     if (state.title.isEmpty) {
       showSnackBar(message: "Please enter event title");
       return false;
@@ -548,7 +555,7 @@ class NewEvent extends StateNotifier<EventModel> {
       startTime: "",
       endTime: "",
       attendees: 0,
-      category: allInterests.first.activity,
+      category: 'Please select',
       isFavorite: false,
       bannerPath: "",
       iconPath: allInterests.first.iconUrl,

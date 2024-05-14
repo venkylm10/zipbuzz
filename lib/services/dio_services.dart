@@ -369,7 +369,6 @@ class DioServices {
     try {
       debugPrint("GETTING ALL EVENTS");
       final data = userEventsRequestModel.toMap();
-      print(data);
       final response = kIsWeb
           ? await dio.post(DioConstants.fetchEvents, data: data)
           : await dio.get(DioConstants.fetchEvents, data: data);

@@ -496,7 +496,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                   borderRadius: BorderRadius.circular(20),
                   child: AttendeeNumberResponse(
                     notification: notification,
-                    addComment: false,
+                    comment: "Sorry, I can't make it",
                     onSubmit: (context, attendees, commentController) async {
                       Navigator.of(context).pop();
                       ref.read(eventsControllerProvider.notifier).updateLoadingState(true);

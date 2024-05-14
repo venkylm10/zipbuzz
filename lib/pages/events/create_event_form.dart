@@ -450,12 +450,9 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             borderSide: BorderSide(color: Colors.transparent),
           ),
         ),
-        items: interests
+        items: ['Please select', ...interests]
             .map(
               (e) => DropdownMenuItem(
-                // onTap: () {
-                //   updateCategory(category: e);
-                // },
                 value: e,
                 child: Row(
                   children: [

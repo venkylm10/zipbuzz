@@ -117,7 +117,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
 
   Future<void> updateInterestsData() async {
     await ref.read(eventsControllerProvider.notifier).getAllInterests();
-    ref.read(newEventProvider.notifier).updateCategory(allInterests.first.activity);
+    ref.read(newEventProvider.notifier).updateCategory('Please select');
     ref.read(editEventControllerProvider.notifier).updateCategory(allInterests.first.activity);
   }
 
