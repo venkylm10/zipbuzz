@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -148,7 +149,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                   return InkWell(
                     onTap: () async {
                       if (loadingText != null) return;
-                      if (ref.read(newEventProvider).eventMembers.isEmpty) {
+                      if (ref.read(newEventProvider).eventMembers.isEmpty && !kIsWeb) {
                         showDialog(
                           context: navigatorKey.currentContext!,
                           barrierDismissible: true,
@@ -950,6 +951,10 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
   }
 
   void inviteContacts(bool edit) async {
+    if (kIsWeb) {
+      showSnackBar(message: "This feature is not available on web");
+      return;
+    }
     await showModalBottomSheet(
       context: navigatorKey.currentContext!,
       isScrollControlled: true,
