@@ -74,11 +74,25 @@ class _EventInviteState extends ConsumerState<EventInvite> {
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
-                "Invite Guests",
-                style: AppStyles.h2.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Invite Guests",
+                    style: AppStyles.h2.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      navigatorKey.currentState!.pop();
+                    },
+                    icon: const Icon(
+                      Icons.cancel_outlined,
+                      color: AppColors.lightGreyColor,
+                    ),
+                  )
+                ],
               ),
               const SizedBox(height: 12),
               CustomTextField(

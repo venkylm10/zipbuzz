@@ -29,6 +29,8 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/widgets/auth_gate.dart';
 
 final dioServicesProvider = Provider((ref) => DioServices(ref: ref));
 
@@ -136,18 +138,54 @@ class DioServices {
     }
   }
 
-  Future<void> updateNotification(int notificationId, String notificationType) async {
+  Future<void> updateUserNotification(int notificationId, String notificationType) async {
     debugPrint({
       "notification_id": notificationId,
       "notification_type": notificationType,
     }.toString());
     try {
-      await dio.put(DioConstants.updateNotification, data: {
+      await dio.put(DioConstants.userNotification, data: {
         "notification_id": notificationId,
         "notification_type": notificationType,
       });
     } catch (e) {
       debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> updateUserNotificationYN(
+      int hostId, int senderId, String notificationType, int eventId) async {
+    final data = {
+      "user_id": hostId, // host id
+      "sender_id": senderId,
+      "notification_type": notificationType, // yes or no
+      "event_id": eventId,
+    };
+    try {
+      await dio.post(DioConstants.userNotification, data: {
+        'notification_data': data,
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> updateRespondedNotification(int userId, int senderId, int eventId) async {
+    final data = {
+      "user_id": userId,
+      "sender_id": senderId,
+      "notification_type": 'accepted',
+      "event_id": eventId,
+    };
+    print(data);
+    try {
+      await dio.put(DioConstants.updateNotification, data: data);
+      print("Accepted Notification sent");
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
     }
   }
 
@@ -326,6 +364,8 @@ class DioServices {
     } catch (error) {
       debugPrint("GETTING USER DATA FAILED");
       debugPrint(error.toString());
+      await GetStorage().erase();
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
       throw Exception('FAILED TO GET USER DATA');
     }
   }
@@ -369,7 +409,6 @@ class DioServices {
     try {
       debugPrint("GETTING ALL EVENTS");
       final data = userEventsRequestModel.toMap();
-      print(data);
       final response = kIsWeb
           ? await dio.post(DioConstants.fetchEvents, data: data)
           : await dio.get(DioConstants.fetchEvents, data: data);
@@ -393,7 +432,9 @@ class DioServices {
       final data = {
         'user_id': ref.read(userProvider).id,
       };
-      final response = await dio.get(DioConstants.fetchUserEvents, data: data);
+      final response = kIsWeb
+          ? await dio.post(DioConstants.fetchUserEventsWeb, data: data)
+          : await dio.get(DioConstants.fetchUserEvents, data: data);
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['data'] as List;
         // print(response.data['data']);
@@ -432,17 +473,17 @@ class DioServices {
 
   Future<List> getUserFavoriteEvents(UserEventsRequestModel userEventsRequestModel) async {
     try {
-      debugPrint("GETTING USER EVENTS");
+      debugPrint("GETTING USER FAVORITE EVENTS");
       final response = kIsWeb
           ? await dio.post(DioConstants.getUserFavoriteEventsWeb,
               data: userEventsRequestModel.toMap())
           : await dio.get(DioConstants.getUserFavoriteEvents, data: userEventsRequestModel.toMap());
       if (response.data[DioConstants.status] == DioConstants.success) {
         final list = response.data['favorite_events'] as List;
-        debugPrint("GETTING USER EVENTS SUCCESSFULL");
+        debugPrint("GETTING USER FAVORITE EVENTS SUCCESSFULL");
         return list;
       } else {
-        throw 'FAILED TO GET USER EVENTS';
+        throw 'FAILED TO GET USER FAVORITE EVENTS';
       }
     } catch (e) {
       debugPrint(e.toString());

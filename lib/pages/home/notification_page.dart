@@ -1,9 +1,6 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/utils.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
@@ -25,6 +22,7 @@ import 'package:zipbuzz/widgets/notification_page/attendee_sheet.dart';
 import '../../models/events/posts/make_request_model.dart';
 import '../../services/chat_services.dart';
 import '../../services/db_services.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationPage extends ConsumerStatefulWidget {
   static const id = "/notification_page";
@@ -112,14 +110,19 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
 
   Widget buildNotificationCard(NotificationData notification) {
     if (notification.notificationType == "invited") {
-      final notiTime = DateTime.parse(notification.notificationTime);
-      final timeDiff = currentTime.difference(notiTime.toLocal());
+      final time = notification.notificationTime.endsWith('Z')
+          ? notification.notificationTime
+          : "${notification.notificationTime}Z";
+      final notiTime = DateTime.parse(time);
       return InviteNotiCard(
         hostName: notification.senderName,
         hostProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
         eventName: notification.eventName,
-        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
+        time: timeago.format(notiTime, locale: 'en_short'),
+        rebuildCall: () {
+          setState(() {});
+        },
         acceptInvite: () async {
           await showModalBottomSheet(
             context: navigatorKey.currentContext!,
@@ -133,6 +136,13 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   onSubmit: (context, attendees, commentController) async {
                     Navigator.of(context).pop();
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                    final user = ref.read(userProvider);
+                    await ref.read(dioServicesProvider).updateUserNotificationYN(
+                        notification.senderId, user.id, "yes", notification.eventId);
+                    print("yes/no");
+                    await ref
+                        .read(dioServicesProvider)
+                        .updateUserNotification(notification.id, "requested");
                     try {
                       final user = ref.read(userProvider);
                       var model = MakeRequestModel(
@@ -166,20 +176,20 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                       debugPrint("Error requesting to join: $e");
                     }
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                    final inInterests = ref
+                        .read(homeTabControllerProvider.notifier)
+                        .containsInterest(notification.eventCategory);
+                    if (!inInterests) {
+                      final interest = allInterests
+                          .firstWhere((element) => element.activity == notification.eventCategory);
+                      updateInterests(interest);
+                    }
+                    setState(() {});
                   },
                 ),
               );
             },
           );
-          final inInterests = ref
-              .read(homeTabControllerProvider.notifier)
-              .containsInterest(notification.eventCategory);
-          if (!inInterests) {
-            final interest = allInterests
-                .firstWhere((element) => element.activity == notification.eventCategory);
-            updateInterests(interest);
-          }
-          setState(() {});
         },
         declineInvite: () async {
           showModalBottomSheet(
@@ -191,10 +201,16 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                 borderRadius: BorderRadius.circular(20),
                 child: AttendeeNumberResponse(
                   notification: notification,
-                  addComment: false,
+                  comment: "Sorry, I can't make it",
                   onSubmit: (context, attendees, commentController) async {
                     Navigator.of(context).pop();
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                    final user = ref.read(userProvider);
+                    await ref.read(dioServicesProvider).updateUserNotificationYN(
+                        notification.senderId, user.id, "no", notification.eventId);
+                    await ref
+                        .read(dioServicesProvider)
+                        .updateUserNotification(notification.id, "declined");
                     try {
                       final user = ref.read(userProvider);
                       var model = MakeRequestModel(
@@ -219,6 +235,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                       debugPrint("Error declining invite: $e");
                     }
                     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                    setState(() {});
                   },
                 ),
               );
@@ -226,41 +243,52 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           );
         },
       );
-    } else if (notification.notificationType == "yes") {
-      final notiTime = DateTime.parse(notification.notificationTime);
-      final timeDiff = currentTime.difference(notiTime.toLocal());
+    } else if (notification.notificationType == "requested" ||
+        notification.notificationType == "declined") {
+      final time = notification.notificationTime.endsWith('Z')
+          ? notification.notificationTime
+          : "${notification.notificationTime}Z";
+      final notiTime = DateTime.parse(time);
       return ResponseNotiCard(
         senderName: notification.senderName,
         senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
         eventName: notification.eventName,
-        positiveResponse: true,
-        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
-      );
-    } else if (notification.notificationType == "no") {
-      final notiTime = DateTime.parse(notification.notificationTime);
-      final timeDiff = currentTime.difference(notiTime.toLocal());
-      return ResponseNotiCard(
-        senderName: notification.senderName,
-        senderProfilePic: notification.senderProfilePicture,
-        eventId: notification.eventId,
-        eventName: notification.eventName,
-        positiveResponse: false,
-        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
-      );
-    } else {
-      final notiTime = DateTime.parse(notification.notificationTime);
-      final timeDiff = currentTime.difference(notiTime.toLocal());
-      return ResponseNotiCard(
-        senderName: notification.senderName,
-        senderProfilePic: notification.senderProfilePicture,
-        eventId: notification.eventId,
-        eventName: notification.eventName,
-        positiveResponse: false,
         confirmResponse: true,
-        time: timeDiff.inHours == 0 ? "${timeDiff.inMinutes}min" : "${timeDiff.inHours}hr",
+        positiveResponse: notification.notificationType == "requested",
+        time: timeago.format(notiTime, locale: 'en_short'),
+      );
+    } else if (notification.notificationType == "yes" || notification.notificationType == "no") {
+      final time = notification.notificationTime.endsWith('Z')
+          ? notification.notificationTime
+          : "${notification.notificationTime}Z";
+      final notiTime = DateTime.parse(time);
+      return ResponseNotiCard(
+        senderName: notification.senderName,
+        senderProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        eventName: notification.eventName,
+        confirmResponse: false,
+        positiveResponse: notification.notificationType == "yes",
+        time: timeago.format(notiTime, locale: 'en_short'),
+      );
+    } else if (notification.notificationType == "accepted") {
+      final time = notification.notificationTime.endsWith('Z')
+          ? notification.notificationTime
+          : "${notification.notificationTime}Z";
+      final notiTime = DateTime.parse(time);
+      return ResponseNotiCard(
+        senderName: notification.senderName,
+        senderProfilePic: notification.senderProfilePicture,
+        eventId: notification.eventId,
+        eventName: notification.eventName,
+        confirmResponse: false,
+        positiveResponse: notification.notificationType == "accepted",
+        time: timeago.format(notiTime, locale: 'en_short'),
+        accepted: true,
       );
     }
+    return const SizedBox();
   }
 
   Widget buildLoader() {

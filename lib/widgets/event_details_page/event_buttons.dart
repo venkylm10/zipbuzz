@@ -353,7 +353,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             final user = ref.read(userProvider);
             final event = widget.event;
             final notification = NotificationData(
-              id: event.id,
+              id: event.notificationId,
+              senderId: event.hostId,
               senderName: user.name,
               senderProfilePicture: user.imageUrl,
               notificationType: 'zipbuzz-null',
@@ -375,6 +376,11 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                     onSubmit: (context, attendees, commentController) async {
                       Navigator.of(context).pop();
                       ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                      await ref.read(dioServicesProvider).updateUserNotificationYN(
+                          notification.senderId, user.id, "yes", notification.eventId);
+                      await ref
+                          .read(dioServicesProvider)
+                          .updateUserNotification(notification.id, "requested");
                       try {
                         final user = ref.read(userProvider);
                         var model = MakeRequestModel(
@@ -410,19 +416,19 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                         debugPrint("Error acception the request: $e");
                       }
                       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                      final inInterests = ref
+                          .read(homeTabControllerProvider.notifier)
+                          .containsInterest(notification.eventCategory);
+                      if (!inInterests) {
+                        final interest = allInterests.firstWhere(
+                            (element) => element.activity == notification.eventCategory);
+                        updateInterests(interest);
+                      }
                     },
                   ),
                 );
               },
             );
-            final inInterests = ref
-                .read(homeTabControllerProvider.notifier)
-                .containsInterest(notification.eventCategory);
-            if (!inInterests) {
-              final interest = allInterests
-                  .firstWhere((element) => element.activity == notification.eventCategory);
-              updateInterests(interest);
-            }
           },
           child: Container(
             decoration: BoxDecoration(
@@ -477,7 +483,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
             final user = ref.read(userProvider);
             final event = widget.event;
             final notification = NotificationData(
-              id: event.id,
+              id: event.notificationId,
+              senderId: event.hostId,
               senderName: user.name,
               senderProfilePicture: user.imageUrl,
               notificationType: 'zipbuzz-null',
@@ -496,10 +503,15 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                   borderRadius: BorderRadius.circular(20),
                   child: AttendeeNumberResponse(
                     notification: notification,
-                    addComment: false,
+                    comment: "Sorry, I can't make it",
                     onSubmit: (context, attendees, commentController) async {
                       Navigator.of(context).pop();
                       ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+                      await ref.read(dioServicesProvider).updateUserNotificationYN(
+                          notification.senderId, user.id, "no", notification.eventId);
+                      await ref
+                          .read(dioServicesProvider)
+                          .updateUserNotification(notification.id, "declined");
                       try {
                         final user = ref.read(userProvider);
                         var model = MakeRequestModel(

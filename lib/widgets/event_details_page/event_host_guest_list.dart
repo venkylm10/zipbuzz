@@ -14,11 +14,13 @@ final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref
 class EventHostGuestList extends StatelessWidget {
   const EventHostGuestList({
     super.key,
+    required this.hostId,
     required this.guests,
     required this.eventId,
     this.interative = true,
   });
 
+  final int hostId;
   final int eventId;
   final List<EventInviteMember> guests;
   final bool interative;
@@ -185,6 +187,9 @@ class EventHostGuestList extends StatelessWidget {
                         await ref
                             .read(dioServicesProvider)
                             .editUserStatus(eventId, member.userId, "confirm");
+                        await ref
+                            .read(dioServicesProvider)
+                            .updateRespondedNotification(member.userId, hostId, eventId);
                       },
                       child: buildGuestTag(member.status),
                     );

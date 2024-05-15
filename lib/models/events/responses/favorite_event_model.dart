@@ -20,6 +20,7 @@ class FavoriteEventModel {
   String status;
   String userDeviceToken;
   List<HyperLinks> hyperlinks;
+  int notificationId;
   FavoriteEventModel({
     required this.eventId,
     required this.image,
@@ -40,6 +41,7 @@ class FavoriteEventModel {
     required this.status,
     required this.userDeviceToken,
     required this.hyperlinks,
+    this.notificationId = -1,
   });
 
   Map<String, dynamic> toMap() {
@@ -88,6 +90,7 @@ class FavoriteEventModel {
       hyperlinks: (map['hyperlinks'] as List)
           .map((e) => HyperLinks.fromMap(e as Map<String, dynamic>))
           .toList(),
+      notificationId: map['notification_id'] ?? -1,
     );
   }
 }

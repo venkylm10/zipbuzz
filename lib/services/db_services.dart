@@ -264,6 +264,7 @@ class DBServices {
             status: res.status,
             userDeviceToken: res.userDeviceToken,
             hyperlinks: res.hyperlinks,
+            notificationId: res.notificationId,
           );
           return eventModel;
         }).toList();
@@ -313,6 +314,7 @@ class DBServices {
             status: res.status,
             userDeviceToken: res.userDeviceToken,
             hyperlinks: res.hyperlinks,
+            notificationId: res.notificationId,
           );
           return eventModel;
         }).toList();
@@ -355,6 +357,7 @@ class DBServices {
       status: res.status,
       userDeviceToken: res.userDeviceToken,
       hyperlinks: res.hyperlinks,
+      notificationId: res.notificationId,
     );
     showSnackBar(message: "Event Details Loaded Successfully");
     return eventModel;
@@ -396,6 +399,7 @@ class DBServices {
             status: fav.status,
             userDeviceToken: fav.userDeviceToken,
             hyperlinks: fav.hyperlinks,
+            notificationId: fav.notificationId,
           );
           return eventModel;
         }).toList();

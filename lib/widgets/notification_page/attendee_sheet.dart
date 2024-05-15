@@ -12,14 +12,15 @@ class AttendeeNumberResponse extends ConsumerStatefulWidget {
     required this.notification,
     this.inviteReply = true,
     required this.onSubmit,
+    this.comment = "Sure, I'll be there!",
     this.event,
-    this.addComment = true,
   });
   final NotificationData notification;
   final bool inviteReply;
-  final Function(BuildContext context, int attendees, TextEditingController commentController) onSubmit;
+  final Function(BuildContext context, int attendees, TextEditingController commentController)
+      onSubmit;
   final EventModel? event;
-  final bool addComment;
+  final String comment;
 
   @override
   ConsumerState<AttendeeNumberResponse> createState() => _AttendeeNumberResponseState();
@@ -44,6 +45,12 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
   }
 
   @override
+  void initState() {
+    super.initState();
+    commentController.text = widget.comment;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -52,13 +59,12 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.addComment)
-              CustomTextField(
-                controller: commentController,
-                focusNode: focusNode,
-                hintText: "Comment (optional)",
-              ),
-            if (widget.addComment) const SizedBox(height: 16),
+            CustomTextField(
+              controller: commentController,
+              focusNode: focusNode,
+              hintText: "Comment (optional)",
+            ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Text(
