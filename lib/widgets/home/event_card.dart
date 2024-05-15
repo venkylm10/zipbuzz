@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
@@ -24,6 +26,7 @@ import 'package:zipbuzz/pages/event_details/event_details_page.dart';
 import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
+import 'package:zipbuzz/widgets/home/add_to_calendar.dart';
 
 // ignore: must_be_immutable
 class EventCard extends ConsumerStatefulWidget {
@@ -133,25 +136,49 @@ class _EventCardState extends ConsumerState<EventCard> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!widget.focusedEvent)
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  buildDate(date),
-                  const SizedBox(height: 10),
-                  Container(
-                    height: 50,
-                    width: 50,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: eventColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(25),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (!widget.focusedEvent) buildDate(date),
+                if (!widget.focusedEvent) const SizedBox(height: 12),
+                Container(
+                  height: 50,
+                  width: 50,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: eventColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Image.network(widget.event.iconPath),
+                ),
+                const SizedBox(height: 12),
+                InkWell(
+                  onTap: () async {
+                    await showModalBottomSheet(
+                      context: navigatorKey.currentContext!,
+                      isScrollControlled: true,
+                      enableDrag: true,
+                      isDismissible: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) {
+                        return AddToCalendar(event: widget.event);
+                      },
+                    );
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      padding: const EdgeInsets.all(12),
+                      color: AppColors.bgGrey,
+                      child: Image.asset(Assets.icons.addToCalendar),
                     ),
-                    child: Image.network(widget.event.iconPath),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
