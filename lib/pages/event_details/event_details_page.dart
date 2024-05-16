@@ -482,9 +482,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                       ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.9
                       : null,
                   child: EventHostGuestList(
-                    hostId: widget.event.hostId,
+                    event: widget.event,
                     guests: guests,
-                    eventId: widget.event.id,
                     interative: false,
                   ),
                 ),
@@ -577,9 +576,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           );
         }
         return EventHostGuestList(
-          hostId: widget.event.hostId,
+          event: widget.event,
           guests: widget.event.eventMembers,
-          eventId: widget.event.id,
         );
       },
     );

@@ -85,9 +85,8 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
                   broadDivider(),
                   const SizedBox(height: 16),
                   EventHostGuestList(
-                    hostId: ref.watch(editEventControllerProvider).hostId,
+                    event: ref.watch(editEventControllerProvider),
                     guests: ref.watch(editEventControllerProvider).eventMembers,
-                    eventId: ref.watch(editEventControllerProvider).id,
                   ),
                   broadDivider(),
                   const SizedBox(height: 16),
