@@ -148,8 +148,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         .firstWhereOrNull((element) => element.id == ref.read(userProvider).id);
     if (joined != null) {
       widget.event.status = "confirmed";
-      setState(() {});
     }
+    setState(() {});
     // for (var e in ref.read(eventRequestMembersProvider)) {
     //   if (widget.event.eventMembers.firstWhereOrNull((element) => element.phone == e.phone) ==
     //       null) {
@@ -492,42 +492,44 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           },
         );
       },
-      child: Consumer(builder: (context, ref, child) {
-        var data = ref.watch(eventRequestMembersProvider);
-        final confirmedMembers = data
-            .where((element) => element.status == "confirm" || element.status == 'host')
-            .toList();
-        final respondedMembers = data;
-        String attendees = "";
-        if (widget.isPreview) {
-          attendees = "${ref.watch(newEventProvider).attendees},0,0";
-        } else {
-          var responded = 0;
-          for (var e in respondedMembers) {
-            responded = responded + e.attendees;
+      child: Consumer(
+        builder: (context, ref, child) {
+          var data = ref.watch(eventRequestMembersProvider);
+          final confirmedMembers = data
+              .where((element) => element.status == "confirm" || element.status == 'host')
+              .toList();
+          final respondedMembers = data;
+          String attendees = "";
+          if (widget.isPreview) {
+            attendees = "${ref.watch(newEventProvider).attendees},0,0";
+          } else {
+            var responded = 0;
+            for (var e in respondedMembers) {
+              responded = responded + e.attendees;
+            }
+            var confirmed = 0;
+            for (var e in confirmedMembers) {
+              confirmed = confirmed + e.attendees;
+            }
+            attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
           }
-          var confirmed = 0;
-          for (var e in confirmedMembers) {
-            confirmed = confirmed + e.attendees;
+
+          var total = 1;
+
+          if (widget.isPreview) {
+            total = ref.watch(newEventProvider).capacity;
+          } else if (widget.rePublish) {
+            total = ref.watch(editEventControllerProvider).capacity;
+          } else {
+            total = widget.event.capacity;
           }
-          attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
-        }
-
-        var total = 1;
-
-        if (widget.isPreview) {
-          total = ref.watch(newEventProvider).capacity;
-        } else if (widget.rePublish) {
-          total = ref.watch(editEventControllerProvider).capacity;
-        } else {
-          total = widget.event.capacity;
-        }
-        return AttendeeNumbers(
-          attendees: attendees,
-          total: total,
-          backgroundColor: AppColors.greyColor.withOpacity(0.1),
-        );
-      }),
+          return AttendeeNumbers(
+            attendees: attendees,
+            total: total,
+            backgroundColor: AppColors.greyColor.withOpacity(0.1),
+          );
+        },
+      ),
     );
   }
 

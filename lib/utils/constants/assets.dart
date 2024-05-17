@@ -83,6 +83,8 @@ class AppIcons {
   final copy = 'assets/icons/copy.svg';
   final clone = 'assets/icons/clone.svg';
   final linkClip = 'assets/icons/link_clip.svg';
+  final addToCalendar = 'assets/icons/add_to_calendar.png';
+  final microsoftLogo = 'assets/icons/microsoft.png';
 }
 
 class WelcomeImage {

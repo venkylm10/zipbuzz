@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -86,12 +87,14 @@ class SignInSheet extends ConsumerWidget {
                 onTap: () => googleSignIn(ref),
               ),
               const SizedBox(height: 8),
-              SignInButton(
-                title: "Apple",
-                iconPath: Assets.icons.apple_logo,
-                onTap: () => appleSignIn(ref),
-              ),
-              const SizedBox(height: 8),
+              if(Platform.isIOS)
+                SignInButton(
+                  title: "Apple",
+                  iconPath: Assets.icons.apple_logo,
+                  onTap: () => appleSignIn(ref),
+                ),
+              if(Platform.isIOS)
+                const SizedBox(height: 8),
               InkWell(
                 onTap: () {
                   // Guest View Flow
