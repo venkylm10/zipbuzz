@@ -216,7 +216,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     interestBanners = banners;
     return;
   }
-
+ 
   Color hexStringToColor(String hexColor) {
     if (hexColor.startsWith('0x') || hexColor.startsWith('0X')) {
       hexColor = hexColor.substring(2);

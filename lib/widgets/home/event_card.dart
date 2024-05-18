@@ -507,7 +507,7 @@ class _EventCardState extends ConsumerState<EventCard> {
       case "invited":
         return "Invited";
       default:
-        return "";
+        return "Interested?";
     }
   }
 
