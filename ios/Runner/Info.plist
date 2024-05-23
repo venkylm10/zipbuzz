@@ -56,11 +56,11 @@
 	<key>NSCameraUsageDescription</key>
 	<string>User profile picture and Event banners images</string>
 	<key>NSContactsUsageDescription</key>
-	<string>This app requires contacts access to function properly.</string>
+	<string>Buzz Me Requires Contact Permission To Help You Send Event Invitation To Your Contacts</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Need calendar access to add events to user's calendar</string>
+	<string>Buzz Me Requires Calendar Permission To Add Event In Your Calendar</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>User profile picture and Event banners images.</string>
+	<string>Buzz Me Requires Library Permission To Upload Profile Picture and Event Banner Image</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

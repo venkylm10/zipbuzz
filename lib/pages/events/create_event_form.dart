@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
+import 'package:interval_time_picker/models/visible_step.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
