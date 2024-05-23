@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
+import 'package:interval_time_picker/models/visible_step.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
@@ -75,7 +76,8 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
       context: context,
       initialTime: currentTime.replacing(minute: currentTime.minute - (currentTime.minute % 5)),
       interval: 5,
-      visibleStep: VisibleStep.fifths,
+      visibleStep: VisibleStep.fifths
+      // visibleStep: VisibleStep.fifths,
     );
     if (time != null) {
       final formatedTime = editEventController.getTimeFromTimeOfDay(time);

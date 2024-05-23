@@ -87,13 +87,13 @@ class SignInSheet extends ConsumerWidget {
                 onTap: () => googleSignIn(ref),
               ),
               const SizedBox(height: 8),
-              if(Platform.isIOS)
+              // if(Platform.isIOS)
                 SignInButton(
                   title: "Apple",
                   iconPath: Assets.icons.apple_logo,
                   onTap: () => appleSignIn(ref),
                 ),
-              if(Platform.isIOS)
+              // if(Platform.isIOS)
                 const SizedBox(height: 8),
               InkWell(
                 onTap: () {
