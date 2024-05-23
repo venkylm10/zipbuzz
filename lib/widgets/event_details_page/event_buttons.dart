@@ -533,6 +533,12 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                           notification.deviceToken,
                           notification.eventId,
                         );
+                        if (commentController.text.trim().isNotEmpty) {
+                          final event = widget.event;
+                          await ref
+                              .read(chatServicesProvider)
+                              .sendMessage(event: event, message: commentController.text);
+                        }
                       } catch (e) {
                         debugPrint("Error rejecting event invite: $e");
                       }
