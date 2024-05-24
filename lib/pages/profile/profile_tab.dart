@@ -16,7 +16,6 @@ import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
-import 'package:zipbuzz/widgets/profile/socials.dart';
 
 class ProfileTab extends ConsumerStatefulWidget {
   const ProfileTab({super.key});
@@ -178,7 +177,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Version: 0.1.75",
+                      "Version: 0.1.79",
                       style: AppStyles.h5.copyWith(
                         fontStyle: FontStyle.italic,
                       ),
