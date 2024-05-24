@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:lottie/lottie.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
@@ -26,10 +27,12 @@ import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/widgets/common/loader.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 import 'package:zipbuzz/widgets/event_details_page/invite_guest_alert.dart';
+import 'package:zipbuzz/widgets/event_details_page/published_event_alert.dart';
 
 import '../../models/events/posts/make_request_model.dart';
 import '../../models/interests/requests/user_interests_update_model.dart';
 import '../../models/interests/responses/interest_model.dart';
+import '../../pages/home/home.dart';
 import '../../services/chat_services.dart';
 import '../../services/dio_services.dart';
 import '../../services/notification_services.dart';
@@ -160,6 +163,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                         return;
                       }
                       await ref.read(newEventProvider.notifier).publishEvent();
+                      publishedAlertBox(ref);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -192,6 +196,15 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
         ),
       ),
     );
+  }
+
+  Future<dynamic> publishedAlertBox(WidgetRef ref) {
+    return showDialog(
+        context: navigatorKey.currentContext!,
+        barrierDismissible: false,
+        builder: (context) {
+          return const PublishedEventAlertBox();
+        });
   }
 
   Widget eventDetailsButtons() {

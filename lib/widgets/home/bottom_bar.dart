@@ -37,12 +37,14 @@ class BottomBar extends ConsumerWidget {
           ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
           ref.read(homeTabControllerProvider).rowInterests = false;
           ref.read(newEventProvider.notifier).resetNewEvent();
+          ref.read(homeTabControllerProvider.notifier).queryController.clear();
+          ref.read(homeTabControllerProvider.notifier).refresh();
         } else if (value == 1) {
           final user = ref.read(userProvider);
           ref.read(newEventProvider.notifier).updateHostId(user.id);
           ref.read(newEventProvider.notifier).updateHostName(user.name);
           ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
-          
+
           ref.read(eventsControllerProvider.notifier).fetchUserEvents();
         } else {
           ref.read(eventsControllerProvider.notifier).fetchEvents();

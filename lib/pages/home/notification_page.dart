@@ -249,6 +249,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           : "${notification.notificationTime}Z";
       final notiTime = DateTime.parse(time);
       return ResponseNotiCard(
+        senderId: notification.senderId,
         senderName: notification.senderName,
         senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
@@ -256,13 +257,17 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         confirmResponse: true,
         positiveResponse: notification.notificationType == "requested",
         time: timeago.format(notiTime, locale: 'en_short'),
+        notificationId: notification.id,
+        senderDeviceToken: notification.deviceToken,
+        notificationType: notification.notificationType,
       );
-    } else if (notification.notificationType == "yes" || notification.notificationType == "no") {
+    } else if (notification.notificationType == "yes" || notification.notificationType == "no" || notification.notificationType == "confirmed") {
       final time = notification.notificationTime.endsWith('Z')
           ? notification.notificationTime
           : "${notification.notificationTime}Z";
       final notiTime = DateTime.parse(time);
       return ResponseNotiCard(
+        senderId: notification.senderId,
         senderName: notification.senderName,
         senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
@@ -270,6 +275,9 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         confirmResponse: false,
         positiveResponse: notification.notificationType == "yes",
         time: timeago.format(notiTime, locale: 'en_short'),
+        notificationId: notification.id,
+        senderDeviceToken: notification.deviceToken,
+        notificationType: notification.notificationType,
       );
     } else if (notification.notificationType == "accepted") {
       final time = notification.notificationTime.endsWith('Z')
@@ -277,6 +285,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           : "${notification.notificationTime}Z";
       final notiTime = DateTime.parse(time);
       return ResponseNotiCard(
+        senderId: notification.senderId,
         senderName: notification.senderName,
         senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
@@ -285,6 +294,9 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         positiveResponse: notification.notificationType == "accepted",
         time: timeago.format(notiTime, locale: 'en_short'),
         accepted: true,
+        notificationId: notification.id,
+        senderDeviceToken: notification.deviceToken,
+        notificationType: notification.notificationType,
       );
     }
     return const SizedBox();

@@ -7,6 +7,7 @@ class Assets {
   static const icons = AppIcons();
   static const images = Images();
   static const welcomeImage = WelcomeImage();
+  static const lottieFiles = LottieFiles();
 }
 
 class AppIcons {
@@ -111,6 +112,11 @@ class Images {
   // ipad_border
   final ipad_border = 'assets/images/ipad_border.png';
   final border_ratio = 1484 / 2000;
+}
+
+class LottieFiles {
+  const LottieFiles();
+  final event_created = 'assets/lottie_files/event_created.json';
 }
 
 var allInterests = <InterestModel>[];

@@ -207,7 +207,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                   color: AppColors.primaryColor,
                 ),
                 child: Text(
-                  "Explore",
+                  "My Interests",
                   style: AppStyles.h4.copyWith(
                     color: Colors.white,
                   ),

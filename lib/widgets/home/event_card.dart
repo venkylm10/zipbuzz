@@ -499,7 +499,7 @@ class _EventCardState extends ConsumerState<EventCard> {
     }
     switch (status) {
       case "hosted":
-        return "Hosted";
+        return "Hosting";
       case "requested":
         return "Requested";
       case "confirmed":

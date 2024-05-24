@@ -4,6 +4,7 @@ import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/widgets/event_details_page/published_event_alert.dart';
 
 class InviteGuestAlert extends ConsumerStatefulWidget {
   const InviteGuestAlert({super.key});
@@ -14,8 +15,15 @@ class InviteGuestAlert extends ConsumerStatefulWidget {
 
 class _InviteGuestAlertState extends ConsumerState<InviteGuestAlert> {
   void publishEvent() async {
-    await ref.read(newEventProvider.notifier).publishEvent();
     navigatorKey.currentState!.pop();
+    await ref.read(newEventProvider.notifier).publishEvent();
+    showDialog(
+      context: navigatorKey.currentContext!,
+      barrierDismissible: false,
+      builder: (context) {
+        return const PublishedEventAlertBox();
+      },
+    );
   }
 
   @override
@@ -65,7 +73,6 @@ class _InviteGuestAlertState extends ConsumerState<InviteGuestAlert> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      navigatorKey.currentState!.pop();
                       publishEvent();
                     },
                     child: Container(

@@ -471,7 +471,7 @@ class NewEvent extends StateNotifier<EventModel> {
         final interest = allInterests.firstWhere((element) => element.activity == state.category);
         updateInterests(interest);
       }
-      await _moveToCreatedEvent();
+      ref.read(loadingTextProvider.notifier).reset();
     } catch (e) {
       ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pop();
@@ -479,7 +479,7 @@ class NewEvent extends StateNotifier<EventModel> {
     }
   }
 
-  Future<void> _moveToCreatedEvent() async {
+  Future<void> moveToCreatedEvent() async {
     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
     try {
       final image = NetworkImage(state.bannerPath);
