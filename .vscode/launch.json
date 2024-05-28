@@ -2,21 +2,45 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "zipbuzz",
+            "name": "zipbuzz-dev",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "dev",
+                "--target", "lib/main/main_dev.dart"
+            ]
         },
         {
-            "name": "zipbuzz web",
+            "name": "zipbuzz-prod",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart",
+            "args": [
+                "--flavor", "prod",
+                "--target", "lib/main/main_prod.dart"
+            ]
+        },
+        {
+            "name": "zipbuzz web-dev",
+            "request": "launch",
+            "type": "dart",
             "args": [
                 "run",
                 "-d",
                 "chrome",
-                "--web-port=60928"
+                "--web-port=60928",
+                "--target", "lib/main/main_dev.dart"
+            ]
+        },
+        {
+            "name": "zipbuzz web-prod",
+            "request": "launch",
+            "type": "dart",
+            "args": [
+                "run",
+                "-d",
+                "chrome",
+                "--web-port=60928",
+                "--target", "lib/main/main_prod.dart"
             ]
         }
     ]

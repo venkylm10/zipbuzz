@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "230074448899",
+    "firebase_url": "https://zipbuzz-dev-default-rtdb.firebaseio.com",
+    "project_id": "zipbuzz-dev",
+    "storage_bucket": "zipbuzz-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230074448899:android:8b1c1b5e7ea0c0e0c56236",
+        "android_client_info": {
+          "package_name": "com.abacus.zipbuzz.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgkOsPa4jnlY687eQGGIOy0jYZ-NdPtD8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

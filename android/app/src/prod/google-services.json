@@ -1,0 +1,243 @@
+{
+  "project_info": {
+    "project_number": "892338366790",
+    "firebase_url": "https://zipbuzz-prod-default-rtdb.firebaseio.com",
+    "project_id": "zipbuzz-prod",
+    "storage_bucket": "zipbuzz-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892338366790:android:167fbaae811e7d51469d47",
+        "android_client_info": {
+          "package_name": "com.abacus.zipbuzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892338366790-8nuvs95o1knku7t0qhhng9kjod6egdkp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abacus.zipbuzz",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "892338366790-eqmkh4bvibsr0u8e22rl49es7jgqnm3c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abacus.zipbuzz",
+            "certificate_hash": "7118b1596494ae1d4f7177b891a16cee7fb4bb79"
+          }
+        },
+        {
+          "client_id": "892338366790-jtorrpllj5tu2kt15osvoi999ni9h9pt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abacus.zipbuzz",
+            "certificate_hash": "3adba7fb79202a11e9c16112a866b0f9084cb282"
+          }
+        },
+        {
+          "client_id": "892338366790-u5mqdn8dqbqmerh27143jvbhuljndiu2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abacus.zipbuzz",
+            "certificate_hash": "bcac923fc9af758b5c7694b5e163ff391e534ecb"
+          }
+        },
+        {
+          "client_id": "892338366790-urgmvsrlt3ovutpp2ov9vu7hpoma0d5b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abacus.zipbuzz",
+            "certificate_hash": "4ed6418e193a09e548c8fb545b76058264957461"
+          }
+        },
+        {
+          "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJe8yovuIgvsHXFtlGmKDMZUhF5k1AItI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "892338366790-6k3qbi6iufgotc0oqljc5j16l546hm76.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zipbuzz.me"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892338366790:android:c58aea08fe0cf648469d47",
+        "android_client_info": {
+          "package_name": "com.example.zipbuzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892338366790-a93phjh463te49k2skhm8f46u0uuv3sr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zipbuzz",
+            "certificate_hash": "4ed6418e193a09e548c8fb545b76058264957461"
+          }
+        },
+        {
+          "client_id": "892338366790-h40mlkg56p88ap742a05l48hu23th7ga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zipbuzz",
+            "certificate_hash": "7118b1596494ae1d4f7177b891a16cee7fb4bb79"
+          }
+        },
+        {
+          "client_id": "892338366790-l6fkk1768nm42gd49bdvn4bb3dqh7b6m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zipbuzz",
+            "certificate_hash": "bcac923fc9af758b5c7694b5e163ff391e534ecb"
+          }
+        },
+        {
+          "client_id": "892338366790-m9k54tl21pl5nni5o5qjuqpnj9mhgsva.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zipbuzz",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJe8yovuIgvsHXFtlGmKDMZUhF5k1AItI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "892338366790-6k3qbi6iufgotc0oqljc5j16l546hm76.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zipbuzz.me"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892338366790:android:e3c265d0dd8a5336469d47",
+        "android_client_info": {
+          "package_name": "com.mycompany.betabuzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892338366790-3bpg24tpe3h9n7b13kf6ghk1ius4f2ad.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.betabuzz",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJe8yovuIgvsHXFtlGmKDMZUhF5k1AItI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "892338366790-6k3qbi6iufgotc0oqljc5j16l546hm76.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zipbuzz.me"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892338366790:android:5415f53aec55ac8b469d47",
+        "android_client_info": {
+          "package_name": "com.mycompany.groupsbuzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892338366790-j51mui35q6h9918r4hh8tfje8tkadh85.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.groupsbuzz",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJe8yovuIgvsHXFtlGmKDMZUhF5k1AItI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892338366790-mn5juqe3v24kuq0q9ats7bdtcjdqlva7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "892338366790-6k3qbi6iufgotc0oqljc5j16l546hm76.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zipbuzz.me"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

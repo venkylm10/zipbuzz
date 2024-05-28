@@ -72,6 +72,30 @@ android {
        }
    }
 
+   flavorDimensions "default" 
+   productFlavors{
+        dev{
+            dimension "default"
+            applicationId "com.abacus.zipbuzz.dev"
+            resValue "string", "app_name", "BuzzMe-Dev"
+        }
+        qatest{
+            dimension "default"
+            applicationId "com.abacus.zipbuzz.test"
+            resValue "string", "app_name", "BuzzMe-Test"
+        }
+        stage{
+            dimension "default"
+            applicationId "com.abacus.zipbuzz.stage"
+            resValue "string", "app_name", "BuzzMe-Stage"
+        }
+        prod{
+            dimension "default"
+            applicationId "com.abacus.zipbuzz"
+            resValue "string", "app_name", "BuzzMe"
+        }
+    }
+
 }
 
 flutter {
