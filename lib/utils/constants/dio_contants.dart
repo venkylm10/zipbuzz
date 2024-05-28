@@ -1,5 +1,5 @@
 class DioConstants {
-  static const String baseUrl = "https://admin.zipbuzz.me";
+  static const String baseUrl = "https://app.zipbuzz.me";
   static const String getTokenApi = "/users/user_token/";
   static const String onboardingDetails = "/users/onboard_images/";
   static const String createUser = "/users/create_user/";
