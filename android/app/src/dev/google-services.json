@@ -13,7 +13,28 @@
           "package_name": "com.abacus.zipbuzz.dev"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "230074448899-iv1f86sgv0gjbeca0673ookf8grpmect.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abacus.zipbuzz.dev",
+            "certificate_hash": "1056fe9cf54681e3f04950ef12fd09c679bc99b9"
+          }
+        },
+        {
+          "client_id": "230074448899-upv05rpfob2mi6o7q7618frpl296u8o4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.abacus.zipbuzz.dev",
+            "certificate_hash": "4ed6418e193a09e548c8fb545b76058264957461"
+          }
+        },
+        {
+          "client_id": "230074448899-86e047bfn2cq6fhetn8qv8005oaskvi0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAgkOsPa4jnlY687eQGGIOy0jYZ-NdPtD8"
@@ -21,7 +42,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230074448899-86e047bfn2cq6fhetn8qv8005oaskvi0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
