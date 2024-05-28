@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -64,6 +65,7 @@ class PublishedEventAlertBox extends ConsumerWidget {
                   Home.id,
                   (_) => false,
                 );
+                ref.read(homeTabControllerProvider.notifier).updateIndex(0);
               },
               child: Container(
                 padding: const EdgeInsets.all(8),
