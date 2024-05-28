@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
@@ -39,7 +40,7 @@ class DioServices {
   DioServices({required this.ref});
   Dio dio = Dio(
     BaseOptions(
-      baseUrl: DioConstants.baseUrl,
+      baseUrl: AppEnvironment.cloudFunctionBaseUrl,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${GetStorage().read(BoxConstants.accessToken)}',
@@ -51,7 +52,7 @@ class DioServices {
   static Future<void> getToken() async {
     final res = await Dio(
       BaseOptions(
-        baseUrl: DioConstants.baseUrl,
+        baseUrl: AppEnvironment.cloudFunctionBaseUrl,
         headers: {'Content-Type': 'application/json'},
       ),
     ).get(DioConstants.getTokenApi);

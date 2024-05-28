@@ -1,7 +1,7 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_uxcam/flutter_uxcam.dart';
+import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/routes.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -14,8 +14,10 @@ class MyApp extends StatelessWidget {
     if (kIsWeb) return;
     FlutterUxcam
         .optIntoSchematicRecordings(); // Confirm that you have user permission for screen recording
-    FlutterUxConfig config =
-        FlutterUxConfig(userAppKey: "cnh8esuvyrp6r0o", enableAutomaticScreenNameTagging: false);
+    FlutterUxConfig config = FlutterUxConfig(
+      userAppKey: AppEnvironment.uxCamKey,
+      enableAutomaticScreenNameTagging: false,
+    );
     FlutterUxcam.startWithConfiguration(config);
   }
 

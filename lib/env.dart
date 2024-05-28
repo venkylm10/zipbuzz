@@ -16,7 +16,7 @@ abstract class AppEnvironment {
     _env = env;
     switch(env) {
       case Environment.dev:
-        cloudFunctionBaseUrl = "https://app.zipbuzz.com/";
+        cloudFunctionBaseUrl = "https://dev.zipbuzz.com/";
         realtimeDataBaseUrl= 'https://shwipt-dev-default-rtdb.firebaseio.com/';
         dynamicLinkBaseUrl = 'https://zipbuzz.page.link';
         appDisplayName = 'Buzz.Me';
