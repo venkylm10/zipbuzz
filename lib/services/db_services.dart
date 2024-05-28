@@ -157,7 +157,7 @@ class DBServices {
     );
   }
 
-  Future<int> getUserId(UserIdRequestModel userIdRequestModel) async {
+  Future<int?> getUserId(UserIdRequestModel userIdRequestModel) async {
     return await _dioServices.getUserId(userIdRequestModel);
   }
 

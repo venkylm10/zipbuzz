@@ -15,8 +15,10 @@ import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -49,27 +51,12 @@ class AuthServices {
         final googleAuth = await googleUser.authentication;
         final authCredential = GoogleAuthProvider.credential(
             idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-        final credentials = await _auth.signInWithCredential(authCredential);
-
-        // Fluttertoast.showToast(
-        //     msg: "Started Signing Process",
-        //     toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.CENTER,
-        //     timeInSecForIosWeb: 1,
-        //     backgroundColor: Colors.red,
-        //     textColor: Colors.white,
-        //     fontSize: 16.0);
-
-        if (credentials.additionalUserInfo!.isNewUser) {
-          // Fluttertoast.showToast(
-          //     msg: "User Doesn't Exists",
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     gravity: ToastGravity.CENTER,
-          //     timeInSecForIosWeb: 1,
-          //     backgroundColor: Colors.red,
-          //     textColor: Colors.white,
-          //     fontSize: 16.0);
-
+        await _auth.signInWithCredential(authCredential);
+        final user = _auth.currentUser;
+        if(user == null)return;
+        final token = await NotificationServices().getToken();
+        final id = await _ref.read(dioServicesProvider).getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
+        if (id == null) {
           _ref.read(loadingTextProvider.notifier).reset();
           var location = _ref.read(userLocationProvider);
           location = _ref.read(userLocationProvider);
@@ -96,15 +83,6 @@ class AuthServices {
             country: location.country,
           );
 
-          // Fluttertoast.showToast(
-          //     msg: "Made User Model",
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     gravity: ToastGravity.CENTER,
-          //     timeInSecForIosWeb: 1,
-          //     backgroundColor: Colors.red,
-          //     textColor: Colors.white,
-          //     fontSize: 16.0);
-
           // creating new user
           _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
           await _ref.read(dbServicesProvider).createUser(user: newUser);
@@ -117,29 +95,11 @@ class AuthServices {
                   deviceToken: box.read(BoxConstants.deviceToken),
                 ),
               );
-
-          // Fluttertoast.showToast(
-          //     msg: "Created Account",
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     gravity: ToastGravity.CENTER,
-          //     timeInSecForIosWeb: 1,
-          //     backgroundColor: Colors.red,
-          //     textColor: Colors.white,
-          //     fontSize: 16.0);
           // storing id
           box.write(BoxConstants.id, id);
           box.write(BoxConstants.login, true);
 
-          // Fluttertoast.showToast(
-          //     msg: "Storing Cache",
-          //     toastLength: Toast.LENGTH_SHORT,
-          //     gravity: ToastGravity.CENTER,
-          //     timeInSecForIosWeb: 1,
-          //     backgroundColor: Colors.red,
-          //     textColor: Colors.white,
-          //     fontSize: 16.0);
-
-          await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id));
+          await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
@@ -152,14 +112,6 @@ class AuthServices {
   }
 
   Future<void> googleUserExistsFlow(String email) async {
-    // Fluttertoast.showToast(
-    //     msg: "User Exists",
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.CENTER,
-    //     timeInSecForIosWeb: 1,
-    //     backgroundColor: Colors.red,
-    //     textColor: Colors.white,
-    //     fontSize: 16.0);
 
     // getting id
     final id = await _ref.read(dbServicesProvider).getUserId(
@@ -169,29 +121,11 @@ class AuthServices {
           ),
         );
 
-    // Fluttertoast.showToast(
-    //     msg: "Read User Details",
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.CENTER,
-    //     timeInSecForIosWeb: 1,
-    //     backgroundColor: Colors.red,
-    //     textColor: Colors.white,
-    //     fontSize: 16.0);
-
     // storing id
     box.write(BoxConstants.id, id);
     box.write(BoxConstants.login, true);
 
-    // Fluttertoast.showToast(
-    //     msg: "Storing Cache",
-    //     toastLength: Toast.LENGTH_SHORT,
-    //     gravity: ToastGravity.CENTER,
-    //     timeInSecForIosWeb: 1,
-    //     backgroundColor: Colors.red,
-    //     textColor: Colors.white,
-    //     fontSize: 16.0);
-
-    _ref.read(newEventProvider.notifier).updateHostId(id);
+    _ref.read(newEventProvider.notifier).updateHostId(id!);
 
     // Back to AuthGate
     navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
@@ -256,22 +190,13 @@ class AuthServices {
       city: location.city,
       country: location.country,
     );
+    final token = await NotificationServices().getToken();
+    final userId  = await _ref.read(dioServicesProvider).getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
 
-    debugPrint("CHECK @@22");
-
-    if (userCredential.additionalUserInfo!.isNewUser) {
+    if (userId == null) {
       if (appleCredential.email == null) {
-        // Fluttertoast.showToast(
-        //     msg: "E-Mail Sharing Is Off",
-        //     toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.CENTER,
-        //     timeInSecForIosWeb: 1,
-        //     backgroundColor: Colors.red,
-        //     textColor: Colors.white,
-        //     fontSize: 16.0);
         final dummyEmail = _generateRandomEmail(user.uid);
         newUser = newUser.copyWith(email: dummyEmail);
-        debugPrint("CHECK @@2233");
       }
       _ref.read(loadingTextProvider.notifier).reset();
       // creating new user
@@ -291,7 +216,7 @@ class AuthServices {
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
-      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id));
+      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
       _ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
@@ -311,7 +236,7 @@ class AuthServices {
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
-      _ref.read(newEventProvider.notifier).updateHostId(id);
+      _ref.read(newEventProvider.notifier).updateHostId(id!);
 
       _ref.read(loadingTextProvider.notifier).reset();
       // Back to AuthGate

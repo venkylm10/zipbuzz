@@ -304,6 +304,7 @@ class DioServices {
         unsortedInterests.add(InterestModel.fromMap(item));
       }
       list.sort((a, b) => a.activity.compareTo(b.activity));
+      print("Interests Length: ${list.length}");
       return list;
     } catch (error) {
       debugPrint('Error in getMasterInterests: ${error.toString()}');
@@ -323,7 +324,7 @@ class DioServices {
     }
   }
 
-  Future<int> getUserId(UserIdRequestModel userIdRequestModel) async {
+  Future<int?> getUserId(UserIdRequestModel userIdRequestModel) async {
     try {
       final response = await dio.post(
         DioConstants.getUserId,
@@ -340,7 +341,7 @@ class DioServices {
       }
     } catch (e) {
       debugPrint('Error in getUserId: $e');
-      throw Exception('Failed to get user id');
+      return null;
     }
   }
 
