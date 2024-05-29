@@ -76,7 +76,7 @@ class EditEventController extends StateNotifier<EventModel> {
   List<TextEditingController> urlNameControllers = [TextEditingController()];
 
   void updateOldInvites(List<String> numbers) {
-    oldInviteNumbers = numbers;
+    oldInviteNumbers = numbers.map((e)=> e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "")).toList();
   }
 
   void addUrlField() {
@@ -401,6 +401,7 @@ class EditEventController extends StateNotifier<EventModel> {
       final newInvitees = eventInvites.where((e) {
         var number = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
         number = number.substring(number.length - 10);
+        print(oldInviteNumbers);
         final contains = oldInviteNumbers.contains(number);
         return !contains;
       });
