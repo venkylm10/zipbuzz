@@ -8,11 +8,11 @@ import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/main.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/notification_services.dart';
-import 'package:zipbuzz/firebase_options.dart';
+import 'package:zipbuzz/firebase_options/firebase_options_prod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptionsProd.currentPlatform);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
