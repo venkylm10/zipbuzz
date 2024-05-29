@@ -37,7 +37,7 @@ class PersonaliseController {
   final nameController = TextEditingController();
   var countryDialCode = "+1";
   var selectedInterests = <String>[];
-  var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "");
+  var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "", neighborhood: "-");
 
   void initialise() async {
     userLocation = ref.read(userLocationProvider);

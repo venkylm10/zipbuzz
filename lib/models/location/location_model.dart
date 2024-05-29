@@ -4,7 +4,7 @@ class LocationModel {
     required this.country,
     required this.countryDialCode,
     required this.zipcode,
-    this.neighborhood = "",
+    required this.neighborhood,
   });
   final String city;
   final String neighborhood;
@@ -27,6 +27,7 @@ class LocationModel {
       country: map['country'] as String,
       countryDialCode: map['countryDialCode'] as String,
       zipcode: map['zipcode'] as String,
+      neighborhood: map['neighborhood'] as String
     );
   }
 

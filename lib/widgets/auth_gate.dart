@@ -34,13 +34,6 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   final box = GetStorage();
 
   Future<void> getLoggedInUserData() async {
-    if (box.hasData(BoxConstants.location)) {
-      await ref
-          .read(userLocationProvider.notifier)
-          .getLocationFromZipcode(box.read(BoxConstants.location));
-    } else {
-      await ref.read(userLocationProvider.notifier).getLocationFromZipcode("95050");
-    }
     ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your Data...");
     final id = GetStorage().read(BoxConstants.id) as int?;
     if(id == null){
