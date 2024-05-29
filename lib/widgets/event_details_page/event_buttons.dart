@@ -1063,7 +1063,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
   void shareEvent(EventModel event) {
     final eventUrl = event.inviteUrl;
     final article = "aeiou".contains(event.category[0].toLowerCase()) ? "an" : "a";
-    Share.share(
-        "Follow the link to find more details on the Event\n\n${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at <link> (later)");
+    final shareText = "Follow the link to find more details on the Event\n\n${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at <link> (later)";
+    Share.share(shareText);
   }
 }

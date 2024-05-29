@@ -54,6 +54,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
   void initState() {
     status = !widget.confirmResponse && widget.positiveResponse ? "Confirm" : "Confirmed";
     notificationType = widget.notificationType;
+    print("notificationType: $notificationType");
     setState(() {});
     super.initState();
   }
@@ -182,15 +183,28 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
                       status = "Confirmed";
                     });
                     final user = ref.read(userProvider);
-                    await ref
+                    try {
+                      await ref
                         .read(dioServicesProvider)
                         .editUserStatus(widget.eventId, widget.senderId, "confirm");
-                    await ref
+                    } catch (e) {
+                      debugPrint(e.toString());
+                    }
+                    try {
+                      await ref
                         .read(dioServicesProvider)
                         .updateRespondedNotification(widget.senderId, user.id, widget.eventId);
-                    await ref
+                    } catch (e) {
+                      debugPrint(e.toString());
+                    }
+                    try {
+                      await ref
                         .read(dioServicesProvider)
                         .updateUserNotification(widget.notificationId, "confirmed");
+                    } catch (e) {
+                      debugPrint(e.toString());
+                    }
+                    
                     showSnackBar(
                         message: "Confirmed ${widget.senderName} for ${widget.eventName}.");
                     NotificationServices.sendMessageNotification(

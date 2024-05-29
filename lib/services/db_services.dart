@@ -189,6 +189,7 @@ class DBServices {
               twitterId: userSocials.twitter,
               country: _ref.read(userLocationProvider).country,
               countryDialCode: _ref.read(userLocationProvider).countryDialCode,
+              notificationCount: userDetails.notificationCount,
             );
         _ref.read(newEventProvider.notifier).updateHostId(userDetailsRequestModel.userId);
         _ref.read(userProvider.notifier).update((state) => updatedUser);

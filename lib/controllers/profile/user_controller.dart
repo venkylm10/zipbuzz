@@ -26,4 +26,5 @@ const globalDummyUser = UserModel(
   pastEventUids: [],
   city: "San Jose",
   country: "USA",
+  notificationCount: 0,
 );

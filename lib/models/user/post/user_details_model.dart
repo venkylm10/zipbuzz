@@ -8,6 +8,7 @@ class UserDetailsModel {
     required this.username,
     required this.isAmbassador,
     required this.deviceToken,
+    this.notificationCount = 0,
   });
   final String phoneNumber;
   final String zipcode;
@@ -17,6 +18,7 @@ class UserDetailsModel {
   final String username;
   final bool isAmbassador;
   final String deviceToken;
+  final int notificationCount;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -28,6 +30,7 @@ class UserDetailsModel {
       'username': username,
       'is_ambassador': isAmbassador,
       'device_token': deviceToken,
+      'notification_count' : notificationCount,
     };
   }
 
@@ -41,6 +44,7 @@ class UserDetailsModel {
       username: map['username'] as String,
       isAmbassador: map['is_ambassador'] as bool,
       deviceToken: map['device_token'] as String,
+      notificationCount: map['notification_count'] as int,
     );
   }
 }

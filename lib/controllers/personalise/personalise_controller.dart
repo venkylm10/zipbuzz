@@ -140,6 +140,7 @@ class PersonaliseController {
           linkedin: updatedUser.linkedinId ?? "",
           twitter: updatedUser.twitterId ?? "",
           interests: updatedUser.interests,
+          notifictaionCount: updatedUser.notificationCount,
         );
         await ref.read(dioServicesProvider).updateUserInterests(
               UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
