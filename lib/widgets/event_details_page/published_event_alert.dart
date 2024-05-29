@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/pages/home/home.dart';
@@ -34,7 +33,7 @@ class PublishedEventAlertBox extends ConsumerWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            Lottie.asset(Assets.lottieFiles.event_created),
+            Image.asset(Assets.gifFiles.event_created),
             const SizedBox(height: 24),
             InkWell(
               onTap: () {

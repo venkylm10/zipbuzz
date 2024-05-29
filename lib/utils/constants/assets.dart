@@ -8,6 +8,7 @@ class Assets {
   static const images = Images();
   static const welcomeImage = WelcomeImage();
   static const lottieFiles = LottieFiles();
+  static const gifFiles = GifFiles();
 }
 
 class AppIcons {
@@ -117,6 +118,11 @@ class Images {
 class LottieFiles {
   const LottieFiles();
   final event_created = 'assets/lottie_files/event_created.json';
+}
+
+class GifFiles {
+  const GifFiles();
+  final event_created = 'assets/gif_files/event_created.gif';
 }
 
 var allInterests = <InterestModel>[];
