@@ -17,7 +17,7 @@ class LocationServices extends StateNotifier<LocationModel> {
   final Ref ref;
   LocationServices({required this.ref})
       : super(LocationModel(
-            city: "Santa Clara", country: "CA", countryDialCode: "+1", zipcode: "95050"));
+            city: "-", country: "-", countryDialCode: "+1", zipcode: "95050"));
 
   final box = GetStorage();
 
@@ -59,7 +59,7 @@ class LocationServices extends StateNotifier<LocationModel> {
       box.write(BoxConstants.location, newZipcode);
     } on DioException catch (e) {
       Fluttertoast.showToast(
-        msg: "Zipcode doesn't exist",
+        msg: "Zipcode not found!",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,

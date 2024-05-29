@@ -16,7 +16,7 @@ abstract class AppEnvironment {
     _env = env;
     switch(env) {
       case Environment.dev:
-        cloudFunctionBaseUrl = "https://dev.zipbuzz.com/";
+        cloudFunctionBaseUrl = "https://dev.zipbuzz.me/";
         realtimeDataBaseUrl= 'https://shwipt-dev-default-rtdb.firebaseio.com/';
         dynamicLinkBaseUrl = 'https://zipbuzz.page.link';
         appDisplayName = 'Buzz.Me';
@@ -40,7 +40,7 @@ abstract class AppEnvironment {
         uxCamKey = '';
         break;
       case Environment.prod:
-        cloudFunctionBaseUrl = "https://app.zipbuzz.com/";
+        cloudFunctionBaseUrl = "https://app.zipbuzz.me/";
         realtimeDataBaseUrl= '';
         dynamicLinkBaseUrl = '';
         appDisplayName = 'Buzz.Me';

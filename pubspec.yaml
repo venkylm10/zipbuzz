@@ -122,6 +122,7 @@ flutter:
     - assets/images/events/
     - assets/images/about/
     - assets/lottie_files/
+    - assets/gif_files/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
