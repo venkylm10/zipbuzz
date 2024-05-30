@@ -135,7 +135,7 @@ class EditProfileController {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading profile pic...");
         profileUrl = await ref.read(dioServicesProvider).postUserImage(image!);
       }
-
+      final updatedLocation = ref.read(userLocationProvider);
       final updatedUser = ref.read(userProvider).copyWith(
             name: nameController.text.trim(),
             about: aboutController.text.trim(),
@@ -146,6 +146,7 @@ class EditProfileController {
             instagramId: instagramIdController.text.trim(),
             twitterId: twitterIdController.text.trim(),
             interests: userClone.interests,
+            zipcode: updatedLocation.zipcode,
           );
 
       final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
