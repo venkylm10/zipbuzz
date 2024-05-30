@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/pages/home/notification_page.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -14,7 +15,8 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
 
-class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget {
+class CustomAppBar extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
   final bool isSearching;
   final void Function() updateFavoriteEvents;
   final VoidCallback toggleSearching;
@@ -28,14 +30,15 @@ class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget
     required this.topPadding,
   });
   @override
-  Size get preferredSize =>
-      Size.fromHeight(AppBar().preferredSize.height + (isSearching ? 65 : 5) + topPadding);
+  Size get preferredSize => Size.fromHeight(
+      AppBar().preferredSize.height + (isSearching ? 65 : 5) + topPadding);
 
   @override
   ConsumerState<CustomAppBar> createState() => _CustomAppBarState();
 }
 
-class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerProviderStateMixin {
+class _CustomAppBarState extends ConsumerState<CustomAppBar>
+    with SingleTickerProviderStateMixin {
   final city = "";
   final country = "";
 
@@ -98,21 +101,66 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                   onTap: () async {
                     widget.toggleSearching();
                   },
-                  child: SvgPicture.asset(Assets.icons.search),
+                  child: SvgPicture.asset(Assets.icons.search, height: 40),
                 ),
                 const SizedBox(width: 12),
                 InkWell(
                   onTap: () {
                     navigatorKey.currentState!.pushNamed(NotificationPage.id);
                   },
-                  child: SvgPicture.asset(Assets.icons.notification),
+                  child: SizedBox(
+                    height: 44,
+                    width: 40,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          child: SvgPicture.asset(
+                            Assets.icons.notification,
+                            height: 40,
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: -6,
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              final notificationCount =
+                                  ref.watch(userProvider).notificationCount;
+                              return notificationCount == 0
+                                  ? const SizedBox()
+                                  : Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: AppColors.primaryColor,
+                                            width: 4),
+                                      ),
+                                      child: Text(
+                                        ref
+                                            .read(userProvider)
+                                            .notificationCount
+                                            .toString(),
+                                        style: AppStyles.h6.copyWith(
+                                            color: AppColors.primaryColor),
+                                      ),
+                                    );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 InkWell(
                   onTap: () async {
                     widget.toggleSearching();
                     if (GetStorage().read(BoxConstants.guestUser) != null) {
-                      showSnackBar(message: "You need to be signed in", duration: 2);
+                      showSnackBar(
+                          message: "You need to be signed in", duration: 2);
                       await Future.delayed(const Duration(seconds: 2));
                       ref.read(newEventProvider.notifier).showSignInForm();
                       return;
@@ -126,7 +174,8 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                       shape: BoxShape.circle,
                     ),
                     child: Consumer(builder: (context, ref, child) {
-                      final showingFavorites = ref.watch(eventsControllerProvider).showingFavorites;
+                      final showingFavorites =
+                          ref.watch(eventsControllerProvider).showingFavorites;
                       return SvgPicture.asset(
                         Assets.icons.heart_fill,
                         colorFilter: ColorFilter.mode(
@@ -147,7 +196,9 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
             right: 0,
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: widget.isSearching ? AppBarSearchField(widget: widget) : const SizedBox(),
+              child: widget.isSearching
+                  ? AppBarSearchField(widget: widget)
+                  : const SizedBox(),
             ),
           ),
         ],
@@ -170,7 +221,8 @@ class AppBarSearchField extends ConsumerWidget {
       height: 50,
       margin: const EdgeInsets.all(10),
       child: TextField(
-        controller: ref.read(homeTabControllerProvider.notifier).queryController,
+        controller:
+            ref.read(homeTabControllerProvider.notifier).queryController,
         cursorHeight: 24,
         style: AppStyles.h4.copyWith(color: Colors.white),
         onChanged: (value) {
@@ -178,7 +230,8 @@ class AppBarSearchField extends ConsumerWidget {
         },
         decoration: InputDecoration(
           hintText: 'Search for an event',
-          hintStyle: AppStyles.h4.copyWith(color: Colors.white.withOpacity(0.7), height: 1),
+          hintStyle: AppStyles.h4
+              .copyWith(color: Colors.white.withOpacity(0.7), height: 1),
           prefixIcon: Padding(
             padding: const EdgeInsets.all(12),
             child: SvgPicture.asset(
@@ -191,7 +244,10 @@ class AppBarSearchField extends ConsumerWidget {
           ),
           suffixIcon: InkWell(
             onTap: () {
-              ref.read(homeTabControllerProvider.notifier).queryController.clear();
+              ref
+                  .read(homeTabControllerProvider.notifier)
+                  .queryController
+                  .clear();
               ref.read(homeTabControllerProvider.notifier).refresh();
             },
             child: Icon(

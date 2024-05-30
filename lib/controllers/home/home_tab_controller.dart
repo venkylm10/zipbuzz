@@ -71,16 +71,6 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     state = state.copyWith(selectedCategory: category);
   }
 
-  void updateBodyScrollController() {
-    if (bodyScrollController.offset > 120 && state.isSearching) {
-      state = state.copyWith(isSearching: false);
-    } else if (bodyScrollController.offset < 120 && !state.isSearching) {
-      state = state.copyWith(selectedCategory: "");
-      state = state.copyWith(isSearching: true);
-    }
-    state = state.copyWith(previousOffset: bodyScrollController.offset);
-  }
-
   bool updatePageIndex(BuildContext context) {
     int currentIndex = state.index;
     final index = ((pageScrollController.offset + 100) / MediaQuery.of(context).size.width).floor();

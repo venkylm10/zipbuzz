@@ -81,6 +81,7 @@ class AuthServices {
             twitterId: "null",
             city: location.city,
             country: location.country,
+            notificationCount: 0,
           );
 
           // creating new user
@@ -189,6 +190,7 @@ class AuthServices {
       twitterId: "null",
       city: location.city,
       country: location.country,
+      notificationCount: 0,
     );
     final token = await NotificationServices().getToken();
     final userId  = await _ref.read(dioServicesProvider).getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));

@@ -21,6 +21,7 @@ class UserModel {
   final List<String>? pastEventUids;
   final String city;
   final String country;
+  final int notificationCount;
 
   const UserModel({
     required this.id,
@@ -37,6 +38,7 @@ class UserModel {
     required this.mobileNumber,
     required this.city,
     required this.country,
+    required this.notificationCount,
     this.linkedinId,
     this.instagramId,
     this.twitterId,
@@ -74,6 +76,7 @@ class UserModel {
       'pastEventUids': pastEventUids,
       'city': city,
       'country': country,
+      'notification_count' : notificationCount,
     };
   }
 
@@ -109,6 +112,7 @@ class UserModel {
           : <String>[],
       city: map['city'] != null ? map['city'] as String : "",
       country: map['country'] != null ? map['country'] as String : "",
+      notificationCount:  map['notification_count'] != null ? map['notification_count'] as int : 0,
     );
   }
 
@@ -133,6 +137,7 @@ class UserModel {
     String? city,
     String? country,
     String? countryDialCode,
+    int? notificationCount,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -154,6 +159,7 @@ class UserModel {
       pastEventUids: pastEventUids ?? this.pastEventUids,
       city: city ?? this.city,
       country: country ?? this.country,
+      notificationCount:  notificationCount ?? this.notificationCount,
     );
   }
 
