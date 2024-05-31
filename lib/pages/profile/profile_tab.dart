@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
@@ -42,6 +43,10 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
   void logOut() async {
     await ref.read(authServicesProvider).signOut();
     showSnackBar(message: "Logged out successfully!");
+  }
+
+  void moveToDeletePage() async {
+    launchUrlString("https://app.zipbuzz.me/delete/");
   }
 
   @override
@@ -167,6 +172,26 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                       child: Text(
                         "Log out",
                         style: AppStyles.h3.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                InkWell(
+                  onTap: () => moveToDeletePage(),
+                  child: Ink(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.negativeRed.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Delete Account",
+                        style: AppStyles.h3.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.negativeRed,
+                        ),
                       ),
                     ),
                   ),
