@@ -15,8 +15,15 @@ final userLocationProvider =
 class LocationServices extends StateNotifier<LocationModel> {
   final Ref ref;
   LocationServices({required this.ref})
-      : super(LocationModel(
-            city: "-", country: "-", countryDialCode: "+1", zipcode: "95050", neighborhood: "-"));
+      : super(
+          LocationModel(
+            city: "-",
+            country: "-",
+            countryDialCode: "+1",
+            zipcode: "95050",
+            neighborhood: "-",
+          ),
+        );
 
   final box = GetStorage();
 
