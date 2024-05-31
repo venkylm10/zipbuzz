@@ -37,9 +37,16 @@ class PersonaliseController {
   final nameController = TextEditingController();
   var countryDialCode = "+1";
   var selectedInterests = <String>[];
-  var userLocation = LocationModel(city: "", country: "", countryDialCode: "", zipcode: "", neighborhood: "-");
+  var userLocation = LocationModel(
+    city: "",
+    country: "",
+    countryDialCode: "",
+    zipcode: "",
+    neighborhood: "-",
+  );
 
   void initialise() async {
+    selectedInterests.clear();
     userLocation = ref.read(userLocationProvider);
     emailController.text = ref.read(userProvider).email;
   }
@@ -57,10 +64,6 @@ class PersonaliseController {
   }
 
   bool validate() {
-    // if (!emailCheck()) {
-    //   showSnackBar(message: "Please use own email, This will be used for further communication");
-    //   return false;
-    // }
     if (mobileController.text.isEmpty) {
       showSnackBar(message: "Please enter mobile number");
       return false;
@@ -127,6 +130,7 @@ class PersonaliseController {
               interests: selectedInterests,
             );
         box.write(BoxConstants.countryDialCode, countryDialCode);
+        print(updatedUser.interests);
         final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: updatedUser.id,
           phoneNumber: updatedUser.mobileNumber,

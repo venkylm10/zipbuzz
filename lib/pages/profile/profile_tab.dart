@@ -179,20 +179,25 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 const SizedBox(height: 12),
                 InkWell(
                   onTap: () => moveToDeletePage(),
-                  child: Ink(
+                  child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.negativeRed.withOpacity(0.2),
+                      color: Colors.red.shade50,
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: Center(
-                      child: Text(
-                        "Delete Account",
-                        style: AppStyles.h3.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.negativeRed,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(Assets.icons.delete),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Delete Account",
+                          style: AppStyles.h3.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red.shade500,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),

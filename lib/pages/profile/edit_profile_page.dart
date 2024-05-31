@@ -190,31 +190,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   const SizedBox(height: 24),
                   Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
                   const SizedBox(height: 24),
-                  InkWell(
-                    onTap: showSnackBar,
-                    child: Ink(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(Assets.icons.delete),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Delete Account",
-                            style: AppStyles.h3.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.red.shade500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
                   Divider(color: AppColors.borderGrey.withOpacity(0.5), height: 1),
                   const SizedBox(height: 24),
                   InkWell(
