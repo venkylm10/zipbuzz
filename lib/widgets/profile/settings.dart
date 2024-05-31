@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:zipbuzz/pages/home/notification_page.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/settings/faqs_page.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class SettingsTiles extends StatelessWidget {
   const SettingsTiles({super.key});
@@ -42,20 +43,22 @@ class SettingsTiles extends StatelessWidget {
               buildSettingsTile(
                 "Notification",
                 Assets.icons.notifications_settings,
-                onTap: showSnackBar,
+                onTap: () {
+                  navigatorKey.currentState!.pushNamed(NotificationPage.id);
+                },
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Divider(
-                  color: AppColors.borderGrey.withOpacity(0.5),
-                  height: 1,
-                ),
-              ),
-              buildSettingsTile(
-                "Terms & Conditions",
-                Assets.icons.tnc,
-                onTap: showSnackBar,
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 12),
+              //   child: Divider(
+              //     color: AppColors.borderGrey.withOpacity(0.5),
+              //     height: 1,
+              //   ),
+              // ),
+              // buildSettingsTile(
+              //   "Terms & Conditions",
+              //   Assets.icons.tnc,
+              //   onTap: showSnackBar,
+              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Divider(
@@ -66,7 +69,9 @@ class SettingsTiles extends StatelessWidget {
               buildSettingsTile(
                 "Privacy Policy",
                 Assets.icons.privacy_policy,
-                onTap: showSnackBar,
+                onTap: () {
+                  launchUrlString("https://app.zipbuzz.me/privacy/");
+                },
               ),
             ],
           ),
@@ -75,11 +80,11 @@ class SettingsTiles extends StatelessWidget {
     );
   }
 
-  Padding buildSettingsTile(String label, String iconPath, {void Function()? onTap}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: InkWell(
-        onTap: onTap,
+  Widget buildSettingsTile(String label, String iconPath, {void Function()? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         child: Row(
           children: [
             SvgPicture.asset(iconPath, height: 20),
