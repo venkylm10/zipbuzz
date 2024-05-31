@@ -70,7 +70,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     setState(() {});
   }
 
-  void updateTime({bool? isEnd = false}) async {
+  void updateTime({bool isEnd = false}) async {
     final currentTime = TimeOfDay.fromDateTime(DateTime.now());
     var time = await showIntervalTimePicker(
       context: context,
@@ -81,11 +81,12 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     );
     if (time != null) {
       final formatedTime = editEventController.getTimeFromTimeOfDay(time);
-      if (isEnd!) {
+      if (isEnd) {
         endTimeController.text = formatedTime;
       } else {
         startTimeController.text = formatedTime;
       }
+      ref.read(editEventControllerProvider.notifier).updateTime(time,isEnd: isEnd);
       setState(() {});
     }
   }
