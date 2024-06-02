@@ -130,7 +130,6 @@ class PersonaliseController {
               interests: selectedInterests,
             );
         box.write(BoxConstants.countryDialCode, countryDialCode);
-        print(updatedUser.interests);
         final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: updatedUser.id,
           phoneNumber: updatedUser.mobileNumber,

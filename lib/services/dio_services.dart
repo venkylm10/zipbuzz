@@ -634,4 +634,10 @@ class DioServices {
       "media_url": imageUrl,
     });
   }
+
+  Future<void> deleteAccount(int userId) async {
+    await dio.post(DioConstants.deleteAccountApi, data: {
+      "user_id": userId,
+    });
+  }
 }

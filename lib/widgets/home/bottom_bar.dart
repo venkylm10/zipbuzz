@@ -5,6 +5,8 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -31,11 +33,14 @@ class BottomBar extends ConsumerWidget {
       unselectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.greyColor),
       fixedColor: AppColors.primaryColor,
       onTap: (value) {
+        final userId = ref.read(userProvider).id;
         ref.read(homeTabControllerProvider.notifier).updateIndex(value);
         if (value == 0) {
           ref.read(homeTabControllerProvider.notifier).updateSearching(false);
           ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
           ref.read(homeTabControllerProvider).rowInterests = false;
+          ref.read(eventsControllerProvider.notifier).fetchEvents();
+          ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
           ref.read(newEventProvider.notifier).resetNewEvent();
           ref.read(homeTabControllerProvider.notifier).queryController.clear();
           ref.read(homeTabControllerProvider.notifier).refresh();
@@ -50,6 +55,7 @@ class BottomBar extends ConsumerWidget {
           ref.read(eventsControllerProvider.notifier).fetchEvents();
           ref.read(newEventProvider.notifier).resetNewEvent();
         }
+
         pop != null ? pop!() : null;
       },
       items: [

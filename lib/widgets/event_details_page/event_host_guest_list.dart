@@ -4,7 +4,6 @@ import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -190,12 +189,6 @@ class EventHostGuestList extends StatelessWidget {
                         await ref
                             .read(dioServicesProvider)
                             .updateRespondedNotification(member.userId, event.hostId, event.id);
-                        NotificationServices.sendMessageNotification(
-                          event.title,
-                          "${event.hostName} has confirmed your invitation to ${event.title}.",
-                          event.userDeviceToken,
-                          event.id,
-                        );
                       },
                       child: buildGuestTag(member.status),
                     );

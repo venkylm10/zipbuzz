@@ -11,6 +11,7 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class CreateEventForm extends ConsumerStatefulWidget {
   const CreateEventForm({super.key});
@@ -28,6 +29,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   late TextEditingController endTimeController;
   DateTime date = DateTime.now();
   late NewEvent newEventController;
+  DateTime? startTime;
+  DateTime? endTime;
 
   @override
   void initState() {
@@ -95,7 +98,13 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     setState(() {});
   }
 
-  void updateTime({bool? isEnd = false}) async {
+  void updateTime({bool isEnd = false}) async {
+    if (isEnd) {
+      if (startTime == null) {
+        showSnackBar(message: "Please select start time first");
+        return;
+      }
+    }
     final currentTime = TimeOfDay.fromDateTime(DateTime.now());
     var time = await showIntervalTimePicker(
       context: context,
@@ -104,9 +113,25 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
       visibleStep: VisibleStep.fifths,
     );
     if (time != null) {
+      final dt = DateTime.now().copyWith(hour: time.hour, minute: time.minute);
+      final now = DateTime.now();
+      if (dt.isBefore(now)) {
+        showSnackBar(message: "Choose a ahead time");
+        return;
+      }
+
+      if (isEnd) {
+        endTime = dt;
+        if (endTime!.isBefore(startTime!)) {
+          showSnackBar(message: "End time should be after start time");
+          return;
+        }
+      } else {
+        startTime = dt;
+      }
       newEventController.updateTime(time, isEnd: isEnd);
       final formatedTime = newEventController.getTimeFromTimeOfDay(time);
-      if (isEnd!) {
+      if (isEnd) {
         endTimeController.text = formatedTime;
       } else {
         startTimeController.text = formatedTime;

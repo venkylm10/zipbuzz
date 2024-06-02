@@ -19,7 +19,7 @@ class EventCalendar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const double rowHeight = 44;
+    const double rowHeight = 46;
     final eventsMap = ref.watch(eventsControllerProvider).eventsMap;
     final focusedDay = ref.watch(eventsControllerProvider).focusedDay;
     return Container(

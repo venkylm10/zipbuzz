@@ -42,6 +42,7 @@ class DioConstants {
   static const String addClonedImageApi = "/events/event_images_url/";
   static const String fetchUserEvents = '/events/user_events/';
   static const String fetchUserEventsWeb = '/events/user_events_web/';
+  static const String deleteAccountApi = 'users/delete_request/';
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

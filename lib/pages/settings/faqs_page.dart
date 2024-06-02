@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/back_button.dart';
@@ -49,70 +48,70 @@ class _FAQsPageState extends State<FAQsPage> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              height: 36,
-              width: 36,
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppColors.borderGrey),
-              ),
-              child: SvgPicture.asset(Assets.icons.telephone),
-            ),
-          ),
-        ],
+        // actions: [
+        //   InkWell(
+        //     onTap: () {},
+        //     child: Container(
+        //       height: 36,
+        //       width: 36,
+        //       padding: const EdgeInsets.symmetric(vertical: 6),
+        //       margin: const EdgeInsets.only(right: 8),
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(18),
+        //         border: Border.all(color: AppColors.borderGrey),
+        //       ),
+        //       child: SvgPicture.asset(Assets.icons.telephone),
+        //     ),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
-              TextField(
-                controller: searchController,
-                cursorColor: AppColors.primaryColor,
-                style: AppStyles.h5,
-                decoration: InputDecoration(
-                  hintText: "Ask a question...",
-                  hintStyle: AppStyles.h5.copyWith(
-                    color: AppColors.lightGreyColor,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: SvgPicture.asset(
-                      Assets.icons.searchBarIcon,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.primaryColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.borderGrey),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.borderGrey),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: AppColors.lightGreyColor),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.borderGrey),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.borderGrey),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-              ),
+              // TextField(
+              //   controller: searchController,
+              //   cursorColor: AppColors.primaryColor,
+              //   style: AppStyles.h5,
+              //   decoration: InputDecoration(
+              //     hintText: "Ask a question...",
+              //     hintStyle: AppStyles.h5.copyWith(
+              //       color: AppColors.lightGreyColor,
+              //     ),
+              //     contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              //     prefixIcon: Padding(
+              //       padding: const EdgeInsets.all(14),
+              //       child: SvgPicture.asset(
+              //         Assets.icons.searchBarIcon,
+              //         colorFilter: const ColorFilter.mode(
+              //           AppColors.primaryColor,
+              //           BlendMode.srcIn,
+              //         ),
+              //       ),
+              //     ),
+              //     border: OutlineInputBorder(
+              //       borderSide: BorderSide(color: AppColors.borderGrey),
+              //       borderRadius: BorderRadius.circular(24),
+              //     ),
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: AppColors.borderGrey),
+              //       borderRadius: BorderRadius.circular(24),
+              //     ),
+              //     focusedBorder: OutlineInputBorder(
+              //       borderSide: const BorderSide(color: AppColors.lightGreyColor),
+              //       borderRadius: BorderRadius.circular(24),
+              //     ),
+              //     errorBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: AppColors.borderGrey),
+              //       borderRadius: BorderRadius.circular(24),
+              //     ),
+              //     disabledBorder: OutlineInputBorder(
+              //       borderSide: BorderSide(color: AppColors.borderGrey),
+              //       borderRadius: BorderRadius.circular(24),
+              //     ),
+              //   ),
+              // ),
               ListView.builder(
                 itemCount: faqs.length,
                 shrinkWrap: true,
@@ -171,6 +170,9 @@ class _FAQsPageState extends State<FAQsPage> {
             ),
             const SizedBox(height: 8),
             InkWell(
+              onTap: () {
+                launchUrlString("mailto:info@zipbuzz.me");
+              },
               child: Ink(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -179,7 +181,7 @@ class _FAQsPageState extends State<FAQsPage> {
                 ),
                 child: Center(
                   child: Text(
-                    "Contact Support",
+                    "Email Support",
                     style: AppStyles.h3.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,

@@ -53,9 +53,11 @@ class AuthServices {
             idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
         await _auth.signInWithCredential(authCredential);
         final user = _auth.currentUser;
-        if(user == null)return;
+        if (user == null) return;
         final token = await NotificationServices().getToken();
-        final id = await _ref.read(dioServicesProvider).getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
+        final id = await _ref
+            .read(dioServicesProvider)
+            .getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
         if (id == null) {
           _ref.read(loadingTextProvider.notifier).reset();
           var location = _ref.read(userLocationProvider);
@@ -69,7 +71,7 @@ class AuthServices {
             imageUrl: auth.currentUser?.photoURL ?? _ref.read(defaultsProvider).profilePictureUrl,
             handle: "",
             isAmbassador: false,
-            about: "New to Zipbuzz",
+            about: "Hi, I am on Buzz.Me",
             eventsHosted: 0,
             rating: 0.toDouble(),
             zipcode: location.zipcode,
@@ -113,7 +115,6 @@ class AuthServices {
   }
 
   Future<void> googleUserExistsFlow(String email) async {
-
     // getting id
     final id = await _ref.read(dbServicesProvider).getUserId(
           UserIdRequestModel(
@@ -178,7 +179,7 @@ class AuthServices {
       imageUrl: user.photoURL ?? _ref.read(defaultsProvider).profilePictureUrl,
       handle: "",
       isAmbassador: false,
-      about: "New to Zipbuzz",
+      about: "Hi, I am on Buzz.Me",
       eventsHosted: 0,
       rating: 0.toDouble(),
       zipcode: location.zipcode,
@@ -193,7 +194,9 @@ class AuthServices {
       notificationCount: 0,
     );
     final token = await NotificationServices().getToken();
-    final userId  = await _ref.read(dioServicesProvider).getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
+    final userId = await _ref
+        .read(dioServicesProvider)
+        .getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
 
     if (userId == null) {
       if (appleCredential.email == null) {
@@ -268,5 +271,15 @@ class AuthServices {
   String _generateRandomEmail(String uid) {
     String email = '$uid@zbuzz.com';
     return email;
+  }
+
+  Future<void> deleteAccount() async {
+    final userId = _ref.read(userProvider).id;
+    try {
+      await _ref.read(dioServicesProvider).deleteAccount(userId);
+      showSnackBar(message: "Your data deletion request has been sent.");
+    } catch (e) {
+      debugPrint("Error deleting user: $e");
+    }
   }
 }

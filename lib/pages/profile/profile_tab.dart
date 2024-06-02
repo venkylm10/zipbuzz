@@ -16,6 +16,7 @@ import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/widgets/profile/delete_account_dialog.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
 
 class ProfileTab extends ConsumerStatefulWidget {
@@ -45,8 +46,13 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     showSnackBar(message: "Logged out successfully!");
   }
 
-  void moveToDeletePage() async {
-    launchUrlString("https://app.zipbuzz.me/delete/");
+  void showDeleteAccountDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const DeleteAccountDialog();
+      },
+    );
   }
 
   @override
@@ -178,7 +184,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 ),
                 const SizedBox(height: 12),
                 InkWell(
-                  onTap: () => moveToDeletePage(),
+                  onTap: () => showDeleteAccountDialog(),
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(

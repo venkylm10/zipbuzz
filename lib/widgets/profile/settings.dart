@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:zipbuzz/pages/home/notification_page.dart';
+import 'package:zipbuzz/pages/settings/settings_notification_page.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -44,7 +44,7 @@ class SettingsTiles extends StatelessWidget {
                 "Notification",
                 Assets.icons.notifications_settings,
                 onTap: () {
-                  navigatorKey.currentState!.pushNamed(NotificationPage.id);
+                  navigatorKey.currentState!.pushNamed(SettingsNotificationPage.id);
                 },
               ),
               // Padding(
