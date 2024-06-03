@@ -369,6 +369,10 @@ class NewEvent extends StateNotifier<EventModel> {
     final check = validateNewEvent();
     if (!check) return;
     try {
+      final currentDay = ref.read(eventsControllerProvider.notifier).currentDay;
+      ref
+          .read(eventsControllerProvider.notifier)
+          .updateCurrentDay(currentDay.add(const Duration(days: 1)));
       var bannerUrl = "";
       if (bannerImage != null) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading banner image...");
@@ -471,6 +475,10 @@ class NewEvent extends StateNotifier<EventModel> {
         final interest = allInterests.firstWhere((element) => element.activity == state.category);
         updateInterests(interest);
       }
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Updating events...");
+
+      await ref.read(eventsControllerProvider.notifier).fetchEvents();
+      await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
       ref.read(loadingTextProvider.notifier).reset();
     } catch (e) {
       ref.read(loadingTextProvider.notifier).reset();
@@ -496,13 +504,17 @@ class NewEvent extends StateNotifier<EventModel> {
         'randInt': 0,
         'showBottomBar': true,
       };
-      await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
       ref.read(loadingTextProvider.notifier).reset();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
       await navigatorKey.currentState!.pushReplacementNamed(
         EventDetailsPage.id,
         arguments: args,
       );
+      await Future.delayed(const Duration(milliseconds: 800));
+      final currentDay = ref.read(eventsControllerProvider.notifier).currentDay;
+      ref
+          .read(eventsControllerProvider.notifier)
+          .updateCurrentDay(currentDay.add(const Duration(days: -1)));
       resetNewEvent();
     } catch (e) {
       debugPrint("Failed to move to created event: $e");
