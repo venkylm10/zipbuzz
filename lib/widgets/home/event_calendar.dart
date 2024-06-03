@@ -43,6 +43,7 @@ class EventCalendar extends ConsumerWidget {
           onDaySelected(selectedDay, focusedDay, ref);
         },
         startingDayOfWeek: StartingDayOfWeek.sunday,
+        daysOfWeekHeight: 30,
         rowHeight: rowHeight,
         availableGestures: AvailableGestures.horizontalSwipe,
         calendarBuilders: customCalendarBuilders(ref),
@@ -78,10 +79,15 @@ class EventCalendar extends ConsumerWidget {
         );
       },
       dowBuilder: (context, day) {
-        return Text(
-          DateFormat.E('en_US').format(day).substring(0, 2),
-          textAlign: TextAlign.center,
-          style: AppStyles.h4.copyWith(fontWeight: FontWeight.w500),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              DateFormat.E('en_US').format(day).substring(0, 2),
+              textAlign: TextAlign.center,
+              style: AppStyles.h4.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ],
         );
       },
       todayBuilder: (context, day, focusedDay) {

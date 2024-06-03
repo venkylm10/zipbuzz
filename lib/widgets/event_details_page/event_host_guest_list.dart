@@ -50,7 +50,7 @@ class EventHostGuestList extends StatelessWidget {
         if (selectedTag == "Invited") {
           return buildInviteMembers();
         }
-        if (selectedTag == "Responded") {
+        if (selectedTag == "RSVPs") {
           return buildRespondedMembers();
         }
 
@@ -301,7 +301,7 @@ class EventHostGuestList extends StatelessWidget {
   SingleChildScrollView buildMemberTags() {
     const List<String> tags = [
       "Invited",
-      "Responded",
+      "RSVPs",
       "Confirmed",
     ];
     return SingleChildScrollView(
@@ -343,7 +343,7 @@ class EventHostGuestList extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  "${tags[index]} (${tags[index] == "Invited" ? allLength : tags[index] == "Responded" ? respondedLength : confirmedLength})",
+                  "${tags[index]} (${tags[index] == "Invited" ? allLength : tags[index] == "RSVPs" ? respondedLength : confirmedLength})",
                   style: AppStyles.h5.copyWith(
                     color: selectedTag == tags[index] ? Colors.white : AppColors.greyColor,
                   ),
