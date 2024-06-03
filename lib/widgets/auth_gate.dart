@@ -36,9 +36,9 @@ class _AuthGateState extends ConsumerState<AuthGate> {
   Future<void> getLoggedInUserData() async {
     ref.read(loadingTextProvider.notifier).updateLoadingText("Getting your Data...");
     final id = GetStorage().read(BoxConstants.id) as int?;
-    if(id == null){
+    if (id == null) {
       await GetStorage().erase();
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (_)=> false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (_) => false);
       return;
     }
     final requestModel = UserDetailsRequestModel(userId: id);
@@ -82,23 +82,8 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 
-  Future<void> setUpGuestData() async {
-    ref.read(userProvider.notifier).update((state) => globalDummyUser);
-    if (box.hasData(BoxConstants.location)) {
-      await ref
-          .read(userLocationProvider.notifier)
-          .getLocationFromZipcode(box.read(BoxConstants.location));
-    } else {
-      await ref.read(userLocationProvider.notifier).getLocationFromZipcode("000000");
-    }
-    ref.read(loadingTextProvider.notifier).reset();
-    GetStorage().write(BoxConstants.id, 1);
-    navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
-  }
-
   void buildNextScreen() async {
     bool? login = box.read(BoxConstants.login) as bool?;
-    // bool? guest = box.read(BoxConstants.guestUser) as bool?;
     await Future.delayed(const Duration(milliseconds: 500));
     await updateInterestsData();
     if (login != null && login) {

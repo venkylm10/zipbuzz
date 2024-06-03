@@ -55,7 +55,6 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
   void initState() {
     status = widget.notificationType == 'yes' ? "Confirm" : "Confirmed";
     notificationType = widget.notificationType;
-    print("notificationType: $notificationType");
     setState(() {});
     super.initState();
   }

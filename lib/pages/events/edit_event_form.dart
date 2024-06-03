@@ -82,15 +82,12 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     final eventDate = DateTime.parse(ref.read(editEventControllerProvider).date);
     if (pm && hr != 12) {
       final dateTime = eventDate.copyWith(hour: hr + 12, minute: min);
-      print(dateTime.toString());
       return dateTime;
     } else if (!pm && hr == 12) {
       final dateTime = eventDate.copyWith(hour: 0, minute: min);
-      print(dateTime.toString());
       return dateTime;
     }
     final dateTime = eventDate.copyWith(hour: hr, minute: min);
-    print(dateTime.toString());
     return dateTime;
   }
 
@@ -129,7 +126,6 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
 
       if (isEnd) {
         endTime = dt;
-        print(endTime!.toString());
         if (endTime!.isBefore(startTime!)) {
           showSnackBar(message: "End time should be after start time");
           return;
