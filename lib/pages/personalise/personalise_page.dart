@@ -259,10 +259,6 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
         padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 8),
         child: InkWell(
           onTap: () {
-            // if (!agree) {
-            //   showSnackBar(message: "We need mobile number to send you event updates");
-            //   return;
-            // }
             if (loadingText == null) {
               personaliseController.sumbitInterests();
             }

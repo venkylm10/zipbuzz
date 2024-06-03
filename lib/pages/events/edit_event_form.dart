@@ -11,6 +11,7 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 class EditEventForm extends ConsumerStatefulWidget {
   const EditEventForm({super.key});
@@ -31,6 +32,8 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
   DateTime date = DateTime.now();
   late EditEventController editEventController;
   late TextEditingController urlController;
+  DateTime? startTime;
+  DateTime? endTime;
 
   @override
   void initState() {
@@ -42,6 +45,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
     startTimeController = TextEditingController();
     endTimeController = TextEditingController();
     urlController = TextEditingController();
+    extractTimeFromEventDetails();
     getEventDetails();
     super.initState();
   }
@@ -66,27 +70,80 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
         ) ??
         DateTime.now();
     editEventController.updateDate(date);
+    extractTimeFromEventDetails();
     dateController.text = DateFormat('d\'th,\' MMMM (EEEE)').format(date);
     setState(() {});
   }
 
+  DateTime extractTime(String time) {
+    final hr = int.parse(time.split(":")[0]);
+    final min = int.parse(time.split(":")[1].split(" ")[0]);
+    final pm = time.split(' ').last == 'PM';
+    final eventDate = DateTime.parse(ref.read(editEventControllerProvider).date);
+    if (pm && hr != 12) {
+      final dateTime = eventDate.copyWith(hour: hr + 12, minute: min);
+      print(dateTime.toString());
+      return dateTime;
+    } else if (!pm && hr == 12) {
+      final dateTime = eventDate.copyWith(hour: 0, minute: min);
+      print(dateTime.toString());
+      return dateTime;
+    }
+    final dateTime = eventDate.copyWith(hour: hr, minute: min);
+    print(dateTime.toString());
+    return dateTime;
+  }
+
+  void extractTimeFromEventDetails() {
+    final event = ref.read(editEventControllerProvider);
+    if (event.startTime != "null") {
+      startTime = extractTime(event.startTime);
+    }
+    if (event.endTime != "null") {
+      endTime = extractTime(event.endTime);
+    }
+  }
+
   void updateTime({bool isEnd = false}) async {
+    if (isEnd) {
+      if (startTime == null) {
+        showSnackBar(message: "Please select start time first");
+        return;
+      }
+    }
     final currentTime = TimeOfDay.fromDateTime(DateTime.now());
     var time = await showIntervalTimePicker(
       context: context,
       initialTime: currentTime.replacing(minute: currentTime.minute - (currentTime.minute % 5)),
       interval: 5,
-      visibleStep: VisibleStep.fifths
-      // visibleStep: VisibleStep.fifths,
+      visibleStep: VisibleStep.fifths,
     );
     if (time != null) {
+      final currentDate = DateTime.parse(ref.read(editEventControllerProvider).date);
+      final dt = currentDate.copyWith(hour: time.hour, minute: time.minute);
+      final now = DateTime.now();
+      if (dt.isBefore(now)) {
+        showSnackBar(message: "Choose time ahead");
+        return;
+      }
+
+      if (isEnd) {
+        endTime = dt;
+        print(endTime!.toString());
+        if (endTime!.isBefore(startTime!)) {
+          showSnackBar(message: "End time should be after start time");
+          return;
+        }
+      } else {
+        startTime = dt;
+      }
+      ref.read(editEventControllerProvider.notifier).updateTime(time, isEnd: isEnd);
       final formatedTime = editEventController.getTimeFromTimeOfDay(time);
       if (isEnd) {
         endTimeController.text = formatedTime;
       } else {
         startTimeController.text = formatedTime;
       }
-      ref.read(editEventControllerProvider.notifier).updateTime(time,isEnd: isEnd);
       setState(() {});
     }
   }

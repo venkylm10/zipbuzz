@@ -63,9 +63,8 @@ class EditProfileController {
   }
 
   void toggleInterestView() {
-    interestViewType = interestViewType == InterestViewType.user
-        ? InterestViewType.all
-        : InterestViewType.user;
+    interestViewType =
+        interestViewType == InterestViewType.user ? InterestViewType.all : InterestViewType.user;
   }
 
   bool validateLocationCheck() {
@@ -103,8 +102,7 @@ class EditProfileController {
   Future<void> saveChanges() async {
     ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
-      showSnackBar(
-          message: "You need to be signed in to edit profile", duration: 2);
+      showSnackBar(message: "You need to be signed in to edit profile", duration: 2);
       await Future.delayed(const Duration(seconds: 2));
       navigatorKey.currentState!.pop();
       ref.read(newEventProvider.notifier).showSignInForm();
@@ -125,9 +123,7 @@ class EditProfileController {
         return;
       }
       if (ref.read(userProvider).zipcode != zipcodeController.text.trim()) {
-        ref
-            .read(loadingTextProvider.notifier)
-            .updateLoadingText("Updating Location..");
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Updating Location..");
         await ref
             .read(userLocationProvider.notifier)
             .getLocationFromZipcode(zipcodeController.text.trim());
@@ -136,9 +132,7 @@ class EditProfileController {
       var profileUrl = ref.read(userProvider).imageUrl;
 
       if (image != null) {
-        ref
-            .read(loadingTextProvider.notifier)
-            .updateLoadingText("Uploading profile pic...");
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading profile pic...");
         profileUrl = await ref.read(dioServicesProvider).postUserImage(image!);
       }
       final updatedLocation = ref.read(userLocationProvider);
@@ -171,22 +165,15 @@ class EditProfileController {
         notifictaionCount: updatedUser.notificationCount,
       );
       await ref.read(dioServicesProvider).updateUserInterests(
-            UserInterestsUpdateModel(
-                userId: updatedUser.id, interests: updatedUser.interests),
+            UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
           );
-      ref
-          .read(loadingTextProvider.notifier)
-          .updateLoadingText("Updating user data...");
-      await ref
-          .read(dbServicesProvider)
-          .updateUser(userDetailsUpdateRequestModel);
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Updating user data...");
+      await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
       await ref
           .read(dbServicesProvider)
           .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
 
-      ref
-          .read(loadingTextProvider.notifier)
-          .updateLoadingText("Getting new events...");
+      ref.read(loadingTextProvider.notifier).updateLoadingText("Getting new events...");
       await ref.read(eventsControllerProvider.notifier).fetchEvents();
       ref.read(loadingTextProvider.notifier).reset();
       showSnackBar(message: "Updated successfully");
@@ -195,6 +182,7 @@ class EditProfileController {
       debugPrint("Error updating user: $e");
       showSnackBar(message: "Error updating user, try later..");
     }
+    interestViewType = InterestViewType.user;
   }
 
   Future<void> resetNotificationCount() async {

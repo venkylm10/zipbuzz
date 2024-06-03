@@ -16,6 +16,7 @@ import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/widgets/profile/delete_account_dialog.dart';
 import 'package:zipbuzz/widgets/profile/settings.dart';
 
 class ProfileTab extends ConsumerStatefulWidget {
@@ -45,8 +46,13 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     showSnackBar(message: "Logged out successfully!");
   }
 
-  void moveToDeletePage() async {
-    launchUrlString("https://app.zipbuzz.me/delete/");
+  void showDeleteAccountDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const DeleteAccountDialog();
+      },
+    );
   }
 
   @override
@@ -178,21 +184,26 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                 ),
                 const SizedBox(height: 12),
                 InkWell(
-                  onTap: () => moveToDeletePage(),
-                  child: Ink(
+                  onTap: () => showDeleteAccountDialog(),
+                  child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.negativeRed.withOpacity(0.2),
+                      color: Colors.red.shade50,
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: Center(
-                      child: Text(
-                        "Delete Account",
-                        style: AppStyles.h3.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.negativeRed,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(Assets.icons.delete),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Delete Account",
+                          style: AppStyles.h3.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red.shade500,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
@@ -202,7 +213,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Version: 0.1.83",
+                      "Version: 1.0.2",
                       style: AppStyles.h5.copyWith(
                         fontStyle: FontStyle.italic,
                       ),

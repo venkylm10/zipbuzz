@@ -76,7 +76,7 @@ class UserModel {
       'pastEventUids': pastEventUids,
       'city': city,
       'country': country,
-      'notification_count' : notificationCount,
+      'notification_count': notificationCount,
     };
   }
 
@@ -103,7 +103,7 @@ class UserModel {
               return userInterest.activity;
             }).toList()
           : [],
-      about: map['about'] != null ? map['about'] as String : "New to ZipBuzz",
+      about: map['about'] != null ? map['about'] as String : "Hi, I am on Buzz.Me",
       eventUids: map['eventUids'] != null
           ? (map['eventUids'] as List).map((e) => e.toString()).toList()
           : <String>[],
@@ -112,7 +112,7 @@ class UserModel {
           : <String>[],
       city: map['city'] != null ? map['city'] as String : "",
       country: map['country'] != null ? map['country'] as String : "",
-      notificationCount:  map['notification_count'] != null ? map['notification_count'] as int : 0,
+      notificationCount: map['notification_count'] != null ? map['notification_count'] as int : 0,
     );
   }
 
@@ -159,7 +159,7 @@ class UserModel {
       pastEventUids: pastEventUids ?? this.pastEventUids,
       city: city ?? this.city,
       country: country ?? this.country,
-      notificationCount:  notificationCount ?? this.notificationCount,
+      notificationCount: notificationCount ?? this.notificationCount,
     );
   }
 

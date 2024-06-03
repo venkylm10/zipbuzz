@@ -42,10 +42,10 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
     super.initState();
   }
 
-  void updateNotification() async{
+  void updateNotification() async {
     ref.read(editProfileControllerProvider).resetNotificationCount();
     await Future.delayed(const Duration(milliseconds: 500));
-    ref.read(userProvider.notifier).update((state)=> state.copyWith(notificationCount: 0));
+    ref.read(userProvider.notifier).update((state) => state.copyWith(notificationCount: 0));
   }
 
   @override
@@ -274,8 +274,13 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         notificationId: notification.id,
         senderDeviceToken: notification.deviceToken,
         notificationType: notification.notificationType,
+        rebuild: () {
+          setState(() {});
+        },
       );
-    } else if (notification.notificationType == "yes" || notification.notificationType == "no" || notification.notificationType == "confirmed") {
+    } else if (notification.notificationType == "yes" ||
+        notification.notificationType == "no" ||
+        notification.notificationType == "confirmed") {
       final time = notification.notificationTime.endsWith('Z')
           ? notification.notificationTime
           : "${notification.notificationTime}Z";
@@ -292,6 +297,9 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         notificationId: notification.id,
         senderDeviceToken: notification.deviceToken,
         notificationType: notification.notificationType,
+        rebuild: () {
+          setState(() {});
+        },
       );
     } else if (notification.notificationType == "accepted") {
       final time = notification.notificationTime.endsWith('Z')
@@ -311,6 +319,9 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         notificationId: notification.id,
         senderDeviceToken: notification.deviceToken,
         notificationType: notification.notificationType,
+        rebuild: () {
+          setState(() {});
+        },
       );
     }
     return const SizedBox();

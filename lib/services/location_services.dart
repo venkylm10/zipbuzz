@@ -10,18 +10,20 @@ import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 
 final userLocationProvider =
-    StateNotifierProvider<LocationServices, LocationModel>(
-        (ref) => LocationServices(ref: ref));
+    StateNotifierProvider<LocationServices, LocationModel>((ref) => LocationServices(ref: ref));
 
 class LocationServices extends StateNotifier<LocationModel> {
   final Ref ref;
   LocationServices({required this.ref})
-      : super(LocationModel(
+      : super(
+          LocationModel(
             city: "-",
             country: "-",
             countryDialCode: "+1",
             zipcode: "95050",
-            neighborhood: "-"));
+            neighborhood: "-",
+          ),
+        );
 
   final box = GetStorage();
 
@@ -61,7 +63,7 @@ class LocationServices extends StateNotifier<LocationModel> {
         neighborhood: neightborhood,
       );
       box.write(BoxConstants.location, newZipcode);
-    }  catch (e) {
+    } catch (e) {
       Fluttertoast.showToast(
         msg: "Zipcode not found!",
         toastLength: Toast.LENGTH_SHORT,
@@ -71,7 +73,12 @@ class LocationServices extends StateNotifier<LocationModel> {
         textColor: Colors.white,
         fontSize: 16.0,
       );
-      state = state.copyWith(zipcode: newZipcode);
+      state = state.copyWith(
+        zipcode: newZipcode,
+        city: "-",
+        country: "-",
+        neighborhood: "-",
+      );
       ref.read(userProvider.notifier).update(
             (state) => state.copyWith(zipcode: state.zipcode),
           );
