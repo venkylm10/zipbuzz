@@ -479,6 +479,9 @@ class NewEvent extends StateNotifier<EventModel> {
 
       await ref.read(eventsControllerProvider.notifier).fetchEvents();
       await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+      ref
+          .read(eventsControllerProvider.notifier)
+          .updateCurrentDay(currentDay.add(const Duration(days: -1)));
       ref.read(loadingTextProvider.notifier).reset();
     } catch (e) {
       ref.read(loadingTextProvider.notifier).reset();
@@ -490,6 +493,10 @@ class NewEvent extends StateNotifier<EventModel> {
   Future<void> moveToCreatedEvent() async {
     ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
     try {
+      final currentDay = ref.read(eventsControllerProvider.notifier).currentDay;
+      ref
+          .read(eventsControllerProvider.notifier)
+          .updateCurrentDay(currentDay.add(const Duration(days: 1)));
       final image = NetworkImage(state.bannerPath);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(image);
       final dominantColor = generator.dominantColor?.color;
@@ -511,7 +518,6 @@ class NewEvent extends StateNotifier<EventModel> {
         arguments: args,
       );
       await Future.delayed(const Duration(milliseconds: 800));
-      final currentDay = ref.read(eventsControllerProvider.notifier).currentDay;
       ref
           .read(eventsControllerProvider.notifier)
           .updateCurrentDay(currentDay.add(const Duration(days: -1)));

@@ -54,7 +54,7 @@ class AuthServices {
         await _auth.signInWithCredential(authCredential);
         final user = _auth.currentUser;
         if (user == null) return;
-        final token = await NotificationServices().getToken();
+        final token = await _ref.read(notificationServicesProvider).getToken();
         final id = await _ref
             .read(dioServicesProvider)
             .getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
@@ -193,7 +193,7 @@ class AuthServices {
       country: location.country,
       notificationCount: 0,
     );
-    final token = await NotificationServices().getToken();
+    final token = await _ref.read(notificationServicesProvider).getToken();
     final userId = await _ref
         .read(dioServicesProvider)
         .getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));

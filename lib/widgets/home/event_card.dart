@@ -145,7 +145,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                   width: 50,
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: eventColor.withOpacity(0.2),
+                    color: eventColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Image.network(widget.event.iconPath),
@@ -260,13 +260,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    if (widget.focusedEvent) buildCategoryChip(),
-                                    if (widget.focusedEvent) const SizedBox(width: 5),
-                                    buildHostChip(),
-                                  ],
-                                ),
+                                buildHostChip(),
                                 const SizedBox(height: 5),
                                 Text(
                                   widget.event.title,
@@ -507,7 +501,7 @@ class _EventCardState extends ConsumerState<EventCard> {
       case "invited":
         return "Invited";
       default:
-        return "Interested?";
+        return "Interested ?";
     }
   }
 

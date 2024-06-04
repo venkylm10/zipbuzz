@@ -1,15 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_uxcam/flutter_uxcam.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/routes.dart';
+import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
   void initUxCam() {
     if (kIsWeb) return;
     FlutterUxcam
@@ -19,6 +26,18 @@ class MyApp extends StatelessWidget {
       enableAutomaticScreenNameTagging: false,
     );
     FlutterUxcam.startWithConfiguration(config);
+  }
+
+  void initNoti() async {
+    if (!kIsWeb) {
+      await ref.read(notificationServicesProvider).initNotifications();
+    }
+  }
+
+  @override
+  void initState() {
+    initNoti();
+    super.initState();
   }
 
   @override

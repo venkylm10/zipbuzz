@@ -20,10 +20,7 @@ class ResponseNotiCard extends ConsumerStatefulWidget {
     required this.senderProfilePic,
     required this.eventId,
     required this.eventName,
-    required this.positiveResponse,
-    this.confirmResponse = false,
     required this.time,
-    this.accepted = false,
     required this.notificationId,
     required this.senderDeviceToken,
     required this.notificationType,
@@ -36,10 +33,7 @@ class ResponseNotiCard extends ConsumerStatefulWidget {
   final int notificationId;
   final int eventId;
   final String eventName;
-  final bool positiveResponse;
-  final bool confirmResponse;
   final String time;
-  final bool accepted;
   final String senderDeviceToken;
   final String notificationType;
   final VoidCallback rebuild;
@@ -53,8 +47,8 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
   var notificationType = "";
   @override
   void initState() {
-    status = widget.notificationType == 'yes' ? "Confirm" : "Confirmed";
     notificationType = widget.notificationType;
+    status = notificationType == 'yes' ? "Confirm" : "Confirmed";
     setState(() {});
     super.initState();
   }
@@ -115,61 +109,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
                     ),
                     softWrap: true,
                   ),
-                  widget.accepted
-                      ? Text(
-                          "${widget.senderName} has accepted your request for ${widget.eventName}",
-                          style: AppStyles.h5.copyWith(
-                            color: AppColors.greyColor,
-                          ),
-                        )
-                      : widget.confirmResponse
-                          ? widget.positiveResponse
-                              ? Text(
-                                  "You have requested for ${widget.eventName}",
-                                  style: AppStyles.h5.copyWith(
-                                    color: AppColors.greyColor,
-                                  ),
-                                )
-                              : Text(
-                                  "You have declined for ${widget.eventName}",
-                                  style: AppStyles.h5.copyWith(
-                                    color: AppColors.greyColor,
-                                  ),
-                                )
-                          : notificationType == "confirmed"
-                              ? Text(
-                                  "You confirmed ${widget.senderName} for ${widget.eventName}",
-                                  style: AppStyles.h5.copyWith(
-                                    color: AppColors.greyColor,
-                                  ),
-                                )
-                              : RichText(
-                                  softWrap: true,
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "${widget.senderName} - RSVP'd ",
-                                        style: AppStyles.h5.copyWith(
-                                          color: AppColors.greyColor,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '${widget.positiveResponse ? "Yes" : "No"} ',
-                                        style: AppStyles.h5.copyWith(
-                                          color: widget.positiveResponse
-                                              ? AppColors.positiveGreen
-                                              : AppColors.negativeRed,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' to your invite for ${widget.eventName}',
-                                        style: AppStyles.h5.copyWith(
-                                          color: AppColors.greyColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                  buildNotificationText(),
                 ],
               ),
             ),
@@ -184,6 +124,68 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
     );
   }
 
+  Widget buildNotificationText() {
+    switch (notificationType) {
+      case 'requested':
+        return Text(
+          "You have requested for ${widget.eventName}",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.greyColor,
+          ),
+        );
+      case 'declined':
+        return Text(
+          "You have declined for ${widget.eventName}",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.greyColor,
+          ),
+        );
+      case "accepted":
+        return Text(
+          "${widget.senderName} has accepted your request for ${widget.eventName}",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.greyColor,
+          ),
+        );
+      case "confirmed":
+        return Text(
+          "You confirmed ${widget.senderName} for ${widget.eventName}",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.greyColor,
+          ),
+        );
+      case "yes" || "no":
+        final positive = notificationType == 'yes';
+        return RichText(
+          softWrap: true,
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "${widget.senderName} - RSVP'd ",
+                style: AppStyles.h5.copyWith(
+                  color: AppColors.greyColor,
+                ),
+              ),
+              TextSpan(
+                text: '${positive ? "Yes" : "No"} ',
+                style: AppStyles.h5.copyWith(
+                  color: positive ? AppColors.positiveGreen : AppColors.negativeRed,
+                ),
+              ),
+              TextSpan(
+                text: ' to your invite for ${widget.eventName}',
+                style: AppStyles.h5.copyWith(
+                  color: AppColors.greyColor,
+                ),
+              ),
+            ],
+          ),
+        );
+      default:
+        return const SizedBox();
+    }
+  }
+
   Widget buildConfirmButton() {
     final show = widget.notificationType == 'yes';
     if (!show) return const SizedBox();
@@ -194,6 +196,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
           if (status == "Confirmed") return;
           setState(() {
             status = "Confirmed";
+            notificationType = "confirmed";
           });
           final user = ref.read(userProvider);
           try {
@@ -217,7 +220,6 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
           } catch (e) {
             debugPrint(e.toString());
           }
-
           showSnackBar(message: "Confirmed ${widget.senderName} for ${widget.eventName}.");
           await Future.delayed(const Duration(seconds: 2));
           widget.rebuild();
