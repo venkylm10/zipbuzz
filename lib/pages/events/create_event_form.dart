@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:interval_time_picker/models/visible_step.dart';
 import 'package:intl/intl.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -113,7 +114,10 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
       visibleStep: VisibleStep.fifths,
     );
     if (time != null) {
-      final dt = DateTime.now().copyWith(hour: time.hour, minute: time.minute);
+      final dt = ref
+          .read(eventsControllerProvider.notifier)
+          .currentDay
+          .copyWith(hour: time.hour, minute: time.minute);
       final now = DateTime.now();
       if (dt.isBefore(now)) {
         showSnackBar(message: "Choose a ahead time");
