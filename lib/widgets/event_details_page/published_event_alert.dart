@@ -59,6 +59,7 @@ class PublishedEventAlertBox extends ConsumerWidget {
             const SizedBox(height: 8),
             InkWell(
               onTap: () {
+                ref.read(newEventProvider.notifier).resetNewEvent();
                 navigatorKey.currentState!.pop();
                 navigatorKey.currentState!.pushNamedAndRemoveUntil(
                   Home.id,
