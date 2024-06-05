@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:interval_time_picker/models/visible_step.dart';
 import 'package:intl/intl.dart';
-import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -82,10 +81,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     newEventController.updateLocation(value);
   }
 
-  void updateUrl(String value) {
-    // newEventController.updateUrl(value);
-  }
-
   void updateDate() async {
     date = await showDatePicker(
           context: context,
@@ -114,10 +109,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
       visibleStep: VisibleStep.fifths,
     );
     if (time != null) {
-      final dt = ref
-          .read(eventsControllerProvider.notifier)
-          .currentDay
-          .copyWith(hour: time.hour, minute: time.minute);
+      final dateTimeString = ref.read(newEventProvider).date;
+      final dt = DateTime.parse(dateTimeString).copyWith(hour: time.hour, minute: time.minute);
       final now = DateTime.now();
       if (dt.isBefore(now)) {
         showSnackBar(message: "Choose a ahead time");
@@ -361,14 +354,12 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                                 controller:
                                     ref.read(newEventProvider.notifier).urlNameControllers[index],
                                 hintText: "HyperLink Name",
-                                onChanged: updateUrl,
                               ),
                               const SizedBox(height: 4),
                               CustomTextField(
                                 controller:
                                     ref.read(newEventProvider.notifier).urlControllers[index],
                                 hintText: "URL",
-                                onChanged: updateUrl,
                               ),
                             ],
                           ),
