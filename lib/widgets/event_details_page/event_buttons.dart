@@ -1020,14 +1020,15 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     ref.read(editEventControllerProvider.notifier).updateEvent(widget.event);
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
-    ref.read(editEventControllerProvider.notifier).updateOldInvites(widget.event.eventMembers
-        .map(
-          (e) => e.phone
-              .replaceAll(RegExp(r'[\s()-]+'), "")
-              .replaceAll(" ", "")
-              .substring(e.phone.length - 10),
-        )
-        .toList());
+    ref.read(editEventControllerProvider.notifier).updateOldInvites(widget.event.eventMembers.map(
+          (e) {
+            var phone = e.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+            if (phone.length > 10) {
+              phone = phone.substring(phone.length - 10);
+            }
+            return phone;
+          },
+        ).toList());
     await fixInviteMoreContacts();
     await showPreview();
     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
@@ -1063,7 +1064,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
   void shareEvent(EventModel event) {
     final eventUrl = event.inviteUrl;
     final article = "aeiou".contains(event.category[0].toLowerCase()) ? "an" : "a";
-    final shareText = "Follow the link to find more details on the Event\n\n${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at <link> (later)";
+    final shareText =
+        "Follow the link to find more details on the Event\n\n${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at <link> (later)";
     Share.share(shareText);
   }
 }
