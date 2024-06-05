@@ -256,8 +256,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           );
         },
       );
-    } else if (notification.notificationType == "requested" ||
-        notification.notificationType == "declined") {
+    } else {
       final time = notification.notificationTime.endsWith('Z')
           ? notification.notificationTime
           : "${notification.notificationTime}Z";
@@ -268,54 +267,7 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         senderProfilePic: notification.senderProfilePicture,
         eventId: notification.eventId,
         eventName: notification.eventName,
-        confirmResponse: true,
-        positiveResponse: notification.notificationType == "requested",
         time: timeago.format(notiTime, locale: 'en_short'),
-        notificationId: notification.id,
-        senderDeviceToken: notification.deviceToken,
-        notificationType: notification.notificationType,
-        rebuild: () {
-          setState(() {});
-        },
-      );
-    } else if (notification.notificationType == "yes" ||
-        notification.notificationType == "no" ||
-        notification.notificationType == "confirmed") {
-      final time = notification.notificationTime.endsWith('Z')
-          ? notification.notificationTime
-          : "${notification.notificationTime}Z";
-      final notiTime = DateTime.parse(time);
-      return ResponseNotiCard(
-        senderId: notification.senderId,
-        senderName: notification.senderName,
-        senderProfilePic: notification.senderProfilePicture,
-        eventId: notification.eventId,
-        eventName: notification.eventName,
-        confirmResponse: false,
-        positiveResponse: notification.notificationType == "yes",
-        time: timeago.format(notiTime, locale: 'en_short'),
-        notificationId: notification.id,
-        senderDeviceToken: notification.deviceToken,
-        notificationType: notification.notificationType,
-        rebuild: () {
-          setState(() {});
-        },
-      );
-    } else if (notification.notificationType == "accepted") {
-      final time = notification.notificationTime.endsWith('Z')
-          ? notification.notificationTime
-          : "${notification.notificationTime}Z";
-      final notiTime = DateTime.parse(time);
-      return ResponseNotiCard(
-        senderId: notification.senderId,
-        senderName: notification.senderName,
-        senderProfilePic: notification.senderProfilePicture,
-        eventId: notification.eventId,
-        eventName: notification.eventName,
-        confirmResponse: false,
-        positiveResponse: notification.notificationType == "accepted",
-        time: timeago.format(notiTime, locale: 'en_short'),
-        accepted: true,
         notificationId: notification.id,
         senderDeviceToken: notification.deviceToken,
         notificationType: notification.notificationType,
@@ -324,7 +276,6 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         },
       );
     }
-    return const SizedBox();
   }
 
   Widget buildLoader() {
