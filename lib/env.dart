@@ -40,7 +40,7 @@ abstract class AppEnvironment {
         uxCamKey = '';
         break;
       case Environment.prod:
-        cloudFunctionBaseUrl = "https://app.zipbuzz.me/";
+        cloudFunctionBaseUrl = "https://admin.zipbuzz.me/";
         realtimeDataBaseUrl= '';
         dynamicLinkBaseUrl = '';
         appDisplayName = 'Buzz.Me';

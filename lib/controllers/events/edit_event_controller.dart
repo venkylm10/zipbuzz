@@ -76,8 +76,15 @@ class EditEventController extends StateNotifier<EventModel> {
   List<TextEditingController> urlNameControllers = [TextEditingController()];
 
   void updateOldInvites(List<String> numbers) {
-    oldInviteNumbers =
-        numbers.map((e) => e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "")).toList();
+    oldInviteNumbers = numbers.map(
+      (e) {
+        var phone = e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        if (phone.length > 10) {
+          phone = phone.substring(phone.length - 10);
+        }
+        return phone;
+      },
+    ).toList();
   }
 
   void addUrlField() {
@@ -401,15 +408,20 @@ class EditEventController extends StateNotifier<EventModel> {
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final newInvitees = eventInvites.where((e) {
         var number = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        number = number.substring(number.length - 10);
+        if (number.length > 10) {
+          number = number.substring(number.length - 10);
+        }
         debugPrint(oldInviteNumbers.toString());
         final contains = oldInviteNumbers.contains(number);
         return !contains;
       });
-      final phoneNumbers = newInvitees
-          .map(
-              (e) => e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", ""))
-          .toList();
+      final phoneNumbers = newInvitees.map((e) {
+        var phone = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        if (phone.length > 10) {
+          phone = phone.substring(phone.length - 10);
+        }
+        return phone;
+      }).toList();
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,
         images: newInvitees.map((e) => Defaults().contactAvatarUrl).toList(),
