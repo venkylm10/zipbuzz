@@ -1,6 +1,5 @@
-enum Environment {
-  dev, prod, stage, testing
-}
+enum Environment { dev, prod, stage, testing }
+
 abstract class AppEnvironment {
   static late Environment _env;
   static Environment get environment => _env;
@@ -14,10 +13,10 @@ abstract class AppEnvironment {
 
   static setupEnv(Environment env) {
     _env = env;
-    switch(env) {
+    switch (env) {
       case Environment.dev:
         cloudFunctionBaseUrl = "https://dev.zipbuzz.me/";
-        realtimeDataBaseUrl= 'https://shwipt-dev-default-rtdb.firebaseio.com/';
+        realtimeDataBaseUrl = 'https://shwipt-dev-default-rtdb.firebaseio.com/';
         dynamicLinkBaseUrl = 'https://zipbuzz.page.link';
         appDisplayName = 'Buzz.Me';
         appEnvironment = 'dev';
@@ -25,7 +24,7 @@ abstract class AppEnvironment {
         break;
       case Environment.testing:
         cloudFunctionBaseUrl = "";
-        realtimeDataBaseUrl= '';
+        realtimeDataBaseUrl = '';
         dynamicLinkBaseUrl = '';
         appDisplayName = '';
         appEnvironment = '';
@@ -33,15 +32,15 @@ abstract class AppEnvironment {
         break;
       case Environment.stage:
         cloudFunctionBaseUrl = "";
-        realtimeDataBaseUrl= '';
+        realtimeDataBaseUrl = '';
         dynamicLinkBaseUrl = '';
         appDisplayName = '';
         appEnvironment = '';
         uxCamKey = '';
         break;
       case Environment.prod:
-        cloudFunctionBaseUrl = "https://app.zipbuzz.me/";
-        realtimeDataBaseUrl= '';
+        cloudFunctionBaseUrl = "https://admin.zipbuzz.me/";
+        realtimeDataBaseUrl = '';
         dynamicLinkBaseUrl = '';
         appDisplayName = 'Buzz.Me';
         appEnvironment = 'prod';
@@ -51,9 +50,9 @@ abstract class AppEnvironment {
   }
 }
 
-class ConnUtils{
+class ConnUtils {
   final cloudFunctionBaseUrl = AppEnvironment.cloudFunctionBaseUrl;
-  final realtimeDataBaseUrl= AppEnvironment.realtimeDataBaseUrl;
+  final realtimeDataBaseUrl = AppEnvironment.realtimeDataBaseUrl;
   final dynamicLinkBaseUrl = AppEnvironment.dynamicLinkBaseUrl;
   final appDisplayName = AppEnvironment.appDisplayName;
 }
