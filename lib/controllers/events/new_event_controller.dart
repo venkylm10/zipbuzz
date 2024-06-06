@@ -228,13 +228,15 @@ class NewEvent extends StateNotifier<EventModel> {
       (element) {
         var number =
             element.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (number.length > 10) {
-          number = number.substring(number.length - 10);
-        }
+        number = number.substring(number.length - 10);
+        // if (number.length > 10) {
+        //   number = number.substring(number.length - 10);
+        // }
         phone = phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (phone.length > 10) {
-          phone = phone.substring(phone.length - 10);
-        }
+        phone = phone.substring(phone.length - 10);
+        // if (phone.length > 10) {
+        //   phone = phone.substring(phone.length - 10);
+        // }
         return phone == number;
       },
     );
@@ -260,13 +262,15 @@ class NewEvent extends StateNotifier<EventModel> {
       (element) {
         var number =
             contact.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (number.length > 10) {
-          number = number.substring(number.length - 10);
-        }
+        number = number.substring(number.length - 10);
+        // if (number.length > 10) {
+        //   number = number.substring(number.length - 10);
+        // }
         var phone = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (phone.length > 10) {
-          phone = phone.substring(phone.length - 10);
-        }
+        phone = phone.substring(phone.length - 10);
+        // if (phone.length > 10) {
+        //   phone = phone.substring(phone.length - 10);
+        // }
         return phone == number;
       },
     );
@@ -428,10 +432,11 @@ class NewEvent extends StateNotifier<EventModel> {
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
       final phoneNumbers = eventInvites.map((e) {
-        var number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
-        if (number.length > 10) {
-          number = number.substring(number.length - 10);
-        }
+        // var number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
+        final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
+        // if (number.length > 10) {
+        //   number = number.substring(number.length - 10);
+        // }
         return number;
       }).toList();
       final names = eventInvites.map((e) {
