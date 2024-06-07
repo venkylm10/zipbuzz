@@ -83,21 +83,26 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void updateDate() async {
-    date = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime.utc(2026),
-        ) ??
-        DateTime.now();
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
+    final chosenDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.utc(2026),
+    );
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
+    if (chosenDate == null) return;
+    date = chosenDate;
     newEventController.updateDate(date);
     dateController.text = DateFormat('d\'th,\' MMMM (EEEE)').format(date);
     setState(() {});
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
   }
 
   void updateTime({bool isEnd = false}) async {
     if (isEnd) {
       if (startTime == null) {
+        FocusScope.of(navigatorKey.currentContext!).unfocus();
         showSnackBar(message: "Please select start time first");
         return;
       }
@@ -109,6 +114,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
       interval: 5,
       visibleStep: VisibleStep.fifths,
     );
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
     if (time != null) {
       final dateTimeString = ref.read(newEventProvider).date;
       final dt = DateTime.parse(dateTimeString).copyWith(hour: time.hour, minute: time.minute);
@@ -135,6 +141,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         startTimeController.text = formatedTime;
       }
       setState(() {});
+      FocusScope.of(navigatorKey.currentContext!).unfocus();
     }
   }
 
@@ -252,7 +259,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           ],
         ),
         const SizedBox(height: 4),
-        InkWell(
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             updateDate();
           },
@@ -303,7 +311,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
-                  textInputAction: TextInputAction.next,
                 ),
               ),
             ),
@@ -322,7 +329,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
-                  textInputAction: TextInputAction.done,
                 ),
               ),
             ),

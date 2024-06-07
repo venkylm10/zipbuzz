@@ -53,7 +53,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
   }
 
   void updateEventsMap() {
-    state = state.copyWith(eventsMap: {});
+    // state = state.copyWith(eventsMap: {});
     Map<DateTime, List<EventModel>> map = {};
     for (final event in state.currentMonthEvents) {
       final date = getDateTimeFromEventData(event.date);
@@ -216,7 +216,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     interestBanners = banners;
     return;
   }
- 
+
   Color hexStringToColor(String hexColor) {
     if (hexColor.startsWith('0x') || hexColor.startsWith('0X')) {
       hexColor = hexColor.substring(2);
@@ -224,7 +224,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     if (hexColor.length == 6) {
       hexColor = "ff$hexColor";
     }
-    int hexValue = int.tryParse(hexColor, radix: 16) ?? int.parse( "ffffff",radix: 16);
+    int hexValue = int.tryParse(hexColor, radix: 16) ?? int.parse("ffffff", radix: 16);
     return Color(hexValue);
   }
 
