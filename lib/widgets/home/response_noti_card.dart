@@ -149,7 +149,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
         );
       case "confirmed":
         return Text(
-          "You confirmed ${widget.senderName} for ${widget.eventName}",
+          "${widget.senderName} is confirmed for ${widget.eventName}",
           style: AppStyles.h5.copyWith(
             color: AppColors.greyColor,
           ),

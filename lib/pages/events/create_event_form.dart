@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
@@ -186,6 +187,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           controller: nameController,
           hintText: "eg: A madcap house party",
           onChanged: updateEventName,
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         RichText(
@@ -237,6 +239,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           onChanged: (value) {
             updateLocation(value);
           },
+          textInputAction: TextInputAction.done,
         ),
         const SizedBox(height: 16),
         Row(
@@ -300,6 +303,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
+                  textInputAction: TextInputAction.next,
                 ),
               ),
             ),
@@ -318,6 +322,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
+                  textInputAction: TextInputAction.done,
                 ),
               ),
             ),
@@ -354,12 +359,14 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                                 controller:
                                     ref.read(newEventProvider.notifier).urlNameControllers[index],
                                 hintText: "HyperLink Name",
+                                textInputAction: TextInputAction.next,
                               ),
                               const SizedBox(height: 4),
                               CustomTextField(
                                 controller:
                                     ref.read(newEventProvider.notifier).urlControllers[index],
                                 hintText: "URL",
+                                textInputAction: TextInputAction.next,
                               ),
                             ],
                           ),

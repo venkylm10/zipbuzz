@@ -15,7 +15,10 @@ class UpcomingEvents extends ConsumerWidget {
     var ownUpcomingEvents = ref.watch(eventsControllerProvider).userUpcomingEvents;
     final loading = ref.watch(eventsControllerProvider).loading;
     return ownUpcomingEvents.isNotEmpty
-        ? Column(
+        ? ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
             children: ownUpcomingEvents
                 .map(
                   (e) => EventCard(

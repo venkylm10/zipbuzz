@@ -20,8 +20,10 @@ class HomeUpcomingEvents extends StatelessWidget {
         final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
         return SizedBox(
           width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             children: upcomingEvents.map((e) {
               // final containsInterest =
               //     ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);

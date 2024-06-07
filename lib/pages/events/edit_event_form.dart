@@ -206,6 +206,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           onChanged: (value) {
             editEventController.updateName(value);
           },
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         Row(
@@ -250,6 +251,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           onChanged: (value) {
             editEventController.updateLocation(value);
           },
+          textInputAction: TextInputAction.done,
         ),
         const SizedBox(height: 16),
         Row(
@@ -313,6 +315,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
+                  textInputAction: TextInputAction.next,
                 ),
               ),
             ),
@@ -331,6 +334,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
+                  textInputAction: TextInputAction.done,
                 ),
               ),
             ),
