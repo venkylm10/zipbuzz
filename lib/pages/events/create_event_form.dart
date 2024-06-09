@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
@@ -82,21 +83,26 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   void updateDate() async {
-    date = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime.utc(2026),
-        ) ??
-        DateTime.now();
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
+    final chosenDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.utc(2026),
+    );
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
+    if (chosenDate == null) return;
+    date = chosenDate;
     newEventController.updateDate(date);
     dateController.text = DateFormat('d\'th,\' MMMM (EEEE)').format(date);
     setState(() {});
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
   }
 
   void updateTime({bool isEnd = false}) async {
     if (isEnd) {
       if (startTime == null) {
+        FocusScope.of(navigatorKey.currentContext!).unfocus();
         showSnackBar(message: "Please select start time first");
         return;
       }
@@ -108,6 +114,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
       interval: 5,
       visibleStep: VisibleStep.fifths,
     );
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
     if (time != null) {
       final dateTimeString = ref.read(newEventProvider).date;
       final dt = DateTime.parse(dateTimeString).copyWith(hour: time.hour, minute: time.minute);
@@ -134,6 +141,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         startTimeController.text = formatedTime;
       }
       setState(() {});
+      FocusScope.of(navigatorKey.currentContext!).unfocus();
     }
   }
 
@@ -186,6 +194,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           controller: nameController,
           hintText: "eg: A madcap house party",
           onChanged: updateEventName,
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         RichText(
@@ -237,6 +246,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           onChanged: (value) {
             updateLocation(value);
           },
+          textInputAction: TextInputAction.done,
         ),
         const SizedBox(height: 16),
         Row(
@@ -249,7 +259,8 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           ],
         ),
         const SizedBox(height: 4),
-        InkWell(
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             updateDate();
           },
@@ -354,12 +365,14 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
                                 controller:
                                     ref.read(newEventProvider.notifier).urlNameControllers[index],
                                 hintText: "HyperLink Name",
+                                textInputAction: TextInputAction.next,
                               ),
                               const SizedBox(height: 4),
                               CustomTextField(
                                 controller:
                                     ref.read(newEventProvider.notifier).urlControllers[index],
                                 hintText: "URL",
+                                textInputAction: TextInputAction.next,
                               ),
                             ],
                           ),

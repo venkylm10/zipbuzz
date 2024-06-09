@@ -16,7 +16,10 @@ class FocusedEvents extends StatelessWidget {
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: focusedEvents.isNotEmpty
-              ? Column(
+              ? ListView(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   children: focusedEvents.map(
                     (e) {
                       // final containsInterest =

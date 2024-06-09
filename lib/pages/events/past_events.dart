@@ -14,7 +14,10 @@ class PastEvents extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var ownPastEvents = ref.watch(eventsControllerProvider).userPastEvents;
     return ownPastEvents.isNotEmpty
-        ? Column(
+        ? ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
             children: ownPastEvents
                 .map(
                   (e) => EventCard(

@@ -8,6 +8,7 @@ import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/widgets/common/broad_divider.dart';
 import 'package:zipbuzz/widgets/common/custom_text_field.dart';
@@ -62,17 +63,20 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
   }
 
   void updateDate() async {
-    date = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime.utc(2026),
-        ) ??
-        DateTime.now();
+    final chosenDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.utc(2026),
+    );
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
+    if (chosenDate == null) return;
+    date = chosenDate;
     editEventController.updateDate(date);
     extractTimeFromEventDetails();
     dateController.text = DateFormat('d\'th,\' MMMM (EEEE)').format(date);
     setState(() {});
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
   }
 
   DateTime extractTime(String time) {
@@ -104,6 +108,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
   void updateTime({bool isEnd = false}) async {
     if (isEnd) {
       if (startTime == null) {
+        FocusScope.of(navigatorKey.currentContext!).unfocus();
         showSnackBar(message: "Please select start time first");
         return;
       }
@@ -115,6 +120,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
       interval: 5,
       visibleStep: VisibleStep.fifths,
     );
+    FocusScope.of(navigatorKey.currentContext!).unfocus();
     if (time != null) {
       final currentDate = DateTime.parse(ref.read(editEventControllerProvider).date);
       final dt = currentDate.copyWith(hour: time.hour, minute: time.minute);
@@ -141,6 +147,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
         startTimeController.text = formatedTime;
       }
       setState(() {});
+      FocusScope.of(navigatorKey.currentContext!).unfocus();
     }
   }
 
@@ -206,6 +213,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           onChanged: (value) {
             editEventController.updateName(value);
           },
+          textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
         Row(
@@ -250,6 +258,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
           onChanged: (value) {
             editEventController.updateLocation(value);
           },
+          textInputAction: TextInputAction.done,
         ),
         const SizedBox(height: 16),
         Row(
@@ -313,6 +322,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
+                  textInputAction: TextInputAction.next,
                 ),
               ),
             ),
@@ -331,6 +341,7 @@ class _CreateEventFormState extends ConsumerState<EditEventForm> {
                     child: SvgPicture.asset(Assets.icons.clock, height: 20),
                   ),
                   enabled: false,
+                  textInputAction: TextInputAction.done,
                 ),
               ),
             ),
