@@ -32,15 +32,14 @@ class BottomBar extends ConsumerWidget {
       selectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.primaryColor),
       unselectedLabelStyle: AppStyles.h5.copyWith(color: AppColors.greyColor),
       fixedColor: AppColors.primaryColor,
-      onTap: (value) {
+      onTap: (value) async {
         final userId = ref.read(userProvider).id;
         ref.read(homeTabControllerProvider.notifier).updateIndex(value);
+        await Future.delayed(const Duration(milliseconds: 100));
         if (value == 0) {
           ref.read(homeTabControllerProvider.notifier).updateSearching(false);
           ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
           ref.read(homeTabControllerProvider).rowInterests = false;
-          ref.read(eventsControllerProvider.notifier).fetchEvents();
-          ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
           ref.read(newEventProvider.notifier).resetNewEvent();
           ref.read(homeTabControllerProvider.notifier).queryController.clear();
           ref.read(homeTabControllerProvider.notifier).refresh();
@@ -49,10 +48,9 @@ class BottomBar extends ConsumerWidget {
           ref.read(newEventProvider.notifier).updateHostId(user.id);
           ref.read(newEventProvider.notifier).updateHostName(user.name);
           ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
-
-          ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+          await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
         } else {
-          ref.read(eventsControllerProvider.notifier).fetchEvents();
+          await ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
           ref.read(newEventProvider.notifier).resetNewEvent();
         }
 
