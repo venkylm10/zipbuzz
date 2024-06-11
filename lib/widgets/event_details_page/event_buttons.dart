@@ -1065,7 +1065,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
     final eventUrl = event.inviteUrl;
     final article = "aeiou".contains(event.category[0].toLowerCase()) ? "an" : "a";
     final shareText =
-        "Follow the link to find more details on the Event\n\n${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at \nPlay Store : https://play.google.com/store/apps/details?id=com.abacus.zipbuzz\nApp Store : https://apps.apple.com/in/app/buzz-me/id6477519288\n";
+        "${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at \nPlay Store : https://play.google.com/store/apps/details?id=com.abacus.zipbuzz\nApp Store : https://apps.apple.com/in/app/buzz-me/id6477519288\n";
     Share.share(shareText);
   }
 }
