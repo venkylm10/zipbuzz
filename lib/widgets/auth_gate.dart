@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -75,6 +76,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     ref.read(loadingTextProvider.notifier).reset();
     final mobileNumber = ref.read(userProvider).mobileNumber;
     if (mobileNumber == "+11234567890" || mobileNumber == "zipbuzz-null") {
+      ref.read(personaliseControllerProvider).initialiseLoggedInUser();
       navigatorKey.currentState!.pushReplacementNamed(PersonalisePage.id);
       return;
     }

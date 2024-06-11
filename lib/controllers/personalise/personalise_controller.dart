@@ -45,10 +45,29 @@ class PersonaliseController {
     neighborhood: "-",
   );
 
-  void initialise() async {
+  void clearFields() async {
     selectedInterests.clear();
     userLocation = ref.read(userLocationProvider);
     emailController.text = ref.read(userProvider).email;
+  }
+
+  void initialiseLoggedInUser() {
+    final user = ref.read(userProvider);
+    emailController.text = user.email;
+    if (user.mobileNumber != 'zipbuzz-null' && user.mobileNumber != '+11234567890') {
+      mobileController.text = user.mobileNumber.substring(user.mobileNumber.length - 10);
+      countryDialCode = user.mobileNumber.substring(0, user.mobileNumber.length - 10);
+    } else {
+      mobileController.text = "";
+    }
+    nameController.text = user.name;
+    if (user.zipcode != 'zipbuzz-null') {
+      zipcodeController.text = user.zipcode;
+    } else {
+      zipcodeController.text = "95050";
+    }
+    selectedInterests.clear();
+    selectedInterests.addAll(user.interests);
   }
 
   void updateCountryCode(String code) {
@@ -68,7 +87,9 @@ class PersonaliseController {
       showSnackBar(message: "Please enter mobile number");
       return false;
     }
-    if (mobileController.text.length != 10) {
+    if (mobileController.text.length != 10 ||
+        mobileController.text.contains(RegExp(r'[a-zA-Z]')) ||
+        mobileController.text == '1234567890') {
       showSnackBar(message: "Please enter valid mobile number");
       return false;
     }
@@ -92,7 +113,11 @@ class PersonaliseController {
   }
 
   Future<bool> checkPhone() async {
+    final currentNumber = ref.read(userProvider).mobileNumber;
     final mobileNumber = "$countryDialCode${mobileController.text.trim()}";
+    if (currentNumber == mobileNumber) {
+      return true;
+    }
     return await ref.read(dioServicesProvider).checkPhone(mobileNumber);
   }
 

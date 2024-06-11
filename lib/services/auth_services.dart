@@ -122,15 +122,13 @@ class AuthServices {
             deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
           ),
         );
-
+    await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
     // storing id
     box.write(BoxConstants.id, id);
     box.write(BoxConstants.login, true);
-
-    _ref.read(newEventProvider.notifier).updateHostId(id!);
-
-    // Back to AuthGate
-    navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+    _ref.read(newEventProvider.notifier).updateHostId(id);
+    _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
+    navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
 
     return;
   }
@@ -238,14 +236,14 @@ class AuthServices {
               deviceToken: box.read(BoxConstants.deviceToken),
             ),
           );
+      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
-      _ref.read(newEventProvider.notifier).updateHostId(id!);
-
+      _ref.read(newEventProvider.notifier).updateHostId(id);
       _ref.read(loadingTextProvider.notifier).reset();
-      // Back to AuthGate
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+      _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
 
       return;
     }
