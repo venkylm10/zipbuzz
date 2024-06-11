@@ -52,6 +52,7 @@ class PersonaliseController {
   }
 
   void initialiseLoggedInUser() {
+    ref.read(loadingTextProvider.notifier).reset();
     final user = ref.read(userProvider);
     emailController.text = user.email;
     if (user.mobileNumber != 'zipbuzz-null' && user.mobileNumber != '+11234567890') {
@@ -136,17 +137,11 @@ class PersonaliseController {
         return;
       }
       try {
-        var location = ref.read(userLocationProvider);
-        if (location.zipcode != zipcodeController.text.trim()) {
-          ref.read(loadingTextProvider.notifier).updateLoadingText("Udating your location...");
-          await ref
-              .read(userLocationProvider.notifier)
-              .getLocationFromZipcode(zipcodeController.text.trim());
-        }
+        await ref
+            .read(userLocationProvider.notifier)
+            .getLocationFromZipcode(zipcodeController.text.trim());
         final localUid = ref.read(userProvider).email.split("@").first;
         final currentUser = FirebaseAuth.instance.currentUser!;
-
-        location = ref.read(userLocationProvider);
         final updatedUser = ref.read(userProvider).copyWith(
               name: localUid == currentUser.uid ? nameController.text.trim() : null,
               email: emailController.text.trim(),
