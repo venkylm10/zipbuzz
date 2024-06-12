@@ -5,11 +5,10 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
+import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
-import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
@@ -58,23 +57,11 @@ class _AuthGateState extends ConsumerState<AuthGate> {
           ),
         );
     ref.read(loadingTextProvider.notifier).reset();
-    if (location.zipcode == "zipbuzz-null") {
-      ref.read(userProvider.notifier).update(
-            (state) => state.copyWith(
-              zipcode: "",
-              city: location.city,
-              country: location.country,
-              countryDialCode: location.countryDialCode,
-            ),
-          );
-      ref.read(editProfileControllerProvider).zipcodeController.text = "";
-      ref.read(editProfileControllerProvider).userClone = ref.read(userProvider).getClone();
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(LocationCheckPage.id, (route) => false);
-      return;
-    }
-    ref.read(loadingTextProvider.notifier).reset();
     final mobileNumber = ref.read(userProvider).mobileNumber;
-    if (mobileNumber == "+11234567890" || mobileNumber == "zipbuzz-null") {
+    if (mobileNumber == "+11234567890" ||
+        mobileNumber == "zipbuzz-null" ||
+        location.zipcode == "zipbuzz-null") {
+      ref.read(personaliseControllerProvider).initialiseLoggedInUser();
       navigatorKey.currentState!.pushReplacementNamed(PersonalisePage.id);
       return;
     }

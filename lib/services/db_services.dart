@@ -229,54 +229,50 @@ class DBServices {
   }
 
   Future<List<EventModel>> getAllEvents(UserEventsRequestModel userEventsRequestModel) async {
-    if (box.read(BoxConstants.guestUser) == null) {
-      try {
-        final list = await _dioServices.fetchEvents(userEventsRequestModel);
-        final userEvents = list;
-        final events = userEvents.map((e) {
-          final res = EventResponseModel.fromMap(e);
-          // for (var e in interestIcons.entries.toList()) {
-          //   print("[${e.key}] : ${e.value}");
-          // }
-          // print(res.category);
-          final eventModel = EventModel(
-            id: res.id,
-            title: res.name,
-            hostId: res.hostId,
-            coHostIds: [],
-            location: res.venue,
-            date: res.date,
-            startTime: res.startTime,
-            endTime: res.endTime,
-            attendees: res.filledCapacity,
-            category: res.category,
-            isFavorite: res.isFavorite,
-            bannerPath: res.banner,
-            iconPath: interestIcons[res.category]!,
-            about: res.description,
-            isPrivate: res.isPrivate,
-            privateGuestList: !res.guestList,
-            capacity: res.capacity,
-            imageUrls: res.images.map((e) => e.imageUrl).toList(),
-            hostName: res.hostName,
-            hostPic: res.hostPic,
-            eventMembers: [],
-            inviteUrl: res.inviteUrl,
-            status: res.status,
-            userDeviceToken: res.userDeviceToken,
-            hyperlinks: res.hyperlinks,
-            notificationId: res.notificationId,
-          );
-          return eventModel;
-        }).toList();
-        return events..sort((a, b) => a.date.compareTo(b.date));
-      } catch (e) {
-        debugPrint("Error In Getting Events: $e");
-        return [];
-      }
+    try {
+      final list = await _dioServices.fetchEvents(userEventsRequestModel);
+      final userEvents = list;
+      final events = userEvents.map((e) {
+        final res = EventResponseModel.fromMap(e);
+        // for (var e in interestIcons.entries.toList()) {
+        //   print("[${e.key}] : ${e.value}");
+        // }
+        // print(res.category);
+        final eventModel = EventModel(
+          id: res.id,
+          title: res.name,
+          hostId: res.hostId,
+          coHostIds: [],
+          location: res.venue,
+          date: res.date,
+          startTime: res.startTime,
+          endTime: res.endTime,
+          attendees: res.filledCapacity,
+          category: res.category,
+          isFavorite: res.isFavorite,
+          bannerPath: res.banner,
+          iconPath: interestIcons[res.category]!,
+          about: res.description,
+          isPrivate: res.isPrivate,
+          privateGuestList: !res.guestList,
+          capacity: res.capacity,
+          imageUrls: res.images.map((e) => e.imageUrl).toList(),
+          hostName: res.hostName,
+          hostPic: res.hostPic,
+          eventMembers: [],
+          inviteUrl: res.inviteUrl,
+          status: res.status,
+          userDeviceToken: res.userDeviceToken,
+          hyperlinks: res.hyperlinks,
+          notificationId: res.notificationId,
+        );
+        return eventModel;
+      }).toList();
+      return events..sort((a, b) => a.date.compareTo(b.date));
+    } catch (e) {
+      debugPrint("Error In Getting Events: $e");
+      return [];
     }
-    // return guestEventsList;
-    return [];
   }
 
   Future<List<EventModel>> getUserEvents() async {

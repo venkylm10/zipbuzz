@@ -23,7 +23,7 @@ class PersonalisePage extends ConsumerStatefulWidget {
 }
 
 class _PersonalisePageState extends ConsumerState<PersonalisePage> {
-  bool agree = false;
+  bool agree = true;
   @override
   void initState() {
     initialise();
@@ -31,7 +31,6 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   }
 
   void initialise() {
-    ref.read(personaliseControllerProvider).initialise();
     ref.read(contactsServicesProvider).updateAllContacts();
     setState(() {});
   }

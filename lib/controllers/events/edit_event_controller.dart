@@ -523,6 +523,8 @@ class EditEventController extends StateNotifier<EventModel> {
         'dominantColor': dominantColor ?? const Color(0xFF4a5759),
         'randInt': 0,
       };
+      await ref.read(eventsControllerProvider.notifier).fetchEvents();
+      await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
       await navigatorKey.currentState!.pushReplacementNamed(
         EventDetailsPage.id,
