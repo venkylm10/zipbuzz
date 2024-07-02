@@ -299,10 +299,13 @@ class NewEvent extends StateNotifier<EventModel> {
         var name = (element.displayName ?? "").toLowerCase().contains(query);
         var number = false;
         if (element.phones!.isNotEmpty) {
-          final phoneNumber = (element.phones!.first.value ?? "")
-              .replaceAll(RegExp(r'[\s()-]+'), "")
-              .replaceAll(" ", "");
-          number = phoneNumber.contains(query);
+          number = element.phones!.any((e) {
+            final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+            if (phone.length > 10) {
+              return phone.substring(phone.length - 10).contains(query);
+            }
+            return phone.contains(query);
+          });
         }
         return name || number;
       },
@@ -428,11 +431,15 @@ class NewEvent extends StateNotifier<EventModel> {
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
       final phoneNumbers = eventInvites.map((e) {
-        var number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
-        if (number.length > 10) {
-          number = number.substring(number.length - 10);
+        Set<String> nums = {};
+        for (var num in e.phones!) {
+          var number = num.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+          if (number.length > 10) {
+            number = number.substring(number.length - 10);
+          }
+          nums.add(number);
         }
-        return number;
+        return nums.join(',');
       }).toList();
       final names = eventInvites.map((e) {
         return e.displayName ?? "";

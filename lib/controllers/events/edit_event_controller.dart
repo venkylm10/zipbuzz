@@ -288,7 +288,13 @@ class EditEventController extends StateNotifier<EventModel> {
         var name = (element.displayName ?? "").toLowerCase().contains(query);
         var number = false;
         if (element.phones!.isNotEmpty) {
-          number = (element.phones!.first.value ?? "").contains(query);
+          number = element.phones!.any((e) {
+            final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+            if (phone.length > 10) {
+              return phone.substring(phone.length - 10).contains(query);
+            }
+            return phone.contains(query);
+          });
         }
         return name || number;
       },
@@ -416,11 +422,15 @@ class EditEventController extends StateNotifier<EventModel> {
         return !contains;
       });
       final phoneNumbers = newInvitees.map((e) {
-        var phone = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (phone.length > 10) {
-          phone = phone.substring(phone.length - 10);
+        Set<String> nums = {};
+        for (var num in e.phones!) {
+          var number = num.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+          if (number.length > 10) {
+            number = number.substring(number.length - 10);
+          }
+          nums.add(number);
         }
-        return phone;
+        return nums.join(',');
       }).toList();
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,
