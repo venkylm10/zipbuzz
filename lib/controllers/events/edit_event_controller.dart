@@ -421,12 +421,14 @@ class EditEventController extends StateNotifier<EventModel> {
         final contains = oldInviteNumbers.contains(number);
         return !contains;
       });
+      final userNumber = ref.read(userProvider).mobileNumber;
+      final countryDialCode = userNumber.substring(0, userNumber.length - 10);
       final phoneNumbers = newInvitees.map((e) {
         Set<String> nums = {};
         for (var num in e.phones!) {
-          var number = num.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-          if (number.length > 10) {
-            number = number.substring(number.length - 10);
+          var number = num.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(" ", "");
+          if(number.length == 10){
+            number = countryDialCode + number;
           }
           nums.add(number);
         }

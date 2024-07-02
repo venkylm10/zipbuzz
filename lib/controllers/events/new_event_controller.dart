@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -430,12 +431,14 @@ class NewEvent extends StateNotifier<EventModel> {
       var formattedDate = formatWithSuffix(eventDateTime);
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
+      final userNumber = ref.read(userProvider).mobileNumber;
+      final countryDialCode = userNumber.substring(0, userNumber.length - 10);
       final phoneNumbers = eventInvites.map((e) {
         Set<String> nums = {};
         for (var num in e.phones!) {
-          var number = num.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-          if (number.length > 10) {
-            number = number.substring(number.length - 10);
+          var number = num.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(" ", "");
+          if (number.length == 10) {
+            number = countryDialCode + number;
           }
           nums.add(number);
         }
@@ -460,6 +463,7 @@ class NewEvent extends StateNotifier<EventModel> {
         hostId: ref.read(userProvider).id,
         notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
+      print(eventInvitePostModel.toMap());
       // showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}");
       debugPrint(eventInvitePostModel.toMap().toString());
       ref.read(loadingTextProvider.notifier).updateLoadingText("Inviting Guests...");
