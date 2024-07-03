@@ -32,7 +32,6 @@ import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final dioServicesProvider = Provider((ref) => DioServices(ref: ref));
 
@@ -202,10 +201,20 @@ class DioServices {
               data: {"phone": phoneNumber},
             );
       debugPrint("check phone: $phoneNumber ${res.data}");
-      if (res.data['message'] == "User not found") {
-        return true;
-      }
+      return res.data['user_id'] != null;
+    } catch (e) {
       return false;
+    }
+  }
+
+  Future<bool> checkEmail(String email) async {
+    try {
+      final res = await dio.post(
+        DioConstants.emailCheck,
+        data: {"email": email},
+      );
+      debugPrint("check email: $email ${res.data}");
+      return res.data['user_id'] != null;
     } catch (e) {
       return false;
     }

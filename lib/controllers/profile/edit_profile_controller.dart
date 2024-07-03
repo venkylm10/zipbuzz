@@ -96,7 +96,7 @@ class EditProfileController {
     if (ref.read(userProvider).mobileNumber == mobileNumber) {
       return true;
     }
-    return await ref.read(dioServicesProvider).checkPhone(mobileNumber);
+    return !(await ref.read(dioServicesProvider).checkPhone(mobileNumber));
   }
 
   Future<void> saveChanges() async {

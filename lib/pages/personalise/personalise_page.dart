@@ -128,6 +128,15 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                                 keyboardType: TextInputType.text,
                               ),
                             if (localUid == currentUser.uid) const SizedBox(height: 12),
+                            if (localUid == currentUser.uid)
+                              buildTextField(
+                                Assets.icons.email,
+                                "Email",
+                                personaliseController.emailController,
+                                currentUser.displayName ?? "Enter email",
+                                keyboardType: TextInputType.text,
+                              ),
+                            if (localUid == currentUser.uid) const SizedBox(height: 12),
                             Consumer(builder: (context, subRef, child) {
                               final userLocation = subRef.watch(userLocationProvider);
                               return buildTextField(
@@ -151,7 +160,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              "Select at least 3 interests:",
+                              "Select at least one interest:",
                               style: AppStyles.h3.copyWith(
                                 color: AppColors.primaryColor,
                                 fontWeight: FontWeight.w600,

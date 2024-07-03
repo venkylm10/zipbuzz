@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,8 +52,8 @@ class NewEvent extends StateNotifier<EventModel> {
             hostPic: ref.read(userProvider).imageUrl,
             coHostIds: [],
             capacity: 10,
-            isPrivate: false,
-            privateGuestList: false,
+            isPrivate: true,
+            privateGuestList: true,
             imageUrls: [],
             eventMembers: [],
             status: "nothing",

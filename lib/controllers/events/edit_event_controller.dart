@@ -53,9 +53,9 @@ class EditEventController extends StateNotifier<EventModel> {
             hostPic: ref.read(userProvider).imageUrl,
             coHostIds: [],
             capacity: 10,
-            isPrivate: false,
+            isPrivate: true,
             imageUrls: [],
-            privateGuestList: false,
+            privateGuestList: true,
             eventMembers: [],
             status: "nothing",
             userDeviceToken: "",
@@ -417,8 +417,7 @@ class EditEventController extends StateNotifier<EventModel> {
         if (number.length > 10) {
           number = number.substring(number.length - 10);
         }
-        debugPrint(oldInviteNumbers.toString());
-        final contains = oldInviteNumbers.contains(number);
+        final contains = oldInviteNumbers.any((e) => e.contains(number));
         return !contains;
       });
       final userNumber = ref.read(userProvider).mobileNumber;
@@ -427,7 +426,7 @@ class EditEventController extends StateNotifier<EventModel> {
         Set<String> nums = {};
         for (var num in e.phones!) {
           var number = num.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(" ", "");
-          if(number.length == 10){
+          if (number.length == 10) {
             number = countryDialCode + number;
           }
           nums.add(number);

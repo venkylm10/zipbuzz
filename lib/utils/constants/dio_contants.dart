@@ -31,6 +31,7 @@ class DioConstants {
   static const String getLocation = "/users/user_location/";
   static const String getLocationWeb = "/users/user_location_web/";
   static const String phoneCheck = "/users/phone_check/";
+  static const String emailCheck = '/users/email_check/';
   static const String getNotifications = "/users/user_notification/";
   static const String getNotificationsWeb = "/users/user_notification_web/";
   static const String userNotification = "/users/user_notification/";

@@ -51,7 +51,7 @@ class PersonaliseController {
     emailController.text = ref.read(userProvider).email;
   }
 
-  Future<void> initialiseLoggedInUser() async{
+  Future<void> initialiseLoggedInUser() async {
     ref.read(loadingTextProvider.notifier).reset();
     final user = ref.read(userProvider);
     emailController.text = user.email;
@@ -84,7 +84,7 @@ class PersonaliseController {
     // showSnackBar(message: "$selectedInterests");
   }
 
-  bool validate() {
+  Future<bool> validate() async {
     if (mobileController.text.isEmpty) {
       showSnackBar(message: "Please enter mobile number");
       return false;
@@ -95,42 +95,46 @@ class PersonaliseController {
       showSnackBar(message: "Please enter valid mobile number");
       return false;
     }
-    if (selectedInterests.length < 3) {
-      showSnackBar(message: "Please select at least 3 interests");
+    if (emailController.text.isEmpty) {
+      showSnackBar(message: "Please enter email");
+      return false;
+    } else if (await newEmail()) {
+      showSnackBar(message: "Email already in use. Please use another email.");
+      return false;
+    }
+    if (selectedInterests.isEmpty) {
+      showSnackBar(message: "Please select at least one interest");
       return false;
     }
     return true;
   }
 
-  bool emailCheck() {
-    // Define the regular expression pattern
-    RegExp emailPattern = RegExp(r'^[a-z]+\d+@zbuzz\.com$');
-
-    // Check if the input text matches the pattern
-    if (emailPattern.hasMatch(emailController.text.trim())) {
+  Future<bool> newEmail() async {
+    final currentEmail = ref.read(userProvider).email;
+    final email = emailController.text.trim();
+    if (currentEmail == email) {
       return false;
-    } else {
-      return true;
     }
+    return !(await ref.read(dioServicesProvider).checkEmail(email));
   }
 
-  Future<bool> checkPhone() async {
+  Future<bool> newPhone() async {
     final currentNumber = ref.read(userProvider).mobileNumber;
     final mobileNumber = "$countryDialCode${mobileController.text.trim()}";
     if (currentNumber == mobileNumber) {
       return true;
     }
-    return await ref.read(dioServicesProvider).checkPhone(mobileNumber);
+    return !(await ref.read(dioServicesProvider).checkPhone(mobileNumber));
   }
 
   void sumbitInterests() async {
-    final check = validate();
+    final check = await validate();
     // showSnackBar(message: "CHECK: $check");
     if (check) {
       if (zipcodeController.text.trim().isEmpty) {
         zipcodeController.text = 95050.toString();
       }
-      final newUser = await checkPhone();
+      final newUser = await newPhone();
       if (!newUser) {
         showSnackBar(
           message: "Mobile number already in use. Please use another number.",
