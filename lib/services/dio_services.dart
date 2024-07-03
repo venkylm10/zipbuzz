@@ -32,6 +32,7 @@ import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/widgets/auth_gate.dart';
+import 'package:zipbuzz/widgets/common/snackbar.dart';
 
 final dioServicesProvider = Provider((ref) => DioServices(ref: ref));
 
@@ -550,10 +551,12 @@ class DioServices {
   Future<void> updateUserInterests(UserInterestsUpdateModel userInterestsUpdateModel) async {
     try {
       debugPrint("UPDATING USER INTERESTS");
+      // showSnackBar(message: "Running ${userInterestsUpdateModel.toMap()}");
       final res = await dio.put(
         DioConstants.updateUserInterests,
         data: userInterestsUpdateModel.toMap(),
       );
+      // showSnackBar(message: "3 ${res.data[DioConstants.status]}");
       if (res.data[DioConstants.status] == DioConstants.success) {
         debugPrint("UPDATING USER INTERESTS SUCCESSFULL");
       } else {

@@ -127,7 +127,7 @@ class AuthServices {
     box.write(BoxConstants.id, id);
     box.write(BoxConstants.login, true);
     _ref.read(newEventProvider.notifier).updateHostId(id);
-    _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
+    await _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
 
     return;

@@ -30,7 +30,6 @@ final newEventProvider = StateNotifierProvider<NewEvent, EventModel>((ref) => Ne
 
 class NewEvent extends StateNotifier<EventModel> {
   final Ref ref;
-
   NewEvent({required this.ref})
       : super(
           EventModel(
@@ -61,6 +60,7 @@ class NewEvent extends StateNotifier<EventModel> {
             hyperlinks: [],
           ),
         );
+
   List<File> selectedImages = [];
   int maxImages = 7;
   File? bannerImage;
@@ -477,12 +477,11 @@ class NewEvent extends StateNotifier<EventModel> {
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-      final interests =
-          ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
-      if (!interests) {
-        final interest = allInterests.firstWhere((element) => element.activity == state.category);
-        updateInterests(interest);
-      }
+      // final interests = ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
+      // if (!interests) {
+      //   final interest = allInterests.firstWhere((element) => element.activity == state.category);
+      //   updateInterests(interest);
+      // }
       ref.read(loadingTextProvider.notifier).updateLoadingText("Updating events...");
 
       await ref.read(eventsControllerProvider.notifier).fetchEvents();

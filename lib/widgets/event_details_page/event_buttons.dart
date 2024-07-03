@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
@@ -1064,8 +1065,23 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
   void shareEvent(EventModel event) {
     final eventUrl = event.inviteUrl;
     final article = "aeiou".contains(event.category[0].toLowerCase()) ? "an" : "a";
+
+    final formattedDate = formatDateTime(DateTime.parse(event.date));
+    const playStore =
+        'Play Store : https://play.google.com/store/apps/details?id=com.abacus.zipbuzz';
+
+    const appStore = 'App Store : https://apps.apple.com/in/app/buzz-me/id6477519288';
+
     final shareText =
-        "${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: ${widget.event.date.substring(0, 10)} at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at \nPlay Store : https://play.google.com/store/apps/details?id=com.abacus.zipbuzz\nApp Store : https://apps.apple.com/in/app/buzz-me/id6477519288\n";
+        "${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${widget.event.about}\nDate: $formattedDate at ${widget.event.startTime}\nLocation: ${widget.event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at https://zipbuzz.me/";
     Share.share(shareText);
+  }
+
+  String formatDateTime(DateTime dateTime) {
+    String month = DateFormat('MMM').format(dateTime);
+    String day = DateFormat('dd').format(dateTime);
+    String year = DateFormat('yyyy').format(dateTime);
+    String dayOfWeek = DateFormat('EEEE').format(dateTime);
+    return '$month-$day-$year ($dayOfWeek)';
   }
 }

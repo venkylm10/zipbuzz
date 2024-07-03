@@ -51,7 +51,7 @@ class PersonaliseController {
     emailController.text = ref.read(userProvider).email;
   }
 
-  void initialiseLoggedInUser() {
+  Future<void> initialiseLoggedInUser() async{
     ref.read(loadingTextProvider.notifier).reset();
     final user = ref.read(userProvider);
     emailController.text = user.email;
@@ -81,6 +81,7 @@ class PersonaliseController {
     } else {
       selectedInterests.add(interest);
     }
+    // showSnackBar(message: "$selectedInterests");
   }
 
   bool validate() {
@@ -124,6 +125,7 @@ class PersonaliseController {
 
   void sumbitInterests() async {
     final check = validate();
+    // showSnackBar(message: "CHECK: $check");
     if (check) {
       if (zipcodeController.text.trim().isEmpty) {
         zipcodeController.text = 95050.toString();
@@ -165,8 +167,9 @@ class PersonaliseController {
           interests: updatedUser.interests,
           notifictaionCount: updatedUser.notificationCount,
         );
+
         await ref.read(dioServicesProvider).updateUserInterests(
-              UserInterestsUpdateModel(userId: updatedUser.id, interests: updatedUser.interests),
+              UserInterestsUpdateModel(userId: updatedUser.id, interests: selectedInterests),
             );
         ref.read(loadingTextProvider.notifier).updateLoadingText("Updating user data...");
         await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
@@ -177,6 +180,8 @@ class PersonaliseController {
         // posting users interests
         ref.read(loadingTextProvider.notifier).updateLoadingText("Personalising the app...");
         box.write('user_interests', selectedInterests);
+
+        // showSnackBar(message: "2 $selectedInterests");
         final requestModel = UserDetailsRequestModel(userId: id);
         await ref.read(dbServicesProvider).getUserData(requestModel);
         debugPrint("UPDATED USER DATA SUCCESSFULLY");

@@ -32,6 +32,9 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   void initialise() {
     ref.read(contactsServicesProvider).updateAllContacts();
+    // final personaliseController = ref.read(personaliseControllerProvider);
+    // final userInterest = ref.read(userProvider);
+    // personaliseController.selectedInterests.addAll(userInterest.interests);
     setState(() {});
   }
 
@@ -41,6 +44,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     final currentUser = ref.read(authProvider).currentUser!;
     final localUid = ref.read(userProvider).email.split("@").first;
     final personaliseController = ref.read(personaliseControllerProvider);
+    // final userInterest = ref.read(userProvider);
+    // personaliseController.selectedInterests.addAll(userInterest.interests);
     final webWidth = size.height * Assets.images.border_ratio * 0.88;
     return CustomBezel(
       child: GestureDetector(
