@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +31,7 @@ final newEventProvider = StateNotifierProvider<NewEvent, EventModel>((ref) => Ne
 
 class NewEvent extends StateNotifier<EventModel> {
   final Ref ref;
+
   NewEvent({required this.ref})
       : super(
           EventModel(
@@ -60,7 +62,6 @@ class NewEvent extends StateNotifier<EventModel> {
             hyperlinks: [],
           ),
         );
-
   List<File> selectedImages = [];
   int maxImages = 7;
   File? bannerImage;
@@ -228,15 +229,13 @@ class NewEvent extends StateNotifier<EventModel> {
       (element) {
         var number =
             element.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        number = number.substring(number.length - 10);
-        // if (number.length > 10) {
-        //   number = number.substring(number.length - 10);
-        // }
+        if (number.length > 10) {
+          number = number.substring(number.length - 10);
+        }
         phone = phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        phone = phone.substring(phone.length - 10);
-        // if (phone.length > 10) {
-        //   phone = phone.substring(phone.length - 10);
-        // }
+        if (phone.length > 10) {
+          phone = phone.substring(phone.length - 10);
+        }
         return phone == number;
       },
     );
@@ -262,15 +261,13 @@ class NewEvent extends StateNotifier<EventModel> {
       (element) {
         var number =
             contact.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        number = number.substring(number.length - 10);
-        // if (number.length > 10) {
-        //   number = number.substring(number.length - 10);
-        // }
+        if (number.length > 10) {
+          number = number.substring(number.length - 10);
+        }
         var phone = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        phone = phone.substring(phone.length - 10);
-        // if (phone.length > 10) {
-        //   phone = phone.substring(phone.length - 10);
-        // }
+        if (phone.length > 10) {
+          phone = phone.substring(phone.length - 10);
+        }
         return phone == number;
       },
     );
@@ -303,10 +300,13 @@ class NewEvent extends StateNotifier<EventModel> {
         var name = (element.displayName ?? "").toLowerCase().contains(query);
         var number = false;
         if (element.phones!.isNotEmpty) {
-          final phoneNumber = (element.phones!.first.value ?? "")
-              .replaceAll(RegExp(r'[\s()-]+'), "")
-              .replaceAll(" ", "");
-          number = phoneNumber.contains(query);
+          number = element.phones!.any((e) {
+            final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+            if (phone.length > 10) {
+              return phone.substring(phone.length - 10).contains(query);
+            }
+            return phone.contains(query);
+          });
         }
         return name || number;
       },
@@ -431,13 +431,18 @@ class NewEvent extends StateNotifier<EventModel> {
       var formattedDate = formatWithSuffix(eventDateTime);
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
+      final userNumber = ref.read(userProvider).mobileNumber;
+      final countryDialCode = userNumber.substring(0, userNumber.length - 10);
       final phoneNumbers = eventInvites.map((e) {
-        // var number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
-        final number = (e.phones!.first.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "");
-        // if (number.length > 10) {
-        //   number = number.substring(number.length - 10);
-        // }
-        return number;
+        Set<String> nums = {};
+        for (var num in e.phones!) {
+          var number = num.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(" ", "");
+          if (number.length == 10) {
+            number = countryDialCode + number;
+          }
+          nums.add(number);
+        }
+        return nums.join(',');
       }).toList();
       final names = eventInvites.map((e) {
         return e.displayName ?? "";
@@ -458,6 +463,7 @@ class NewEvent extends StateNotifier<EventModel> {
         hostId: ref.read(userProvider).id,
         notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
+      print(eventInvitePostModel.toMap());
       // showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}");
       debugPrint(eventInvitePostModel.toMap().toString());
       ref.read(loadingTextProvider.notifier).updateLoadingText("Inviting Guests...");
@@ -477,11 +483,12 @@ class NewEvent extends StateNotifier<EventModel> {
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-      // final interests = ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
-      // if (!interests) {
-      //   final interest = allInterests.firstWhere((element) => element.activity == state.category);
-      //   updateInterests(interest);
-      // }
+      final interests =
+          ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
+      if (!interests) {
+        final interest = allInterests.firstWhere((element) => element.activity == state.category);
+        updateInterests(interest);
+      }
       ref.read(loadingTextProvider.notifier).updateLoadingText("Updating events...");
 
       await ref.read(eventsControllerProvider.notifier).fetchEvents();

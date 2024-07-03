@@ -255,7 +255,15 @@ class _EventInviteState extends ConsumerState<EventInvite> {
 
   Widget buildContactCard(Contact contact, {bool isSelected = false}) {
     final name = contact.displayName ?? "";
-    final phoneNumber = contact.phones!.first.value ?? "";
+    // final phoneNumber = contact.phones!.first.value ?? "";
+    // final phoneNumber = contact.phones?.map((phone) => phone.value).join(", ") ?? "";
+    final phoneNumbers = contact.phones != null
+      ? contact.phones!
+          .map((phone) => phone.value!.replaceAll(' ', ''))
+          .toSet()
+          .toList()
+      : [];
+  final phoneNumber = phoneNumbers.join(", ");
     return InkWell(
       onTap: () {
         widget.edit
