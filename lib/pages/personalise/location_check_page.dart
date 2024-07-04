@@ -9,7 +9,7 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
 
 class LocationCheckPage extends ConsumerStatefulWidget {
   static const id = '/location_check';

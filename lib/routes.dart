@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
-import 'package:zipbuzz/pages/event_details/event_details_page.dart';
+import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/pages/home/home.dart';
-import 'package:zipbuzz/pages/home/notification_page.dart';
+import 'package:zipbuzz/pages/notification/notification_page.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
@@ -12,7 +12,7 @@ import 'package:zipbuzz/pages/settings/faqs_page.dart';
 import 'package:zipbuzz/pages/settings/settings_notification_page.dart';
 import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
-import 'package:zipbuzz/widgets/auth_gate.dart';
+import 'package:zipbuzz/pages/splash/splash_screen.dart';
 
 Route<dynamic>? onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -136,7 +136,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
 
     default:
       return PageTransition(
-        child: const AuthGate(),
+        child: const SplashScreen(),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),

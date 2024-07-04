@@ -15,8 +15,8 @@ import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final editProfileControllerProvider =
     StateProvider.autoDispose((ref) => EditProfileController(ref: ref));

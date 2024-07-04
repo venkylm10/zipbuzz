@@ -4,7 +4,7 @@ import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 
 class AttendeeNumberResponse extends ConsumerStatefulWidget {
   const AttendeeNumberResponse({

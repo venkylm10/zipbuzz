@@ -10,11 +10,11 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/services/image_picker.dart';
-import 'package:zipbuzz/widgets/common/back_button.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
-import 'package:zipbuzz/widgets/common/custom_text_field.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/utils/widgets/back_button.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
+import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
   static const id = "/profile/edit";

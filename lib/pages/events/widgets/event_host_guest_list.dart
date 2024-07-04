@@ -7,7 +7,7 @@ import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final guestListTagProvider = StateProvider<String>((ref) => "Invited");
 final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);

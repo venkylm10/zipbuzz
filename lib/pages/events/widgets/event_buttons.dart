@@ -14,28 +14,28 @@ import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/notification_data.dart';
-import 'package:zipbuzz/pages/event_details/event_details_page.dart';
+import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_invite.dart';
+import 'package:zipbuzz/pages/events/widgets/event_invite.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
-import 'package:zipbuzz/widgets/event_details_page/invite_guest_alert.dart';
-import 'package:zipbuzz/widgets/event_details_page/published_event_alert.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
+import 'package:zipbuzz/pages/events/widgets/invite_guest_alert.dart';
+import 'package:zipbuzz/pages/events/widgets/published_event_alert.dart';
 
-import '../../models/events/posts/make_request_model.dart';
-import '../../models/interests/requests/user_interests_update_model.dart';
-import '../../models/interests/responses/interest_model.dart';
-import '../../services/chat_services.dart';
-import '../../services/dio_services.dart';
-import '../../services/notification_services.dart';
-import '../notification_page/attendee_sheet.dart';
+import '../../../models/events/posts/make_request_model.dart';
+import '../../../models/interests/requests/user_interests_update_model.dart';
+import '../../../models/interests/responses/interest_model.dart';
+import '../../../services/chat_services.dart';
+import '../../../services/dio_services.dart';
+import '../../../services/notification_services.dart';
+import '../../notification/widgets/attendee_sheet.dart';
 
 class EventButtons extends ConsumerStatefulWidget {
   const EventButtons({

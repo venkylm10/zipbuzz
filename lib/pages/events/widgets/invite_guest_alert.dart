@@ -4,7 +4,7 @@ import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/event_details_page/published_event_alert.dart';
+import 'package:zipbuzz/pages/events/widgets/published_event_alert.dart';
 
 class InviteGuestAlert extends ConsumerStatefulWidget {
   const InviteGuestAlert({super.key});

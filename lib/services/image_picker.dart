@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final imageServicesProvider = Provider((ref) => ImageServices());
 

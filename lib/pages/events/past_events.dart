@@ -5,7 +5,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
-import 'package:zipbuzz/widgets/home/event_card.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card.dart';
 
 class PastEvents extends ConsumerWidget {
   const PastEvents({super.key});

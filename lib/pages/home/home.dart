@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
-import 'package:zipbuzz/widgets/home/bottom_bar.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
+import 'package:zipbuzz/pages/home/widgets/bottom_bar.dart';
 
 class Home extends ConsumerWidget {
   static const id = '/home';

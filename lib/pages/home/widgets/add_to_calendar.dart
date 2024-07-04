@@ -6,9 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
-import '../../models/events/event_model.dart';
-import '../../utils/constants/colors.dart';
-import '../../utils/constants/styles.dart';
+import '../../../models/events/event_model.dart';
+import '../../../utils/constants/colors.dart';
+import '../../../utils/constants/styles.dart';
 
 class AddToCalendar extends StatelessWidget {
   final EventModel event;

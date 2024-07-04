@@ -10,7 +10,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 
 final newInvitesProvider = StateProvider<List<EventInviteMember>>((ref) => []);
 

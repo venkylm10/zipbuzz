@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
 
 class Loader extends StatelessWidget {
   const Loader({super.key});

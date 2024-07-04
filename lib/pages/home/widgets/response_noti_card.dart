@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/pages/event_details/event_details_page.dart';
+import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
+import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 
-import '../../services/db_services.dart';
-import '../../services/dio_services.dart';
-import '../../utils/constants/globals.dart';
+import '../../../services/db_services.dart';
+import '../../../services/dio_services.dart';
+import '../../../utils/constants/globals.dart';
 
 class ResponseNotiCard extends ConsumerStatefulWidget {
   const ResponseNotiCard({

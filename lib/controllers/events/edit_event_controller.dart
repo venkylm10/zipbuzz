@@ -11,7 +11,7 @@ import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
-import 'package:zipbuzz/pages/event_details/event_details_page.dart';
+import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -24,8 +24,8 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final editEventControllerProvider =
     StateNotifierProvider<EditEventController, EventModel>((ref) => EditEventController(ref: ref));

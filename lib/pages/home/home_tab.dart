@@ -13,9 +13,9 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
-import 'package:zipbuzz/widgets/home/custom_appbar.dart';
-import 'package:zipbuzz/widgets/home/home_calendar.dart';
-import 'package:zipbuzz/widgets/home/event_search_results.dart';
+import 'package:zipbuzz/pages/home/widgets/custom_appbar.dart';
+import 'package:zipbuzz/pages/home/widgets/home_calendar.dart';
+import 'package:zipbuzz/pages/home/widgets/event_search_results.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});

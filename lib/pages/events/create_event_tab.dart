@@ -8,12 +8,12 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/pages/event_details/event_details_page.dart';
+import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/create_event_form.dart';
-import 'package:zipbuzz/widgets/common/broad_divider.dart';
-import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
-import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
-import 'package:zipbuzz/widgets/create_event/add_event_photos.dart';
+import 'package:zipbuzz/utils/widgets/broad_divider.dart';
+import 'package:zipbuzz/pages/events/widgets/add_hosts.dart';
+import 'package:zipbuzz/pages/events/widgets/event_type_and_capacity.dart';
+import 'package:zipbuzz/pages/events/widgets/add_event_photos.dart';
 
 class CreateEvent extends ConsumerStatefulWidget {
   const CreateEvent({super.key, this.rePublish = false});

@@ -22,10 +22,10 @@ import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
-import 'package:zipbuzz/widgets/auth_gate.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
+import 'package:zipbuzz/pages/splash/splash_screen.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final authServicesProvider = Provider((ref) => AuthServices(
     auth: ref.read(authProvider), ref: ref, googleSignIn: ref.read(googleSignInProvider)));
@@ -221,7 +221,7 @@ class AuthServices {
       box.write(BoxConstants.login, true);
       await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
       _ref.read(loadingTextProvider.notifier).reset();
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
       return;
     } else {
       // getting id
@@ -253,14 +253,14 @@ class AuthServices {
     final box = GetStorage();
     box.erase();
     if (box.read(BoxConstants.guestUser) != null) {
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
       return;
     }
     try {
       await _googleSignIn.signOut();
       await _auth.signOut();
       _ref.read(personaliseControllerProvider).clearController();
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
     } catch (e) {
       debugPrint(e.toString());
     }

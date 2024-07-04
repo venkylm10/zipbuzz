@@ -10,8 +10,8 @@ import 'package:zipbuzz/services/chat_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
-import 'package:zipbuzz/widgets/common/custom_text_field.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
+import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 
 class ChatPage extends ConsumerStatefulWidget {
   static const id = '/chat';

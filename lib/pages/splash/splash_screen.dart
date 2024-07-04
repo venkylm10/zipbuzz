@@ -19,17 +19,17 @@ import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
 
-class AuthGate extends ConsumerStatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   static const id = '/';
-  const AuthGate({super.key});
+  const SplashScreen({super.key});
 
   @override
-  ConsumerState<AuthGate> createState() => _AuthGateState();
+  ConsumerState<SplashScreen> createState() => _AuthGateState();
 }
 
-class _AuthGateState extends ConsumerState<AuthGate> {
+class _AuthGateState extends ConsumerState<SplashScreen> {
   final box = GetStorage();
 
   Future<void> getLoggedInUserData() async {
@@ -37,7 +37,7 @@ class _AuthGateState extends ConsumerState<AuthGate> {
     final id = GetStorage().read(BoxConstants.id) as int?;
     if (id == null) {
       await GetStorage().erase();
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (_) => false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (_) => false);
       return;
     }
     final requestModel = UserDetailsRequestModel(userId: id);

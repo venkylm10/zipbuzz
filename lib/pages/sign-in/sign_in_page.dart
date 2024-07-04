@@ -13,7 +13,7 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/services/auth_services.dart';
-import 'package:zipbuzz/widgets/auth_gate.dart';
+import 'package:zipbuzz/pages/splash/splash_screen.dart';
 
 class SignInSheet extends ConsumerWidget {
   static const id = '/sign_in';
@@ -36,7 +36,7 @@ class SignInSheet extends ConsumerWidget {
     GetStorage().write(BoxConstants.id, 1);
     ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
     ref.read(homeTabControllerProvider.notifier).updateIndex(0);
-    NavigationController.routeOff(route: AuthGate.id);
+    NavigationController.routeOff(route: SplashScreen.id);
   }
 
   @override
@@ -87,13 +87,13 @@ class SignInSheet extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               // if(Platform.isIOS)
-                SignInButton(
-                  title: "Apple",
-                  iconPath: Assets.icons.apple_logo,
-                  onTap: () => appleSignIn(ref),
-                ),
+              SignInButton(
+                title: "Apple",
+                iconPath: Assets.icons.apple_logo,
+                onTap: () => appleSignIn(ref),
+              ),
               // if(Platform.isIOS)
-                const SizedBox(height: 8),
+              const SizedBox(height: 8),
               InkWell(
                 onTap: () {
                   // Guest View Flow

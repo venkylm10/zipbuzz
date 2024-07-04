@@ -21,25 +21,25 @@ import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
-import 'package:zipbuzz/widgets/common/loader.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
+import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
-import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
-import 'package:zipbuzz/widgets/common/event_chip.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_buttons.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_details.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_hosts.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_images.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_qrcode.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_urls.dart';
-import 'package:zipbuzz/widgets/event_details_page/guest_list.dart';
-import 'package:zipbuzz/widgets/home/bottom_bar.dart';
+import 'package:zipbuzz/pages/events/widgets/attendee_numbers.dart';
+import 'package:zipbuzz/pages/events/widgets/event_chip.dart';
+import 'package:zipbuzz/pages/events/widgets/event_buttons.dart';
+import 'package:zipbuzz/pages/events/widgets/event_details.dart';
+import 'package:zipbuzz/pages/events/widgets/event_hosts.dart';
+import 'package:zipbuzz/pages/events/widgets/event_images.dart';
+import 'package:zipbuzz/pages/events/widgets/event_qrcode.dart';
+import 'package:zipbuzz/pages/events/widgets/event_urls.dart';
+import 'package:zipbuzz/pages/events/widgets/guest_list.dart';
+import 'package:zipbuzz/pages/home/widgets/bottom_bar.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends ConsumerStatefulWidget {

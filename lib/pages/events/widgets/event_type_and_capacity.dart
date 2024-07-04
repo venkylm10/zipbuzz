@@ -6,7 +6,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/widgets/create_event/guest_list_type.dart';
+import 'package:zipbuzz/pages/events/widgets/guest_list_type.dart';
 
 class EventTypeAndCapacity extends ConsumerStatefulWidget {
   const EventTypeAndCapacity({super.key, this.rePublish = false});

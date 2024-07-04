@@ -20,11 +20,11 @@ import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/pages/event_details/event_details_page.dart';
-import 'package:zipbuzz/widgets/common/attendee_numbers.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
-import 'package:zipbuzz/widgets/home/add_to_calendar.dart';
+import 'package:zipbuzz/pages/events/event_details_page.dart';
+import 'package:zipbuzz/pages/events/widgets/attendee_numbers.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
+import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
+import 'package:zipbuzz/pages/home/widgets/add_to_calendar.dart';
 
 // ignore: must_be_immutable
 class EventCard extends ConsumerStatefulWidget {

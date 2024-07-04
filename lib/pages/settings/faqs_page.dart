@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/back_button.dart';
+import 'package:zipbuzz/utils/widgets/back_button.dart';
 
 class FAQsPage extends StatefulWidget {
   static const id = "/settings/faqs";

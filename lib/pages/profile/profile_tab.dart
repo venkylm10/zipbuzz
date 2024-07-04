@@ -14,9 +14,9 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/profile/edit_profile_page.dart';
 import 'package:zipbuzz/services/auth_services.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
-import 'package:zipbuzz/widgets/profile/delete_account_dialog.dart';
-import 'package:zipbuzz/widgets/profile/settings.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
+import 'package:zipbuzz/pages/profile/widgets/delete_account_dialog.dart';
+import 'package:zipbuzz/pages/profile/widgets/settings.dart';
 
 class ProfileTab extends ConsumerStatefulWidget {
   const ProfileTab({super.key});

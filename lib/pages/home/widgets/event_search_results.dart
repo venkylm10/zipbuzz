@@ -4,7 +4,7 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/home/event_card.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card.dart';
 
 class EventsSearchResults extends StatelessWidget {
   const EventsSearchResults({super.key});

@@ -5,8 +5,8 @@ import 'package:zipbuzz/pages/events/focused_events.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
-import 'package:zipbuzz/widgets/home/event_calendar.dart';
-import 'package:zipbuzz/widgets/home/home_upcoming_events.dart';
+import 'package:zipbuzz/pages/home/widgets/event_calendar.dart';
+import 'package:zipbuzz/pages/home/widgets/home_upcoming_events.dart';
 
 class HomeCalender extends ConsumerStatefulWidget {
   const HomeCalender({super.key});

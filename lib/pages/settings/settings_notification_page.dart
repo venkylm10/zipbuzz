@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/back_button.dart';
+import 'package:zipbuzz/utils/widgets/back_button.dart';
 
 class SettingsNotificationPage extends StatefulWidget {
   static const id = "/settings/notification";

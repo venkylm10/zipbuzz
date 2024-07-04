@@ -14,11 +14,11 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/widgets/common/back_button.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
-import 'package:zipbuzz/widgets/home/invite_noti_card.dart';
-import 'package:zipbuzz/widgets/home/response_noti_card.dart';
-import 'package:zipbuzz/widgets/notification_page/attendee_sheet.dart';
+import 'package:zipbuzz/utils/widgets/back_button.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
+import 'package:zipbuzz/pages/home/widgets/invite_noti_card.dart';
+import 'package:zipbuzz/pages/home/widgets/response_noti_card.dart';
+import 'package:zipbuzz/pages/notification/widgets/attendee_sheet.dart';
 
 import '../../models/events/posts/make_request_model.dart';
 import '../../services/chat_services.dart';

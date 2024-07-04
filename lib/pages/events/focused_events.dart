@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
-import 'package:zipbuzz/widgets/home/event_card.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card.dart';
 
 class FocusedEvents extends StatelessWidget {
   const FocusedEvents({super.key});

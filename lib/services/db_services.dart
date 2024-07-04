@@ -28,8 +28,8 @@ import 'package:zipbuzz/models/user/post/user_socials_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
+import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 
 final dbServicesProvider = Provider((ref) => DBServices(
       database: ref.read(databaseProvider),

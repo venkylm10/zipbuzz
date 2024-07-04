@@ -5,7 +5,7 @@ import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
-import 'package:zipbuzz/widgets/common/snackbar.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final contactsServicesProvider = Provider<Contacts>((ref) {
   return Contacts(ref: ref);

@@ -31,7 +31,7 @@ import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
-import 'package:zipbuzz/widgets/auth_gate.dart';
+import 'package:zipbuzz/pages/splash/splash_screen.dart';
 
 final dioServicesProvider = Provider((ref) => DioServices(ref: ref));
 
@@ -374,7 +374,7 @@ class DioServices {
       debugPrint("GETTING USER DATA FAILED");
       debugPrint(error.toString());
       await GetStorage().erase();
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AuthGate.id, (route) => false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
       throw Exception('FAILED TO GET USER DATA');
     }
   }

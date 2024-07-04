@@ -7,15 +7,15 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/pages/event_details/event_details_page.dart';
-import 'package:zipbuzz/widgets/common/back_button.dart';
-import 'package:zipbuzz/widgets/common/broad_divider.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
-import 'package:zipbuzz/widgets/create_event/add_hosts.dart';
-import 'package:zipbuzz/widgets/create_event/edit_event_photos.dart';
-import 'package:zipbuzz/widgets/create_event/event_type_and_capacity.dart';
-import 'package:zipbuzz/widgets/edit_event/event_banner.dart';
-import 'package:zipbuzz/widgets/event_details_page/event_host_guest_list.dart';
+import 'package:zipbuzz/pages/events/event_details_page.dart';
+import 'package:zipbuzz/utils/widgets/back_button.dart';
+import 'package:zipbuzz/utils/widgets/broad_divider.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
+import 'package:zipbuzz/pages/events/widgets/add_hosts.dart';
+import 'package:zipbuzz/pages/events/widgets/edit_event_photos.dart';
+import 'package:zipbuzz/pages/events/widgets/event_type_and_capacity.dart';
+import 'package:zipbuzz/pages/events/widgets/edit_event_banner.dart';
+import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 
 class EditEventPage extends ConsumerStatefulWidget {
   static const id = '/edit_event_page';

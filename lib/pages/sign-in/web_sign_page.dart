@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
-import 'package:zipbuzz/widgets/common/custom_bezel.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
 
 class WebSignInPage extends StatelessWidget {
   static const id = '/web_sign_in';
