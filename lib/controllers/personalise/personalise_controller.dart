@@ -36,7 +36,7 @@ class PersonaliseController {
   final mobileController = TextEditingController();
   final nameController = TextEditingController();
   var countryDialCode = "+1";
-  var selectedInterests = <String>[];
+  var selectedInterests = <String>['Hangouts'];
   var userLocation = LocationModel(
     city: "",
     country: "",
@@ -207,5 +207,6 @@ class PersonaliseController {
     nameController.clear();
     zipcodeController.clear();
     selectedInterests.clear();
+    selectedInterests.add('Hangouts');
   }
 }
