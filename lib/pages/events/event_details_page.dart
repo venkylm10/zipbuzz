@@ -1,27 +1,26 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/utils.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
+import 'package:zipbuzz/pages/events/widgets/event_details_app_bar.dart';
+import 'package:zipbuzz/pages/events/widgets/event_details_attendee_numbers.dart';
+import 'package:zipbuzz/pages/events/widgets/event_details_banner.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
-import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
+import 'package:zipbuzz/utils/widgets/custom_hyper_linked_textspan.dart';
 import 'package:zipbuzz/utils/widgets/loader.dart';
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -30,16 +29,16 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
-import 'package:zipbuzz/pages/events/widgets/attendee_numbers.dart';
 import 'package:zipbuzz/pages/events/widgets/event_chip.dart';
 import 'package:zipbuzz/pages/events/widgets/event_buttons.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details.dart';
 import 'package:zipbuzz/pages/events/widgets/event_hosts.dart';
-import 'package:zipbuzz/pages/events/widgets/event_images.dart';
+import 'package:zipbuzz/pages/events/widgets/event_details_images.dart';
 import 'package:zipbuzz/pages/events/widgets/event_qrcode.dart';
 import 'package:zipbuzz/pages/events/widgets/event_urls.dart';
-import 'package:zipbuzz/pages/events/widgets/guest_list.dart';
 import 'package:zipbuzz/pages/home/widgets/bottom_bar.dart';
+
+import 'widgets/event_details_common_guest_list.dart';
 
 // ignore: must_be_immutable
 class EventDetailsPage extends ConsumerStatefulWidget {
@@ -86,35 +85,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     setState(() {});
   }
 
-  void pickImage() async {
-    final pickedImage = await ImageServices().pickImage();
-    if (pickedImage == null) return;
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: pickedImage.path,
-      aspectRatioPresets: [CropAspectRatioPreset.ratio16x9],
-      uiSettings: [
-        AndroidUiSettings(
-            toolbarTitle: 'Cropper',
-            toolbarColor: AppColors.primaryColor,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.ratio16x9,
-            lockAspectRatio: false),
-        IOSUiSettings(title: 'Cropper'),
-        WebUiSettings(
-          context: navigatorKey.currentContext!,
-        ),
-      ],
-    );
-    if (croppedFile == null) return;
-    image = File(croppedFile.path);
-    ref.read(newEventProvider.notifier).updateBannerImage(image!);
-    ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
-    ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
-    widget.dominantColor = await getDominantColor();
-    ref.read(loadingTextProvider.notifier).reset();
-    setState(() {});
-  }
-
   void getEventColor() {
     eventColor = interestColors[widget.event.category]!;
     setState(() {});
@@ -150,13 +120,6 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       widget.event.status = "confirmed";
     }
     setState(() {});
-    // for (var e in ref.read(eventRequestMembersProvider)) {
-    //   if (widget.event.eventMembers.firstWhereOrNull((element) => element.phone == e.phone) ==
-    //       null) {
-    //     final newMember = EventInviteMember(image: e.image, phone: e.phone, name: e.name);
-    //     widget.event.eventMembers.add(newMember);
-    //   }
-    // }
   }
 
   @override
@@ -177,7 +140,11 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         child: Scaffold(
             backgroundColor: widget.dominantColor,
             resizeToAvoidBottomInset: false,
-            appBar: buildAppBar(),
+            appBar: EventDetailsAppBar(
+              isPreview: widget.isPreview,
+              rePublish: widget.rePublish,
+              pickImage: _pickImage,
+            ),
             extendBodyBehindAppBar: true,
             body: Stack(
               children: [
@@ -191,7 +158,11 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          buildBanner(),
+                          EventDetailsBanner(
+                            event: widget.event,
+                            isPreview: widget.isPreview,
+                            dominantColor: widget.dominantColor,
+                          ),
                           Transform.translate(
                             offset: const Offset(0, -40),
                             child: AnimatedPadding(
@@ -226,7 +197,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                           interest: widget.event.category,
                                           iconPath: widget.event.iconPath,
                                         ),
-                                        buildAttendeeNumber(),
+                                        EventDetailsAttendeeNumbers(
+                                            event: widget.event,
+                                            isPreview: widget.isPreview,
+                                            rePublish: widget.rePublish),
                                         if (!widget.isPreview) EventQRCode(event: widget.event),
                                       ],
                                     ),
@@ -263,17 +237,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                       color: AppColors.greyColor.withOpacity(0.2),
                                       thickness: 0,
                                     ),
-                                    if (!widget.event.privateGuestList || hosted)
-                                      buildGuestListTitle(),
-                                    if (!widget.event.privateGuestList || hosted)
-                                      const SizedBox(height: 16),
-                                    if (!widget.event.privateGuestList || hosted) buildGuestList(),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      "Photos",
-                                      style: AppStyles.h5.copyWith(
-                                        color: AppColors.lightGreyColor,
-                                      ),
+                                    EventDetailsCommonGuestList(
+                                      event: widget.event,
+                                      isPreview: widget.isPreview,
+                                      rePublish: widget.rePublish,
+                                      clone: widget.clone,
+                                      hosted: hosted,
                                     ),
                                     const SizedBox(height: 16),
                                     buildPhotos(widget.isPreview, widget.rePublish, ref),
@@ -340,20 +309,33 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     );
   }
 
-  Consumer buildGuestListTitle() {
-    return Consumer(builder: (context, ref, child) {
-      final newEvent = ref.watch(newEventProvider);
-      var num = widget.event.eventMembers.length;
-      if (widget.isPreview) {
-        num = newEvent.eventMembers.length;
-      }
-      return Text(
-        "Guest list ($num)",
-        style: AppStyles.h5.copyWith(
-          color: AppColors.lightGreyColor,
+  void _pickImage() async {
+    final pickedImage = await ImageServices().pickImage();
+    if (pickedImage == null) return;
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: pickedImage.path,
+      aspectRatioPresets: [CropAspectRatioPreset.ratio16x9],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: AppColors.primaryColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.ratio16x9,
+            lockAspectRatio: false),
+        IOSUiSettings(title: 'Cropper'),
+        WebUiSettings(
+          context: navigatorKey.currentContext!,
         ),
-      );
-    });
+      ],
+    );
+    if (croppedFile == null) return;
+    image = File(croppedFile.path);
+    ref.read(newEventProvider.notifier).updateBannerImage(image!);
+    ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
+    ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
+    widget.dominantColor = await getDominantColor();
+    ref.read(loadingTextProvider.notifier).reset();
+    setState(() {});
   }
 
   Widget buildLoader() {
@@ -389,140 +371,11 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Builder(
-          builder: (context) {
-            final splits = widget.event.about.split(" ");
-            return RichText(
-              text: TextSpan(
-                children: splits.map(
-                  (e) {
-                    var isLink = false;
-                    var url = "";
-                    final up2 = RegExp(r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                    if (up2.hasMatch(e)) {
-                      isLink = true;
-                      if (e.startsWith("http://") || e.startsWith("https://")) {
-                        url = e;
-                      } else {
-                        url = "http://$e";
-                      }
-                    }
-                    return TextSpan(
-                      children: isLink
-                          ? [
-                              TextSpan(
-                                text: e,
-                                style: AppStyles.h4.copyWith(
-                                  color: isLink ? Colors.blue : AppColors.greyColor,
-                                  fontStyle: isLink ? FontStyle.italic : FontStyle.normal,
-                                  decoration:
-                                      isLink ? TextDecoration.underline : TextDecoration.none,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    launchUrlString(url);
-                                  },
-                              ),
-                              const TextSpan(text: " "),
-                            ]
-                          : [
-                              TextSpan(
-                                text: !isLink ? "$e " : null,
-                                style: AppStyles.h4.copyWith(
-                                  color: AppColors.greyColor,
-                                  fontStyle: FontStyle.normal,
-                                  decoration: TextDecoration.none,
-                                ),
-                              ),
-                            ],
-                    );
-                  },
-                ).toList(),
-              ),
-            );
-          },
-        ),
+        CustomHyperLinkedTextSpan(text: widget.event.about),
         widget.event.hyperlinks.isEmpty
             ? const SizedBox()
             : EventUrls(hyperlinks: widget.event.hyperlinks),
       ],
-    );
-  }
-
-  Widget buildAttendeeNumber() {
-    final hosted = widget.event.hostId == ref.read(userProvider).id;
-    return InkWell(
-      onTap: () {
-        if (widget.isPreview || widget.rePublish) return;
-        if (!(!widget.event.privateGuestList || hosted)) return;
-        showModalBottomSheet(
-          context: navigatorKey.currentContext!,
-          isScrollControlled: true,
-          enableDrag: true,
-          builder: (context) {
-            var guests = widget.isPreview
-                ? ref.watch(newEventProvider).eventMembers
-                : widget.event.eventMembers;
-            if (widget.rePublish) {
-              guests = ref.read(editEventControllerProvider).eventMembers;
-            }
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  width: kIsWeb
-                      ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.9
-                      : null,
-                  child: EventHostGuestList(
-                    event: widget.event,
-                    guests: guests,
-                    interative: false,
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-      child: Consumer(
-        builder: (context, ref, child) {
-          var data = ref.watch(eventRequestMembersProvider);
-          final confirmedMembers = data
-              .where((element) => element.status == "confirm" || element.status == 'host')
-              .toList();
-          final respondedMembers = data;
-          String attendees = "";
-          if (widget.isPreview) {
-            attendees = "${ref.watch(newEventProvider).attendees},0,0";
-          } else {
-            var responded = 0;
-            for (var e in respondedMembers) {
-              responded = responded + e.attendees;
-            }
-            var confirmed = 0;
-            for (var e in confirmedMembers) {
-              confirmed = confirmed + e.attendees;
-            }
-            attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
-          }
-
-          var total = 1;
-
-          if (widget.isPreview) {
-            total = ref.watch(newEventProvider).capacity;
-          } else if (widget.rePublish) {
-            total = ref.watch(editEventControllerProvider).capacity;
-          } else {
-            total = widget.event.capacity;
-          }
-          return AttendeeNumbers(
-            attendees: attendees,
-            total: total,
-            backgroundColor: AppColors.greyColor.withOpacity(0.1),
-          );
-        },
-      ),
     );
   }
 
@@ -546,202 +399,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     return dominantColor;
   }
 
-  Widget buildGuestList() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final userId = GetStorage().read(BoxConstants.id);
-        final newEvent = ref.watch(newEventProvider);
-        final editEvent = ref.watch(editEventControllerProvider);
-        if (widget.isPreview) {
-          return EventGuestList(
-            guests: newEvent.eventMembers,
-            clone: widget.clone,
-          );
-        }
-        if (widget.rePublish) {
-          return EventGuestList(
-            guests: editEvent.eventMembers,
-            clone: widget.clone,
-          );
-        }
-        if (widget.event.hostId != userId) {
-          return EventGuestList(
-            guests: widget.event.eventMembers,
-            clone: widget.clone,
-          );
-        }
-        return EventHostGuestList(
-          event: widget.event,
-          guests: widget.event.eventMembers,
-        );
-      },
-    );
-  }
-
-  AppBar buildAppBar() {
-    return AppBar(
-      shadowColor: Colors.transparent,
-      backgroundColor: Colors.transparent,
-      leadingWidth: 0,
-      leading: const SizedBox(),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: InkWell(
-            onTap: () => navigatorKey.currentState!.pop(),
-            child: Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                  child: const Center(
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        const Expanded(child: SizedBox()),
-        if (widget.isPreview || widget.rePublish)
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: InkWell(
-              onTap: () => pickImage(),
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                    child: const Center(
-                      child: Icon(
-                        Icons.edit,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget buildBanner() {
-    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-
-    if (widget.isPreview) {
-      if (previewBanner != null) {
-        return SizedBox(
-          height: 300,
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.file(
-                  previewBanner,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              buildBannerGradient(),
-            ],
-          ),
-        );
-      }
-
-      return SizedBox(
-        height: 300,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network(
-                interestBanners[widget.event.category]!,
-                fit: BoxFit.cover,
-              ),
-            ),
-            buildBannerGradient(),
-          ],
-        ),
-      );
-    } else {
-      final newBanner = ref.read(editEventControllerProvider.notifier).bannerImage;
-      if (newBanner == null) {
-        return SizedBox(
-          height: 300,
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.network(
-                  widget.event.bannerPath,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              buildBannerGradient(),
-            ],
-          ),
-        );
-      } else {
-        return SizedBox(
-          height: 300,
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.file(
-                  newBanner,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              buildBannerGradient(),
-            ],
-          ),
-        );
-      }
-    }
-  }
-
-  Positioned buildBannerGradient() {
-    return Positioned(
-      bottom: -10,
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 300,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.transparent, widget.dominantColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: const [0.2, 1],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildPhotos(bool isPreview, bool rePublish, WidgetRef ref) {
     final imageFiles = rePublish
         ? ref.watch(editEventControllerProvider.notifier).selectedImages
         : ref.watch(newEventProvider.notifier).selectedImages;
     final imageUrls = widget.event.imageUrls;
-    return EventImages(
+    return EventDetailsImages(
       isPreview: isPreview,
       rePublish: rePublish,
       ref: ref,

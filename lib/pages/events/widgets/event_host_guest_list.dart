@@ -29,6 +29,8 @@ class EventHostGuestList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildGuestListTitle(),
+        const SizedBox(height: 16),
         buildMemberTags(),
         const SizedBox(height: 16),
         Container(
@@ -40,6 +42,15 @@ class EventHostGuestList extends StatelessWidget {
           child: buildMembersList(),
         )
       ],
+    );
+  }
+
+  Text buildGuestListTitle() {
+    return Text(
+      "Guest list",
+      style: AppStyles.h5.copyWith(
+        color: AppColors.lightGreyColor,
+      ),
     );
   }
 

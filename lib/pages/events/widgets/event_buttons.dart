@@ -18,7 +18,7 @@ import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
-import 'package:zipbuzz/pages/events/widgets/event_invite.dart';
+import 'package:zipbuzz/pages/events/widgets/event_select_contacts_sheet.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -980,7 +980,7 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
       builder: (context) {
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: EventInvite(edit: edit),
+          child: EventSelectContactSheet(edit: edit),
         );
       },
     );

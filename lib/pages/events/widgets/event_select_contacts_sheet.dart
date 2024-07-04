@@ -14,16 +14,16 @@ import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 
 final newInvitesProvider = StateProvider<List<EventInviteMember>>((ref) => []);
 
-class EventInvite extends ConsumerStatefulWidget {
+class EventSelectContactSheet extends ConsumerStatefulWidget {
   static const id = "/invite";
   final bool edit;
-  const EventInvite({super.key, this.edit = false});
+  const EventSelectContactSheet({super.key, this.edit = false});
 
   @override
-  ConsumerState<EventInvite> createState() => _EventInviteState();
+  ConsumerState<EventSelectContactSheet> createState() => _EventSelectContactSheetState();
 }
 
-class _EventInviteState extends ConsumerState<EventInvite> {
+class _EventSelectContactSheetState extends ConsumerState<EventSelectContactSheet> {
   late TextEditingController searchController;
   bool isMounted = true;
   bool loading = false;
@@ -258,12 +258,12 @@ class _EventInviteState extends ConsumerState<EventInvite> {
     // final phoneNumber = contact.phones!.first.value ?? "";
     // final phoneNumber = contact.phones?.map((phone) => phone.value).join(", ") ?? "";
     final phoneNumbers = contact.phones != null
-      ? contact.phones!
-          .map((phone) => phone.value!.replaceAll(' ', ''))
-          .toSet()
-          .toList()
-      : [];
-  final phoneNumber = phoneNumbers.join(", ");
+        ? contact.phones!
+            .map((phone) => phone.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(' ', ''))
+            .toSet()
+            .toList()
+        : [];
+    final phoneNumber = phoneNumbers.join(", ");
     return InkWell(
       onTap: () {
         widget.edit

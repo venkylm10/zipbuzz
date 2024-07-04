@@ -462,8 +462,6 @@ class NewEvent extends StateNotifier<EventModel> {
         hostId: ref.read(userProvider).id,
         notificationData: InviteData(eventId: eventId, senderId: ref.read(userProvider).id),
       );
-      print(eventInvitePostModel.toMap());
-      // showSnackBar(message: "Invites: ${phoneNumbers.join(" ")}");
       debugPrint(eventInvitePostModel.toMap().toString());
       ref.read(loadingTextProvider.notifier).updateLoadingText("Inviting Guests...");
       await ref.read(dioServicesProvider).sendEventInvite(eventInvitePostModel);
