@@ -200,7 +200,7 @@ class EditProfileController {
       linkedin: user.linkedinId ?? "",
       twitter: user.twitterId ?? "",
       interests: user.interests,
-      notifictaionCount: user.notificationCount,
+      notifictaionCount: 0,
     );
     await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
   }
