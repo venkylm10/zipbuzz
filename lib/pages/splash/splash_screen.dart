@@ -60,7 +60,7 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
     final mobileNumber = ref.read(userProvider).mobileNumber;
     if (mobileNumber == "+11234567890" ||
         mobileNumber == "zipbuzz-null" ||
-        location.zipcode == "zipbuzz-null") {
+        ref.read(userProvider).zipcode == "zipbuzz-null") {
       ref.read(personaliseControllerProvider).initialiseLoggedInUser();
       navigatorKey.currentState!.pushReplacementNamed(PersonalisePage.id);
       return;

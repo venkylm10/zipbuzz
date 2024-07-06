@@ -55,9 +55,8 @@ class AuthServices {
         final user = _auth.currentUser;
         if (user == null) return;
         final token = await _ref.read(notificationServicesProvider).getToken();
-        final id = await _ref
-            .read(dioServicesProvider)
-            .getUserId(UserIdRequestModel(email: user.email!, deviceToken: token!));
+        final id = await _ref.read(dioServicesProvider).getUserId(
+            UserIdRequestModel(email: user.email!, deviceToken: token ?? 'zipbuzz-null'));
         if (id == null) {
           _ref.read(loadingTextProvider.notifier).reset();
           var location = _ref.read(userLocationProvider);
@@ -212,7 +211,7 @@ class AuthServices {
       final id = await _ref.read(dbServicesProvider).getUserId(
             UserIdRequestModel(
               email: newUser.email,
-              deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
+              deviceToken: await FirebaseMessaging.instance.getToken() ?? "zipbuzz-null",
             ),
           );
 
