@@ -256,32 +256,9 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                             color: AppColors.greyColor.withOpacity(0.2),
                                             thickness: 0,
                                           ),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const SizedBox(height: 16),
-                                              Text(
-                                                "Hosts",
-                                                style: AppStyles.h5.copyWith(
-                                                  color: AppColors.lightGreyColor,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 16),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  EventHosts(
-                                                    event: widget.event,
-                                                    isPreview: widget.isPreview,
-                                                  ),
-                                                  const SizedBox(height: 16),
-                                                  Divider(
-                                                    color: AppColors.greyColor.withOpacity(0.2),
-                                                    thickness: 0,
-                                                  ),
-                                                ],
-                                              )
-                                            ],
+                                          EventHosts(
+                                            event: widget.event,
+                                            isPreview: widget.isPreview,
                                           ),
                                           const SizedBox(height: 16),
                                         ],

@@ -46,7 +46,16 @@ class _EventHostsState extends ConsumerState<EventHosts> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 16),
+        Text(
+          "Hosts",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.lightGreyColor,
+          ),
+        ),
+        const SizedBox(height: 16),
         buildHost(widget.event.hostId, widget.event.hostName, widget.event.hostPic),
         const SizedBox(height: 12),
         !widget.isPreview
@@ -76,6 +85,11 @@ class _EventHostsState extends ConsumerState<EventHosts> {
                 ),
               )
             : const SizedBox(),
+        const SizedBox(height: 16),
+        Divider(
+          color: AppColors.greyColor.withOpacity(0.2),
+          thickness: 0,
+        ),
       ],
     );
   }
