@@ -122,14 +122,12 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
             : widget.guests;
 
         if (widget.addRSVPToList) {
-          allGuests.addAll(
-            widget.guests.where(
-              (e) {
-                final contains = rsvpMembers.any((element) => element.phone.contains(e.phone));
-                return !contains;
-              },
-            ),
-          );
+          for (var e in widget.guests) {
+            final contains = allGuests.any((element) => element.phone.contains(e.phone));
+            if (!contains) {
+              allGuests.add(e);
+            }
+          }
         }
         return GridView.count(
           crossAxisCount: 2,

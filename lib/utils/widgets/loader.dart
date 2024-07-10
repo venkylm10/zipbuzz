@@ -10,6 +10,7 @@ class Loader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomBezel(
+      showLoader: true,
       child: Scaffold(
         body: Center(
           child: Column(

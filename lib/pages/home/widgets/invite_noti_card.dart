@@ -158,7 +158,6 @@ class InviteNotiCard extends ConsumerWidget {
               ],
             ),
           ),
-          const Spacer(),
           Text(
             time,
             style: AppStyles.h6,

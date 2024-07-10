@@ -237,6 +237,7 @@ class AppBarSearchField extends ConsumerWidget {
           suffixIcon: InkWell(
             onTap: () {
               ref.read(homeTabControllerProvider.notifier).queryController.clear();
+              widget.toggleSearching();
               ref.read(homeTabControllerProvider.notifier).refresh();
             },
             child: Icon(

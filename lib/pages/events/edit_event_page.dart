@@ -16,6 +16,7 @@ import 'package:zipbuzz/pages/events/widgets/edit_event_photos.dart';
 import 'package:zipbuzz/pages/events/widgets/event_type_and_capacity.dart';
 import 'package:zipbuzz/pages/events/widgets/edit_event_banner.dart';
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
+import 'package:zipbuzz/utils/widgets/no_internet_screen.dart';
 
 class EditEventPage extends ConsumerStatefulWidget {
   static const id = '/edit_event_page';
@@ -47,57 +48,58 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
 
   @override
   Widget build(BuildContext context) {
+    final internectConnection = ref.watch(checkInternetProvider);
     return CustomBezel(
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            leading: backButton(),
-            title: Text(
-              "Editing Event",
-              style: AppStyles.h2.copyWith(
-                color: AppColors.primaryColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            centerTitle: true,
-            forceMaterialTransparency: true,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const EditEventBannerSelector(),
-                  const SizedBox(height: 16),
-                  const EditEventForm(),
-                  broadDivider(),
-                  const AddHosts(),
-                  broadDivider(),
-                  const EventTypeAndCapacity(rePublish: true),
-                  broadDivider(),
-                  const EditEventPhotos(),
-                  broadDivider(),
-                  const SizedBox(height: 16),
-                  EventHostGuestList(
-                    event: ref.watch(editEventControllerProvider),
-                    guests: ref.watch(editEventControllerProvider).eventMembers,
+      child: internectConnection != const AsyncData(false) ? GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Scaffold(
+              appBar: AppBar(
+                leading: backButton(),
+                title: Text(
+                  "Editing Event",
+                  style: AppStyles.h2.copyWith(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
                   ),
-                  broadDivider(),
-                  const SizedBox(height: 16),
-                  buildSaveButton(),
-                  const SizedBox(height: 32),
-                ],
+                ),
+                centerTitle: true,
+                forceMaterialTransparency: true,
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const EditEventBannerSelector(),
+                      const SizedBox(height: 16),
+                      const EditEventForm(),
+                      broadDivider(),
+                      const AddHosts(),
+                      broadDivider(),
+                      const EventTypeAndCapacity(rePublish: true),
+                      broadDivider(),
+                      const EditEventPhotos(),
+                      broadDivider(),
+                      const SizedBox(height: 16),
+                      EventHostGuestList(
+                        event: ref.watch(editEventControllerProvider),
+                        guests: ref.watch(editEventControllerProvider).eventMembers,
+                      ),
+                      broadDivider(),
+                      const SizedBox(height: 16),
+                      buildSaveButton(),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
+          ): const NoInternetScreen(showLoader: false),
     );
   }
 

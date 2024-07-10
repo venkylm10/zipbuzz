@@ -19,6 +19,7 @@ import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
 import 'package:zipbuzz/pages/home/widgets/invite_noti_card.dart';
 import 'package:zipbuzz/pages/home/widgets/response_noti_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/attendee_sheet.dart';
+import 'package:zipbuzz/utils/widgets/no_internet_screen.dart';
 
 import '../../models/events/posts/make_request_model.dart';
 import '../../services/chat_services.dart';
@@ -52,72 +53,80 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return CustomBezel(
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            leading: backButton(),
-            title: Text(
-              "Notifications",
-              style: AppStyles.h2.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.primaryColor,
-              ),
-            ),
-            centerTitle: true,
-            elevation: 0,
-          ),
-          body: SizedBox(
-            height: size.height,
-            width: size.width,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: FutureBuilder(
-                    future: ref.read(dioServicesProvider).getNotifications(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                          ),
-                        );
-                      }
-                      final notifications = snapshot.data as List<NotificationData>;
-                      if (notifications.isEmpty) {
-                        return Center(
-                          child: Text(
-                            "No Notifications",
-                            style: AppStyles.h4.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.lightGreyColor,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        );
-                      }
-                      return SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16).copyWith(bottom: 0),
-                          child: Column(
-                            children: notifications
-                                .map(
-                                  (e) => buildNotificationCard(e),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      );
-                    },
+      child: StreamBuilder<bool>(
+          stream: checkInternetStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data == false) {
+              return const NoInternetScreen(showLoader: false);
+            }
+          return GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Scaffold(
+              appBar: AppBar(
+                leading: backButton(),
+                title: Text(
+                  "Notifications",
+                  style: AppStyles.h2.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primaryColor,
                   ),
                 ),
-                buildLoader(),
-              ],
+                centerTitle: true,
+                elevation: 0,
+              ),
+              body: SizedBox(
+                height: size.height,
+                width: size.width,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: FutureBuilder(
+                        future: ref.read(dioServicesProvider).getNotifications(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryColor,
+                              ),
+                            );
+                          }
+                          final notifications = snapshot.data as List<NotificationData>;
+                          if (notifications.isEmpty) {
+                            return Center(
+                              child: Text(
+                                "No Notifications",
+                                style: AppStyles.h4.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.lightGreyColor,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            );
+                          }
+                          return SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16).copyWith(bottom: 0),
+                              child: Column(
+                                children: notifications
+                                    .map(
+                                      (e) => buildNotificationCard(e),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    buildLoader(),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        }
       ),
     );
   }

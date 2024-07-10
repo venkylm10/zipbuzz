@@ -20,7 +20,6 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/widgets/loader.dart';
-import 'package:zipbuzz/utils/widgets/no_internet_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   static const id = '/';
@@ -73,12 +72,7 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
   void buildNextScreen() async {
     bool? login = box.read(BoxConstants.login) as bool?;
     await Future.delayed(const Duration(milliseconds: 500));
-    final res = await checkInternet();
-    print("Internet check : $res");
-    if (!res) {
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(NoInternetScreen.id, (route) => false);
-      return;
-    }
+    await DioServices.getToken();
     await updateInterestsData();
     if (login != null && login) {
       await getLoggedInUserData();

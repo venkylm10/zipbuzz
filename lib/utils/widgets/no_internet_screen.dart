@@ -1,11 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/pages/splash/splash_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/utils/widgets/back_button.dart';
+
+final StreamProvider<bool> checkInternetProvider = StreamProvider<bool>((ref) {
+  return checkInternetStream();
+});
+
+Stream<bool> checkInternetStream() async* {
+  while (true) {
+    await Future.delayed(const Duration(seconds: 3));
+    yield await checkInternet();
+  }
+}
 
 Future<bool> checkInternet() async {
   try {
@@ -19,15 +30,12 @@ Future<bool> checkInternet() async {
 
 class NoInternetScreen extends StatelessWidget {
   static const id = '/no-internet';
-  const NoInternetScreen({super.key});
+  final bool showLoader;
+  const NoInternetScreen({super.key, this.showLoader = true});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: backButton(),
-        elevation: 0,
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +52,7 @@ class NoInternetScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            InkWell(
+            if(showLoader)InkWell(
               onTap: () {
                 checkInternet().then((value) {
                   if (value) {

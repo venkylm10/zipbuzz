@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/main.dart';
-import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/firebase_options/firebase_options_prod.dart';
 
 void main() async {
