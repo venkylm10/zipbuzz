@@ -108,18 +108,25 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
 
   Widget buildGuests(BuildContext context) {
     final rsvpMembers = ref.watch(eventRequestMembersProvider);
-    final allGuests = [...widget.guests];
-
-    if (widget.addRSVPToList) {
-      allGuests.addAll(
-        rsvpMembers
+    final allGuests = widget.addRSVPToList
+        ? rsvpMembers
             .map((e) => EventInviteMember(
                   name: e.name,
                   phone: e.phone,
                   image: e.image,
                   status: e.status,
                 ))
-            .toList(),
+            .toList()
+        : widget.guests;
+
+    if (widget.addRSVPToList) {
+      allGuests.addAll(
+        widget.guests.where(
+          (e) {
+            final contains = rsvpMembers.any((element) => element.phone.contains(e.phone));
+            return !contains;
+          },
+        ),
       );
     }
     return Consumer(
