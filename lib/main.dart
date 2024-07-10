@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_uxcam/flutter_uxcam.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/routes.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/pages/splash/splash_screen.dart';
+import 'package:zipbuzz/utils/widgets/no_internet_screen.dart';
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
@@ -29,6 +31,12 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   void initNoti() async {
+    final res = await checkInternet();
+    if (!res) {
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(NoInternetScreen.id, (route) => false);
+      return;
+    }
+    await DioServices.getToken();
     if (!kIsWeb) {
       await ref.read(notificationServicesProvider).initNotifications();
     }

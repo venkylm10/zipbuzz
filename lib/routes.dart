@@ -13,6 +13,7 @@ import 'package:zipbuzz/pages/settings/settings_notification_page.dart';
 import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/pages/splash/splash_screen.dart';
+import 'package:zipbuzz/utils/widgets/no_internet_screen.dart';
 
 Route<dynamic>? onGenerateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -128,6 +129,15 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
           clone: clone,
           showBottomBar: showBottomBar,
         ),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+
+    case NoInternetScreen.id:
+      return PageTransition(
+        child: const NoInternetScreen(),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),
