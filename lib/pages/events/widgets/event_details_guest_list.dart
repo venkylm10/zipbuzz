@@ -107,30 +107,30 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
   }
 
   Widget buildGuests(BuildContext context) {
-    final rsvpMembers = ref.watch(eventRequestMembersProvider);
-    final allGuests = widget.addRSVPToList
-        ? rsvpMembers
-            .map((e) => EventInviteMember(
-                  name: e.name,
-                  phone: e.phone,
-                  image: e.image,
-                  status: e.status,
-                ))
-            .toList()
-        : widget.guests;
-
-    if (widget.addRSVPToList) {
-      allGuests.addAll(
-        widget.guests.where(
-          (e) {
-            final contains = rsvpMembers.any((element) => element.phone.contains(e.phone));
-            return !contains;
-          },
-        ),
-      );
-    }
     return Consumer(
       builder: (context, ref, child) {
+        final rsvpMembers = ref.watch(eventRequestMembersProvider);
+        final allGuests = widget.addRSVPToList
+            ? rsvpMembers
+                .map((e) => EventInviteMember(
+                      name: e.name,
+                      phone: e.phone,
+                      image: e.image,
+                      status: e.status,
+                    ))
+                .toList()
+            : widget.guests;
+
+        if (widget.addRSVPToList) {
+          allGuests.addAll(
+            widget.guests.where(
+              (e) {
+                final contains = rsvpMembers.any((element) => element.phone.contains(e.phone));
+                return !contains;
+              },
+            ),
+          );
+        }
         return GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
@@ -146,36 +146,42 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
                 (member) => Stack(
                   children: [
                     _buildMemberCard(member, context),
-                    if (widget.clone)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Transform.translate(
-                          offset: const Offset(4, -4),
-                          child: InkWell(
-                            onTap: () {
-                              ref.read(newEventProvider.notifier).removeInviteMember(member.phone);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: AppColors.borderGrey,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Transform.rotate(
-                                angle: pi / 4,
-                                child: const Icon(Icons.add, size: 16),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    _buildRemoveButton(ref, member),
                   ],
                 ),
               )
               .toList(),
         );
       },
+    );
+  }
+
+  Widget _buildRemoveButton(WidgetRef ref, EventInviteMember member) {
+    if (!widget.clone) {
+      return const SizedBox();
+    }
+    return Positioned(
+      right: 0,
+      top: 0,
+      child: Transform.translate(
+        offset: const Offset(4, -4),
+        child: InkWell(
+          onTap: () {
+            ref.read(newEventProvider.notifier).removeInviteMember(member.phone);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: AppColors.borderGrey,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Transform.rotate(
+              angle: pi / 4,
+              child: const Icon(Icons.add, size: 16),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
