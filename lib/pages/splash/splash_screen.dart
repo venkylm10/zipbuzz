@@ -70,7 +70,6 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
   }
 
   void buildNextScreen() async {
-    await ref.read(dioServicesProvider).checkEmail("venkylm10@gmail.com");
     bool? login = box.read(BoxConstants.login) as bool?;
     await Future.delayed(const Duration(milliseconds: 500));
     await updateInterestsData();

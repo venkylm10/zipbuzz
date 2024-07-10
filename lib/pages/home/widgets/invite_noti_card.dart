@@ -73,8 +73,7 @@ class InviteNotiCard extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          SizedBox(
-            width: MediaQuery.of(context).size.width - 120,
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -109,6 +108,7 @@ class InviteNotiCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Row(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
                       child: InkWell(

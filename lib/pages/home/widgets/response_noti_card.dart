@@ -81,7 +81,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () {
           navigateToEventDetails(ref);
         },

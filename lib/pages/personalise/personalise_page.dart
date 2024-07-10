@@ -172,7 +172,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             buildCheckBox(),
                             const SizedBox(height: 12),
                             buildSubmitButton(personaliseController),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 80),
                           ],
                         ),
                       ),
@@ -309,118 +309,123 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   Widget buildInterests(BuildContext context, WidgetRef ref) {
     final personaliseController = ref.watch(personaliseControllerProvider);
+    List<Widget> interests = unsortedInterests.sublist(0, 10).map(
+      (e) {
+        final name = e.activity;
+        return InkWell(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            personaliseController.updateInterests(name);
+            setState(() {});
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.primaryColor),
+              color: personaliseController.selectedInterests.contains(name)
+                  ? AppColors.primaryColor
+                  : Colors.white,
+            ),
+            child: Text(
+              e.activity,
+              style: AppStyles.h5.copyWith(
+                color: personaliseController.selectedInterests.contains(name)
+                    ? Colors.white
+                    : AppColors.primaryColor,
+                fontWeight: personaliseController.selectedInterests.contains(name)
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+              ),
+            ),
+          ),
+        );
+      },
+    ).toList();
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: unsortedInterests.sublist(0, 10).map(
-        (e) {
-          final name = e.activity;
-          return InkWell(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              personaliseController.updateInterests(name);
-              setState(() {});
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.primaryColor),
-                color: personaliseController.selectedInterests.contains(name)
-                    ? AppColors.primaryColor
-                    : Colors.white,
-              ),
-              child: Text(
-                e.activity,
-                style: AppStyles.h5.copyWith(
-                  color: personaliseController.selectedInterests.contains(name)
-                      ? Colors.white
-                      : AppColors.primaryColor,
-                  fontWeight: personaliseController.selectedInterests.contains(name)
-                      ? FontWeight.w600
-                      : FontWeight.normal,
-                ),
-              ),
-            ),
-          );
-        },
-      ).toList(),
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        ...interests,
+        Text(
+          "and many many more...",
+          style: AppStyles.h5.copyWith(fontStyle: FontStyle.italic, color: AppColors.textColor),
+        ),
+      ],
     );
   }
 
   Widget buildTextField(
       String iconPath, String label, TextEditingController controller, String hintText,
       {TextInputType? keyboardType, int? maxLength, Widget? prefixWidget}) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94 - 48,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SvgPicture.asset(
-            iconPath,
-            height: 32,
-            colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: AppStyles.h3),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (prefixWidget != null) prefixWidget,
-                    if (prefixWidget != null) const SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        cursorColor: AppColors.primaryColor,
-                        style: AppStyles.h4,
-                        keyboardType: keyboardType,
-                        maxLength: maxLength,
-                        onChanged: (value) {
-                          if (value.length == maxLength) {
-                            //close keyboard
-                            FocusScope.of(context).requestFocus(FocusNode());
-                          }
-                        },
-                        decoration: InputDecoration(
-                          counter: const SizedBox(),
-                          hintText: hintText,
-                          hintStyle: AppStyles.h4.copyWith(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SvgPicture.asset(
+          iconPath,
+          height: 32,
+          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: AppStyles.h3),
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (prefixWidget != null) prefixWidget,
+                  if (prefixWidget != null) const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      cursorColor: AppColors.primaryColor,
+                      style: AppStyles.h4,
+                      keyboardType: keyboardType,
+                      maxLength: maxLength,
+                      onChanged: (value) {
+                        if (value.length == maxLength) {
+                          //close keyboard
+                          FocusScope.of(context).requestFocus(FocusNode());
+                        }
+                      },
+                      decoration: InputDecoration(
+                        counter: const SizedBox(),
+                        hintText: hintText,
+                        hintStyle: AppStyles.h4.copyWith(
+                          color: AppColors.lightGreyColor,
+                        ),
+                        contentPadding: const EdgeInsets.all(16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
                             color: AppColors.lightGreyColor,
                           ),
-                          contentPadding: const EdgeInsets.all(16),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColors.lightGreyColor,
-                            ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.lightGreyColor,
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColors.lightGreyColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColors.lightGreyColor,
-                            ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.lightGreyColor,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
