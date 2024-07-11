@@ -44,6 +44,7 @@ class DioConstants {
   static const String fetchUserEvents = '/events/user_events/';
   static const String fetchUserEventsWeb = '/events/user_events_web/';
   static const String deleteAccountApi = 'users/delete_request/';
+  static const String getUserFaqs = 'users/faq_master/';
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

@@ -81,6 +81,8 @@ dependencies:
   timeago: ^3.6.1
   add_2_calendar: ^3.0.1
   lottie: ^3.1.2
+  chewie: ^1.8.1
+  video_player: ^2.9.1
   
   
 

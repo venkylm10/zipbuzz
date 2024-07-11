@@ -22,6 +22,7 @@ import 'package:zipbuzz/models/interests/requests/user_interests_update_model.da
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/models/onboarding_page_model.dart';
+import 'package:zipbuzz/models/user/faq_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
@@ -651,5 +652,16 @@ class DioServices {
     await dio.post(DioConstants.deleteAccountApi, data: {
       "user_id": userId,
     });
+  }
+
+  Future<List<FaqModel>> getUserFaqs() async {
+    try {
+      final res = await dio.get(DioConstants.getUserFaqs);
+      final list = res.data['category_data'] as List;
+      return list.map((e) => FaqModel.fromMap(e)).toList();
+    } catch (e) {
+      debugPrint("Error getting user faqs: $e");
+      rethrow;
+    }
   }
 }
