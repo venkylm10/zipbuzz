@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/pages/splash/splash_screen.dart';
@@ -20,6 +21,7 @@ Stream<bool> checkInternetStream() async* {
 
 Future<bool> checkInternet() async {
   try {
+    if (kIsWeb) return true;
     final res = await InternetAddress.lookup('www.google.com');
     return res.isNotEmpty && res[0].rawAddress.isNotEmpty;
   } catch (e) {
@@ -52,20 +54,21 @@ class NoInternetScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            if(showLoader)InkWell(
-              onTap: () {
-                checkInternet().then((value) {
-                  if (value) {
-                    navigatorKey.currentState!
-                        .pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
-                  }
-                });
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(16),
-                child: Icon(Icons.refresh_rounded),
-              ),
-            )
+            if (showLoader)
+              InkWell(
+                onTap: () {
+                  checkInternet().then((value) {
+                    if (value) {
+                      navigatorKey.currentState!
+                          .pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
+                    }
+                  });
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Icon(Icons.refresh_rounded),
+                ),
+              )
           ],
         ),
       ),

@@ -279,12 +279,9 @@ class DBServices {
     if (box.read(BoxConstants.guestUser) == null) {
       try {
         final list = await _dioServices.fetchUserEvents();
-        final events = list.map((e) {
+        final events = <EventModel>[];
+        for (var e in list) {
           final res = EventResponseModel.fromMap(e);
-          // for (var e in interestIcons.entries.toList()) {
-          //   print("[${e.key}] : ${e.value}");
-          // }
-          // print(res.category);
           final eventModel = EventModel(
             id: res.id,
             title: res.name,
@@ -313,8 +310,8 @@ class DBServices {
             hyperlinks: res.hyperlinks,
             notificationId: res.notificationId,
           );
-          return eventModel;
-        }).toList();
+          events.add(eventModel);
+        }
         return events..sort((a, b) => a.date.compareTo(b.date));
       } catch (e) {
         debugPrint("Error In Getting Events: $e");
