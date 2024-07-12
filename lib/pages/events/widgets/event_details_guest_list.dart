@@ -38,6 +38,7 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
     'declined': AppColors.negativeRed,
     'invited': AppColors.borderGrey,
     'accepted': Colors.orange,
+    'pending' : Colors.yellow,
   };
 
   @override
