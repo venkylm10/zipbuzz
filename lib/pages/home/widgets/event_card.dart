@@ -371,7 +371,6 @@ class _EventCardState extends ConsumerState<EventCard> {
       case "declined":
         return "Declined";
       default:
-        print(status);
         return "Interested ?";
     }
   }

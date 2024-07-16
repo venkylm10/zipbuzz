@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_update_rsvp_sheet.dart';
-import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -45,13 +43,7 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: EventCardRsvpUpdateSheet(
                   event: event,
-                  updateStatus: (status, members) async {
-                    final user = ref.read(userProvider);
-                    await ref
-                        .read(dioServicesProvider)
-                        .updateRsvp(event.id, user.id, members, status);
-                    updateStatus(status, members);
-                  },
+                  updateStatus: (status, members) => updateStatus(status, members),
                 ),
               );
             },

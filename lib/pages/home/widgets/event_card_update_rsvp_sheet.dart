@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/services/chat_services.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -10,7 +12,7 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class EventCardRsvpUpdateSheet extends ConsumerStatefulWidget {
   final EventModel event;
-  final Future Function(String, int) updateStatus;
+  final Function(String, int) updateStatus;
   const EventCardRsvpUpdateSheet({
     super.key,
     required this.event,
@@ -116,21 +118,7 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
           ),
           const SizedBox(height: 24),
           InkWell(
-            onTap: () async {
-              if (clicked) return;
-              clicked = true;
-              await widget.updateStatus(toAccept ? "pending" : "declined", attendees);
-              if (commentController.text.isEmpty) return;
-              ref.read(chatServicesProvider).sendMessage(
-                    event: widget.event,
-                    message: commentController.text.trim(),
-                  );
-              navigatorKey.currentState!.pop();
-              showSnackBar(
-                message: "RSVP updated '${toAccept ? "Yes" : "No"}' successfully",
-              );
-              clicked = false;
-            },
+            onTap: changeRsvp,
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -156,6 +144,26 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
         ],
       ),
     );
+  }
+
+  void changeRsvp() async {
+    if (clicked) return;
+    clicked = true;
+    final user = ref.read(userProvider);
+    await ref
+        .read(dioServicesProvider)
+        .updateRsvp(widget.event.id, user.id, attendees, toAccept ? "pending" : "declined");
+    widget.updateStatus(toAccept ? "pending" : "declined", attendees);
+    if (commentController.text.isEmpty) return;
+    ref.read(chatServicesProvider).sendMessage(
+          event: widget.event,
+          message: commentController.text.trim(),
+        );
+    navigatorKey.currentState!.pop();
+    showSnackBar(
+      message: "RSVP updated '${toAccept ? "Yes" : "No"}' successfully",
+    );
+    clicked = false;
   }
 
   GestureDetector _buildNoButton() {
