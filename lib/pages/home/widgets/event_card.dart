@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:zipbuzz/controllers/events/events_controller.dart';
-import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
-import 'package:zipbuzz/services/contact_services.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card_category_details.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card_clone_option.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card_host_chip.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
-import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/widgets/attendee_numbers.dart';
-import 'package:zipbuzz/utils/widgets/snackbar.dart';
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
-import 'package:zipbuzz/pages/home/widgets/add_to_calendar.dart';
 
 // ignore: must_be_immutable
 class EventCard extends ConsumerStatefulWidget {
@@ -46,18 +39,9 @@ class EventCard extends ConsumerStatefulWidget {
 }
 
 class _EventCardState extends ConsumerState<EventCard> {
-  Color eventColor = Colors.white;
+  late Color eventColor;
   int randInt = 0;
   bool isMounted = true;
-
-  String getMonth(DateTime date) {
-    final formatter = DateFormat.MMM();
-    return formatter.format(date);
-  }
-
-  String getWeekDay(DateTime date) {
-    return DateFormat.EEEE().format(date).substring(0, 3);
-  }
 
   void navigateToEventDetails() async {
     debugPrint(widget.event.id.toString());
@@ -89,30 +73,9 @@ class _EventCardState extends ConsumerState<EventCard> {
     return dominantColor;
   }
 
-  void getEventColor() {
-    eventColor = interestColors[widget.event.category]!;
-    setState(() {});
-  }
-
-  Future<void> addToFavorite() async {
-    if (GetStorage().read(BoxConstants.guestUser) != null) {
-      showSnackBar(message: "You need to be signed in", duration: 2);
-      await Future.delayed(const Duration(seconds: 2));
-      ref.read(newEventProvider.notifier).showSignInForm();
-      return;
-    }
-    widget.event.isFavorite = !widget.event.isFavorite;
-    setState(() {});
-    if (widget.event.isFavorite) {
-      await ref.read(eventsControllerProvider.notifier).addEventToFavorites(widget.event.id);
-    } else {
-      await ref.read(eventsControllerProvider.notifier).removeEventFromFavorites(widget.event.id);
-    }
-  }
-
   @override
   void initState() {
-    getEventColor();
+    eventColor = interestColors[widget.event.category]!;
     super.initState();
   }
 
@@ -125,88 +88,26 @@ class _EventCardState extends ConsumerState<EventCard> {
   @override
   Widget build(BuildContext context) {
     final date = DateTime.parse(widget.event.date);
-    final status = getUserTag(widget.event.status);
-    return InkWell(
-      onTap: () => navigateToEventDetails(),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        margin: const EdgeInsets.only(bottom: 20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (!widget.focusedEvent) buildDate(date),
-                if (!widget.focusedEvent) const SizedBox(height: 12),
-                Container(
-                  height: 50,
-                  width: 50,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: eventColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Image.network(widget.event.iconPath),
-                ),
-                const SizedBox(height: 12),
-                InkWell(
-                  onTap: () async {
-                    await showModalBottomSheet(
-                      context: navigatorKey.currentContext!,
-                      isScrollControlled: true,
-                      enableDrag: true,
-                      isDismissible: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) {
-                        return AddToCalendar(event: widget.event);
-                      },
-                    );
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      padding: const EdgeInsets.all(12),
-                      color: AppColors.bgGrey,
-                      child: Image.asset(Assets.icons.addToCalendar),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(width: 10),
-            Expanded(
+    final status = _getUserTag(widget.event.status);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EventCardCategoryDetails(
+            event: widget.event,
+            focusedEvent: widget.focusedEvent,
+            date: date,
+            eventColor: eventColor,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: InkWell(
+              onTap: () => navigateToEventDetails(),
               child: Column(
                 children: [
-                  if (status.isNotEmpty)
-                    Container(
-                      height: 40,
-                      padding: const EdgeInsets.only(top: 4),
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SvgPicture.asset(Assets.icons.stars, height: 12),
-                          const SizedBox(width: 8),
-                          Text(
-                            status,
-                            style: AppStyles.h6.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          SvgPicture.asset(Assets.icons.stars, height: 12),
-                        ],
-                      ),
-                    ),
+                  _buildStatus(status),
                   Transform.translate(
                     offset: Offset(0, status.isNotEmpty ? -20 : 0),
                     child: Container(
@@ -229,97 +130,20 @@ class _EventCardState extends ConsumerState<EventCard> {
                             constraints: const BoxConstraints(maxHeight: 200),
                             child: Stack(
                               children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                  child: Image.network(
-                                    widget.event.bannerPath,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                  ),
+                                _buildBanner(),
+                                EventCardActionItems(
+                                  event: widget.event,
+                                  onFavoriteTap: () {
+                                    setState(() {
+                                      widget.event.isFavorite = !widget.event.isFavorite;
+                                    });
+                                  },
                                 ),
-                                Positioned(
-                                  right: 10,
-                                  top: 10,
-                                  child: buildCardOptions(),
-                                ),
-                                Positioned(
-                                  bottom: 8,
-                                  right: 8,
-                                  child: buildAttendees(),
-                                ),
+                                _buildAttendees(),
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                buildHostChip(),
-                                const SizedBox(height: 5),
-                                Text(
-                                  widget.event.title,
-                                  softWrap: true,
-                                  style: AppStyles.h4.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                if (widget.event.about.isNotEmpty)
-                                  Text(
-                                    widget.event.about,
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppStyles.h5.copyWith(
-                                      color: AppColors.lightGreyColor,
-                                    ),
-                                  ),
-                                if (widget.event.about.isNotEmpty) const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      Assets.icons.geo_mini,
-                                      height: 16,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        widget.event.location,
-                                        style: AppStyles.h5.copyWith(
-                                          color: AppColors.lightGreyColor,
-                                        ),
-                                        softWrap: true,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      Assets.icons.clock,
-                                      height: 16,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      "${widget.event.startTime}${widget.event.endTime != "null" ? " - ${widget.event.endTime}" : ""}",
-                                      style: AppStyles.h5.copyWith(
-                                        color: AppColors.lightGreyColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )
+                          _buildDetails()
                         ],
                       ),
                     ),
@@ -327,120 +151,142 @@ class _EventCardState extends ConsumerState<EventCard> {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  void cloneEvent() async {
-    // final startTime = TimeOfDay.fromDateTime(DateTime.now());
-    // final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
-    await fixCloneEventContacts();
-    ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-    ref.read(newEventProvider.notifier).cloneEvent = true;
-    // ref.read(newEventProvider.notifier).updateDate(DateTime.now());
-    ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
-    final eventMembers = widget.event.eventMembers.where((element) {
-      var num = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-      num = num.length > 10 ? num.substring(num.length - 10) : num;
-      var userNumber = ref
-          .read(userProvider)
-          .mobileNumber
-          .replaceAll(RegExp(r'[\s()-]+'), "")
-          .replaceAll(" ", "");
-      userNumber =
-          userNumber.length > 10 ? userNumber.substring(userNumber.length - 10) : userNumber;
-      return num != userNumber;
-    }).toList();
-    final clone = ref.read(newEventProvider).copyWith(
-          title: widget.event.title,
-          about: widget.event.about,
-          category: widget.event.category,
-          endTime: "",
-          location: widget.event.location,
-          capacity: widget.event.capacity,
-          bannerPath: widget.event.bannerPath,
-          iconPath: widget.event.iconPath,
-          attendees: eventMembers.length,
-          eventMembers: eventMembers,
-          imageUrls: widget.event.imageUrls,
-          isPrivate: widget.event.isPrivate,
-          privateGuestList: widget.event.privateGuestList,
-        );
-
-    ref.read(eventTabControllerProvider.notifier).updateIndex(2);
-    ref.read(newEventProvider.notifier).updateEvent(clone);
-    ref.read(newEventProvider.notifier).cloneHyperLinks(widget.event.hyperlinks);
-    ref.read(newEventProvider.notifier).updateCategory(widget.event.category);
+  ClipRRect _buildBanner() {
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(
+        top: Radius.circular(20),
+      ),
+      child: Image.network(
+        widget.event.bannerPath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+      ),
+    );
   }
 
-  Future<void> fixCloneEventContacts() async {
-    showSnackBar(message: "Cloning event", duration: 1);
-    final numbers = widget.event.eventMembers
-        .where((e) {
-          var num = e.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-          num = num.length > 10 ? num.substring(num.length - 10) : num;
-          var userNumber = ref
-              .read(userProvider)
-              .mobileNumber
-              .replaceAll(RegExp(r'[\s()-]+'), "")
-              .replaceAll(" ", "");
-          userNumber =
-              userNumber.length > 10 ? userNumber.substring(userNumber.length - 10) : userNumber;
-          return num != userNumber;
-        })
-        .map((e) => e.phone)
-        .toList();
-    final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
-    await Future.delayed(const Duration(milliseconds: 500));
-    ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
-    await Future.delayed(const Duration(milliseconds: 500));
+  Widget _buildStatus(String status) {
+    if (status.isEmpty) {
+      return const SizedBox();
+    }
+    return Container(
+      height: 40,
+      padding: const EdgeInsets.only(top: 4),
+      decoration: const BoxDecoration(
+        color: AppColors.primaryColor,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SvgPicture.asset(Assets.icons.stars, height: 12),
+          const SizedBox(width: 8),
+          Text(
+            status,
+            style: AppStyles.h6.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 8),
+          SvgPicture.asset(Assets.icons.stars, height: 12),
+        ],
+      ),
+    );
   }
 
-  Widget buildCardOptions() {
-    final hostId = widget.event.hostId;
-    final userId = ref.read(userProvider).id;
+  Padding _buildDetails() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 12,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EventCardHostChip(event: widget.event),
+          const SizedBox(height: 5),
+          Text(
+            widget.event.title,
+            softWrap: true,
+            style: AppStyles.h4.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 5),
+          _buildAbout(),
+          _buildLocation(),
+          _buildTiming(),
+        ],
+      ),
+    );
+  }
+
+  Row _buildTiming() {
     return Row(
       children: [
-        if (hostId == userId)
-          InkWell(
-            onTap: () async {
-              cloneEvent();
-            },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: SvgPicture.asset(
-                Assets.icons.copy,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primaryColor,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
+        SvgPicture.asset(
+          Assets.icons.clock,
+          height: 16,
+        ),
+        const SizedBox(width: 5),
+        Text(
+          "${widget.event.startTime}${widget.event.endTime != "null" ? " - ${widget.event.endTime}" : ""}",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.lightGreyColor,
           ),
-        const SizedBox(width: 8),
-        InkWell(
-          onTap: () async {
-            await addToFavorite();
-          },
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              Icons.favorite_rounded,
-              color: widget.event.isFavorite ? Colors.red[500] : Colors.grey[300],
-            ),
-          ),
-        )
+        ),
       ],
+    );
+  }
+
+  Widget _buildLocation() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Row(
+        children: [
+          SvgPicture.asset(
+            Assets.icons.geo_mini,
+            height: 16,
+          ),
+          const SizedBox(width: 5),
+          Expanded(
+            child: Text(
+              widget.event.location,
+              style: AppStyles.h5.copyWith(
+                color: AppColors.lightGreyColor,
+              ),
+              softWrap: true,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAbout() {
+    if (widget.event.about.isEmpty) {
+      return const SizedBox();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Text(
+        widget.event.about,
+        softWrap: true,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: AppStyles.h5.copyWith(
+          color: AppColors.lightGreyColor,
+        ),
+      ),
     );
   }
 
@@ -453,41 +299,45 @@ class _EventCardState extends ConsumerState<EventCard> {
     return data;
   }
 
-  Widget buildAttendees() {
-    return FutureBuilder(
-      future: getEventMembers(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var data = snapshot.data!;
-          var responded = 0;
-          var confirmed = 0;
-          final responedMembers = data;
-          final confirmedMembers = data.where((element) {
-            return element.status == "confirm" || element.status == 'host';
-          }).toList();
-          for (var e in responedMembers) {
-            responded += e.attendees;
+  Widget _buildAttendees() {
+    return Positioned(
+      bottom: 8,
+      right: 8,
+      child: FutureBuilder(
+        future: getEventMembers(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var data = snapshot.data!;
+            var responded = 0;
+            var confirmed = 0;
+            final responedMembers = data;
+            final confirmedMembers = data.where((element) {
+              return element.status == "confirm" || element.status == 'host';
+            }).toList();
+            for (var e in responedMembers) {
+              responded += e.attendees;
+            }
+            for (var e in confirmedMembers) {
+              confirmed += e.attendees;
+            }
+            final attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
+            return AttendeeNumbers(
+              attendees: attendees,
+              total: widget.event.capacity,
+              backgroundColor: AppColors.greyColor.withOpacity(0.1),
+            );
           }
-          for (var e in confirmedMembers) {
-            confirmed += e.attendees;
-          }
-          final attendees = "${widget.event.eventMembers.length},$responded,$confirmed";
           return AttendeeNumbers(
-            attendees: attendees,
+            attendees: "${ref.watch(newEventProvider).attendees},0,0",
             total: widget.event.capacity,
             backgroundColor: AppColors.greyColor.withOpacity(0.1),
           );
-        }
-        return AttendeeNumbers(
-          attendees: "${ref.watch(newEventProvider).attendees},0,0",
-          total: widget.event.capacity,
-          backgroundColor: AppColors.greyColor.withOpacity(0.1),
-        );
-      },
+        },
+      ),
     );
   }
 
-  String getUserTag(String status) {
+  String _getUserTag(String status) {
     if (!widget.showTag) {
       return "";
     }
@@ -503,107 +353,5 @@ class _EventCardState extends ConsumerState<EventCard> {
       default:
         return "Interested ?";
     }
-  }
-
-  Container buildHostChip() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2).copyWith(left: 2),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryColor),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.network(
-              widget.event.hostPic,
-              height: 22,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(width: 5),
-          Text(
-            widget.event.hostName,
-            style: AppStyles.h5.copyWith(
-              color: AppColors.primaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Container buildCategoryChip() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 6,
-      ),
-      decoration: BoxDecoration(
-        color: eventColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.network(
-            widget.event.iconPath,
-            height: 16,
-          ),
-          const SizedBox(width: 5),
-          Text(
-            widget.event.category,
-            style: AppStyles.h5.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Container buildDate(DateTime date) {
-    return Container(
-      padding: const EdgeInsets.all(2),
-      constraints: const BoxConstraints(minWidth: 50),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(8),
-              ),
-            ),
-            child: Text(
-              getMonth(date),
-              style: AppStyles.h4.copyWith(
-                color: AppColors.greyColor,
-              ),
-            ),
-          ),
-          Text(
-            date.day.toString(),
-            style: AppStyles.h2.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Text(
-            getWeekDay(date),
-            style: AppStyles.h4.copyWith(color: AppColors.greyColor),
-          )
-        ],
-      ),
-    );
   }
 }
