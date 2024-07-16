@@ -664,4 +664,20 @@ class DioServices {
       rethrow;
     }
   }
+
+  Future<void> updateRsvp(int eventId, int userId, int members, String status) async {
+    try {
+      final data = {
+        "event_id": eventId,
+        "user_id": userId,
+        "members": members,
+        "status": status,
+      };
+      await dio.put(DioConstants.updateRsvp, data: data);
+      debugPrint("Updated RSVP to ${status == 'pending' ? "yes" : "no"}");
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
 }

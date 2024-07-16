@@ -24,6 +24,7 @@ class PastEvents extends ConsumerWidget {
                     event: e,
                     showTag: true,
                     myEvent: true,
+                    changeRsvp: false,
                   ),
                 )
                 .toList(),

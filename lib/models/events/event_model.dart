@@ -27,6 +27,7 @@ class EventModel {
   String userDeviceToken;
   final List<HyperLinks> hyperlinks;
   final int notificationId;
+  int members;
   EventModel({
     required this.id,
     required this.title,
@@ -54,6 +55,7 @@ class EventModel {
     required this.userDeviceToken,
     required this.hyperlinks,
     this.notificationId = -1,
+    required this.members,
   });
 
   EventModel copyWith({
@@ -82,6 +84,7 @@ class EventModel {
     String? status,
     String? userDeviceToken,
     List<HyperLinks>? hyperlinks,
+    int? members,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -109,6 +112,7 @@ class EventModel {
       status: status ?? this.status,
       userDeviceToken: userDeviceToken ?? this.userDeviceToken,
       hyperlinks: hyperlinks ?? this.hyperlinks,
+      members: members ?? this.members,
     );
   }
 
@@ -144,6 +148,7 @@ class EventModel {
           .map((e) => HyperLinks.fromMap(e as Map<String, dynamic>))
           .toList(),
       notificationId: map['notificationId'] ?? -1,
+      members: map['members'] ?? 0,
     );
   }
 

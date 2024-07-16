@@ -9,7 +9,6 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
-import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
 import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
@@ -265,6 +264,7 @@ class DBServices {
           userDeviceToken: res.userDeviceToken,
           hyperlinks: res.hyperlinks,
           notificationId: res.notificationId,
+          members: res.members,
         );
         return eventModel;
       }).toList();
@@ -309,6 +309,7 @@ class DBServices {
             userDeviceToken: res.userDeviceToken,
             hyperlinks: res.hyperlinks,
             notificationId: res.notificationId,
+            members: res.members,
           );
           events.add(eventModel);
         }
@@ -352,6 +353,7 @@ class DBServices {
       userDeviceToken: res.userDeviceToken,
       hyperlinks: res.hyperlinks,
       notificationId: res.notificationId,
+      members: res.members,
     );
     showSnackBar(message: "Event Details Loaded Successfully");
     return eventModel;
@@ -363,9 +365,6 @@ class DBServices {
       try {
         final list = await _dioServices.getUserFavoriteEvents(userEventsRequestModel);
         final events = list.map((e) async {
-          final res = FavoriteEventModel.fromMap(e as Map<String, dynamic>);
-          final members =
-              await _dioServices.getEventMembers(EventMembersRequestModel(eventId: res.eventId));
           final fav = FavoriteEventModel.fromMap(e);
           final eventModel = EventModel(
             id: fav.eventId,
@@ -388,12 +387,13 @@ class DBServices {
             privateGuestList: true,
             hostName: fav.hostName,
             hostPic: fav.hostPic,
-            eventMembers: members,
+            eventMembers: [],
             inviteUrl: fav.inviteUrl,
             status: fav.status,
             userDeviceToken: fav.userDeviceToken,
             hyperlinks: fav.hyperlinks,
             notificationId: fav.notificationId,
+            members: fav.members,
           );
           return eventModel;
         }).toList();

@@ -59,6 +59,7 @@ class NewEvent extends StateNotifier<EventModel> {
             status: "nothing",
             userDeviceToken: "",
             hyperlinks: [],
+            members: 0
           ),
         );
   List<File> selectedImages = [];
@@ -601,6 +602,7 @@ class NewEvent extends StateNotifier<EventModel> {
       status: "nothing",
       userDeviceToken: "",
       hyperlinks: [],
+      members: 0,
     );
     eventInvites = [];
     bannerImage = null;

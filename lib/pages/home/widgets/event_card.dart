@@ -9,6 +9,7 @@ import 'package:zipbuzz/models/events/requests/event_members_request_model.dart'
 import 'package:zipbuzz/pages/home/widgets/event_card_category_details.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_clone_option.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_host_chip.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card_rsvp_update_button.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -25,6 +26,7 @@ class EventCard extends ConsumerStatefulWidget {
   final bool focusedEvent;
   final bool showTag;
   final bool myEvent;
+  final bool changeRsvp;
 
   EventCard({
     super.key,
@@ -32,6 +34,7 @@ class EventCard extends ConsumerStatefulWidget {
     this.focusedEvent = false,
     this.showTag = true,
     this.myEvent = false,
+    this.changeRsvp = true,
   });
 
   @override
@@ -210,7 +213,22 @@ class _EventCardState extends ConsumerState<EventCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          EventCardHostChip(event: widget.event),
+          Wrap(
+            spacing: 5,
+            children: [
+              EventCardHostChip(event: widget.event),
+              if (widget.changeRsvp)
+                EventCardRsvpUpdateButton(
+                  event: widget.event,
+                  updateStatus: (val, members) {
+                    setState(() {
+                      widget.event.status = val;
+                      widget.event.members = members;
+                    });
+                  },
+                ),
+            ],
+          ),
           const SizedBox(height: 5),
           Text(
             widget.event.title,
@@ -344,13 +362,16 @@ class _EventCardState extends ConsumerState<EventCard> {
     switch (status) {
       case "hosted":
         return "Hosting";
-      case "requested":
+      case "requested" || "pending":
         return "Requested";
       case "confirmed":
         return "Confirmed";
       case "invited":
         return "Invited";
+      case "declined":
+        return "Declined";
       default:
+        print(status);
         return "Interested ?";
     }
   }

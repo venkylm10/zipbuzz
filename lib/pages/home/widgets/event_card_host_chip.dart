@@ -14,7 +14,10 @@ class EventCardHostChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2).copyWith(left: 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 2,
+      ).copyWith(left: 2),
       decoration: BoxDecoration(
         color: AppColors.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),

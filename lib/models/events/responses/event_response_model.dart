@@ -25,6 +25,7 @@ class EventResponseModel {
   final bool isPrivate;
   final bool guestList;
   final int notificationId;
+  final int members;
 
   EventResponseModel({
     required this.id,
@@ -51,6 +52,7 @@ class EventResponseModel {
     required this.isPrivate,
     required this.guestList,
     required this.notificationId,
+    required this.members,
   });
 
   Map<String, dynamic> toMap() {
@@ -78,6 +80,8 @@ class EventResponseModel {
       "hyperlinks": hyperlinks.map((hyperlink) => hyperlink.toMap()).toList(),
       'is_private': isPrivate,
       'guest_list': guestList,
+      'notification_id': notificationId,
+      'members': members,
     };
   }
 
@@ -107,6 +111,7 @@ class EventResponseModel {
       isPrivate: map['is_private'] as bool,
       guestList: map['guest_list'] as bool,
       notificationId: map['notification_id'] as int,
+      members: map['members'] as int,
     );
   }
 }
