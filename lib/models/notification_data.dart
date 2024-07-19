@@ -9,6 +9,7 @@ class NotificationData {
   String deviceToken;
   String eventCategory;
   int senderId;
+
   NotificationData({
     required this.id,
     required this.senderId,

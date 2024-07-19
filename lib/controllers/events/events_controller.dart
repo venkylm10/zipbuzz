@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -258,6 +259,29 @@ class EventsControllProvider extends StateNotifier<EventsController> {
 
   void updateCurrentDay(DateTime day) async {
     currentDay = day;
+  }
+
+  void shareEvent(EventModel event) {
+    final eventUrl = event.inviteUrl;
+    final article = "aeiou".contains(event.category[0].toLowerCase()) ? "an" : "a";
+
+    final formattedDate = _formatDateTime(DateTime.parse(event.date));
+    // const playStore =
+    //     'Play Store : https://play.google.com/store/apps/details?id=com.abacus.zipbuzz';
+
+    // const appStore = 'App Store : https://apps.apple.com/in/app/buzz-me/id6477519288';
+
+    final shareText =
+        "${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${event.about}\nDate: $formattedDate at ${event.startTime}\nLocation: ${event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at https://zipbuzz.me/";
+    Share.share(shareText);
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    String month = DateFormat('MMM').format(dateTime);
+    String day = DateFormat('dd').format(dateTime);
+    String year = DateFormat('yyyy').format(dateTime);
+    String dayOfWeek = DateFormat('EEEE').format(dateTime);
+    return '$month-$day-$year ($dayOfWeek)';
   }
 }
 

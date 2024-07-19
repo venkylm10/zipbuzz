@@ -47,6 +47,7 @@ class DioConstants {
   static const String getUserFaqs = 'users/faq_master/';
   static const String updateRsvp = 'events/edit_request/';
   static const String sendInviteNotification = 'users/invite_notification/';
+  static const String sendBroadcastMessage = 'users/broadcast_message/';
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

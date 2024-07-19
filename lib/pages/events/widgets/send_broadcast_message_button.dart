@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/models/events/posts/send_invite_notification_model.dart';
-import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
-import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/pages/events/widgets/send_broadcast_message_sheet.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 
-class SendNotificationBell extends ConsumerWidget {
-  const SendNotificationBell({
+class SendBroadcastMessageButton extends ConsumerWidget {
+  const SendBroadcastMessageButton({
     super.key,
     required this.event,
   });
@@ -21,18 +20,17 @@ class SendNotificationBell extends ConsumerWidget {
     if (user.id != event.hostId) return const SizedBox();
     return InkWell(
       onTap: () async {
-        final rsvpNumbers = ref
-            .read(eventRequestMembersProvider)
-            .map((e) => e.phone)
-            .where((e) => e != user.mobileNumber)
-            .toList();
-        final model = SendInviteNotificationModel(
-            senderName: user.name,
-            phoneNumbers: rsvpNumbers,
-            eventName: event.title,
-            eventId: event.id,
-            hostId: user.id);
-        await ref.read(dioServicesProvider).sendInviteNotification(model);
+        await showModalBottomSheet(
+          context: navigatorKey.currentContext!,
+          isScrollControlled: true,
+          enableDrag: true,
+          builder: (context) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: SendBroadcastMessageSheet(event: event),
+            );
+          },
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -51,7 +49,7 @@ class SendNotificationBell extends ConsumerWidget {
           ],
         ),
         child: const Icon(
-          Icons.notifications_active_rounded,
+          Icons.message_rounded,
           size: 24,
           color: AppColors.primaryColor,
         ),

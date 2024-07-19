@@ -5,14 +5,15 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/notification_data.dart';
+import 'package:zipbuzz/pages/notification/widgets/broadcast_noti_card.dart';
+import 'package:zipbuzz/pages/notification/widgets/remainder_noti_card.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/back_button.dart';
 import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
-import 'package:zipbuzz/pages/home/widgets/invite_noti_card.dart';
-import 'package:zipbuzz/pages/home/widgets/response_noti_card.dart';
-import 'package:zipbuzz/utils/widgets/no_internet_screen.dart';
+import 'package:zipbuzz/pages/notification/widgets/invite_noti_card.dart';
+import 'package:zipbuzz/pages/notification/widgets/response_noti_card.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationPage extends ConsumerStatefulWidget {
@@ -42,116 +43,121 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return CustomBezel(
-      child: StreamBuilder<bool>(
-          stream: checkInternetStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data == false) {
-              return const NoInternetScreen(showLoader: false);
-            }
-          return GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Scaffold(
-              appBar: AppBar(
-                leading: backButton(),
-                title: Text(
-                  "Notifications",
-                  style: AppStyles.h2.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryColor,
-                  ),
-                ),
-                centerTitle: true,
-                elevation: 0,
-              ),
-              body: SizedBox(
-                height: size.height,
-                width: size.width,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: FutureBuilder(
-                        future: ref.read(dioServicesProvider).getNotifications(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                              ),
-                            );
-                          }
-                          final notifications = snapshot.data as List<NotificationData>;
-                          if (notifications.isEmpty) {
-                            return Center(
-                              child: Text(
-                                "No Notifications",
-                                style: AppStyles.h4.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.lightGreyColor,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            );
-                          }
-                          return SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16).copyWith(bottom: 0),
-                              child: Column(
-                                children: notifications
-                                    .map(
-                                      (e) => buildNotificationCard(e),
-                                    )
-                                    .toList(),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    buildLoader(),
-                  ],
-                ),
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            leading: backButton(),
+            title: Text(
+              "Notifications",
+              style: AppStyles.h2.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.primaryColor,
               ),
             ),
-          );
-        }
+            centerTitle: true,
+            elevation: 0,
+          ),
+          body: SizedBox(
+            height: size.height,
+            width: size.width,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: FutureBuilder(
+                    future: ref.read(dioServicesProvider).getNotifications(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        );
+                      }
+                      final notifications = snapshot.data as List<NotificationData>;
+                      if (notifications.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "No Notifications",
+                            style: AppStyles.h4.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.lightGreyColor,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        );
+                      }
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16).copyWith(bottom: 0),
+                          child: Column(
+                            children: notifications
+                                .map(
+                                  (e) => buildNotificationCard(e),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                buildLoader(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget buildNotificationCard(NotificationData notification) {
-    if (notification.notificationType == "invited") {
-      final time = notification.notificationTime.endsWith('Z')
-          ? notification.notificationTime
-          : "${notification.notificationTime}Z";
-      final notiTime = DateTime.parse(time);
-      return InviteNotiCard(
-        notification: notification,
-        time: timeago.format(notiTime, locale: 'en_short'),
-        rebuildCall: () {
-          setState(() {});
-        },
-      );
-    } else {
-      final time = notification.notificationTime.endsWith('Z')
-          ? notification.notificationTime
-          : "${notification.notificationTime}Z";
-      final notiTime = DateTime.parse(time);
-      return ResponseNotiCard(
-        senderId: notification.senderId,
-        senderName: notification.senderName,
-        senderProfilePic: notification.senderProfilePicture,
-        eventId: notification.eventId,
-        eventName: notification.eventName,
-        time: timeago.format(notiTime, locale: 'en_short'),
-        notificationId: notification.id,
-        senderDeviceToken: notification.deviceToken,
-        notificationType: notification.notificationType,
-        rebuild: () {
-          setState(() {});
-        },
-      );
+    final time = notification.notificationTime.endsWith('Z')
+        ? notification.notificationTime
+        : "${notification.notificationTime}Z";
+    final notiTime = DateTime.parse(time);
+    switch (notification.notificationType) {
+      case 'invited':
+        return InviteNotiCard(
+          notification: notification,
+          time: timeago.format(notiTime, locale: 'en_short'),
+          rebuildCall: () {
+            setState(() {});
+          },
+        );
+      case 'reminder':
+        return RemainderNotiCard(
+          notification: notification,
+          time: timeago.format(notiTime, locale: 'en_short'),
+          rebuildCall: () {
+            setState(() {});
+          },
+        );
+      case 'requested' || 'declined' || 'accepted' || 'confirmed' || 'yes' || 'no':
+        return ResponseNotiCard(
+          senderId: notification.senderId,
+          senderName: notification.senderName,
+          senderProfilePic: notification.senderProfilePicture,
+          eventId: notification.eventId,
+          eventName: notification.eventName,
+          time: timeago.format(notiTime, locale: 'en_short'),
+          notificationId: notification.id,
+          senderDeviceToken: notification.deviceToken,
+          notificationType: notification.notificationType,
+          rebuild: () {
+            setState(() {});
+          },
+        );
+      default:
+        return BroadcastNotiCard(
+          notification: notification,
+          time: timeago.format(notiTime, locale: 'en_short'),
+          rebuildCall: () {
+            setState(() {});
+          },
+        );
     }
   }
 
@@ -183,5 +189,4 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
       },
     );
   }
-
 }

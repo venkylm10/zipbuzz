@@ -10,6 +10,7 @@ import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
+import 'package:zipbuzz/models/events/posts/broadcast_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/models/events/posts/make_request_model.dart';
@@ -690,6 +691,17 @@ class DioServices {
       showSnackBar(message: "Invite notification sent successfully");
     } catch (e) {
       debugPrint("Error sending invite notification: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> sendBroadcastMessage(BroadcastPostModel model) async {
+    try {
+      await dio.post(DioConstants.sendBroadcastMessage, data: model.toJson());
+      debugPrint("Broadcast message sent");
+      showSnackBar(message: "Broadcast message sent successfully");
+    } catch (e) {
+      debugPrint("Error sending broadcast message: $e");
       rethrow;
     }
   }
