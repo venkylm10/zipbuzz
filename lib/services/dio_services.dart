@@ -13,6 +13,7 @@ import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/models/events/posts/make_request_model.dart';
+import 'package:zipbuzz/models/events/posts/send_invite_notification_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
@@ -33,6 +34,7 @@ import 'package:zipbuzz/utils/constants/dio_contants.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/pages/splash/splash_screen.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final dioServicesProvider = Provider((ref) => DioServices(ref: ref));
 
@@ -677,6 +679,17 @@ class DioServices {
       debugPrint("Updated RSVP to ${status == 'pending' ? "yes" : "no"}");
     } catch (e) {
       debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> sendInviteNotification(SendInviteNotificationModel model) async {
+    try {
+      await dio.post(DioConstants.sendInviteNotification, data: model.toMap());
+      debugPrint("Invite notification sent");
+      showSnackBar(message: "Invite notification sent successfully");
+    } catch (e) {
+      debugPrint("Error sending invite notification: $e");
       rethrow;
     }
   }

@@ -171,7 +171,12 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
       onTap: () {
         setState(() {
           toAccept = !toAccept;
-        });
+          if (toAccept) {
+            commentController.text = "Sure, I'll be there!";
+          } else {
+            commentController.text = "Sorry, I can't make it!";
+          }
+      });
       },
       child: Container(
         padding: const EdgeInsets.all(12).copyWith(left: 16),
@@ -195,6 +200,11 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
       onTap: () {
         setState(() {
           toAccept = !toAccept;
+          if (toAccept) {
+            commentController.text = "Sure, I'll be there!";
+          } else {
+            commentController.text = "Sorry, I can't make it!";
+          }
         });
       },
       child: Container(

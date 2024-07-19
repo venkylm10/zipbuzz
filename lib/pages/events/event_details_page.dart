@@ -14,6 +14,7 @@ import 'package:zipbuzz/models/events/requests/event_members_request_model.dart'
 import 'package:zipbuzz/pages/events/widgets/event_details_app_bar.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_attendee_numbers.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_banner.dart';
+import 'package:zipbuzz/pages/events/widgets/send_invitation_bell.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -190,25 +191,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                             softWrap: true,
                                           ),
                                           const SizedBox(height: 10),
-                                          Wrap(
-                                            direction: Axis.horizontal,
-                                            alignment: WrapAlignment.start,
-                                            spacing: 8,
-                                            runSpacing: 8,
-                                            children: [
-                                              EventChip(
-                                                eventColor: eventColor,
-                                                interest: widget.event.category,
-                                                iconPath: widget.event.iconPath,
-                                              ),
-                                              EventDetailsAttendeeNumbers(
-                                                  event: widget.event,
-                                                  isPreview: widget.isPreview,
-                                                  rePublish: widget.rePublish),
-                                              if (!widget.isPreview)
-                                                EventQRCode(event: widget.event),
-                                            ],
-                                          ),
+                                          _buildDetailTags(),
                                           const SizedBox(height: 16),
                                           Divider(
                                             color: AppColors.greyColor.withOpacity(0.2),
@@ -289,6 +272,26 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                   )),
             )
           : const NoInternetScreen(showLoader: false),
+    );
+  }
+
+  Wrap _buildDetailTags() {
+    return Wrap(
+      direction: Axis.horizontal,
+      alignment: WrapAlignment.start,
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        EventChip(
+          eventColor: eventColor,
+          interest: widget.event.category,
+          iconPath: widget.event.iconPath,
+        ),
+        EventDetailsAttendeeNumbers(
+            event: widget.event, isPreview: widget.isPreview, rePublish: widget.rePublish),
+        if (!widget.isPreview) EventQRCode(event: widget.event),
+        SendNotificationBell(event: widget.event)
+      ],
     );
   }
 
