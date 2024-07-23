@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/broadcast_post_model.dart';
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
@@ -14,9 +15,11 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class SendBroadcastMessageSheet extends ConsumerStatefulWidget {
   final EventModel event;
+  final List<EventInviteMember> guests;
   const SendBroadcastMessageSheet({
     super.key,
     required this.event,
+    required this.guests,
   });
 
   @override
@@ -46,7 +49,7 @@ class _SendBroadcastMessageSheetState extends ConsumerState<SendBroadcastMessage
           CustomTextField(
             controller: commentController,
             focusNode: focusNode,
-            hintText: "Broadcast Message...",
+            hintText: "Broadcast message to all invitees",
           ),
           const SizedBox(height: 24),
           InkWell(
@@ -88,14 +91,28 @@ class _SendBroadcastMessageSheetState extends ConsumerState<SendBroadcastMessage
       loading = true;
     });
     try {
+      final rsvpMembers = ref.read(eventRequestMembersProvider);
+      final allGuests = rsvpMembers
+          .map((e) => EventInviteMember(
+                name: e.name,
+                phone: e.phone,
+                image: e.image,
+                status: e.status,
+              ))
+          .where((e) => e.status != 'declined')
+          .toList();
+
+      for (var e in widget.guests) {
+        final contains = allGuests.any((element) => element.phone.contains(e.phone));
+        if (!contains && e.status != 'declined') {
+          allGuests.add(e);
+        }
+      }
       final message = commentController.text.trim();
       if (message.isEmpty) return;
       final user = ref.read(userProvider);
-      final rsvpNumbers = ref
-          .read(eventRequestMembersProvider)
-          .map((e) => e.phone)
-          .where((e) => e != user.mobileNumber)
-          .toList();
+      final rsvpNumbers =
+          allGuests.map((e) => e.phone).where((e) => e != user.mobileNumber).toList();
       final model = BroadcastPostModel(
         broadcastMessage: message,
         phoneNumbers: rsvpNumbers,

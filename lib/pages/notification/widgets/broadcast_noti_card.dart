@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
+import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -14,26 +17,32 @@ class BroadcastNotiCard extends ConsumerWidget {
     super.key,
     required this.notification,
     required this.time,
-    required this.rebuildCall,
   });
 
   final NotificationData notification;
   final String time;
-  final VoidCallback rebuildCall;
 
   void navigateToEventDetails(WidgetRef ref) async {
     showSnackBar(message: "Getting event details...");
     final event = await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
     final dominantColor = await getDominantColor(event.bannerPath);
     ref.read(guestListTagProvider.notifier).update((state) => "Invited");
-    await navigatorKey.currentState!.pushNamed(EventDetailsPage.id, arguments: {
+    navigatorKey.currentState!.pushNamed(EventDetailsPage.id, arguments: {
       "event": event,
       "dominantColor": dominantColor,
       "isPreview": false,
       "rePublish": false,
       "randInt": 0,
     });
-    rebuildCall();
+    await Future.delayed(const Duration(milliseconds: 500));
+    await navigateToChatPage(event);
+  }
+
+  Future navigateToChatPage(EventModel event) async {
+    await NavigationController.routeTo(
+      route: ChatPage.id,
+      arguments: {"event": event},
+    );
   }
 
   Future<Color> getDominantColor(String bannerPath) async {
@@ -77,7 +86,7 @@ class BroadcastNotiCard extends ConsumerWidget {
                     softWrap: true,
                   ),
                   Text(
-                    '${notification.senderName} has sent a broadcast message for the event - ${notification.eventName}',
+                    '${notification.senderName} has sent a broadcast message in the group chat for - ${notification.eventName}',
                     style: AppStyles.h5,
                   ),
                 ],

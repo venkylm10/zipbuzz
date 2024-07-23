@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/events/widgets/send_broadcast_message_sheet.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -10,9 +11,11 @@ class SendBroadcastMessageButton extends ConsumerWidget {
   const SendBroadcastMessageButton({
     super.key,
     required this.event,
+    required this.guests,
   });
 
   final EventModel event;
+  final List<EventInviteMember> guests;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +30,10 @@ class SendBroadcastMessageButton extends ConsumerWidget {
           builder: (context) {
             return ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: SendBroadcastMessageSheet(event: event),
+              child: SendBroadcastMessageSheet(
+                event: event,
+                guests: guests,
+              ),
             );
           },
         );

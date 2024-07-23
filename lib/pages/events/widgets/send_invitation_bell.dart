@@ -4,8 +4,10 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/send_invite_notification_model.dart';
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
+import 'package:zipbuzz/pages/events/widgets/event_remainder_pop_up.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 
 class SendNotificationBell extends ConsumerWidget {
   const SendNotificationBell({
@@ -21,18 +23,29 @@ class SendNotificationBell extends ConsumerWidget {
     if (user.id != event.hostId) return const SizedBox();
     return InkWell(
       onTap: () async {
-        final rsvpNumbers = ref
-            .read(eventRequestMembersProvider)
-            .map((e) => e.phone)
-            .where((e) => e != user.mobileNumber)
-            .toList();
-        final model = SendInviteNotificationModel(
-            senderName: user.name,
-            phoneNumbers: rsvpNumbers,
-            eventName: event.title,
-            eventId: event.id,
-            hostId: user.id);
-        await ref.read(dioServicesProvider).sendInviteNotification(model);
+        showDialog(
+          context: navigatorKey.currentContext!,
+          barrierDismissible: true,
+          builder: (context) {
+            return EventRemainderPopUp(
+              onConfirm: () async {
+                final rsvpNumbers = ref
+                    .read(eventRequestMembersProvider)
+                    .map((e) => e.phone)
+                    .where((e) => e != user.mobileNumber)
+                    .toList();
+                final model = SendInviteNotificationModel(
+                    senderName: user.name,
+                    phoneNumbers: rsvpNumbers,
+                    eventName: event.title,
+                    eventId: event.id,
+                    hostId: user.id);
+                navigatorKey.currentState!.pop();
+                await ref.read(dioServicesProvider).sendInviteNotification(model);
+              },
+            );
+          },
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(

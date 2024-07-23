@@ -292,7 +292,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
             event: widget.event, isPreview: widget.isPreview, rePublish: widget.rePublish),
         if (!widget.isPreview) EventQRCode(event: widget.event),
         SendNotificationBell(event: widget.event),
-        SendBroadcastMessageButton(event: widget.event),
+        SendBroadcastMessageButton(
+          event: widget.event,
+          guests: widget.event.eventMembers,
+        ),
       ],
     );
   }

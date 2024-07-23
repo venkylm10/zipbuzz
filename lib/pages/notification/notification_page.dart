@@ -154,9 +154,6 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         return BroadcastNotiCard(
           notification: notification,
           time: timeago.format(notiTime, locale: 'en_short'),
-          rebuildCall: () {
-            setState(() {});
-          },
         );
     }
   }
