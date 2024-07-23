@@ -291,11 +291,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         EventDetailsAttendeeNumbers(
             event: widget.event, isPreview: widget.isPreview, rePublish: widget.rePublish),
         if (!widget.isPreview) EventQRCode(event: widget.event),
-        SendNotificationBell(event: widget.event),
-        SendBroadcastMessageButton(
-          event: widget.event,
-          guests: widget.event.eventMembers,
-        ),
+        if (!widget.isPreview && !widget.rePublish) SendNotificationBell(event: widget.event),
+        if (!widget.isPreview && !widget.rePublish)
+          SendBroadcastMessageButton(
+            event: widget.event,
+            guests: widget.event.eventMembers,
+          ),
       ],
     );
   }
