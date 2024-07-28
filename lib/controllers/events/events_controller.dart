@@ -12,14 +12,14 @@ import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 
-final eventsControllerProvider = StateNotifierProvider<EventsControllProvider, EventsController>(
-  (ref) => EventsControllProvider(ref: ref, user: ref.watch(userProvider)),
+final eventsControllerProvider = StateNotifierProvider<EventsControllerProvider, EventsController>(
+  (ref) => EventsControllerProvider(ref: ref, user: ref.watch(userProvider)),
 );
 
-class EventsControllProvider extends StateNotifier<EventsController> {
+class EventsControllerProvider extends StateNotifier<EventsController> {
   final UserModel? user;
   final Ref ref;
-  EventsControllProvider({required this.ref, required this.user})
+  EventsControllerProvider({required this.ref, required this.user})
       : super(EventsController(ref: ref, user: user));
 
   void setCalendarHeight(double height) {
@@ -217,7 +217,7 @@ class EventsControllProvider extends StateNotifier<EventsController> {
     return;
   }
 
-  Color hexStringToColor(String hexColor) {
+  static Color hexStringToColor(String hexColor) {
     if (hexColor.startsWith('0x') || hexColor.startsWith('0X')) {
       hexColor = hexColor.substring(2);
     }

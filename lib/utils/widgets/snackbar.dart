@@ -10,6 +10,7 @@ void showSnackBar({String? message = "coming soon!", int? duration = 1}) {
       SnackBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: duration!),
         content: Container(
           padding: const EdgeInsets.all(8),

@@ -508,7 +508,7 @@ class EditEventController extends StateNotifier<EventModel> {
     try {
       var eventDateTime = DateTime.parse(state.date);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
-      ref.read(homeTabControllerProvider.notifier).updateIndex(1);
+      ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
       // await ref.read(eventsControllerProvider.notifier).fetchEvents();
       // ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
       // ref.read(eventsControllerProvider.notifier).updateFocusedEvents();

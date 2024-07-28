@@ -266,7 +266,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                     rePublish: widget.rePublish,
                   ),
                   bottomNavigationBar: BottomBar(
-                    selectedTab: ref.watch(homeTabControllerProvider).homeTabIndex,
+                    selectedTab: ref.watch(homeTabControllerProvider).selectedTab.index,
                     pop: () {
                       navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
                     },

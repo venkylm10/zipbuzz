@@ -10,7 +10,7 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedTab = ref.watch(homeTabControllerProvider).homeTabIndex;
+    final selectedTab = ref.watch(homeTabControllerProvider).selectedTab;
     final tabs = ref.read(homeTabControllerProvider.notifier).tabs;
     return CustomBezel(
       child: Scaffold(
@@ -18,9 +18,9 @@ class Home extends ConsumerWidget {
           onTap: () {
             FocusScope.of(context).unfocus();
           },
-          child: tabs[selectedTab],
+          child: tabs[selectedTab.index],
         ),
-        bottomNavigationBar: BottomBar(selectedTab: selectedTab),
+        bottomNavigationBar: BottomBar(selectedTab: selectedTab.index),
       ),
     );
   }

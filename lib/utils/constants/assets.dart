@@ -87,6 +87,9 @@ class AppIcons {
   final linkClip = 'assets/icons/link_clip.svg';
   final addToCalendar = 'assets/icons/add_to_calendar.png';
   final microsoftLogo = 'assets/icons/microsoft.png';
+  final home_calender_not_visible = 'assets/icons/home_calender_not_visible.svg';
+  final home_calender_visible = 'assets/icons/home_calender_visible.svg';
+  final group_tab = 'assets/icons/group_tab.svg';
 }
 
 class WelcomeImage {

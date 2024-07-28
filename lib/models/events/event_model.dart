@@ -1,4 +1,7 @@
 import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/models/events/responses/event_response_model.dart';
+import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 
 class EventModel {
   final int id;
@@ -178,6 +181,70 @@ class EventModel {
       "invite_url": inviteUrl,
       "status": status,
     };
+  }
+
+  factory EventModel.fromFavEventModel(FavoriteEventModel fav) {
+    return EventModel(
+      id: fav.eventId,
+      title: fav.name,
+      hostId: fav.hostId,
+      coHostIds: [],
+      location: fav.venue,
+      date: fav.date,
+      startTime: fav.startTime,
+      endTime: fav.endTime,
+      attendees: fav.filledCapacity,
+      category: fav.category,
+      isFavorite: true,
+      bannerPath: fav.image,
+      iconPath: interestIcons[fav.category]!,
+      about: fav.description,
+      isPrivate: fav.eventType,
+      capacity: fav.capacity,
+      imageUrls: [],
+      privateGuestList: true,
+      hostName: fav.hostName,
+      hostPic: fav.hostPic,
+      eventMembers: [],
+      inviteUrl: fav.inviteUrl,
+      status: fav.status,
+      userDeviceToken: fav.userDeviceToken,
+      hyperlinks: fav.hyperlinks,
+      notificationId: fav.notificationId,
+      members: fav.members,
+    );
+  }
+
+  factory EventModel.fromEventResModel(EventResponseModel res) {
+    return EventModel(
+      id: res.id,
+      title: res.name,
+      hostId: res.hostId,
+      coHostIds: [],
+      location: res.venue,
+      date: res.date,
+      startTime: res.startTime,
+      endTime: res.endTime,
+      attendees: res.filledCapacity,
+      category: res.category,
+      isFavorite: res.isFavorite,
+      bannerPath: res.banner,
+      iconPath: interestIcons[res.category]!,
+      about: res.description,
+      isPrivate: res.isPrivate,
+      privateGuestList: !res.guestList,
+      capacity: res.capacity,
+      imageUrls: res.images.map((e) => e.imageUrl).toList(),
+      hostName: res.hostName,
+      hostPic: res.hostPic,
+      eventMembers: [],
+      inviteUrl: res.inviteUrl,
+      status: res.status,
+      userDeviceToken: res.userDeviceToken,
+      hyperlinks: res.hyperlinks,
+      notificationId: res.notificationId,
+      members: res.members,
+    );
   }
 }
 

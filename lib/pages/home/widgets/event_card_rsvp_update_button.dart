@@ -24,41 +24,35 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
         event.status != 'pending') {
       return const SizedBox();
     }
-    return Container(
-      height: 26,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryColor),
-      ),
-      child: InkWell(
-        onTap: () async {
-          await showModalBottomSheet(
-            context: navigatorKey.currentContext!,
-            isScrollControlled: true,
-            enableDrag: true,
-            builder: (context) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: EventCardRsvpUpdateSheet(
-                  event: event,
-                  updateStatus: (status, members) => updateStatus(status, members),
-                ),
-              );
-            },
-          );
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Change RSVP",
-              style: AppStyles.h5.copyWith(
-                color: AppColors.primaryColor,
+    return InkWell(
+      onTap: () async {
+        await showModalBottomSheet(
+          context: navigatorKey.currentContext!,
+          isScrollControlled: true,
+          enableDrag: true,
+          builder: (context) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: EventCardRsvpUpdateSheet(
+                event: event,
+                updateStatus: (status, members) => updateStatus(status, members),
               ),
-            ),
-          ],
+            );
+          },
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: AppColors.primaryColor),
+        ),
+        child: Text(
+          "RSVP",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

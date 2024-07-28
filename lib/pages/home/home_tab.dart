@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
@@ -8,13 +7,14 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/home/activities_sheet.dart';
+import 'package:zipbuzz/pages/home/widgets/home_interest_chip.dart';
+import 'package:zipbuzz/pages/home/widgets/home_upcoming_events.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/custom_appbar.dart';
-import 'package:zipbuzz/pages/home/widgets/home_calendar.dart';
 import 'package:zipbuzz/pages/home/widgets/event_search_results.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -81,18 +81,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     setState(() {});
   }
 
-  void onTapGridCategory(String interest) async {
-    ref.read(homeTabControllerProvider.notifier).updateSearching(true);
-    ref.read(homeTabControllerProvider.notifier).updateRowInterests(true);
-    final selectedCategory = ref.read(homeTabControllerProvider).selectedCategory;
-    if (selectedCategory != interest) {
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: interest);
-      scrollDownInterests();
-      await Future.delayed(const Duration(milliseconds: 500));
-      // ref.read(homeTabControllerProvider.notifier).scrollToRowCategory();
-    } else {
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
-    }
+  void toggleHomeCategory(String interest) async {
+    await ref.read(homeTabControllerProvider.notifier).toggleHomeCategory(interest);
+    scrollDownInterests();
   }
 
   void scrollDownInterests() {
@@ -116,18 +107,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: CustomAppBar(
-          isSearching: isSearching,
-          toggleSearching: () {
-            homeTabController.updateSearching(!isSearching);
-            setState(() {});
-          },
-          updateFavoriteEvents: () async {
-            await ref.read(eventsControllerProvider.notifier).updateFavoriteEvents();
-            setState(() {});
-          },
-          topPadding: topPadding,
-        ),
+        appBar: _buildAppBar(isSearching, homeTabController),
         body: Stack(
           children: [
             SingleChildScrollView(
@@ -137,132 +117,60 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildInterests(context),
-                  buildPageIndicator(),
-                  buildHomeTabButtons(),
-                  const SizedBox(height: 10),
                   homeTabController.queryController.text.trim().isNotEmpty
                       ? const EventsSearchResults()
                       : const SizedBox(),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 0, 10),
-                    child: Text(
-                      "My Calendar Events",
-                      style: AppStyles.h2,
-                    ),
-                  ),
-                  const HomeCalender(),
+                  const SizedBox(height: 8),
+                  const HomeUpcomingEvents(),
                   const SizedBox(height: 200)
                 ],
               ),
             ),
-            buildCategoryRow(),
+            _buildScrolledCategoryRow(),
           ],
         ),
+        floatingActionButton: InkWell(
+          onTap: () {
+            ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
+            ref.read(eventTabControllerProvider.notifier).updateIndex(2);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(360),
+              color: const Color(0xff1F98A9),
+            ),
+            child: Text(
+              "Create Event",
+              style: AppStyles.h4.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
 
-  Widget buildHomeTabButtons() {
-    return Row(
-      key: ref.read(homeTabControllerProvider.notifier).homeButtonsKey,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Wrap(
-          direction: Axis.horizontal,
-          runAlignment: WrapAlignment.center,
-          runSpacing: 8,
-          spacing: 8,
-          children: [
-            InkWell(
-              onTap: () async {
-                await showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  enableDrag: true,
-                  isDismissible: true,
-                  builder: (context) {
-                    return const ActivitiesSheet();
-                  },
-                );
-                await ref.read(dioServicesProvider).updateUserInterests(
-                      UserInterestsUpdateModel(
-                        userId: ref.read(userProvider).id,
-                        interests: ref
-                            .read(homeTabControllerProvider)
-                            .currentInterests
-                            .map((e) => e.activity)
-                            .toList(),
-                      ),
-                    );
-                debugPrint("Updated homeTab interests");
-                ref.read(eventsControllerProvider.notifier).fetchEvents();
-                setState(() {});
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                margin: const EdgeInsets.only(top: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(360),
-                  border: Border.all(color: Colors.white),
-                  color: AppColors.primaryColor,
-                ),
-                child: Text(
-                  "Interests",
-                  style: AppStyles.h4.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-                ref.read(eventTabControllerProvider.notifier).updateIndex(2);
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                margin: const EdgeInsets.only(top: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(360),
-                  border: Border.all(color: Colors.white),
-                  color: AppColors.primaryColor,
-                ),
-                child: Text(
-                  "Create Event",
-                  style: AppStyles.h4.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                ref.read(homeTabControllerProvider.notifier).updateIndex(1);
-                ref.read(eventTabControllerProvider.notifier).updateIndex(0);
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                margin: const EdgeInsets.only(top: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(360),
-                  border: Border.all(color: Colors.white),
-                  color: AppColors.primaryColor,
-                ),
-                child: Text(
-                  "My Events",
-                  style: AppStyles.h4.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ],
+  CustomAppBar _buildAppBar(bool isSearching, HomeTabController homeTabController) {
+    return CustomAppBar(
+      isSearching: isSearching,
+      toggleSearching: () {
+        homeTabController.updateSearching(!isSearching);
+        setState(() {});
+      },
+      updateFavoriteEvents: () async {
+        await ref.read(eventsControllerProvider.notifier).updateFavoriteEvents();
+        setState(() {});
+      },
+      topPadding: topPadding,
     );
   }
 
-  Widget buildCategoryRow() {
+  Widget _buildScrolledCategoryRow() {
     final index = ref.watch(homeTabControllerProvider).index;
     final selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
     final rowInterests = ref.watch(homeTabControllerProvider).rowInterests;
@@ -335,113 +243,88 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           final homeTabController = ref.watch(homeTabControllerProvider);
           final userInterests = homeTabController.currentInterests
             ..sort((a, b) => a.activity.compareTo(b.activity));
-          return SizedBox(
-            width: kIsWeb
-                ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94 - 60
-                : null,
-            child: ScrollConfiguration(
-              behavior: MyCustomScrollBehavior(),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: isSearching ? const PageScrollPhysics() : const BouncingScrollPhysics(),
-                controller: ref.watch(homeTabControllerProvider.notifier).pageScrollController,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List.generate(
-                    (userInterests.length / 8).ceil(),
-                    (index) {
-                      var interests = userInterests;
-                      if (interests.length > 8) {
-                        interests = userInterests.sublist(
-                            index * 8,
-                            (index + 1) * 8 > userInterests.length
-                                ? userInterests.length
-                                : (index + 1) * 8);
-                      }
-                      return buildCategoryPage(index, context, interests);
-                    },
-                  ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "My Interests",
+                      style: AppStyles.h3.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    _buildShowInterestModalButton(context, ref),
+                  ],
                 ),
               ),
-            ),
+              const SizedBox(height: 4),
+              _buildCategoryRow(userInterests.sublist(0, userInterests.length ~/ 2)),
+              _buildCategoryRow(userInterests.sublist(userInterests.length ~/ 2)),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget buildPageIndicator() {
-    final index = ref.watch(homeTabControllerProvider).index;
-    return Consumer(
-      builder: (context, ref, child) {
-        final homeTabController = ref.watch(homeTabControllerProvider);
-        final userInterests = homeTabController.currentInterests;
-        return userInterests.length > 8
-            ? Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  (userInterests.length / 8).ceil(),
-                  (pageIndex) => Container(
-                    height: 6,
-                    width: 6,
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
-                    decoration: BoxDecoration(
-                      color: index == pageIndex ? AppColors.primaryColor : Colors.grey[350],
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                ),
-              )
-            : const SizedBox();
+  InkWell _buildShowInterestModalButton(BuildContext context, WidgetRef ref) {
+    return InkWell(
+      onTap: () async {
+        await showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          enableDrag: true,
+          isDismissible: true,
+          builder: (context) {
+            return const ActivitiesSheet();
+          },
+        );
+        await ref.read(dioServicesProvider).updateUserInterests(
+              UserInterestsUpdateModel(
+                userId: ref.read(userProvider).id,
+                interests: ref
+                    .read(homeTabControllerProvider)
+                    .currentInterests
+                    .map((e) => e.activity)
+                    .toList(),
+              ),
+            );
+        debugPrint("Updated homeTab interests");
+        ref.read(eventsControllerProvider.notifier).fetchEvents();
+        setState(() {});
       },
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.primaryColor,
+        ),
+        child: const Icon(Icons.add_rounded, color: Colors.white),
+      ),
     );
   }
 
-  Widget buildCategoryPage(
-    int pageIndex,
-    BuildContext context,
-    List<InterestModel> interests,
-  ) {
-    final width = MediaQuery.of(context).size.width;
-    return Container(
-      width:
-          kIsWeb ? MediaQuery.of(context).size.height * Assets.images.border_ratio * 0.94 : width,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20).copyWith(top: 10),
-      child: GridView.count(
-        crossAxisCount: 4,
-        childAspectRatio: 0.95,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+  Widget _buildCategoryRow(List<InterestModel> interests) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
         children: List.generate(
           interests.length,
           (index) {
+            final first = index == 0;
+            final last = index == interests.length - 1;
             final interest = interests[index];
-            return InkWell(
-              onTap: () => onTapGridCategory(interest.activity),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    constraints: const BoxConstraints(minHeight: 50),
-                    child: Image.network(
-                      interest.iconUrl,
-                      height: 40,
-                    ),
-                  ),
-                  Text(
-                    interest.activity,
-                    softWrap: true,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: AppStyles.h5,
-                  ),
-                ],
+            return Padding(
+              padding: EdgeInsets.only(left: first ? 12 : 0, right: last ? 12 : 0),
+              child: HomeInterestChip(
+                interest: interest,
+                toggleHomeCategory: () {
+                  toggleHomeCategory(interest.activity);
+                },
               ),
             );
           },

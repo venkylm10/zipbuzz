@@ -19,7 +19,6 @@ import 'package:zipbuzz/models/user/requests/user_details_update_request_model.d
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/services/location_services.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/models/user/post/user_details_model.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
@@ -233,40 +232,7 @@ class DBServices {
       final userEvents = list;
       final events = userEvents.map((e) {
         final res = EventResponseModel.fromMap(e);
-        // for (var e in interestIcons.entries.toList()) {
-        //   print("[${e.key}] : ${e.value}");
-        // }
-        // print(res.category);
-        final eventModel = EventModel(
-          id: res.id,
-          title: res.name,
-          hostId: res.hostId,
-          coHostIds: [],
-          location: res.venue,
-          date: res.date,
-          startTime: res.startTime,
-          endTime: res.endTime,
-          attendees: res.filledCapacity,
-          category: res.category,
-          isFavorite: res.isFavorite,
-          bannerPath: res.banner,
-          iconPath: interestIcons[res.category]!,
-          about: res.description,
-          isPrivate: res.isPrivate,
-          privateGuestList: !res.guestList,
-          capacity: res.capacity,
-          imageUrls: res.images.map((e) => e.imageUrl).toList(),
-          hostName: res.hostName,
-          hostPic: res.hostPic,
-          eventMembers: [],
-          inviteUrl: res.inviteUrl,
-          status: res.status,
-          userDeviceToken: res.userDeviceToken,
-          hyperlinks: res.hyperlinks,
-          notificationId: res.notificationId,
-          members: res.members,
-        );
-        return eventModel;
+        return EventModel.fromEventResModel(res);
       }).toList();
       return events..sort((a, b) => a.date.compareTo(b.date));
     } catch (e) {
@@ -282,36 +248,7 @@ class DBServices {
         final events = <EventModel>[];
         for (var e in list) {
           final res = EventResponseModel.fromMap(e);
-          final eventModel = EventModel(
-            id: res.id,
-            title: res.name,
-            hostId: res.hostId,
-            coHostIds: [],
-            location: res.venue,
-            date: res.date,
-            startTime: res.startTime,
-            endTime: res.endTime,
-            attendees: res.filledCapacity,
-            category: res.category,
-            isFavorite: res.isFavorite,
-            bannerPath: res.banner,
-            iconPath: interestIcons[res.category]!,
-            about: res.description,
-            isPrivate: res.isPrivate,
-            privateGuestList: !res.guestList,
-            capacity: res.capacity,
-            imageUrls: res.images.map((e) => e.imageUrl).toList(),
-            hostName: res.hostName,
-            hostPic: res.hostPic,
-            eventMembers: [],
-            inviteUrl: res.inviteUrl,
-            status: res.status,
-            userDeviceToken: res.userDeviceToken,
-            hyperlinks: res.hyperlinks,
-            notificationId: res.notificationId,
-            members: res.members,
-          );
-          events.add(eventModel);
+          events.add(EventModel.fromEventResModel(res));
         }
         return events..sort((a, b) => a.date.compareTo(b.date));
       } catch (e) {
@@ -326,37 +263,8 @@ class DBServices {
   Future<EventModel> getEventDetails(int eventId) async {
     final e = await _dioServices.getEventDetails(eventId);
     final res = EventResponseModel.fromMap(e);
-    final eventModel = EventModel(
-      id: res.id,
-      title: res.name,
-      hostId: res.hostId,
-      coHostIds: [],
-      location: res.venue,
-      date: res.date,
-      startTime: res.startTime,
-      endTime: res.endTime,
-      attendees: res.filledCapacity,
-      category: res.category,
-      isFavorite: res.isFavorite,
-      bannerPath: res.banner,
-      iconPath: interestIcons[res.category]!,
-      about: res.description,
-      isPrivate: res.isPrivate,
-      privateGuestList: !res.guestList,
-      capacity: res.capacity,
-      imageUrls: res.images.map((e) => e.imageUrl).toList(),
-      hostName: res.hostName,
-      hostPic: res.hostPic,
-      eventMembers: [],
-      inviteUrl: res.inviteUrl,
-      status: res.status,
-      userDeviceToken: res.userDeviceToken,
-      hyperlinks: res.hyperlinks,
-      notificationId: res.notificationId,
-      members: res.members,
-    );
     showSnackBar(message: "Event Details Loaded Successfully");
-    return eventModel;
+    return EventModel.fromEventResModel(res);
   }
 
   Future<List<EventModel>> getUserFavoriteEvents(
@@ -366,35 +274,7 @@ class DBServices {
         final list = await _dioServices.getUserFavoriteEvents(userEventsRequestModel);
         final events = list.map((e) async {
           final fav = FavoriteEventModel.fromMap(e);
-          final eventModel = EventModel(
-            id: fav.eventId,
-            title: fav.name,
-            hostId: fav.hostId,
-            coHostIds: [],
-            location: fav.venue,
-            date: fav.date,
-            startTime: fav.startTime,
-            endTime: fav.endTime,
-            attendees: fav.filledCapacity,
-            category: fav.category,
-            isFavorite: true,
-            bannerPath: fav.image,
-            iconPath: interestIcons[fav.category]!,
-            about: fav.description,
-            isPrivate: fav.eventType,
-            capacity: fav.capacity,
-            imageUrls: [],
-            privateGuestList: true,
-            hostName: fav.hostName,
-            hostPic: fav.hostPic,
-            eventMembers: [],
-            inviteUrl: fav.inviteUrl,
-            status: fav.status,
-            userDeviceToken: fav.userDeviceToken,
-            hyperlinks: fav.hyperlinks,
-            notificationId: fav.notificationId,
-            members: fav.members,
-          );
+          final eventModel = EventModel.fromFavEventModel(fav);
           return eventModel;
         }).toList();
         return await Future.wait(events)

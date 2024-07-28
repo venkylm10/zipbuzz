@@ -65,7 +65,7 @@ class PublishedEventAlertBox extends ConsumerWidget {
                   Home.id,
                   (_) => false,
                 );
-                ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+                ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.home);
               },
               child: Container(
                 padding: const EdgeInsets.all(8),

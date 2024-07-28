@@ -21,13 +21,13 @@ class SignInSheet extends ConsumerWidget {
 
   void googleSignIn(WidgetRef ref) {
     ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-    ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+    ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.home);
     ref.read(authServicesProvider).signInWithGoogle();
   }
 
   void appleSignIn(WidgetRef ref) {
     ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-    ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+    ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.home);
     ref.read(authServicesProvider).signInWithApple();
   }
 
@@ -35,7 +35,7 @@ class SignInSheet extends ConsumerWidget {
     GetStorage().write(BoxConstants.guestUser, true);
     GetStorage().write(BoxConstants.id, 1);
     ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-    ref.read(homeTabControllerProvider.notifier).updateIndex(0);
+    ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.home);
     NavigationController.routeOff(route: SplashScreen.id);
   }
 

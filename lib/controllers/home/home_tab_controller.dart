@@ -4,8 +4,10 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
+import 'package:zipbuzz/pages/groups/groups_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 
 enum InterestViewType {
   user,
@@ -22,7 +24,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
           rowInterests: false,
           isSearching: false,
           index: 0,
-          homeTabIndex: 0,
+          selectedTab: AppTabs.home,
           previousOffset: 0,
           selectedCategory: '',
           interestViewType: InterestViewType.user,
@@ -34,6 +36,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   var tabs = const [
     HomeTab(),
     EventsTab(),
+    GroupsTab(),
     ProfileTab(),
   ];
 
@@ -57,13 +60,13 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     state = state.copyWith(rowInterests: rowInterests);
   }
 
-  void updateIndex(int index) {
+  void updateSelectedTab(AppTabs tab) {
     ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-    state = state.copyWith(homeTabIndex: index);
+    state = state.copyWith(selectedTab: tab);
   }
 
   Future<bool> backToHomeTab() async {
-    state = state.copyWith(homeTabIndex: 0);
+    state = state.copyWith(selectedTab: AppTabs.home);
     return false;
   }
 
@@ -167,48 +170,129 @@ class HomeTabController extends StateNotifier<HomeTabState> {
       curve: Curves.easeInOut,
     );
   }
+
+  Future<void> toggleHomeCategory(String interest) async {
+    updateRowInterests(true);
+    if (state.selectedCategory != interest) {
+      selectCategory(category: interest);
+      await Future.delayed(const Duration(milliseconds: 500));
+    } else {
+      ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
+    }
+  }
+
+  void toggleHomeCalenderVisibility() {
+    state = state.copyWith(homeCalenderVisible: !state.homeCalenderVisible);
+  }
 }
 
 class HomeTabState {
   bool isSearching;
   int index;
-  int homeTabIndex;
+  AppTabs selectedTab;
   double previousOffset;
   String selectedCategory;
   InterestViewType interestViewType;
   List<InterestModel> currentInterests;
   bool rowInterests;
+  bool homeCalenderVisible;
 
   HomeTabState({
     required this.isSearching,
     required this.index,
-    required this.homeTabIndex,
+    required this.selectedTab,
     required this.previousOffset,
     required this.selectedCategory,
     required this.interestViewType,
     required this.currentInterests,
     required this.rowInterests,
+    this.homeCalenderVisible = false,
   });
 
   HomeTabState copyWith({
     bool? isSearching,
     int? index,
-    int? homeTabIndex,
+    AppTabs? selectedTab,
     double? previousOffset,
     String? selectedCategory,
     InterestViewType? interestViewType,
     List<InterestModel>? currentInterests,
     bool? rowInterests,
+    bool? homeCalenderVisible,
   }) {
     return HomeTabState(
       rowInterests: rowInterests ?? this.rowInterests,
       isSearching: isSearching ?? this.isSearching,
       index: index ?? this.index,
-      homeTabIndex: homeTabIndex ?? this.homeTabIndex,
+      selectedTab: selectedTab ?? this.selectedTab,
       previousOffset: previousOffset ?? this.previousOffset,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       interestViewType: interestViewType ?? this.interestViewType,
       currentInterests: currentInterests ?? this.currentInterests,
+      homeCalenderVisible: homeCalenderVisible ?? this.homeCalenderVisible,
     );
+  }
+}
+
+enum AppTabs {
+  home,
+  events,
+  groups,
+  profile,
+}
+
+extension AppTabsExtension on AppTabs {
+  String get name {
+    switch (this) {
+      case AppTabs.home:
+        return 'Home';
+      case AppTabs.events:
+        return 'My Events';
+      case AppTabs.groups:
+        return 'Groups';
+      case AppTabs.profile:
+        return 'Profile';
+    }
+  }
+
+  int get index {
+    switch (this) {
+      case AppTabs.home:
+        return 0;
+      case AppTabs.events:
+        return 1;
+      case AppTabs.groups:
+        return 2;
+      case AppTabs.profile:
+        return 3;
+    }
+  }
+
+  String get icon {
+    switch (this) {
+      case AppTabs.home:
+        return Assets.icons.home;
+      case AppTabs.events:
+        return Assets.icons.events;
+      case AppTabs.groups:
+        return Assets.icons.group_tab;
+      case AppTabs.profile:
+        return Assets.icons.person;
+    }
+  }
+
+  static AppTabs fromIndex(int index) {
+    switch (index) {
+      case 0:
+        return AppTabs.home;
+      case 1:
+        return AppTabs.events;
+      case 2:
+        return AppTabs.groups;
+      case 3:
+        return AppTabs.profile;
+      default:
+        return AppTabs.home;
+    }
   }
 }

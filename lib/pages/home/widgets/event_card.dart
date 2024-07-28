@@ -6,6 +6,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
+import 'package:zipbuzz/pages/home/widgets/add_to_calendar.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_category_details.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_clone_option.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_host_chip.dart';
@@ -95,67 +96,57 @@ class _EventCardState extends ConsumerState<EventCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       margin: const EdgeInsets.only(bottom: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          EventCardCategoryDetails(
-            event: widget.event,
-            focusedEvent: widget.focusedEvent,
-            date: date,
-            eventColor: eventColor,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: InkWell(
-              onTap: () => navigateToEventDetails(),
-              child: Column(
-                children: [
-                  _buildStatus(status),
-                  Transform.translate(
-                    offset: Offset(0, status.isNotEmpty ? -20 : 0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            offset: const Offset(-2, 4),
-                            blurRadius: 10,
-                            spreadRadius: 4,
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      child: InkWell(
+        onTap: () => navigateToEventDetails(),
+        child: Column(
+          children: [
+            _buildStatus(status),
+            Transform.translate(
+              offset: Offset(0, status.isNotEmpty ? -20 : 0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      offset: const Offset(-2, 4),
+                      blurRadius: 10,
+                      spreadRadius: 4,
+                    )
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 200),
+                      child: Stack(
                         children: [
-                          Container(
-                            constraints: const BoxConstraints(maxHeight: 200),
-                            child: Stack(
-                              children: [
-                                _buildBanner(),
-                                EventCardActionItems(
-                                  event: widget.event,
-                                  onFavoriteTap: () {
-                                    setState(() {
-                                      widget.event.isFavorite = !widget.event.isFavorite;
-                                    });
-                                  },
-                                ),
-                                _buildAttendees(),
-                              ],
-                            ),
+                          _buildBanner(),
+                          EventCardActionItems(
+                            event: widget.event,
+                            onFavoriteTap: () {
+                              setState(() {
+                                widget.event.isFavorite = !widget.event.isFavorite;
+                              });
+                            },
                           ),
-                          _buildDetails()
+                          _buildAttendees(),
+                          EventCardCategoryDetails(
+                            event: widget.event,
+                            date: date,
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    _buildDetails()
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -213,20 +204,29 @@ class _EventCardState extends ConsumerState<EventCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Wrap(
-            spacing: 5,
+          Row(
             children: [
               EventCardHostChip(event: widget.event),
-              if (widget.changeRsvp)
-                EventCardRsvpUpdateButton(
-                  event: widget.event,
-                  updateStatus: (val, members) {
-                    setState(() {
-                      widget.event.status = val;
-                      widget.event.members = members;
-                    });
-                  },
+              const Spacer(),
+              InkWell(
+                onTap: () async {
+                  await showModalBottomSheet(
+                    context: navigatorKey.currentContext!,
+                    isScrollControlled: true,
+                    enableDrag: true,
+                    isDismissible: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) {
+                      return AddToCalendar(event: widget.event);
+                    },
+                  );
+                },
+                child: Image.asset(
+                  Assets.icons.addToCalendar,
+                  height: 30,
+                  width: 30,
                 ),
+              ),
             ],
           ),
           const SizedBox(height: 5),
@@ -239,8 +239,28 @@ class _EventCardState extends ConsumerState<EventCard> {
           ),
           const SizedBox(height: 5),
           _buildAbout(),
-          _buildLocation(),
-          _buildTiming(),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    _buildLocation(),
+                    _buildTiming(),
+                  ],
+                ),
+              ),
+              if (widget.changeRsvp)
+                EventCardRsvpUpdateButton(
+                  event: widget.event,
+                  updateStatus: (val, members) {
+                    setState(() {
+                      widget.event.status = val;
+                      widget.event.members = members;
+                    });
+                  },
+                ),
+            ],
+          )
         ],
       ),
     );

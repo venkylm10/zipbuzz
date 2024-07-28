@@ -6,7 +6,6 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/event_calendar.dart';
-import 'package:zipbuzz/pages/home/widgets/home_upcoming_events.dart';
 
 class HomeCalender extends ConsumerStatefulWidget {
   const HomeCalender({super.key});
@@ -33,8 +32,6 @@ class _CustomCalendarState extends ConsumerState<HomeCalender> {
         _focusedEventTitle(),
         const SizedBox(height: 16),
         const FocusedEvents(),
-        _upcomingEventsTitle(),
-        const HomeUpcomingEvents(),
       ],
     );
   }
@@ -81,24 +78,6 @@ class _CustomCalendarState extends ConsumerState<HomeCalender> {
               )
             : const SizedBox(),
       );
-    });
-  }
-
-  Consumer _upcomingEventsTitle() {
-    return Consumer(builder: (context, ref, child) {
-      final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents.where((element) {
-        final date = DateTime.parse(element.date);
-        return !date.isAtSameMomentAs(ref.watch(eventsControllerProvider).focusedDay);
-      });
-      return upcomingEvents.isNotEmpty
-          ? Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
-              child: Text(
-                "Upcoming Events",
-                style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-              ),
-            )
-          : const SizedBox();
     });
   }
 }

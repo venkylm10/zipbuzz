@@ -7,7 +7,6 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
@@ -34,21 +33,23 @@ class BottomBar extends ConsumerWidget {
       fixedColor: AppColors.primaryColor,
       onTap: (value) async {
         final userId = ref.read(userProvider).id;
-        ref.read(homeTabControllerProvider.notifier).updateIndex(value);
+        final tab = AppTabsExtension.fromIndex(value);
+        ref.read(homeTabControllerProvider.notifier).updateSelectedTab(tab);
         await Future.delayed(const Duration(milliseconds: 100));
-        if (value == 0) {
+        if (tab == AppTabs.home) {
           ref.read(homeTabControllerProvider.notifier).updateSearching(false);
           ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
           ref.read(homeTabControllerProvider).rowInterests = false;
           ref.read(newEventProvider.notifier).resetNewEvent();
           ref.read(homeTabControllerProvider.notifier).queryController.clear();
           ref.read(homeTabControllerProvider.notifier).refresh();
-        } else if (value == 1) {
+        } else if (tab == AppTabs.events) {
           final user = ref.read(userProvider);
           ref.read(newEventProvider.notifier).updateHostId(user.id);
           ref.read(newEventProvider.notifier).updateHostName(user.name);
           ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
           await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+        } else if (tab == AppTabs.groups) {
         } else {
           await ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
           ref.read(newEventProvider.notifier).resetNewEvent();
@@ -56,38 +57,19 @@ class BottomBar extends ConsumerWidget {
 
         pop != null ? pop!() : null;
       },
-      items: [
-        BottomNavigationBarItem(
-          label: 'Home',
+      items: List.generate(AppTabs.values.length, (index) {
+        final tab = AppTabsExtension.fromIndex(index);
+        return BottomNavigationBarItem(
           icon: SvgPicture.asset(
-            Assets.icons.home,
+            tab.icon,
             colorFilter: ColorFilter.mode(
-              selectedTab == 0 ? AppColors.primaryColor : AppColors.greyColor,
+              selectedTab == index ? AppColors.primaryColor : AppColors.greyColor,
               BlendMode.srcIn,
             ),
           ),
-        ),
-        BottomNavigationBarItem(
-          label: 'My Events',
-          icon: SvgPicture.asset(
-            Assets.icons.events,
-            colorFilter: ColorFilter.mode(
-              selectedTab == 1 ? AppColors.primaryColor : AppColors.greyColor,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: 'Profile',
-          icon: SvgPicture.asset(
-            Assets.icons.person,
-            colorFilter: ColorFilter.mode(
-              selectedTab == 2 ? AppColors.primaryColor : AppColors.greyColor,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
-      ],
+          label: tab.name,
+        );
+      }),
     );
   }
 }

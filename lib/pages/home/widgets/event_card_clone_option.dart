@@ -28,8 +28,8 @@ class EventCardActionItems extends ConsumerWidget {
     final hostId = event.hostId;
     final userId = ref.read(userProvider).id;
     return Positioned(
-                                  right: 10,
-                                  top: 10,
+      right: 10,
+      top: 10,
       child: Row(
         children: [
           if (hostId == userId)
@@ -93,7 +93,7 @@ class EventCardActionItems extends ConsumerWidget {
     // final startTime = TimeOfDay.fromDateTime(DateTime.now());
     // final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
     await fixCloneEventContacts(ref);
-    ref.read(homeTabControllerProvider.notifier).updateIndex(1);
+    ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
     ref.read(newEventProvider.notifier).cloneEvent = true;
     // ref.read(newEventProvider.notifier).updateDate(DateTime.now());
     ref.read(newEventProvider.notifier).updateCategory(event.category);
