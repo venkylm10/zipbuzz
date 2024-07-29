@@ -259,7 +259,7 @@ class _EventSelectContactSheetState extends ConsumerState<EventSelectContactShee
     // final phoneNumber = contact.phones?.map((phone) => phone.value).join(", ") ?? "";
     final phoneNumbers = contact.phones != null
         ? contact.phones!
-            .map((phone) => phone.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(' ', ''))
+            .map((phone) => phone.value!.replaceAll(RegExp(r'[\s()-.]'), "").replaceAll(' ', ''))
             .toSet()
             .toList()
         : [];

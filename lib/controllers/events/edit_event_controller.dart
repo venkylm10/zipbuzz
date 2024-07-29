@@ -426,9 +426,13 @@ class EditEventController extends StateNotifier<EventModel> {
       final phoneNumbers = newInvitees.map((e) {
         Set<String> nums = {};
         for (var num in e.phones!) {
-          var number = num.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(" ", "");
+          var number = num.value!.replaceAll(RegExp(r'[\s()-.]'), "").replaceAll(" ", "");
           if (number.length == 10) {
             number = countryDialCode + number;
+          } else if (number.length > 10 && !number.startsWith("+")) {
+            final code = number.substring(0, number.length - 10);
+            number = number.substring(number.length - 10);
+            number = "+$code$number";
           }
           nums.add(number);
         }

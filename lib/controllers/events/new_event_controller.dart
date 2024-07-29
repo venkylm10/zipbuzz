@@ -435,9 +435,13 @@ class NewEvent extends StateNotifier<EventModel> {
       final phoneNumbers = eventInvites.map((e) {
         Set<String> nums = {};
         for (var num in e.phones!) {
-          var number = num.value!.replaceAll(RegExp(r'[\s()-]'), "").replaceAll(" ", "");
+          var number = num.value!.replaceAll(RegExp(r'[\s()-.]'), "").replaceAll(" ", "");
           if (number.length == 10) {
             number = countryDialCode + number;
+          } else if (number.length > 10 && !number.startsWith("+")) {
+            final code = number.substring(0, number.length - 10);
+            number = number.substring(number.length - 10);
+            number = code + number;
           }
           nums.add(number);
         }
@@ -446,6 +450,9 @@ class NewEvent extends StateNotifier<EventModel> {
       final names = eventInvites.map((e) {
         return e.displayName ?? "";
       }).toList();
+      for (var e in phoneNumbers) {
+        debugPrint("Phone Numbers: $e");
+      }
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,
         images: inviteePicUrls,
