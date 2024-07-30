@@ -46,6 +46,7 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
   @override
   void initState() {
     attendees = widget.event.members;
+    // toAccept = widget.event.status == 'declined' ? true : false;
     super.initState();
     focusNode = FocusNode();
     commentController = TextEditingController(
@@ -176,7 +177,7 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
           } else {
             commentController.text = "Sorry, I can't make it!";
           }
-      });
+        });
       },
       child: Container(
         padding: const EdgeInsets.all(12).copyWith(left: 16),

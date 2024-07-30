@@ -8,6 +8,7 @@ import 'package:zipbuzz/pages/events/widgets/event_remainder_pop_up.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class SendNotificationBell extends ConsumerWidget {
   const SendNotificationBell({
@@ -34,6 +35,11 @@ class SendNotificationBell extends ConsumerWidget {
                     .map((e) => e.phone)
                     .where((e) => e != user.mobileNumber)
                     .toList();
+                if (rsvpNumbers.isEmpty) {
+                  navigatorKey.currentState!.pop();
+                  showSnackBar(message: "No one to send notification to");
+                  return;
+                }
                 final model = SendInviteNotificationModel(
                     senderName: user.name,
                     phoneNumbers: rsvpNumbers,
