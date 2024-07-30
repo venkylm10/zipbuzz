@@ -60,13 +60,7 @@ class BottomBar extends ConsumerWidget {
       items: List.generate(AppTabs.values.length, (index) {
         final tab = AppTabsExtension.fromIndex(index);
         return BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            tab.icon,
-            colorFilter: ColorFilter.mode(
-              selectedTab == index ? AppColors.primaryColor : AppColors.greyColor,
-              BlendMode.srcIn,
-            ),
-          ),
+          icon: selectedTab == index ? tab.selectedIcon : tab.unSelectedIcon,
           label: tab.name,
         );
       }),

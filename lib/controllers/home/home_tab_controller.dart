@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
@@ -8,6 +9,7 @@ import 'package:zipbuzz/pages/groups/groups_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
 
 enum InterestViewType {
   user,
@@ -268,7 +270,7 @@ extension AppTabsExtension on AppTabs {
     }
   }
 
-  String get icon {
+  String get iconPath {
     switch (this) {
       case AppTabs.home:
         return Assets.icons.home;
@@ -278,6 +280,52 @@ extension AppTabsExtension on AppTabs {
         return Assets.icons.group_tab;
       case AppTabs.profile:
         return Assets.icons.person;
+    }
+  }
+
+  Widget get unSelectedIcon {
+    switch (this) {
+      case AppTabs.home:
+      case AppTabs.events:
+      case AppTabs.profile:
+        return SvgPicture.asset(
+          iconPath,
+          colorFilter: const ColorFilter.mode(
+            AppColors.greyColor,
+            BlendMode.srcIn,
+          ),
+        );
+      case AppTabs.groups:
+        return SvgPicture.asset(
+          iconPath,
+          colorFilter: const ColorFilter.mode(
+            AppColors.greyColor,
+            BlendMode.darken,
+          ),
+        );
+    }
+  }
+
+  Widget get selectedIcon {
+    switch (this) {
+      case AppTabs.home:
+      case AppTabs.events:
+      case AppTabs.profile:
+        return SvgPicture.asset(
+          iconPath,
+          colorFilter: const ColorFilter.mode(
+            AppColors.primaryColor,
+            BlendMode.srcIn,
+          ),
+        );
+      case AppTabs.groups:
+        return SvgPicture.asset(
+          iconPath,
+          colorFilter: const ColorFilter.mode(
+            AppColors.primaryColor,
+            BlendMode.darken,
+          ),
+        );
     }
   }
 

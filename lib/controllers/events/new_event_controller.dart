@@ -294,6 +294,7 @@ class NewEvent extends StateNotifier<EventModel> {
   }
 
   void updateContactSearchResult(String query) {
+    query = query.toLowerCase().trim();
     contactSearchResult = allContacts.where(
       (element) {
         var name = (element.displayName ?? "").toLowerCase().contains(query);
@@ -434,12 +435,13 @@ class NewEvent extends StateNotifier<EventModel> {
       final countryDialCode = userNumber.substring(0, userNumber.length - 10);
       final phoneNumbers = eventInvites.map((e) {
         Set<String> nums = {};
+        String code = "";
         for (var num in e.phones!) {
           var number = num.value!.replaceAll(RegExp(r'[\s()-.]'), "").replaceAll(" ", "");
+          code = number.substring(0, number.length - 10);
           if (number.length == 10) {
             number = countryDialCode + number;
           } else if (number.length > 10 && !number.startsWith("+")) {
-            final code = number.substring(0, number.length - 10);
             number = number.substring(number.length - 10);
             number = "+$code$number";
           }

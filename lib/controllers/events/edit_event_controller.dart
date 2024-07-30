@@ -284,6 +284,7 @@ class EditEventController extends StateNotifier<EventModel> {
   }
 
   void updateContactSearchResult(String query) {
+    query = query.toLowerCase().trim();
     contactSearchResult = allContacts.where(
       (element) {
         var name = (element.displayName ?? "").toLowerCase().contains(query);
