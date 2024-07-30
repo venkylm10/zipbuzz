@@ -77,7 +77,7 @@ class RemainderNotiCard extends ConsumerWidget {
                     softWrap: true,
                   ),
                   Text(
-                    '${notification.senderName} has invited you for the event - ${notification.eventName}',
+                    '${notification.senderName} has remainded you for the event - ${notification.eventName}',
                     style: AppStyles.h5,
                   ),
                 ],
