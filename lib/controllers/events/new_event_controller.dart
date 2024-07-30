@@ -441,7 +441,7 @@ class NewEvent extends StateNotifier<EventModel> {
           } else if (number.length > 10 && !number.startsWith("+")) {
             final code = number.substring(0, number.length - 10);
             number = number.substring(number.length - 10);
-            number = code + number;
+            number = "+$code$number";
           }
           nums.add(number);
         }
