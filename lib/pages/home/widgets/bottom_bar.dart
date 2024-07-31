@@ -8,6 +8,7 @@ import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/utils/tabs.dart';
 
 class BottomBar extends ConsumerWidget {
   const BottomBar({
@@ -48,7 +49,6 @@ class BottomBar extends ConsumerWidget {
           ref.read(newEventProvider.notifier).updateHostName(user.name);
           ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
           await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
-        } else if (tab == AppTabs.groups) {
         } else {
           await ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
           ref.read(newEventProvider.notifier).resetNewEvent();

@@ -24,6 +24,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
+import 'package:zipbuzz/utils/tabs.dart';
 import 'package:zipbuzz/utils/widgets/loader.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 

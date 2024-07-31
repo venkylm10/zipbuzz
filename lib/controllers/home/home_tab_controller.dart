@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
-import 'package:zipbuzz/pages/groups/groups_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
-import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/tabs.dart';
 
-enum InterestViewType {
-  user,
-  all,
-}
+enum InterestViewType { user, all }
 
 final homeTabControllerProvider = StateNotifierProvider<HomeTabController, HomeTabState>((ref) {
   return HomeTabController(ref: ref);
@@ -38,7 +32,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   var tabs = const [
     HomeTab(),
     EventsTab(),
-    GroupsTab(),
+    // GroupsTab(),
     ProfileTab(),
   ];
 
@@ -233,114 +227,5 @@ class HomeTabState {
       currentInterests: currentInterests ?? this.currentInterests,
       homeCalenderVisible: homeCalenderVisible ?? this.homeCalenderVisible,
     );
-  }
-}
-
-enum AppTabs {
-  home,
-  events,
-  groups,
-  profile,
-}
-
-extension AppTabsExtension on AppTabs {
-  String get name {
-    switch (this) {
-      case AppTabs.home:
-        return 'Home';
-      case AppTabs.events:
-        return 'My Events';
-      case AppTabs.groups:
-        return 'Groups';
-      case AppTabs.profile:
-        return 'Profile';
-    }
-  }
-
-  int get index {
-    switch (this) {
-      case AppTabs.home:
-        return 0;
-      case AppTabs.events:
-        return 1;
-      case AppTabs.groups:
-        return 2;
-      case AppTabs.profile:
-        return 3;
-    }
-  }
-
-  String get iconPath {
-    switch (this) {
-      case AppTabs.home:
-        return Assets.icons.home;
-      case AppTabs.events:
-        return Assets.icons.events;
-      case AppTabs.groups:
-        return Assets.icons.group_tab;
-      case AppTabs.profile:
-        return Assets.icons.person;
-    }
-  }
-
-  Widget get unSelectedIcon {
-    switch (this) {
-      case AppTabs.home:
-      case AppTabs.events:
-      case AppTabs.profile:
-        return SvgPicture.asset(
-          iconPath,
-          colorFilter: const ColorFilter.mode(
-            AppColors.greyColor,
-            BlendMode.srcIn,
-          ),
-        );
-      case AppTabs.groups:
-        return SvgPicture.asset(
-          iconPath,
-          colorFilter: const ColorFilter.mode(
-            AppColors.greyColor,
-            BlendMode.darken,
-          ),
-        );
-    }
-  }
-
-  Widget get selectedIcon {
-    switch (this) {
-      case AppTabs.home:
-      case AppTabs.events:
-      case AppTabs.profile:
-        return SvgPicture.asset(
-          iconPath,
-          colorFilter: const ColorFilter.mode(
-            AppColors.primaryColor,
-            BlendMode.srcIn,
-          ),
-        );
-      case AppTabs.groups:
-        return SvgPicture.asset(
-          iconPath,
-          colorFilter: const ColorFilter.mode(
-            AppColors.primaryColor,
-            BlendMode.darken,
-          ),
-        );
-    }
-  }
-
-  static AppTabs fromIndex(int index) {
-    switch (index) {
-      case 0:
-        return AppTabs.home;
-      case 1:
-        return AppTabs.events;
-      case 2:
-        return AppTabs.groups;
-      case 3:
-        return AppTabs.profile;
-      default:
-        return AppTabs.home;
-    }
   }
 }

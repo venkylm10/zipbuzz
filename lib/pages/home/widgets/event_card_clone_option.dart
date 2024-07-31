@@ -10,6 +10,7 @@ import 'package:zipbuzz/pages/events/widgets/send_invitation_bell.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/tabs.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class EventCardActionItems extends ConsumerWidget {

@@ -14,6 +14,7 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/pages/splash/splash_screen.dart';
+import 'package:zipbuzz/utils/tabs.dart';
 
 class SignInSheet extends ConsumerWidget {
   static const id = '/sign_in';
