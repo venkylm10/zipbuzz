@@ -53,6 +53,11 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     adjustEventData();
   }
 
+  void fixHomeEvents(List<EventModel> events) {
+    state = state.copyWith(currentMonthEvents: events);
+    adjustEventData();
+  }
+
   void updateEventsMap() {
     Map<DateTime, List<EventModel>> map = {};
     for (final event in state.currentMonthEvents) {
