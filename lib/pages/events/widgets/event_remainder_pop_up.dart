@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
-class EventRemainderPopUp extends StatelessWidget {
+class EventReminderPopUp extends StatelessWidget {
   final VoidCallback onConfirm;
-  const EventRemainderPopUp({super.key, required this.onConfirm});
+  const EventReminderPopUp({super.key, required this.onConfirm});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class EventRemainderPopUp extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Are you sure you want to send remainder?",
+              "Are you sure you want to send reminder?",
               style: AppStyles.h4,
               textAlign: TextAlign.center,
             ),

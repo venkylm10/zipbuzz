@@ -162,10 +162,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         homeTabController.updateSearching(!isSearching);
         setState(() {});
       },
-      updateFavoriteEvents: () async {
-        await ref.read(eventsControllerProvider.notifier).updateFavoriteEvents();
-        setState(() {});
-      },
       topPadding: topPadding,
     );
   }

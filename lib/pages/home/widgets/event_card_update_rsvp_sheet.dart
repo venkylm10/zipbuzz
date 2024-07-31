@@ -46,11 +46,11 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
   @override
   void initState() {
     attendees = widget.event.members;
-    // toAccept = widget.event.status == 'declined' ? true : false;
+    toAccept = widget.event.status == 'declined' ? true : false;
     super.initState();
     focusNode = FocusNode();
     commentController = TextEditingController(
-      text: "Sure, I'll be there!",
+      text: toAccept ? "Sure, I'll be there!" : "Sorry, I can't make it!",
     );
   }
 
@@ -169,16 +169,7 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
 
   GestureDetector _buildNoButton() {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          toAccept = !toAccept;
-          if (toAccept) {
-            commentController.text = "Sure, I'll be there!";
-          } else {
-            commentController.text = "Sorry, I can't make it!";
-          }
-        });
-      },
+      onTap: toggleControllerText,
       child: Container(
         padding: const EdgeInsets.all(12).copyWith(left: 16),
         decoration: BoxDecoration(
@@ -196,18 +187,20 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
     );
   }
 
+  void toggleControllerText() {
+    setState(() {
+      toAccept = !toAccept;
+      if (toAccept) {
+        commentController.text = "Sure, I'll be there!";
+      } else {
+        commentController.text = "Sorry, I can't make it!";
+      }
+    });
+  }
+
   GestureDetector _buildYesButton() {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          toAccept = !toAccept;
-          if (toAccept) {
-            commentController.text = "Sure, I'll be there!";
-          } else {
-            commentController.text = "Sorry, I can't make it!";
-          }
-        });
-      },
+      onTap: toggleControllerText,
       child: Container(
         padding: const EdgeInsets.all(12).copyWith(left: 16),
         decoration: BoxDecoration(

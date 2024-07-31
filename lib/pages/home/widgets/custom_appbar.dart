@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:zipbuzz/controllers/events/events_controller.dart';
-import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/pages/notification/notification_page.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
-import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget {
   final bool isSearching;
-  final void Function() updateFavoriteEvents;
   final VoidCallback toggleSearching;
   final double topPadding;
 
   const CustomAppBar({
     super.key,
     required this.isSearching,
-    required this.updateFavoriteEvents,
     required this.toggleSearching,
     required this.topPadding,
   });
@@ -150,36 +143,6 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                         ),
                       ],
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                InkWell(
-                  onTap: () async {
-                    widget.toggleSearching();
-                    if (GetStorage().read(BoxConstants.guestUser) != null) {
-                      showSnackBar(message: "You need to be signed in", duration: 2);
-                      await Future.delayed(const Duration(seconds: 2));
-                      ref.read(newEventProvider.notifier).showSignInForm();
-                      return;
-                    }
-                    widget.updateFavoriteEvents();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Consumer(builder: (context, ref, child) {
-                      final showingFavorites = ref.watch(eventsControllerProvider).showingFavorites;
-                      return SvgPicture.asset(
-                        Assets.icons.heart_fill,
-                        colorFilter: ColorFilter.mode(
-                          showingFavorites ? Colors.red.shade500 : Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                      );
-                    }),
                   ),
                 ),
                 const SizedBox(width: 12),

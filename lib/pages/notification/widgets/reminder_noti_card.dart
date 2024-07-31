@@ -9,8 +9,8 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 
-class RemainderNotiCard extends ConsumerWidget {
-  const RemainderNotiCard({
+class ReminderNotiCard extends ConsumerWidget {
+  const ReminderNotiCard({
     super.key,
     required this.notification,
     required this.time,
@@ -71,23 +71,18 @@ class RemainderNotiCard extends ConsumerWidget {
                 children: [
                   Text(
                     notification.senderName,
-                    style: AppStyles.h5.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppStyles.h5.copyWith(fontWeight: FontWeight.w600),
                     softWrap: true,
                   ),
                   Text(
-                    '${notification.senderName} has remainded you for the event - ${notification.eventName}',
+                    '${notification.senderName} has reminded you for the event - ${notification.eventName}',
                     style: AppStyles.h5,
                   ),
                 ],
               ),
             ),
           ),
-          Text(
-            time,
-            style: AppStyles.h6,
-          ),
+          Text(time, style: AppStyles.h6),
         ],
       ),
     );

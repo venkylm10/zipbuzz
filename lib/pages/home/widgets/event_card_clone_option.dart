@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/pages/events/widgets/send_invitation_bell.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
-import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class EventCardActionItems extends ConsumerWidget {
   final EventModel event;
-  final VoidCallback onFavoriteTap;
   const EventCardActionItems({
     super.key,
     required this.event,
-    required this.onFavoriteTap,
   });
 
   @override
@@ -34,9 +30,7 @@ class EventCardActionItems extends ConsumerWidget {
         children: [
           if (hostId == userId)
             InkWell(
-              onTap: () async {
-                cloneEvent(ref);
-              },
+              onTap: () => cloneEvent(ref),
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -52,50 +46,24 @@ class EventCardActionItems extends ConsumerWidget {
                 ),
               ),
             ),
-          const SizedBox(width: 8),
-          InkWell(
-            onTap: () {
-              addToFavorite(ref);
-            },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
+          if (userId == hostId)
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: SendNotificationBell(
+                event: event,
+                padding: const EdgeInsets.all(8),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                Icons.favorite_rounded,
-                color: event.isFavorite ? Colors.red[500] : Colors.grey[300],
-              ),
             ),
-          )
         ],
       ),
     );
   }
 
-  Future<void> addToFavorite(WidgetRef ref) async {
-    if (GetStorage().read(BoxConstants.guestUser) != null) {
-      showSnackBar(message: "You need to be signed in", duration: 2);
-      await Future.delayed(const Duration(seconds: 2));
-      ref.read(newEventProvider.notifier).showSignInForm();
-      return;
-    }
-    onFavoriteTap();
-    if (event.isFavorite) {
-      await ref.read(eventsControllerProvider.notifier).addEventToFavorites(event.id);
-    } else {
-      await ref.read(eventsControllerProvider.notifier).removeEventFromFavorites(event.id);
-    }
-  }
-
   void cloneEvent(WidgetRef ref) async {
-    // final startTime = TimeOfDay.fromDateTime(DateTime.now());
-    // final formatedStartTime = ref.read(newEventProvider.notifier).getTimeFromTimeOfDay(startTime);
     await fixCloneEventContacts(ref);
     ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
     ref.read(newEventProvider.notifier).cloneEvent = true;
-    // ref.read(newEventProvider.notifier).updateDate(DateTime.now());
     ref.read(newEventProvider.notifier).updateCategory(event.category);
     final eventMembers = event.eventMembers.where((element) {
       var num = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");

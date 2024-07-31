@@ -14,9 +14,16 @@ class SendNotificationBell extends ConsumerWidget {
   const SendNotificationBell({
     super.key,
     required this.event,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: 10,
+      vertical: 6,
+    ),
+    this.borderRadius = const BorderRadius.all(Radius.circular(20)),
   });
 
   final EventModel event;
+  final EdgeInsetsGeometry padding;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,7 +35,7 @@ class SendNotificationBell extends ConsumerWidget {
           context: navigatorKey.currentContext!,
           barrierDismissible: true,
           builder: (context) {
-            return EventRemainderPopUp(
+            return EventReminderPopUp(
               onConfirm: () async {
                 final rsvpNumbers = ref
                     .read(eventRequestMembersProvider)
@@ -54,13 +61,10 @@ class SendNotificationBell extends ConsumerWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 6,
-        ),
+        padding: padding,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: borderRadius,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.03),

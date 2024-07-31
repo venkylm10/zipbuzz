@@ -124,14 +124,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                       child: Stack(
                         children: [
                           _buildBanner(),
-                          EventCardActionItems(
-                            event: widget.event,
-                            onFavoriteTap: () {
-                              setState(() {
-                                widget.event.isFavorite = !widget.event.isFavorite;
-                              });
-                            },
-                          ),
+                          EventCardActionItems(event: widget.event),
                           _buildAttendees(),
                           EventCardCategoryDetails(
                             event: widget.event,
