@@ -4,6 +4,7 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
+import 'package:zipbuzz/pages/groups/groups_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
 import 'package:zipbuzz/utils/tabs.dart';
@@ -29,10 +30,10 @@ class HomeTabController extends StateNotifier<HomeTabState> {
 
   final Ref ref;
 
-  var tabs = const [
+  final tabs = const [
     HomeTab(),
     EventsTab(),
-    // GroupsTab(),
+    GroupsTab(),
     ProfileTab(),
   ];
 
