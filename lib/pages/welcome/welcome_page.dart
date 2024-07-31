@@ -20,7 +20,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   var currentPage = 0;
   late PageController pageController;
   var pageDetails = <OnboardingPageModel>[];
-  var images = <String>[
+  final images = <String>[
     Assets.welcomeImage.welcome1,
     Assets.welcomeImage.welcome2,
     Assets.welcomeImage.welcome3,

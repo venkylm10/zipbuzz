@@ -96,7 +96,7 @@ class WelcomeImage {
   const WelcomeImage();
   final welcome1 = 'assets/images/welcome/welcome1.png';
   final welcome2 = 'assets/images/welcome/welcome2.jpg';
-  final welcome3 = 'assets/images/welcome/welcome3.jpg';
+  final welcome3 = 'assets/images/welcome/welcome3.jpeg';
 }
 
 class Images {

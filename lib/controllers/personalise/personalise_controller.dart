@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
@@ -193,6 +194,7 @@ class PersonaliseController {
         ref.read(newEventProvider.notifier).updateHostId(id);
         ref.read(newEventProvider.notifier).updateHostName(user.name);
         ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
+        await ref.read(eventsControllerProvider.notifier).fetchEvents();
         ref.read(loadingTextProvider.notifier).reset();
         navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
       } catch (e) {

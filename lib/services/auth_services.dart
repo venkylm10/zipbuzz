@@ -243,7 +243,6 @@ class AuthServices {
       _ref.read(loadingTextProvider.notifier).reset();
       _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
-
       return;
     }
   }
