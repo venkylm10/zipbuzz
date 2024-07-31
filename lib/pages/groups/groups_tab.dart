@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/pages/groups/create_group_form.dart';
+import 'package:zipbuzz/pages/groups/widgets/create_group_button.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/tabs.dart';
@@ -15,34 +17,41 @@ class GroupsTab extends ConsumerWidget {
       canPop: false,
       onPopInvoked: (value) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Groups",
-            style: AppStyles.h2.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.primaryColor,
-            ),
-          ),
-          leading: const SizedBox(),
-          centerTitle: true,
-          elevation: 0,
-        ),
+        appBar: _buildAppBar(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              _buildGroupTabs(ref),
-              const SizedBox(height: 16),
-              _buildGroupTitleCard("My Cricket Group"),
-              _buildGroupTitleCard("CopperTown Desi Gang"),
-              _buildGroupTitleCard("BollyDance Ladies"),
-              _buildGroupTitleCard("Gen-AI-Meetup"),
-              _buildGroupTitleCard("SJ Church Bible Study"),
-              _buildGroupTitleCard("Williams Elementary | 3rd Grade"),
-            ],
-          ),
+          child: ref.watch(groupControllerProvider).creatingGroup
+              ? const CreateGroupForm()
+              : Column(
+                  children: [
+                    _buildGroupTabs(ref),
+                    const SizedBox(height: 16),
+                    _buildGroupTitleCard("My Cricket Group"),
+                    _buildGroupTitleCard("CopperTown Desi Gang"),
+                    _buildGroupTitleCard("BollyDance Ladies"),
+                    _buildGroupTitleCard("Gen-AI-Meetup"),
+                    _buildGroupTitleCard("SJ Church Bible Study"),
+                    _buildGroupTitleCard("Williams Elementary | 3rd Grade"),
+                  ],
+                ),
+        ),
+        floatingActionButton: const CreateGroupButton(),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: Text(
+        "Groups",
+        style: AppStyles.h2.copyWith(
+          fontWeight: FontWeight.w600,
+          color: AppColors.primaryColor,
         ),
       ),
+      leading: const SizedBox(),
+      centerTitle: true,
+      elevation: 0,
     );
   }
 
