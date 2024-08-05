@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
@@ -34,7 +35,9 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
           interests: updatedInterests,
         ));
     ref.read(editProfileControllerProvider).updateUserClone();
+    final events = ref.read(eventsControllerProvider).currentMonthEvents;
     await navigatorKey.currentState!.pushNamed(EditProfilePage.id, arguments: {"user": user});
+    ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
     if (isMounted) {
       setState(() {});
     }

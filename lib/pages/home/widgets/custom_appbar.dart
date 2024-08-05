@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/pages/notification/notification_page.dart';
@@ -103,8 +104,10 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                 ),
                 const SizedBox(width: 12),
                 InkWell(
-                  onTap: () {
-                    navigatorKey.currentState!.pushNamed(NotificationPage.id);
+                  onTap: () async {
+                    final events = ref.read(eventsControllerProvider).currentMonthEvents;
+                    await navigatorKey.currentState!.pushNamed(NotificationPage.id);
+                    ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
                   },
                   child: SizedBox(
                     height: 44,
