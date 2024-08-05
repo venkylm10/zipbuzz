@@ -4,7 +4,7 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/events/widgets/send_broadcast_message_sheet.dart';
-import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 
 class SendBroadcastMessageButton extends ConsumerWidget {
@@ -54,11 +54,7 @@ class SendBroadcastMessageButton extends ConsumerWidget {
             ),
           ],
         ),
-        child: const Icon(
-          Icons.message_rounded,
-          size: 24,
-          color: AppColors.primaryColor,
-        ),
+        child: Image.asset(Assets.icons.broadcastIcon, height: 24),
       ),
     );
   }
