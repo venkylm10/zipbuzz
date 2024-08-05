@@ -90,6 +90,8 @@ class AppIcons {
   final home_calender_not_visible = 'assets/icons/home_calender_not_visible.svg';
   final home_calender_visible = 'assets/icons/home_calender_visible.svg';
   final group_tab = 'assets/icons/group_tab.svg';
+  final reminderIcon = 'assets/icons/reminder_icon.png';
+  final broadcastIcon = 'assets/icons/broadcast_icon.png';
 }
 
 class WelcomeImage {

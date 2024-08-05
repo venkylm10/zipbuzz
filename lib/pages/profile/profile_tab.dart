@@ -328,7 +328,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
         children: updatedInterests.map(
           (interest) {
             {
-              final iconPath = interest.iconUrl;
+              // final iconPath = interest.iconUrl;
               final color = interestColors[interest.activity]!;
               final present = myInterests.contains(interest.activity);
               return InkWell(
@@ -336,20 +336,23 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   updateInterests(interest);
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(8),
                     color: present ? color.withOpacity(0.1) : AppColors.bgGrey,
                     border: !present ? Border.all(color: AppColors.borderGrey) : null,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Opacity(
-                        opacity: present ? 1 : 0.4,
-                        child: Image.network(iconPath, height: 16),
-                      ),
-                      const SizedBox(width: 8),
+                      // Opacity(
+                      //   opacity: present ? 1 : 0.4,
+                      //   child: Image.network(iconPath, height: 16),
+                      // ),
+                      // const SizedBox(width: 8),
                       Text(
                         interest.activity,
                         style: AppStyles.h4.copyWith(

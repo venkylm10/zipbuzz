@@ -6,7 +6,7 @@ import 'package:zipbuzz/models/events/posts/send_invite_notification_model.dart'
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 import 'package:zipbuzz/pages/events/widgets/event_remainder_pop_up.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
@@ -73,11 +73,7 @@ class SendNotificationBell extends ConsumerWidget {
             ),
           ],
         ),
-        child: const Icon(
-          Icons.notifications_active_rounded,
-          size: 24,
-          color: AppColors.primaryColor,
-        ),
+        child: Image.asset(Assets.icons.reminderIcon, height: 24),
       ),
     );
   }
