@@ -10,7 +10,6 @@ import 'package:zipbuzz/pages/home/activities_sheet.dart';
 import 'package:zipbuzz/pages/home/widgets/home_interest_chip.dart';
 import 'package:zipbuzz/pages/home/widgets/home_upcoming_events.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
@@ -51,15 +50,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         }
         if (width == 0) {
           width = MediaQuery.of(context).size.width * 0.6;
-        }
-        final rowInterests = ref.read(homeTabControllerProvider).rowInterests;
-        if (ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset > width &&
-            !rowInterests) {
-          if (mounted) ref.read(homeTabControllerProvider.notifier).updateRowInterests(true);
-        }
-        if (ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset < width &&
-            rowInterests) {
-          if (mounted) ref.read(homeTabControllerProvider.notifier).updateRowInterests(false);
         }
       },
     );
@@ -127,7 +117,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 ],
               ),
             ),
-            _buildScrolledCategoryRow(),
           ],
         ),
         floatingActionButton: InkWell(
@@ -165,68 +154,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       },
       topPadding: topPadding,
     );
-  }
-
-  Widget _buildScrolledCategoryRow() {
-    final index = ref.watch(homeTabControllerProvider).index;
-    final selectedCategory = ref.watch(eventsControllerProvider).selectedCategory;
-    final rowInterests = ref.watch(homeTabControllerProvider).rowInterests;
-    return rowInterests
-        ? AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: Consumer(
-              builder: (context, ref, child) {
-                final homeTabController = ref.watch(homeTabControllerProvider);
-                final userInterests = homeTabController.currentInterests;
-                return Container(
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: ScrollConfiguration(
-                    behavior: MyCustomScrollBehavior(),
-                    child: SingleChildScrollView(
-                      controller: ref.watch(homeTabControllerProvider.notifier).rowScrollController,
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: userInterests.map((e) {
-                            final name = e.activity;
-                            final iconPath = e.iconUrl;
-                            return InkWell(
-                              onTap: () {
-                                onTapRowCategory(name);
-                              },
-                              child: Container(
-                                key: selectedCategory == name
-                                    ? ref.read(homeTabControllerProvider.notifier).rowCategoryKey
-                                    : null,
-                                margin: EdgeInsets.only(
-                                  top: 5,
-                                  left: index == 0 ? 12 : 2,
-                                  right: index == allInterests.length - 1 ? 12 : 2,
-                                  bottom: 5,
-                                ),
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: homeTabController.selectedCategory == name
-                                      ? Colors.green.withOpacity(0.15)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Image.network(
-                                  iconPath,
-                                  height: 30,
-                                ),
-                              ),
-                            );
-                          }).toList()),
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
-        : const SizedBox();
   }
 
   Widget buildInterests(BuildContext context) {
