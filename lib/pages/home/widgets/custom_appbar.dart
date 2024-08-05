@@ -108,6 +108,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                     final events = ref.read(eventsControllerProvider).currentMonthEvents;
                     await navigatorKey.currentState!.pushNamed(NotificationPage.id);
                     ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
+                    ref.read(eventsControllerProvider.notifier).fetchEvents();
                   },
                   child: SizedBox(
                     height: 44,
