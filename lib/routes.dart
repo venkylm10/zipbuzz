@@ -3,6 +3,11 @@ import 'package:page_transition/page_transition.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
+import 'package:zipbuzz/pages/groups/add_group_members.dart';
+import 'package:zipbuzz/pages/groups/group_details_screen.dart';
+import 'package:zipbuzz/pages/groups/group_events_screen.dart';
+import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
+import 'package:zipbuzz/pages/groups/group_members_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/notification/notification_page.dart';
 import 'package:zipbuzz/pages/personalise/location_check_page.dart';
@@ -138,6 +143,46 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     case NoInternetScreen.id:
       return PageTransition(
         child: const NoInternetScreen(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+    case GroupEventsScreen.id:
+      return PageTransition(
+        child: const GroupEventsScreen(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+    case GroupDetailsScreen.id:
+      return PageTransition(
+        child: const GroupDetailsScreen(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+    case GroupMembersScreen.id:
+      return PageTransition(
+        child: const GroupMembersScreen(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+    case GroupMemberDetailsScreen.id:
+      return PageTransition(
+        child: const GroupMemberDetailsScreen(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+    case AddGroupMembers.id:
+      return PageTransition(
+        child: const AddGroupMembers(),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),

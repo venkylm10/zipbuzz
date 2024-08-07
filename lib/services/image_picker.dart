@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 final imageServicesProvider = Provider((ref) => ImageServices());
@@ -8,7 +14,7 @@ final imageServicesProvider = Provider((ref) => ImageServices());
 class ImageServices {
   final imagePicker = ImagePicker();
 
-  Future<XFile?> pickImage() async {
+  Future<File?> pickImage({List<CropAspectRatioPreset>? aspectRatios}) async {
     if (kIsWeb) {
       showSnackBar(message: "Not available on web");
       return null;
@@ -17,7 +23,29 @@ class ImageServices {
       source: ImageSource.gallery,
       imageQuality: 20,
     );
-    return pickedImage;
+
+    if (pickedImage != null && aspectRatios != null) {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedImage.path,
+        aspectRatioPresets: aspectRatios,
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: AppColors.primaryColor,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.ratio16x9,
+              lockAspectRatio: false),
+          IOSUiSettings(title: 'Cropper'),
+          WebUiSettings(
+            context: navigatorKey.currentContext!,
+          ),
+        ],
+      );
+      if (croppedFile == null) return null;
+      return File(croppedFile.path);
+    }
+    if (pickedImage == null) return null;
+    return File(pickedImage.path);
   }
 
   Future<List<XFile?>> pickMultipleImages() async {

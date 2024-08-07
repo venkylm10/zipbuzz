@@ -54,4 +54,12 @@ class DioConstants {
 
   static const String status = "status";
   static const String success = "success";
+
+  // Groups
+  static const String addGroupImages = '/groups/group_images/';
+  static const String createGroup = "/groups/group_add/";
+  static const String getUserGroupDescription = "/groups/get_group_description_listing_for_user/";
+  static const String getGroupDetails = '/groups/group_display/';
+  static const String getCommunityAndGroupsForUser = 'groups/get_communities_and_groups_for_users/';
+  static const String getGroupMembers = "/groups/group_members_listing/";
 }

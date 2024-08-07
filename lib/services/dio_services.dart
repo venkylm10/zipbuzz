@@ -19,6 +19,12 @@ import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_members_response_model.dart';
+import 'package:zipbuzz/models/groups/group_model.dart';
+import 'package:zipbuzz/models/groups/post/create_group_model.dart';
+import 'package:zipbuzz/models/groups/res/community_and_group_res.dart';
+import 'package:zipbuzz/models/groups/res/get_group_display_model.dart';
+import 'package:zipbuzz/models/groups/res/group_description_res.dart';
+import 'package:zipbuzz/models/groups/res/group_member_res_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
@@ -702,6 +708,88 @@ class DioServices {
       showSnackBar(message: "Broadcast message sent successfully");
     } catch (e) {
       debugPrint("Error sending broadcast message: $e");
+      rethrow;
+    }
+  }
+
+  // Groups
+
+  /// Add Image To Group Before Creating To Get Image URLs
+  Future<Map<String, String>> addGroupImages(File image, File banner) async {
+    final form = FormData.fromMap({
+      'group_image': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last),
+      'banner_image':
+          await MultipartFile.fromFile(banner.path, filename: banner.path.split('/').last),
+    });
+    try {
+      final res = await dio.post(DioConstants.addGroupImages, data: form);
+      return {
+        'group_image_url': res.data['group_image_url'] as String,
+        'group_banner_url': res.data['banner_image_url'] as String,
+      };
+    } catch (e) {
+      debugPrint("Error adding group images: $e");
+      rethrow;
+    }
+  }
+
+  /// Create Group
+  Future<void> createGroup(CreateGroupModel model) async {
+    try {
+      await dio.post(DioConstants.createGroup, data: model.toJson());
+    } catch (e) {
+      debugPrint("Error creating group: $e");
+      rethrow;
+    }
+  }
+
+  /// Fetch Group Descriptions
+  Future<GroupDescriptionRes> getGroupDescriptions(int userId) async {
+    try {
+      final res = await dio.post(DioConstants.getUserGroupDescription, data: {
+        'user_id': userId,
+      });
+      return GroupDescriptionRes.fromJson(res.data);
+    } catch (e) {
+      debugPrint("Error get user group descritpions : $e");
+      rethrow;
+    }
+  }
+
+  Future<CommunityAndGroupRes> getCommunityAndGroupsDescriptions(int userId) async {
+    try {
+      final res = await dio.post(DioConstants.getCommunityAndGroupsForUser, data: {
+        'user_id': userId,
+      });
+      return CommunityAndGroupRes.fromJson(res.data);
+    } catch (e) {
+      debugPrint("Error get community descriptions : $e");
+      rethrow;
+    }
+  }
+
+  /// Fetch group display details
+  Future<GroupModel> getGroupDetails(int userId, int groupId) async {
+    try {
+      final res = await dio.post(DioConstants.getGroupDetails, data: {
+        'user_id': userId,
+        'group_id': groupId,
+      });
+      return GroupDisplayResModel.fromJson(res.data).group;
+    } catch (e) {
+      debugPrint("Error get group details : $e");
+      rethrow;
+    }
+  }
+
+  Future<GroupMemberResModel> getGroupMembers(int groupId) async {
+    try {
+      final res = await dio.post(DioConstants.getGroupMembers, data: {
+        'group_id': groupId,
+      });
+      return GroupMemberResModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint("Error get group members : $e");
       rethrow;
     }
   }

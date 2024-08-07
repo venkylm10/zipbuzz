@@ -4,15 +4,21 @@ import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/pages/groups/create_group_form.dart';
 import 'package:zipbuzz/pages/groups/widgets/create_group_button.dart';
+import 'package:zipbuzz/pages/groups/widgets/group_tab_description_list.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 
-class GroupsTab extends ConsumerWidget {
+class GroupsTab extends ConsumerStatefulWidget {
   const GroupsTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<GroupsTab> createState() => _GroupsTabState();
+}
+
+class _GroupsTabState extends ConsumerState<GroupsTab> {
+  @override
+  Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       onPopInvoked: (value) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
@@ -26,12 +32,7 @@ class GroupsTab extends ConsumerWidget {
                   children: [
                     _buildGroupTabs(ref),
                     const SizedBox(height: 16),
-                    _buildGroupTitleCard("My Cricket Group"),
-                    _buildGroupTitleCard("CopperTown Desi Gang"),
-                    _buildGroupTitleCard("BollyDance Ladies"),
-                    _buildGroupTitleCard("Gen-AI-Meetup"),
-                    _buildGroupTitleCard("SJ Church Bible Study"),
-                    _buildGroupTitleCard("Williams Elementary | 3rd Grade"),
+                    const GroupTabDescriptionList(),
                   ],
                 ),
         ),
@@ -55,38 +56,6 @@ class GroupsTab extends ConsumerWidget {
     );
   }
 
-  Container _buildGroupTitleCard(String title) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderGrey),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              style: AppStyles.h4.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 12.5,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            ">",
-            style: AppStyles.h4.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: 12.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Row _buildGroupTabs(WidgetRef ref) {
     return Row(
       children: List.generate(
@@ -99,7 +68,7 @@ class GroupsTab extends ConsumerWidget {
             flex: first ? 2 : 3,
             child: InkWell(
               onTap: () {
-                ref.read(groupControllerProvider.notifier).changeTab(tab);
+                ref.read(groupControllerProvider.notifier).changeCurrentTab(tab);
               },
               customBorder: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(360),

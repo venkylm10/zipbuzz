@@ -140,7 +140,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             margin: const EdgeInsets.only(top: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(360),
-              color: const Color(0xff1F98A9),
+              color: AppColors.buttonColor,
             ),
             child: Text(
               "Create Event",

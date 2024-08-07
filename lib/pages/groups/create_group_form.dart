@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -13,52 +15,77 @@ class CreateGroupForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildClosingButton(ref),
-          _buildFieldTitle("Group Name", true),
-          CustomTextField(
-            controller: TextEditingController(),
-            hintText: "Group Name",
-          ),
-          _buildFieldTitle("Group Description", true),
-          CustomTextField(
-            controller: TextEditingController(),
-            hintText: "Group Description",
-            maxLines: 4,
-          ),
-          _buildFieldTitle("Group Profile Image", false),
-          _buildAddButton(ref, isProfile: true),
-          _buildFieldTitle("Group Banner Image", false),
-          _buildAddButton(ref, isProfile: false),
-          _buildFieldTitle("Group url", false),
-          HyperlinkFields(
-            nameController: TextEditingController(),
-            urlController: TextEditingController(),
-            onDelete: () {},
-          ),
-          _buildFieldTitle("Group visibility", false),
-          Row(
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              groupTypeCard(ref, "Public group", "Shown to All", false),
-              const SizedBox(width: 8),
-              groupTypeCard(ref, "Private group", "By Invitation Only", true),
+              _buildClosingButton(ref),
+              _buildFieldTitle("Group Name", true),
+              CustomTextField(
+                controller: ref.read(groupControllerProvider.notifier).nameController,
+                hintText: "Group Name",
+              ),
+              _buildFieldTitle("Group Description", true),
+              CustomTextField(
+                controller: ref.read(groupControllerProvider.notifier).descriptionController,
+                hintText: "Group Description",
+                maxLines: 4,
+              ),
+              _buildFieldTitle("Group Profile Image", false),
+              _buildAddButton(ref, isProfile: true),
+              _buildFieldTitle("Group Banner Image", false),
+              _buildAddButton(ref, isProfile: false),
+              _buildFieldTitle("Group url", false),
+              HyperlinkFields(
+                nameController: TextEditingController(),
+                urlController: TextEditingController(),
+                onDelete: () {},
+              ),
+              _buildFieldTitle("Group visibility", false),
+              Row(
+                children: [
+                  groupTypeCard(ref, "Public group", "Shown to All", false),
+                  const SizedBox(width: 8),
+                  groupTypeCard(ref, "Private group", "By Invitation Only", true),
+                ],
+              ),
+              const SizedBox(height: 16),
+              createGroupButton(ref),
+              const SizedBox(height: 32),
             ],
           ),
-          const SizedBox(height: 16),
-          createGroupButton(),
-          const SizedBox(height: 32),
-        ],
+        ),
+        _buildLoader(ref),
+      ],
+    );
+  }
+
+  Widget _buildLoader(WidgetRef ref) {
+    if (!ref.watch(groupControllerProvider).loading) return const SizedBox();
+    return Positioned.fill(
+      child: Container(
+        color: Colors.white.withOpacity(0.6),
+        child: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: AppColors.primaryColor),
+              Text("Please don't move to other screen or close the App"),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget createGroupButton() {
+  Widget createGroupButton(WidgetRef ref) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        ref.read(groupControllerProvider.notifier).createGroup();
+      },
       child: Ink(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -112,7 +139,8 @@ class CreateGroupForm extends ConsumerWidget {
                 groupValue: selected,
                 activeColor: AppColors.primaryColor,
                 onChanged: (value) {
-                  // updateEventType(false);
+                  if (value == null || value == selected) return;
+                  ref.read(groupControllerProvider.notifier).updateGroupVisibility(value);
                 },
               ),
               Column(
@@ -135,33 +163,77 @@ class CreateGroupForm extends ConsumerWidget {
   }
 
   InkWell _buildAddButton(WidgetRef ref, {bool isProfile = true}) {
+    final image = isProfile
+        ? ref.watch(groupControllerProvider).profileImage
+        : ref.watch(groupControllerProvider).bannerImage;
     return InkWell(
       onTap: () {
         if (isProfile) {
-          ref.read(groupControllerProvider.notifier).selectProfileImage();
+          ref.read(groupControllerProvider.notifier).pickProfileImage();
         } else {
-          ref.read(groupControllerProvider.notifier).selectProfileImage();
+          ref.read(groupControllerProvider.notifier).pickBannerImage();
         }
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.bgGrey,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderGrey),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(Assets.icons.add_circle),
-            const SizedBox(width: 8),
-            Text(
-              "Add",
-              style: AppStyles.h4.copyWith(
-                color: AppColors.greyColor,
+      child: image == null
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.bgGrey,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.borderGrey),
               ),
-            ),
-          ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(Assets.icons.add_circle),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Add",
+                    style: AppStyles.h4.copyWith(
+                      color: AppColors.greyColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : isProfile
+              ? _buildProfileImage(image, ref)
+              : _buildBannerImage(image, ref),
+    );
+  }
+
+  Widget _buildBannerImage(File image, WidgetRef ref) {
+    return Align(
+      alignment: Alignment.center,
+      child: InkWell(
+        onTap: () {
+          ref.read(groupControllerProvider.notifier).pickProfileImage();
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.file(
+            image,
+            width: double.infinity,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileImage(File image, WidgetRef ref) {
+    return Align(
+      alignment: Alignment.center,
+      child: InkWell(
+        onTap: () {
+          ref.read(groupControllerProvider.notifier).pickProfileImage();
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(50),
+          child: Image.file(
+            image,
+            height: 100,
+            width: 100,
+          ),
         ),
       ),
     );

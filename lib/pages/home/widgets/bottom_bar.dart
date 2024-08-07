@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -49,6 +50,8 @@ class BottomBar extends ConsumerWidget {
           ref.read(newEventProvider.notifier).updateHostName(user.name);
           ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
           await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+        } else if (tab == AppTabs.groups) {
+          ref.read(groupControllerProvider.notifier).fetchCommunityAndGroupDescriptions();
         } else {
           final events = ref.read(eventsControllerProvider).currentMonthEvents;
           await ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));

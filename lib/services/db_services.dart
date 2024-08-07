@@ -12,6 +12,7 @@ import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
 import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
+import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -291,5 +292,13 @@ class DBServices {
   Future<void> getEventRequestMembers(int eventId) async {
     final requests = await _dioServices.getEventRequestMembers(eventId);
     _ref.read(eventRequestMembersProvider.notifier).update((state) => requests);
+  }
+
+  // Groups
+
+  Future<void> createGroup(CreateGroupModel model) async{
+    debugPrint("CREATING GROUP");
+    await _dioServices.createGroup(model);
+    debugPrint("GROUP CREATED");
   }
 }

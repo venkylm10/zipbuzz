@@ -150,3 +150,30 @@ extension GroupTabExtension on GroupTab {
     }
   }
 }
+
+enum GroupEventsTab {
+  upcoming,
+  past,
+}
+
+extension GroupEventsTabExtension on GroupEventsTab {
+  String get name {
+    switch (this) {
+      case GroupEventsTab.upcoming:
+        return 'Upcoming';
+      case GroupEventsTab.past:
+        return 'Past';
+      default:
+        return '';
+    }
+  }
+
+  int get index {
+    switch (this) {
+      case GroupEventsTab.upcoming:
+        return 0;
+      case GroupEventsTab.past:
+        return 1;
+    }
+  }
+}

@@ -52,7 +52,6 @@ class EditEventController extends StateNotifier<EventModel> {
             hostId: ref.read(userProvider).id,
             hostName: ref.read(userProvider).name,
             hostPic: ref.read(userProvider).imageUrl,
-            coHostIds: [],
             capacity: 10,
             isPrivate: true,
             imageUrls: [],
@@ -302,10 +301,6 @@ class EditEventController extends StateNotifier<EventModel> {
         return name || number;
       },
     ).toList();
-  }
-
-  void addToCoHost(String uid) {
-    state = state.copyWith(coHostIds: state.coHostIds..add(uid));
   }
 
   String getDateFromDateTime(DateTime dateTime) {
