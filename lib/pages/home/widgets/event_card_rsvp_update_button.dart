@@ -118,6 +118,8 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                   clicked = false;
                   navigatorKey.currentState!.pop();
                   await Future.delayed(const Duration(milliseconds: 300));
+                  event.status = "requested";
+                  updateStatus('requested', event.eventMembers.length);
                   showSnackBar(message: "Requested to join event");
                 } catch (e) {
                   debugPrint("Error accepting the request: $e");
