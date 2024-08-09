@@ -17,16 +17,17 @@ final homeTabControllerProvider = StateNotifierProvider<HomeTabController, HomeT
 
 class HomeTabController extends StateNotifier<HomeTabState> {
   HomeTabController({required this.ref})
-      : super(HomeTabState(
-          rowInterests: false,
-          isSearching: false,
-          index: 0,
-          selectedTab: AppTabs.home,
-          previousOffset: 0,
-          selectedCategory: '',
-          interestViewType: InterestViewType.user,
-          currentInterests: [],
-        ));
+      : super(
+          HomeTabState(
+            isSearching: false,
+            index: 0,
+            selectedTab: AppTabs.home,
+            previousOffset: 0,
+            selectedCategory: '',
+            interestViewType: InterestViewType.user,
+            currentInterests: [],
+          ),
+        );
 
   final Ref ref;
 
@@ -38,7 +39,6 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   ];
 
   final pageScrollController = ScrollController();
-  final rowScrollController = ScrollController();
   final bodyScrollController = ScrollController();
   final queryController = TextEditingController();
   final categoryPageKey = GlobalKey();
@@ -191,7 +191,6 @@ class HomeTabState {
   String selectedCategory;
   InterestViewType interestViewType;
   List<InterestModel> currentInterests;
-  bool rowInterests;
   bool homeCalenderVisible;
 
   HomeTabState({
@@ -202,7 +201,6 @@ class HomeTabState {
     required this.selectedCategory,
     required this.interestViewType,
     required this.currentInterests,
-    required this.rowInterests,
     this.homeCalenderVisible = false,
   });
 
@@ -218,7 +216,6 @@ class HomeTabState {
     bool? homeCalenderVisible,
   }) {
     return HomeTabState(
-      rowInterests: rowInterests ?? this.rowInterests,
       isSearching: isSearching ?? this.isSearching,
       index: index ?? this.index,
       selectedTab: selectedTab ?? this.selectedTab,
