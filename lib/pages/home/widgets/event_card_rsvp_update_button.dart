@@ -24,6 +24,7 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
         event.status != 'pending') {
       return const SizedBox();
     }
+    final change = event.status == 'pending' || event.status == 'confirmed' ? "Change " : '';
     return InkWell(
       onTap: () async {
         await showModalBottomSheet(
@@ -48,7 +49,7 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
           border: Border.all(color: AppColors.primaryColor),
         ),
         child: Text(
-          "RSVP",
+          "${change}RSVP",
           style: AppStyles.h5.copyWith(
             color: AppColors.primaryColor,
             fontWeight: FontWeight.bold,
