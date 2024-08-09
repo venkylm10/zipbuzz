@@ -25,64 +25,80 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
     final groupId = ref.read(groupControllerProvider).currentGroupDescription!.id;
     return Scaffold(
       appBar: _buildAppBar(),
-      body: FutureBuilder(
-          future: ref.read(dioServicesProvider).getGroupDetails(userId, groupId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                color: AppColors.primaryColor,
-              ));
-            }
-            if (!snapshot.hasData) {
-              return Center(
-                child: IconButton(
-                  onPressed: () {
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.refresh_rounded),
-                ),
-              );
-            }
-            group = snapshot.data!;
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildCoverImages(),
-                  const SizedBox(height: 16),
-                  Text(
-                    group.name,
-                    style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+      body: Stack(
+        children: [
+          FutureBuilder(
+              future: ref.read(dioServicesProvider).getGroupDetails(userId, groupId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ));
+                }
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: IconButton(
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.refresh_rounded),
+                    ),
+                  );
+                }
+                group = snapshot.data!;
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildCoverImages(),
+                      const SizedBox(height: 16),
+                      Text(
+                        group.name,
+                        style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        group.description,
+                        style: AppStyles.h3.copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildDescription(),
+                      _buildDetailTab("Members", onTap: () {
+                        ref.read(groupControllerProvider.notifier).getGroupMembers();
+                        navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
+                      }),
+                      _buildDetailTab("Links and Media"),
+                      // _buildPublicToggleButton(),
+                      const SizedBox(height: 16),
+                      _buildInviteMembersButton(),
+                      _buildExitButton(),
+                      _buildDeleteButton()
+                    ],
                   ),
-                  Text(
-                    group.description,
-                    style: AppStyles.h3.copyWith(fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildDescription(),
-                  _buildDetailTab("Members", onTap: () {
-                    ref.read(groupControllerProvider.notifier).getGroupMembers();
-                    navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
-                  }),
-                  _buildDetailTab("Links and Media"),
-                  // _buildPublicToggleButton(),
-                  const SizedBox(height: 16),
-                  _buildInviteMembersButton(),
-                  _buildExitButton(),
-                  _buildDeleteButton()
-                ],
-              ),
-            );
-          }),
+                );
+              }),
+          _buildLoader(),
+        ],
+      ),
     );
+  }
+
+  Widget _buildLoader() {
+    if (!ref.watch(groupControllerProvider).loading) return const SizedBox();
+    return Positioned.fill(
+        child: Container(
+      color: Colors.white12,
+      child: const Center(
+          child: CircularProgressIndicator(
+        color: AppColors.primaryColor,
+      )),
+    ));
   }
 
   Widget _buildDeleteButton() {
     if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
     return InkWell(
       onTap: () {
-       
-        
+        ref.read(groupControllerProvider.notifier).archiveGroup();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

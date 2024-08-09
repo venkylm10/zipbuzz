@@ -47,6 +47,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
         actions: [
           IconButton(
             onPressed: () {
+              ref.read(groupControllerProvider.notifier).updateLoading(false);
               navigatorKey.currentState!.pushNamed(GroupDetailsScreen.id);
             },
             icon: const Icon(

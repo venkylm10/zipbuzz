@@ -14,14 +14,15 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
+// ignore: must_be_immutable
 class EventCardRsvpUpdateButton extends ConsumerWidget {
-  const EventCardRsvpUpdateButton({
+  EventCardRsvpUpdateButton({
     super.key,
     required this.event,
     required this.updateStatus,
   });
 
-  final EventModel event;
+  EventModel event;
   final Function(String, int) updateStatus;
 
   @override
@@ -118,6 +119,8 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                   clicked = false;
                   navigatorKey.currentState!.pop();
                   await Future.delayed(const Duration(milliseconds: 300));
+                  event.status = "requested";
+                  updateStatus('requested', event.eventMembers.length);
                   showSnackBar(message: "Requested to join event");
                 } catch (e) {
                   debugPrint("Error accepting the request: $e");

@@ -8,9 +8,11 @@ import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
+import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
@@ -144,14 +146,23 @@ class GroupController extends StateNotifier<GroupState> {
     try {
       updateLoading(true);
       final user = ref.read(userProvider);
-      ref.read(dioServicesProvider).archiveGroup(user.id, state.currentGroupDescription!.id);
+      await ref.read(dioServicesProvider).archiveGroup(user.id, state.currentGroupDescription!.id);
+      state = state.copyWith(
+        currentGroups:
+            state.currentGroups.where((e) => e.id != state.currentGroupDescription!.id).toList(),
+      );
+      updateLoading(false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (_) => false);
       showSnackBar(message: "Archived Group : ${state.currentGroupDescription!.groupName}");
+      await Future.delayed(const Duration(seconds: 1));
+      fetchCommunityAndGroupDescriptions();
     } catch (e) {
       debugPrint(e.toString());
       showSnackBar(
           message:
               "Something went wrong while archiving ${state.currentGroupDescription!.groupName}");
     }
+    updateLoading(false);
   }
 
   void resetController() {
