@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_update_rsvp_sheet.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -18,13 +19,13 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (event.status != 'requested' &&
-        event.status != 'confirmed' &&
-        event.status != 'declined' &&
-        event.status != 'pending') {
+    if (event.hostId == ref.read(userProvider).id) {
       return const SizedBox();
     }
-    final change = event.status == 'pending' || event.status == 'confirmed' ? "Change " : '';
+    final change =
+        event.status == 'pending' || event.status == 'confirmed' || event.status == 'declined'
+            ? "Change "
+            : '';
     return InkWell(
       onTap: () async {
         await showModalBottomSheet(
