@@ -148,23 +148,32 @@ class _EventCardRsvpUpdateSheetState extends ConsumerState<EventCardRsvpUpdateSh
   }
 
   void changeRsvp() async {
-    if (clicked) return;
-    clicked = true;
-    final user = ref.read(userProvider);
-    await ref
-        .read(dioServicesProvider)
-        .updateRsvp(widget.event.id, user.id, attendees, toAccept ? "pending" : "declined");
-    widget.updateStatus(toAccept ? "pending" : "declined", attendees);
-    if (commentController.text.isEmpty) return;
-    ref.read(chatServicesProvider).sendMessage(
-          event: widget.event,
-          message: commentController.text.trim(),
-        );
-    navigatorKey.currentState!.pop();
-    showSnackBar(
-      message: "RSVP updated '${toAccept ? "Yes" : "No"}' successfully",
-    );
-    clicked = false;
+    try {
+      if (clicked) return;
+      clicked = true;
+      final user = ref.read(userProvider);
+      await ref
+          .read(dioServicesProvider)
+          .updateRsvp(widget.event.id, user.id, attendees, toAccept ? "pending" : "declined");
+      widget.updateStatus(toAccept ? "pending" : "declined", attendees);
+      if (commentController.text.isEmpty) return;
+      ref.read(chatServicesProvider).sendMessage(
+            event: widget.event,
+            message: commentController.text.trim(),
+          );
+      navigatorKey.currentState!.pop();
+      showSnackBar(
+        message: "RSVP updated '${toAccept ? "Yes" : "No"}' successfully",
+      );
+      clicked = false;
+    } catch (e) {
+      navigatorKey.currentState!.pop();
+      var snackBar = SnackBar(
+        content: Text(e.toString()),
+        duration: const Duration(seconds: 5),
+      );
+      scaffoldMessengerKey.currentState!.showSnackBar(snackBar);
+    }
   }
 
   GestureDetector _buildNoButton() {

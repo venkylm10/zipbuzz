@@ -65,7 +65,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                     navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
                   }),
                   _buildDetailTab("Links and Media"),
-                  _buildPublicToggleButton(),
+                  // _buildPublicToggleButton(),
                   const SizedBox(height: 16),
                   _buildInviteMembersButton(),
                   _buildExitButton(),
@@ -77,18 +77,25 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
     );
   }
 
-  Container _buildDeleteButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primaryColor),
-      ),
-      child: Text(
-        "Archive/Delete Group",
-        style: AppStyles.h4.copyWith(
-          color: AppColors.primaryColor,
-          fontWeight: FontWeight.w500,
+  Widget _buildDeleteButton() {
+    if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
+    return InkWell(
+      onTap: () {
+       
+        
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.primaryColor),
+        ),
+        child: Text(
+          "Archive/Delete Group",
+          style: AppStyles.h4.copyWith(
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
@@ -114,7 +121,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
 
   Widget _buildInviteMembersButton() {
     final user = ref.read(userProvider);
-    final admin = ref.read(groupControllerProvider).admins.any((e) => e.userId == user.id);
+    final admin = ref.watch(groupControllerProvider).admins.any((e) => e.userId == user.id);
     if (!admin) return const SizedBox();
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -165,7 +172,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
     );
   }
 
-  Padding _buildPublicToggleButton() {
+  Widget _buildPublicToggleButton() {
     return Padding(
       padding: const EdgeInsets.only(left: 32, right: 16),
       child: Row(

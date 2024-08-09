@@ -106,7 +106,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
   }
 
   Widget _buildInviteMembersButton() {
-    if (!ref.read(groupControllerProvider).isAdmin) return const SizedBox();
+    if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
     return GestureDetector(
       onTap: () {
         navigatorKey.currentState!.pushNamed(AddGroupMembers.id);

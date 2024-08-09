@@ -44,14 +44,14 @@ class CreateGroupForm extends ConsumerWidget {
                 urlController: TextEditingController(),
                 onDelete: () {},
               ),
-              _buildFieldTitle("Group visibility", false),
-              Row(
-                children: [
-                  groupTypeCard(ref, "Public group", "Shown to All", false),
-                  const SizedBox(width: 8),
-                  groupTypeCard(ref, "Private group", "By Invitation Only", true),
-                ],
-              ),
+              // _buildFieldTitle("Group visibility", false),
+              // Row(
+              //   children: [
+              //     groupTypeCard(ref, "Public group", "Shown to All", false),
+              //     const SizedBox(width: 8),
+              //     groupTypeCard(ref, "Private group", "By Invitation Only", true),
+              //   ],
+              // ),
               const SizedBox(height: 16),
               createGroupButton(ref),
               const SizedBox(height: 32),

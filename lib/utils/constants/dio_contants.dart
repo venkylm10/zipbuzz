@@ -62,4 +62,5 @@ class DioConstants {
   static const String getGroupDetails = '/groups/group_display/';
   static const String getCommunityAndGroupsForUser = 'groups/get_communities_and_groups_for_users/';
   static const String getGroupMembers = "/groups/group_members_listing/";
+  static const String archiveGroup = '/groups/group_archive/';
 }

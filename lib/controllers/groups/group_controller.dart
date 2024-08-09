@@ -122,9 +122,12 @@ class GroupController extends StateNotifier<GroupState> {
     try {
       final res =
           await ref.read(dioServicesProvider).getGroupMembers(state.currentGroupDescription!.id);
+      final user = ref.read(userProvider);
+      final admin = res.admins.any((e) => e.userId == user.id);
       state = state.copyWith(
         admins: res.admins,
         members: res.members,
+        isAdmin: admin,
       );
     } catch (e) {
       debugPrint("ERROR FETCHING GROUP MEMBERS: $e");
@@ -135,6 +138,31 @@ class GroupController extends StateNotifier<GroupState> {
 
   void updateCurrentGroupMember(GroupMemberModel member, bool isAdmin) {
     state = state.copyWith(currentGroupMember: member, isAdmin: isAdmin);
+  }
+
+  Future<void> archiveGroup() async {
+    try {
+      updateLoading(true);
+      final user = ref.read(userProvider);
+      ref.read(dioServicesProvider).archiveGroup(user.id, state.currentGroupDescription!.id);
+      showSnackBar(message: "Archived Group : ${state.currentGroupDescription!.groupName}");
+    } catch (e) {
+      debugPrint(e.toString());
+      showSnackBar(
+          message:
+              "Something went wrong while archiving ${state.currentGroupDescription!.groupName}");
+    }
+  }
+
+  void resetController() {
+    state = state.copyWith(
+      loading: false,
+      creatingGroup: false,
+      privateGroup: true,
+      admins: [],
+      members: [],
+      isAdmin: false,
+    );
   }
 }
 
@@ -162,7 +190,7 @@ class GroupState {
     this.creatingGroup = false,
     this.profileImage,
     this.bannerImage,
-    this.privateGroup = false,
+    this.privateGroup = true,
     this.currentGroupDescription,
     this.fetchingList = false,
     this.currentGroups = const [],

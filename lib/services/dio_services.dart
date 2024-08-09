@@ -793,4 +793,16 @@ class DioServices {
       rethrow;
     }
   }
+
+  Future<void> archiveGroup(int userId, int groupId) async {
+    try {
+      await dio.post(DioConstants.archiveGroup, data: {
+        'user_id': userId,
+        'group_id': groupId,
+      });
+    } catch (e) {
+      debugPrint("Error archiving group: $e");
+      rethrow;
+    }
+  }
 }

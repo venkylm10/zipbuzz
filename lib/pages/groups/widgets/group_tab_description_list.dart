@@ -47,6 +47,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
       onTap: () async {
         // Update the current group description
         if (description.type == 'group') {
+          ref.read(groupControllerProvider.notifier).resetController();
           final groupDescription = GroupDescriptionModel(
             id: description.id,
             groupName: description.name,
@@ -55,6 +56,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
           ref
               .read(groupControllerProvider.notifier)
               .updateCurrentGroupDescription(groupDescription);
+          ref.read(groupControllerProvider.notifier).getGroupMembers();
           await navigatorKey.currentState!.pushNamed(GroupEventsScreen.id);
         }
       },
