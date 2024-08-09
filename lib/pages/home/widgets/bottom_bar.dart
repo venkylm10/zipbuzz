@@ -63,9 +63,7 @@ class BottomBar extends ConsumerWidget {
       ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
       await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
     } else {
-      final events = ref.read(eventsControllerProvider).currentMonthEvents;
       await ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
-      ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
       ref.read(newEventProvider.notifier).resetNewEvent();
     }
   }
