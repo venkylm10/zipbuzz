@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
@@ -161,6 +162,7 @@ class DBServices {
   }
 
   Future<void> getUserData(UserDetailsRequestModel userDetailsRequestModel) async {
+    final events = _ref.read(eventsControllerProvider).currentMonthEvents;
     try {
       final res = await _dioServices.getUserData(userDetailsRequestModel);
       if (res['status'] == "success") {
@@ -207,6 +209,7 @@ class DBServices {
       debugPrint(e.toString());
       showSnackBar(message: e.toString());
     }
+    _ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
   }
 
   Future<void> postUserInterests(UserInterestPostModel userInterestPostModel) async {
