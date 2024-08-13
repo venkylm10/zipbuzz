@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
@@ -365,7 +366,7 @@ class NewEvent extends StateNotifier<EventModel> {
     );
   }
 
-  Future<void> publishEvent() async {
+  Future<void> publishEvent({bool groupEvent = false}) async {
     ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
       showSnackBar(message: "You need to be Signed In to create an event!", duration: 2);
@@ -393,6 +394,11 @@ class NewEvent extends StateNotifier<EventModel> {
       state = state.copyWith(
         privateGuestList: state.isPrivate ? state.privateGuestList : false,
       );
+      final groupId =
+          groupEvent ? ref.read(groupControllerProvider).currentGroupDescription!.id : 0;
+      final groupName = groupEvent
+          ? ref.read(groupControllerProvider).currentGroupDescription!.groupName
+          : "zipbuzz-null";
       final eventPostModel = EventPostModel(
         banner: bannerUrl,
         category: state.category,
@@ -410,6 +416,8 @@ class NewEvent extends StateNotifier<EventModel> {
         filledCapacity: eventInvites.length,
         guestList: !state.privateGuestList,
         isPrivate: state.isPrivate,
+        groupId: groupId,
+        groupName: groupName,
       );
 
       // print(eventPostModel.toMap());

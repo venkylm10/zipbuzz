@@ -53,6 +53,7 @@ class EventDetailsPage extends ConsumerStatefulWidget {
   final bool clone;
   final bool showBottomBar;
   Color dominantColor;
+  final bool groupEvent;
   EventDetailsPage({
     super.key,
     required this.event,
@@ -62,6 +63,7 @@ class EventDetailsPage extends ConsumerStatefulWidget {
     required this.dominantColor,
     this.clone = false,
     this.showBottomBar = false,
+    this.groupEvent = false,
   });
 
   @override
@@ -264,6 +266,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                     event: widget.event,
                     isPreview: widget.isPreview,
                     rePublish: widget.rePublish,
+                    groupEvent: widget.groupEvent,
                   ),
                   bottomNavigationBar: BottomBar(
                     selectedTab: ref.watch(homeTabControllerProvider).selectedTab.index,

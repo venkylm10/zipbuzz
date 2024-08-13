@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
+import 'package:zipbuzz/pages/events/create_event_form.dart';
+import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -38,6 +41,30 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
             _buildTabs(ref, selectedTab),
             const SizedBox(height: 24),
           ],
+        ),
+      ),
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          navigatorKey.currentState!.push(
+            NavigationController.getTransition(
+              CreateGroupEventScreen(),
+            ),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: const EdgeInsets.only(top: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(360),
+            color: const Color(0xff1F98A9),
+          ),
+          child: Text(
+            "Create Event",
+            style: AppStyles.h4.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
@@ -113,3 +140,5 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
     );
   }
 }
+
+

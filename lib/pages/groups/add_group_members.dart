@@ -112,13 +112,31 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
   Widget _buildSearchResult() {
     return Consumer(builder: (context, ref, child) {
       final searchResults = ref.watch(groupControllerProvider).contactSearchResult;
+      final selectedContactsSearchResult =
+          ref.watch(groupControllerProvider).selectedContactsSearchResult;
+      final result = [...selectedContactsSearchResult, ...searchResults];
+      if (result.isEmpty) {
+        return Align(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              "No contacts found",
+              style: AppStyles.h4.copyWith(
+                color: AppColors.greyColor,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        );
+      }
       return ListView.builder(
-        itemCount: searchResults.length,
+        itemCount: result.length,
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          final contact = searchResults[index];
+          final contact = result[index];
           return _buildMemberCard(contact);
         },
       );

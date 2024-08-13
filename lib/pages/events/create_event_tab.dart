@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -15,15 +16,20 @@ import 'package:zipbuzz/pages/events/widgets/add_hosts.dart';
 import 'package:zipbuzz/pages/events/widgets/event_type_and_capacity.dart';
 import 'package:zipbuzz/pages/events/widgets/add_event_photos.dart';
 
-class CreateEvent extends ConsumerStatefulWidget {
-  const CreateEvent({super.key, this.rePublish = false});
-  final bool? rePublish;
+class CreateEventTab extends ConsumerStatefulWidget {
+  const CreateEventTab({
+    super.key,
+    this.rePublish = false,
+    this.groupEvent = false,
+  });
+  final bool rePublish;
+  final bool groupEvent;
 
   @override
-  ConsumerState<CreateEvent> createState() => _CreateEventState();
+  ConsumerState<CreateEventTab> createState() => _CreateEventState();
 }
 
-class _CreateEventState extends ConsumerState<CreateEvent> {
+class _CreateEventState extends ConsumerState<CreateEventTab> {
   String category = allInterests.first.activity;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
@@ -47,7 +53,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
-    newIsPrivate = widget.rePublish!
+    newIsPrivate = widget.rePublish
         ? ref.watch(editEventControllerProvider).isPrivate
         : ref.watch(newEventProvider).isPrivate;
     return Padding(
@@ -55,13 +61,9 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Removed banner selector in create event tab
-          // const EventBannerSelector(),
-          // const SizedBox(height: 16),
           const CreateEventForm(),
           broadDivider(),
           const AddHosts(),
-          // broadDivider(),
           const SizedBox(height: 16),
           const EventTypeAndCapacity(),
           broadDivider(),
@@ -123,16 +125,24 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
       final dominantColor = await getDominantColor();
       ref.read(newEventProvider.notifier).updateHyperlinks();
       final clone = ref.read(newEventProvider.notifier).cloneEvent;
-      Map<String, dynamic> args = {
-        'event': ref.read(newEventProvider),
-        'isPreview': true,
-        'dominantColor': dominantColor,
-        'randInt': randInt,
-        'clone': clone,
-      };
-      navigatorKey.currentState!.pushNamed(
-        EventDetailsPage.id,
-        arguments: args,
+      // Map<String, dynamic> args = {
+      //   'event': ref.read(newEventProvider),
+      //   'isPreview': true,
+      //   'dominantColor': dominantColor,
+      //   'randInt': randInt,
+      //   'clone': clone,
+      // };
+      navigatorKey.currentState!.push(
+        NavigationController.getTransition(
+          EventDetailsPage(
+            event: ref.read(newEventProvider),
+            isPreview: true,
+            dominantColor: dominantColor,
+            randInt: randInt,
+            clone: clone,
+            groupEvent: widget.groupEvent,
+          ),
+        ),
       );
     }
   }

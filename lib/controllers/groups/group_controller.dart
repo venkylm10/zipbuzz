@@ -222,36 +222,53 @@ class GroupController extends StateNotifier<GroupState> {
     state = state.copyWith(contactSearchResult: allContacts);
   }
 
+  bool _contactInSearch(Contact element, String query) {
+    var name = (element.displayName ?? "").toLowerCase().contains(query);
+    var number = false;
+    if (element.phones!.isNotEmpty) {
+      number = element.phones!.any((e) {
+        final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        if (phone.length > 10) {
+          return phone.substring(phone.length - 10).contains(query);
+        }
+        return phone.contains(query);
+      });
+    }
+    return name || number;
+  }
+
   void _searchForContacts(String query) {
     query = query.toLowerCase().trim();
     final contactSearchResult = allContacts.where(
       (element) {
-        var name = (element.displayName ?? "").toLowerCase().contains(query);
-        var number = false;
-        if (element.phones!.isNotEmpty) {
-          number = element.phones!.any((e) {
-            final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-            if (phone.length > 10) {
-              return phone.substring(phone.length - 10).contains(query);
-            }
-            return phone.contains(query);
-          });
-        }
-        return name || number;
+        return _contactInSearch(element, query);
       },
     ).toList();
-
-    state = state.copyWith(contactSearchResult: contactSearchResult);
+    final selectedContactsSearchResult = state.selectedContacts.where(
+      (element) {
+        return _contactInSearch(element, query);
+      },
+    ).toList();
+    state = state.copyWith(
+      contactSearchResult: contactSearchResult,
+      selectedContactsSearchResult: selectedContactsSearchResult,
+    );
   }
 
   void toggleSelectedContact(Contact contact) {
     var contacts = [...state.selectedContacts];
+    var search = [...state.selectedContactsSearchResult];
     if (contacts.contains(contact)) {
       contacts.remove(contact);
+      search.remove(contact);
     } else {
       contacts.add(contact);
+      search.add(contact);
     }
-    state = state.copyWith(selectedContacts: contacts);
+    state = state.copyWith(
+      selectedContacts: contacts,
+      selectedContactsSearchResult: search,
+    );
   }
 
   void inviteMembersToGroup() async {
@@ -344,6 +361,7 @@ class GroupState {
   final bool isAdmin;
   final List<Contact> selectedContacts;
   final List<Contact> contactSearchResult;
+  final List<Contact> selectedContactsSearchResult;
   final bool invitingMembers;
   GroupState({
     this.loading = false,
@@ -364,30 +382,33 @@ class GroupState {
     this.isAdmin = false,
     this.selectedContacts = const [],
     this.contactSearchResult = const [],
+    this.selectedContactsSearchResult = const [],
     this.invitingMembers = false,
   });
 
   GroupState removeFiles() {
     return GroupState(
-        loading: loading,
-        groupEventsTab: groupEventsTab,
-        currentTab: currentTab,
-        creatingGroup: creatingGroup,
-        profileImage: null,
-        bannerImage: null,
-        privateGroup: privateGroup,
-        currentGroupDescription: currentGroupDescription,
-        fetchingList: fetchingList,
-        currentGroups: currentGroups,
-        currentCommunities: currentCommunities,
-        fetchingMembers: fetchingMembers,
-        admins: admins,
-        members: members,
-        currentGroupMember: currentGroupMember,
-        isAdmin: isAdmin,
-        contactSearchResult: contactSearchResult,
-        selectedContacts: selectedContacts,
-        invitingMembers: invitingMembers);
+      loading: loading,
+      groupEventsTab: groupEventsTab,
+      currentTab: currentTab,
+      creatingGroup: creatingGroup,
+      profileImage: null,
+      bannerImage: null,
+      privateGroup: privateGroup,
+      currentGroupDescription: currentGroupDescription,
+      fetchingList: fetchingList,
+      currentGroups: currentGroups,
+      currentCommunities: currentCommunities,
+      fetchingMembers: fetchingMembers,
+      admins: admins,
+      members: members,
+      currentGroupMember: currentGroupMember,
+      isAdmin: isAdmin,
+      contactSearchResult: contactSearchResult,
+      selectedContacts: selectedContacts,
+      selectedContactsSearchResult: selectedContactsSearchResult,
+      invitingMembers: invitingMembers,
+    );
   }
 
   GroupState copyWith({
@@ -409,6 +430,7 @@ class GroupState {
     bool? isAdmin,
     List<Contact>? selectedContacts,
     List<Contact>? contactSearchResult,
+    List<Contact>? selectedContactsSearchResult,
     bool? invitingMembers,
   }) {
     return GroupState(
@@ -431,6 +453,8 @@ class GroupState {
       selectedContacts: selectedContacts ?? this.selectedContacts,
       contactSearchResult: contactSearchResult ?? this.contactSearchResult,
       invitingMembers: invitingMembers ?? this.invitingMembers,
+      selectedContactsSearchResult:
+          selectedContactsSearchResult ?? this.selectedContactsSearchResult,
     );
   }
 }

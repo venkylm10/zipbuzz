@@ -12,7 +12,9 @@ import 'package:zipbuzz/utils/tabs.dart';
 class PublishedEventAlertBox extends ConsumerWidget {
   const PublishedEventAlertBox({
     super.key,
+    this.groupEvent = false,
   });
+  final bool groupEvent;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,6 +41,8 @@ class PublishedEventAlertBox extends ConsumerWidget {
             InkWell(
               onTap: () {
                 navigatorKey.currentState!.pop();
+                if (groupEvent) navigatorKey.currentState!.pop();
+                if (groupEvent) navigatorKey.currentState!.pop();
                 ref.read(newEventProvider.notifier).moveToCreatedEvent();
               },
               child: Container(
