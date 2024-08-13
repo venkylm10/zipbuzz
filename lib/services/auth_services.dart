@@ -101,7 +101,8 @@ class AuthServices {
           box.write(BoxConstants.id, id);
           box.write(BoxConstants.login, true);
 
-          await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+          await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+          await _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
@@ -121,7 +122,7 @@ class AuthServices {
             deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
           ),
         );
-    await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+    await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
     // storing id
     box.write(BoxConstants.id, id);
     box.write(BoxConstants.login, true);
@@ -218,7 +219,7 @@ class AuthServices {
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
-      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
       _ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
       return;
@@ -235,7 +236,7 @@ class AuthServices {
               deviceToken: box.read(BoxConstants.deviceToken),
             ),
           );
-      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);

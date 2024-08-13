@@ -1,13 +1,19 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
+import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
+import 'package:zipbuzz/models/groups/post/invite_group_member_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
+import 'package:zipbuzz/pages/groups/add_group_members.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -26,6 +32,8 @@ class GroupController extends StateNotifier<GroupState> {
   final Ref ref;
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
+  final contactSearchController = TextEditingController();
+  List<Contact> allContacts = [];
 
   void changeGroupEventsTab(GroupEventsTab tab) {
     state = state.copyWith(groupEventsTab: tab);
@@ -50,14 +58,20 @@ class GroupController extends StateNotifier<GroupState> {
   void pickProfileImage() async {
     final image = await ImageServices().pickImage(aspectRatios: [CropAspectRatioPreset.square]);
     if (image != null) {
-      state = state.copyWith(profileImage: File(image.path));
+      state = state.copyWith(
+        profileImage: File(image.path),
+        bannerImage: state.bannerImage,
+      );
     }
   }
 
   void pickBannerImage() async {
     final image = await ImageServices().pickImage(aspectRatios: [CropAspectRatioPreset.ratio16x9]);
     if (image != null) {
-      state = state.copyWith(bannerImage: File(image.path));
+      state = state.copyWith(
+        bannerImage: File(image.path),
+        profileImage: state.profileImage,
+      );
     }
   }
 
@@ -88,10 +102,19 @@ class GroupController extends StateNotifier<GroupState> {
         groupBanner: urls['group_banner_url'] ?? 'zipbuzz-null',
         groupListed: !state.privateGroup,
       );
-      await ref.read(dbServicesProvider).createGroup(model);
-      toggleCreatingGroup();
+      final groupId = await ref.read(dbServicesProvider).createGroup(model);
       await fetchCommunityAndGroupDescriptions();
+      final desc = state.currentGroups.firstWhere((e) => e.id == groupId);
+      state = state.copyWith(
+        currentGroupDescription: GroupDescriptionModel(
+            id: desc.id, groupName: desc.name, groupDescription: desc.description),
+      );
+      await getGroupMembers();
       updateLoading(false);
+      toggleCreatingGroup();
+      navigatorKey.currentState!.push(
+        NavigationController.getTransition(const AddGroupMembers()),
+      );
       showSnackBar(message: "Group created successfully");
     } catch (e) {
       updateLoading(false);
@@ -156,6 +179,7 @@ class GroupController extends StateNotifier<GroupState> {
       showSnackBar(message: "Archived Group : ${state.currentGroupDescription!.groupName}");
       await Future.delayed(const Duration(seconds: 1));
       fetchCommunityAndGroupDescriptions();
+      resetController();
     } catch (e) {
       debugPrint(e.toString());
       showSnackBar(
@@ -166,6 +190,8 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void resetController() {
+    nameController.clear();
+    descriptionController.clear();
     state = state.copyWith(
       loading: false,
       creatingGroup: false,
@@ -174,6 +200,128 @@ class GroupController extends StateNotifier<GroupState> {
       members: [],
       isAdmin: false,
     );
+    state = state.removeFiles();
+  }
+
+  // Contacts
+  void updateAllContacts(List<Contact> contacts) {
+    allContacts = contacts;
+    state = state.copyWith(contactSearchResult: allContacts);
+  }
+
+  Timer? _debounce;
+
+  void updateContactSearchResult(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      _searchForContacts(query);
+    });
+  }
+
+  void resetContactSearchResult() {
+    state = state.copyWith(contactSearchResult: allContacts);
+  }
+
+  void _searchForContacts(String query) {
+    query = query.toLowerCase().trim();
+    final contactSearchResult = allContacts.where(
+      (element) {
+        var name = (element.displayName ?? "").toLowerCase().contains(query);
+        var number = false;
+        if (element.phones!.isNotEmpty) {
+          number = element.phones!.any((e) {
+            final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+            if (phone.length > 10) {
+              return phone.substring(phone.length - 10).contains(query);
+            }
+            return phone.contains(query);
+          });
+        }
+        return name || number;
+      },
+    ).toList();
+
+    state = state.copyWith(contactSearchResult: contactSearchResult);
+  }
+
+  void toggleSelectedContact(Contact contact) {
+    var contacts = [...state.selectedContacts];
+    if (contacts.contains(contact)) {
+      contacts.remove(contact);
+    } else {
+      contacts.add(contact);
+    }
+    state = state.copyWith(selectedContacts: contacts);
+  }
+
+  void inviteMembersToGroup() async {
+    state = state.copyWith(invitingMembers: true);
+    try {
+      List<InviteGroupMemberModel> members = [];
+      final userNumber = ref.read(userProvider).mobileNumber;
+      final countryDialCode = userNumber.substring(0, userNumber.length - 10);
+      for (var e in state.selectedContacts) {
+        final user = ref.read(userProvider);
+        var number = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        (" ", "");
+        final code = number.substring(0, number.length - 10);
+        if (number.length == 10) {
+          number = countryDialCode + number;
+        } else if (number.length > 10 && !number.startsWith("+")) {
+          number = number.substring(number.length - 10);
+          number = "+$code$number";
+        }
+        final member = InviteGroupMemberModel(
+          groupId: state.currentGroupDescription!.id,
+          userId: user.id,
+          title: state.currentGroupDescription!.groupName,
+          phoneNumber: number,
+          invitingUserName: user.name,
+        );
+        members.add(member);
+        await ref.read(dioServicesProvider).inviteToGroup(member);
+      }
+      state = state.copyWith(invitingMembers: false);
+      navigatorKey.currentState!.pop();
+    } catch (e) {
+      print(e.toString());
+    }
+    state = state.copyWith(invitingMembers: false);
+  }
+
+  Future<void> acceptInvite(AcceptGroupModel model) async {
+    await ref.read(dioServicesProvider).acceptGroup(model);
+  }
+
+  Future<void> updateGroupMemberStatus(int userId, String permissionType) async {
+    try {
+      return await ref.read(dioServicesProvider).updateGroupMember(
+            userId,
+            state.currentGroupDescription!.id,
+            permissionType,
+          );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> deleteGroupMember(int userId) async {
+    try {
+      final isAdmin = state.admins.any((e) => e.userId == userId);
+      await ref
+          .read(dioServicesProvider)
+          .deleteGroupMember(userId, state.currentGroupDescription!.id);
+      state = state.copyWith(
+        members: !isAdmin ? state.members.where((e) => e.userId != userId).toList() : null,
+        admins: isAdmin ? state.admins.where((e) => e.userId != userId).toList() : null,
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void clearSelectedContacts() {
+    state = state.copyWith(selectedContacts: []);
   }
 }
 
@@ -194,6 +342,9 @@ class GroupState {
   final List<GroupMemberModel> members;
   final GroupMemberModel? currentGroupMember;
   final bool isAdmin;
+  final List<Contact> selectedContacts;
+  final List<Contact> contactSearchResult;
+  final bool invitingMembers;
   GroupState({
     this.loading = false,
     this.groupEventsTab = GroupEventsTab.upcoming,
@@ -211,7 +362,33 @@ class GroupState {
     this.members = const [],
     this.currentGroupMember,
     this.isAdmin = false,
+    this.selectedContacts = const [],
+    this.contactSearchResult = const [],
+    this.invitingMembers = false,
   });
+
+  GroupState removeFiles() {
+    return GroupState(
+        loading: loading,
+        groupEventsTab: groupEventsTab,
+        currentTab: currentTab,
+        creatingGroup: creatingGroup,
+        profileImage: null,
+        bannerImage: null,
+        privateGroup: privateGroup,
+        currentGroupDescription: currentGroupDescription,
+        fetchingList: fetchingList,
+        currentGroups: currentGroups,
+        currentCommunities: currentCommunities,
+        fetchingMembers: fetchingMembers,
+        admins: admins,
+        members: members,
+        currentGroupMember: currentGroupMember,
+        isAdmin: isAdmin,
+        contactSearchResult: contactSearchResult,
+        selectedContacts: selectedContacts,
+        invitingMembers: invitingMembers);
+  }
 
   GroupState copyWith({
     bool? loading,
@@ -230,6 +407,9 @@ class GroupState {
     List<GroupMemberModel>? members,
     GroupMemberModel? currentGroupMember,
     bool? isAdmin,
+    List<Contact>? selectedContacts,
+    List<Contact>? contactSearchResult,
+    bool? invitingMembers,
   }) {
     return GroupState(
       loading: loading ?? this.loading,
@@ -248,6 +428,9 @@ class GroupState {
       members: members ?? this.members,
       currentGroupMember: currentGroupMember ?? this.currentGroupMember,
       isAdmin: isAdmin ?? this.isAdmin,
+      selectedContacts: selectedContacts ?? this.selectedContacts,
+      contactSearchResult: contactSearchResult ?? this.contactSearchResult,
+      invitingMembers: invitingMembers ?? this.invitingMembers,
     );
   }
 }

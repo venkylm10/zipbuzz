@@ -6,6 +6,7 @@ import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/notification/widgets/broadcast_noti_card.dart';
+import 'package:zipbuzz/pages/notification/widgets/group_invite_aceept_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/reminder_noti_card.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -150,6 +151,13 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             setState(() {});
           },
         );
+      case 'group_invited':
+        return GroupInviteAceeptCard(
+            notification: notification,
+            time: timeago.format(notiTime, locale: 'en_short'),
+            rebuild: () {
+              setState(() {});
+            });
       default:
         return BroadcastNotiCard(
           notification: notification,

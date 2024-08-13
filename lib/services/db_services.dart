@@ -161,10 +161,10 @@ class DBServices {
     return await _dioServices.getUserId(userIdRequestModel);
   }
 
-  Future<void> getUserData(UserDetailsRequestModel userDetailsRequestModel) async {
+  Future<void> getOwnUserData(UserDetailsRequestModel userDetailsRequestModel) async {
     final events = _ref.read(eventsControllerProvider).currentMonthEvents;
     try {
-      final res = await _dioServices.getUserData(userDetailsRequestModel);
+      final res = await _dioServices.getUserData(userDetailsRequestModel.userId);
       if (res['status'] == "success") {
         final userDetails = UserDetailsModel.fromMap(res['data']);
         var homeTabInterests = <InterestModel>[];
@@ -210,6 +210,44 @@ class DBServices {
       showSnackBar(message: e.toString());
     }
     _ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
+  }
+
+  Future<UserModel> getUserModel(int userId) async {
+    try {
+      final res = await _dioServices.getUserData(userId);
+      final userDetails = UserDetailsModel.fromMap(res['data']);
+      var homeTabInterests = <InterestModel>[];
+      final interests = (res['interests'] as List).map((e) {
+        final interest = InterestModel.fromMap(e);
+        homeTabInterests.add(interest);
+        return interest.activity;
+      }).toList();
+      final userSocials = UserSocialsModel.fromMap(res['socials']);
+      final updatedUser = UserModel(
+        id: userId,
+        name: userDetails.username,
+        mobileNumber: userDetails.phoneNumber,
+        email: userDetails.email,
+        imageUrl: userDetails.profilePicture,
+        about: userDetails.description,
+        zipcode: userDetails.zipcode,
+        interests: interests,
+        isAmbassador: userDetails.isAmbassador,
+        instagramId: userSocials.instagram,
+        linkedinId: userSocials.linkedin,
+        twitterId: userSocials.twitter,
+        country: _ref.read(userLocationProvider).country,
+        notificationCount: userDetails.notificationCount,
+        handle: 'zipbuzz-null',
+        eventsHosted: 0,
+        rating: 0,
+        city: 'zipbuzz-null',
+      );
+      return updatedUser;
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
   }
 
   Future<void> postUserInterests(UserInterestPostModel userInterestPostModel) async {
@@ -299,9 +337,10 @@ class DBServices {
 
   // Groups
 
-  Future<void> createGroup(CreateGroupModel model) async{
+  Future<int> createGroup(CreateGroupModel model) async {
     debugPrint("CREATING GROUP");
-    await _dioServices.createGroup(model);
+    final groupId = await _dioServices.createGroup(model);
     debugPrint("GROUP CREATED");
+    return groupId;
   }
 }

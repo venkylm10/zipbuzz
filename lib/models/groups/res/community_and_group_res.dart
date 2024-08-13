@@ -9,16 +9,16 @@ class CommunityAndGroupRes {
   factory CommunityAndGroupRes.fromJson(Map<String, dynamic> json) {
     List<DescriptionModel> groups = [];
     List<DescriptionModel> communities = [];
-    for (var e in (json['query_results'] as List)) {
-      if (e['type'] == 'group') {
-        groups.add(DescriptionModel.fromJson(e));
-      } else {
-        communities.add(DescriptionModel.fromJson(e));
+    if (json['query_results'] != null) {
+      for (var e in (json['query_results'] as List)) {
+        if (e['type'] == 'group') {
+          groups.add(DescriptionModel.fromJson(e));
+        } else {
+          communities.add(DescriptionModel.fromJson(e));
+        }
       }
     }
-    return CommunityAndGroupRes(
-      groups: groups,
-      communities: communities,
-    );
+
+    return CommunityAndGroupRes(groups: groups, communities: communities);
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/group_model.dart';
+import 'package:zipbuzz/pages/groups/add_group_members.dart';
 import 'package:zipbuzz/pages/groups/group_members_screen.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -19,6 +20,7 @@ class GroupDetailsScreen extends ConsumerStatefulWidget {
 
 class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   late GroupModel group;
+
   @override
   Widget build(BuildContext context) {
     final userId = ref.read(userProvider).id;
@@ -95,26 +97,28 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   }
 
   Widget _buildDeleteButton() {
-    if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
-    return InkWell(
-      onTap: () {
-        ref.read(groupControllerProvider.notifier).archiveGroup();
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.primaryColor),
-        ),
-        child: Text(
-          "Archive/Delete Group",
-          style: AppStyles.h4.copyWith(
-            color: AppColors.primaryColor,
-            fontWeight: FontWeight.w500,
+    return Consumer(builder: (context, ref, child) {
+      if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
+      return InkWell(
+        onTap: () {
+          ref.read(groupControllerProvider.notifier).archiveGroup();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.primaryColor),
+          ),
+          child: Text(
+            "Archive/Delete Group",
+            style: AppStyles.h4.copyWith(
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Container _buildExitButton() {
@@ -136,23 +140,32 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   }
 
   Widget _buildInviteMembersButton() {
-    final user = ref.read(userProvider);
-    final admin = ref.watch(groupControllerProvider).admins.any((e) => e.userId == user.id);
-    if (!admin) return const SizedBox();
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppColors.buttonColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        "Invite Members",
-        style: AppStyles.h4.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
+    return Consumer(builder: (context, ref, child) {
+      final user = ref.read(userProvider);
+      final admin = ref.watch(groupControllerProvider).admins.any((e) => e.userId == user.id);
+      if (!admin) return const SizedBox();
+      return GestureDetector(
+        onTap: () async {
+          ref.read(groupControllerProvider.notifier).clearSelectedContacts();
+          ref.read(groupControllerProvider.notifier).contactSearchController.clear();
+          await navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            color: AppColors.buttonColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            "Invite Members",
+            style: AppStyles.h4.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Container _buildDescription() {
@@ -174,10 +187,6 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: Text(
-        "Bible Study",
-        style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-      ),
       leading: IconButton(
         onPressed: () {
           navigatorKey.currentState!.pop();

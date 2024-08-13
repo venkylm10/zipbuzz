@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
-import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
-import 'package:zipbuzz/pages/home/widgets/event_card.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -32,72 +29,45 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
   Widget build(BuildContext context) {
     final selectedTab = ref.watch(groupControllerProvider).groupEventsTab;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          groupDescription.groupName,
-          style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            navigatorKey.currentState!.pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios),
-        ),
-        elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              ref.read(groupControllerProvider.notifier).updateLoading(false);
-              navigatorKey.currentState!.pushNamed(GroupDetailsScreen.id);
-            },
-            icon: const Icon(
-              Icons.more_horiz_rounded,
-              color: AppColors.primaryColor,
-            ),
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildTabs(ref, selectedTab),
-              const SizedBox(height: 24),
-              EventCard(
-                event: EventModel(
-                  id: 12,
-                  title: "Under 19 Match",
-                  hostId: 12,
-                  location: "Home",
-                  date: DateTime.now().toString(),
-                  startTime: "10:20 AM",
-                  endTime: "10:30 AM",
-                  attendees: 3,
-                  category: allInterests.first.activity,
-                  bannerPath:
-                      "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                  iconPath:
-                      "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                  about: "Welcome",
-                  isPrivate: false,
-                  capacity: 5,
-                  imageUrls: [],
-                  privateGuestList: false,
-                  hostName: "Dhiransh",
-                  hostPic:
-                      "https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                  eventMembers: [],
-                  status: 'pending',
-                  userDeviceToken: 'zipbuzz-null',
-                  hyperlinks: [],
-                  members: 3,
-                ),
-              )
-            ],
-          ),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            _buildTabs(ref, selectedTab),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: Text(
+        groupDescription.groupName,
+        style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+      ),
+      leading: IconButton(
+        onPressed: () {
+          navigatorKey.currentState!.pop();
+        },
+        icon: const Icon(Icons.arrow_back_ios),
+      ),
+      elevation: 0,
+      actions: [
+        IconButton(
+          onPressed: () {
+            ref.read(groupControllerProvider.notifier).updateLoading(false);
+            navigatorKey.currentState!.pushNamed(GroupDetailsScreen.id);
+          },
+          icon: const Icon(
+            Icons.more_horiz_rounded,
+            color: AppColors.primaryColor,
+          ),
+        ),
+      ],
     );
   }
 

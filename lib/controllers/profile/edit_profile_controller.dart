@@ -171,7 +171,7 @@ class EditProfileController {
       await ref.read(dbServicesProvider).updateUser(userDetailsUpdateRequestModel);
       await ref
           .read(dbServicesProvider)
-          .getUserData(UserDetailsRequestModel(userId: updatedUser.id));
+          .getOwnUserData(UserDetailsRequestModel(userId: updatedUser.id));
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Getting new events...");
       await ref.read(eventsControllerProvider.notifier).fetchEvents();

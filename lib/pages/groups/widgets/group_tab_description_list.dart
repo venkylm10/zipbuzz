@@ -43,6 +43,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
   }
 
   Widget _buildGroupTitleCard(DescriptionModel description, WidgetRef ref) {
+    if (description.archive) return const SizedBox();
     return GestureDetector(
       onTap: () async {
         // Update the current group description

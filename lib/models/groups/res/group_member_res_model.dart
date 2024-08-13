@@ -12,7 +12,8 @@ class GroupMemberResModel {
   factory GroupMemberResModel.fromJson(Map<String, dynamic> json) {
     final List<GroupMemberModel> admins = [];
     final List<GroupMemberModel> members = [];
-    for (final user in (json['users'] as List)) {
+    final userList = json['users'] as List;
+    for (final user in userList) {
       final model = GroupMemberModel.fromJson(user);
       if (model.permissionType == GroupPermissionType.admin) {
         admins.add(model);

@@ -20,6 +20,8 @@ import 'package:zipbuzz/models/events/requests/event_members_request_model.dart'
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_members_response_model.dart';
 import 'package:zipbuzz/models/groups/group_model.dart';
+import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
+import 'package:zipbuzz/models/groups/post/invite_group_member_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/community_and_group_res.dart';
 import 'package:zipbuzz/models/groups/res/get_group_display_model.dart';
@@ -31,7 +33,6 @@ import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/models/onboarding_page_model.dart';
 import 'package:zipbuzz/models/user/faq_model.dart';
-import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
@@ -365,18 +366,22 @@ class DioServices {
     }
   }
 
-  Future<Map<String, dynamic>> getUserData(UserDetailsRequestModel userDetailsRequestModel) async {
+  Future<Map<String, dynamic>> getUserData(int userId) async {
     debugPrint("GETTING USER DATA");
 
     try {
       final response = kIsWeb
           ? await dio.post(
               DioConstants.getUserDetailsWeb,
-              data: userDetailsRequestModel.toMap(),
+              data: {
+                'user_id': userId,
+              },
             )
           : await dio.get(
               DioConstants.getUserDetails,
-              data: userDetailsRequestModel.toMap(),
+              data: {
+                'user_id': userId,
+              },
             );
       debugPrint("GETTING USER DATA COMPLETE");
       return response.data as Map<String, dynamic>;
@@ -734,9 +739,10 @@ class DioServices {
   }
 
   /// Create Group
-  Future<void> createGroup(CreateGroupModel model) async {
+  Future<int> createGroup(CreateGroupModel model) async {
     try {
-      await dio.post(DioConstants.createGroup, data: model.toJson());
+      final res = await dio.post(DioConstants.createGroup, data: model.toJson());
+      return res.data['query_details']['group_id'] as int;
     } catch (e) {
       debugPrint("Error creating group: $e");
       rethrow;
@@ -802,6 +808,53 @@ class DioServices {
       });
     } catch (e) {
       debugPrint("Error archiving group: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> inviteToGroup(InviteGroupMemberModel model) async {
+    try {
+      await dio.post(DioConstants.inviteGroupMember, data: model.toJson());
+    } catch (e) {
+      debugPrint("Error add member to group: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> acceptGroup(AcceptGroupModel model) async {
+    try {
+      await dio.post(DioConstants.acceptInvite, data: model.toJson());
+      debugPrint("Accepted Group ${model.groupId}");
+    } catch (e) {
+      debugPrint("Error accepting group: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> deleteGroupMember(int userId, int groupId) async {
+    try {
+      await dio.post(DioConstants.deleteMember, data: {
+        'user_id': userId,
+        'group_id': groupId,
+      });
+      debugPrint("Removed user $userId from group $groupId");
+    } catch (e) {
+      debugPrint("Error removing $userId from group $groupId : $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateGroupMember(int userId, int groupId, String permissionType) async {
+    try {
+      await dio.post(DioConstants.deleteMember, data: {
+        'user_id': userId,
+        'group_id': groupId,
+        'permission_type': permissionType,
+      });
+      debugPrint("Updated permission to $permissionType for user $userId in group $groupId");
+    } catch (e) {
+      debugPrint(
+          "Error Updated permission to $permissionType for user $userId in group $groupId : $e");
       rethrow;
     }
   }

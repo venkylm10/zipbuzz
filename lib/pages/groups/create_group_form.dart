@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -8,7 +7,6 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
-import 'package:zipbuzz/utils/widgets/hyperlink_fields.dart';
 
 class CreateGroupForm extends ConsumerWidget {
   const CreateGroupForm({super.key});
@@ -38,12 +36,12 @@ class CreateGroupForm extends ConsumerWidget {
               _buildAddButton(ref, isProfile: true),
               _buildFieldTitle("Group Banner Image", false),
               _buildAddButton(ref, isProfile: false),
-              _buildFieldTitle("Group url", false),
-              HyperlinkFields(
-                nameController: TextEditingController(),
-                urlController: TextEditingController(),
-                onDelete: () {},
-              ),
+              // _buildFieldTitle("Group url", false),
+              // HyperlinkFields(
+              //   nameController: TextEditingController(),
+              //   urlController: TextEditingController(),
+              //   onDelete: () {},
+              // ),
               // _buildFieldTitle("Group visibility", false),
               // Row(
               //   children: [

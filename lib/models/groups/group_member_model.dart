@@ -12,7 +12,7 @@ class GroupMemberModel {
   factory GroupMemberModel.fromJson(Map<String, dynamic> json) {
     GroupPermissionType permissionType;
     switch (json['group_user_permission_type']) {
-      case 'o':
+      case 'o' || 'a':
         permissionType = GroupPermissionType.admin;
         break;
       default:

@@ -52,7 +52,9 @@ class BottomBar extends ConsumerWidget {
         } else if (tab == AppTabs.groups) {
           ref.read(groupControllerProvider.notifier).fetchCommunityAndGroupDescriptions();
         } else {
-          await ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
+          await ref
+              .read(dbServicesProvider)
+              .getOwnUserData(UserDetailsRequestModel(userId: userId));
           ref.read(newEventProvider.notifier).resetNewEvent();
         }
 

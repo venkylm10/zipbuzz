@@ -3,12 +3,14 @@ class DescriptionModel {
   final String name;
   final String description;
   final String type;
+  final bool archive;
 
   DescriptionModel({
     required this.id,
     required this.name,
     required this.description,
     required this.type,
+    required this.archive,
   });
 
   factory DescriptionModel.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class DescriptionModel {
       name: json['name'],
       description: json['description'],
       type: json['type'],
+      archive: json['archive'],
     );
   }
 }

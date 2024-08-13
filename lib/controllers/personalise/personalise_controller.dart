@@ -188,7 +188,7 @@ class PersonaliseController {
 
         // showSnackBar(message: "2 $selectedInterests");
         final requestModel = UserDetailsRequestModel(userId: id);
-        await ref.read(dbServicesProvider).getUserData(requestModel);
+        await ref.read(dbServicesProvider).getOwnUserData(requestModel);
         debugPrint("UPDATED USER DATA SUCCESSFULLY");
         final user = ref.read(userProvider);
         ref.read(newEventProvider.notifier).updateHostId(id);

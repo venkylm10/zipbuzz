@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
 import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
@@ -108,8 +109,11 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
   Widget _buildInviteMembersButton() {
     if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
     return GestureDetector(
-      onTap: () {
-        navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+      onTap: () async {
+        ref.read(groupControllerProvider.notifier).clearSelectedContacts();
+        ref.read(groupControllerProvider.notifier).contactSearchController.clear();
+        await navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+        ref.read(groupControllerProvider.notifier).getGroupMembers();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -132,7 +136,11 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
     return GestureDetector(
       onTap: () {
         ref.read(groupControllerProvider.notifier).updateCurrentGroupMember(member, isAdmin);
-        navigatorKey.currentState!.pushNamed(GroupMemberDetailsScreen.id);
+        navigatorKey.currentState!.push(
+          NavigationController.getTransition(
+            GroupMemberDetailsScreen(userId: member.userId),
+          ),
+        );
       },
       child: Container(
         width: double.infinity,
