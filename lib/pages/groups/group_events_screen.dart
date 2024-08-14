@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
-import 'package:zipbuzz/pages/events/create_event_form.dart';
 import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -46,9 +45,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
       floatingActionButton: GestureDetector(
         onTap: () {
           navigatorKey.currentState!.push(
-            NavigationController.getTransition(
-              CreateGroupEventScreen(),
-            ),
+            NavigationController.getTransition(const CreateGroupEventScreen()),
           );
         },
         child: Container(
@@ -140,5 +137,3 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
     );
   }
 }
-
-

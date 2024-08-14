@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:zipbuzz/pages/events/create_event_form.dart';
 import 'package:zipbuzz/pages/events/create_event_tab.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -28,8 +27,8 @@ class CreateGroupEventScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: CreateEventTab(rePublish: false, groupEvent: true),
       ),
     );

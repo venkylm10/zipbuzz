@@ -301,7 +301,7 @@ class GroupController extends StateNotifier<GroupState> {
       state = state.copyWith(invitingMembers: false);
       navigatorKey.currentState!.pop();
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
     state = state.copyWith(invitingMembers: false);
   }
