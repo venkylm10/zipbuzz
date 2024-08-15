@@ -10,7 +10,6 @@ class EventModel {
   final int hostId;
   final String hostName;
   final String hostPic;
-  final List<String> coHostIds;
   final bool privateGuestList;
   final String location;
   final String date;
@@ -35,7 +34,6 @@ class EventModel {
     required this.id,
     required this.title,
     required this.hostId,
-    required this.coHostIds,
     required this.location,
     required this.date,
     required this.startTime,
@@ -68,7 +66,6 @@ class EventModel {
     int? hostId,
     String? hostName,
     String? hostPic,
-    List<String>? coHostIds,
     List<EventInviteMember>? eventMembers,
     String? location,
     String? date,
@@ -94,7 +91,6 @@ class EventModel {
       title: title ?? this.title,
       about: about ?? this.about,
       hostId: hostId ?? this.hostId,
-      coHostIds: coHostIds ?? this.coHostIds,
       location: location ?? this.location,
       date: date ?? this.date,
       startTime: startTime ?? this.startTime,
@@ -127,7 +123,6 @@ class EventModel {
       hostId: map['host_id'] as int,
       hostName: map['host_name'] as String,
       hostPic: map['host_pic'] as String,
-      coHostIds: (map['coHostIds'] as List).map((e) => e.toString()).toList(),
       location: map['location'] as String,
       date: map['date'] as String,
       startTime: map['start_time'] as String,
@@ -163,7 +158,6 @@ class EventModel {
       'host_id': hostId,
       'host_name': hostName,
       'host_pic': hostPic,
-      'coHostIds': coHostIds,
       'location': location,
       'date': date,
       'start_time': startTime,
@@ -188,7 +182,6 @@ class EventModel {
       id: fav.eventId,
       title: fav.name,
       hostId: fav.hostId,
-      coHostIds: [],
       location: fav.venue,
       date: fav.date,
       startTime: fav.startTime,
@@ -220,7 +213,6 @@ class EventModel {
       id: res.id,
       title: res.name,
       hostId: res.hostId,
-      coHostIds: [],
       location: res.venue,
       date: res.date,
       startTime: res.startTime,

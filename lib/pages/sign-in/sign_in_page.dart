@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/pages/sign-in/widgets/mobile_number_sheet.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
@@ -26,10 +27,8 @@ class SignInSheet extends ConsumerWidget {
     ref.read(authServicesProvider).signInWithGoogle();
   }
 
-  void appleSignIn(WidgetRef ref) {
-    ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-    ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.home);
-    ref.read(authServicesProvider).signInWithApple();
+  void moveToMobileNumberEntry() {
+    navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => const MobileNumberSheet()));
   }
 
   void signInGuestUser(WidgetRef ref) {
@@ -87,18 +86,14 @@ class SignInSheet extends ConsumerWidget {
                 onTap: () => googleSignIn(ref),
               ),
               const SizedBox(height: 8),
-              // if(Platform.isIOS)
               SignInButton(
-                title: "Apple",
-                iconPath: Assets.icons.apple_logo,
-                onTap: () => appleSignIn(ref),
+                title: "Mobile",
+                iconPath: Assets.icons.telephone,
+                onTap: () => moveToMobileNumberEntry(),
               ),
-              // if(Platform.isIOS)
               const SizedBox(height: 8),
               InkWell(
                 onTap: () {
-                  // Guest View Flow
-                  // signInGuestUser(ref);
                   navigatorKey.currentState!.pop();
                   showPrivacySheet(context);
                 },

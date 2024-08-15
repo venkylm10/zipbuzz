@@ -247,6 +247,91 @@ class AuthServices {
     }
   }
 
+  final otpDigits = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+  ];
+
+  final otpFocusNodes = [
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+  ];
+
+  void clearOTPs() {
+    for (var e in otpDigits) {
+      e.clear();
+    }
+  }
+
+  final countryCodeController = TextEditingController(text: "91");
+
+  void updateCountryCode(String code) {
+    countryCodeController.text = code;
+  }
+
+  Future<void> signInWithMobile(String number) async {
+    var location = _ref.read(userLocationProvider);
+    UserModel newUser = UserModel(
+      id: 1,
+      name: "BuzzMe User",
+      mobileNumber: number,
+      email: '$number@gmail.com',
+      imageUrl: _ref.read(defaultsProvider).profilePictureUrl,
+      handle: "zipbuzz-null",
+      isAmbassador: false,
+      about: "Hi, I am on Buzz.Me",
+      eventsHosted: 0,
+      rating: 0.toDouble(),
+      zipcode: location.zipcode,
+      interests: [],
+      eventUids: [],
+      pastEventUids: [],
+      instagramId: "null",
+      linkedinId: "null",
+      twitterId: "null",
+      city: location.city,
+      country: location.country,
+      notificationCount: 0,
+    );
+    final userId = await _ref.read(dioServicesProvider).getIdFromPhone(number);
+    if (userId == null) {
+      _ref.read(loadingTextProvider.notifier).reset();
+      _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
+      debugPrint(newUser.toMap().toString());
+      await _ref.read(dbServicesProvider).createUser(user: newUser);
+      debugPrint("USER CREATED SUCCESSFULLY");
+      _ref.read(loadingTextProvider.notifier).reset();
+      final id = await _ref.read(dioServicesProvider).getIdFromPhone(number);
+      box.write(BoxConstants.id, id);
+      box.write(BoxConstants.login, true);
+      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+      _ref.read(loadingTextProvider.notifier).reset();
+      _ref.read(personaliseControllerProvider).updateShowMobile(false);
+      _ref.read(personaliseControllerProvider).updateShowEmailId(true);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
+      return;
+    } else {
+      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
+      box.write(BoxConstants.id, userId);
+      box.write(BoxConstants.login, true);
+      _ref.read(newEventProvider.notifier).updateHostId(userId);
+      _ref.read(loadingTextProvider.notifier).reset();
+      await _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
+      _ref.read(personaliseControllerProvider).updateShowMobile(true);
+      _ref.read(personaliseControllerProvider).updateShowEmailId(false);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
+      return;
+    }
+  }
+
   Future<void> signOut() async {
     final box = GetStorage();
     box.erase();

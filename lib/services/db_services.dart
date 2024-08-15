@@ -1,11 +1,11 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
-import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/event_post_model.dart';
@@ -18,7 +18,6 @@ import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
-import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/models/user/post/user_details_model.dart';
@@ -121,7 +120,9 @@ class DBServices {
         description: user.about,
         username: user.name,
         isAmbassador: false,
-        deviceToken: kIsWeb ? "zipbuzz-null" : box.read(BoxConstants.deviceToken),
+        deviceToken: kIsWeb
+            ? "zipbuzz-null"
+            : (await FirebaseMessaging.instance.getToken() ?? 'zipbuzz-null'),
       );
 
       final userSocials = UserSocialsModel(
@@ -135,25 +136,19 @@ class DBServices {
       if (res['status'] == "success") {
         final box = GetStorage();
         box.write('user_details', userDetails.toMap());
-
-        _ref.read(userProvider.notifier).update((state) => state.copyWith(id: res['id']));
         box.write(BoxConstants.login, true);
         box.write(BoxConstants.id, res['id'] as int);
-        NavigationController.routeOff(route: PersonalisePage.id);
       } else {
         throw "FAILED TO CREATE USER";
       }
     } catch (e) {
       debugPrint("FAILED TO CREATE USER $e");
+      throw "FAILED TO CREATE USER $e";
     }
   }
 
   Future<void> updateUser(UserDetailsUpdateRequestModel userDetailsUpdateRequestModel) async {
     await _dioServices.updateUserDetails(userDetailsUpdateRequestModel);
-    await setAppleUserEmail(
-      uid: _ref.read(authProvider).currentUser!.uid,
-      email: userDetailsUpdateRequestModel.email,
-    );
   }
 
   Future<int?> getUserId(UserIdRequestModel userIdRequestModel) async {

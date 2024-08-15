@@ -18,6 +18,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
+  final TextAlign textAlign;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -34,6 +35,7 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.focusNode,
     this.textInputAction,
+    this.textAlign = TextAlign.start,
   });
 
   Widget? buildCounter() {
@@ -78,6 +80,7 @@ class CustomTextField extends StatelessWidget {
               onChanged: onChanged,
               keyboardType: keyboardType,
               textInputAction: textInputAction,
+              textAlign: textAlign,
               decoration: InputDecoration(
                 enabled: enabled!,
                 hintText: hintText,
