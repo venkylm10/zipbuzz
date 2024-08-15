@@ -218,6 +218,25 @@ class DioServices {
     }
   }
 
+  Future<int?> getIdFromPhone(String phoneNumber) async {
+    try {
+      final res = kIsWeb
+          ? await dio.post(
+              DioConstants.phoneCheck,
+              data: {"phone": phoneNumber},
+            )
+          : await dio.get(
+              DioConstants.phoneCheck,
+              data: {"phone": phoneNumber},
+            );
+      debugPrint("check phone: $phoneNumber ${res.data}");
+      return res.data['user_id'];
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
   Future<bool> checkEmail(String email) async {
     try {
       final res = await dio.post(
@@ -227,6 +246,7 @@ class DioServices {
       debugPrint("check email: $email ${res.data}");
       return res.data['user_id'] != null;
     } catch (e) {
+      debugPrint(e.toString());
       return false;
     }
   }
@@ -714,6 +734,18 @@ class DioServices {
     } catch (e) {
       debugPrint("Error sending broadcast message: $e");
       rethrow;
+    }
+  }
+
+  Future<int?> sendOTP(String number) async {
+    try {
+      final res = await dio.get(DioConstants.sendMobileOTP, data: {
+        'phone_number': number,
+      });
+      return res.data['otp'];
+    } catch (e) {
+      debugPrint("Error sending otp: $e");
+      return null;
     }
   }
 

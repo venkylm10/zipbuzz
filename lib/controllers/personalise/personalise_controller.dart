@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -9,6 +10,8 @@ import 'package:zipbuzz/models/interests/requests/user_interests_update_model.da
 import 'package:zipbuzz/models/location/location_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
+import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
+import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -36,7 +39,7 @@ class PersonaliseController {
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
   final nameController = TextEditingController();
-  var countryDialCode = "+1";
+  var countryDialCode = "+91";
   var selectedInterests = <String>['Hangouts'];
   var userLocation = LocationModel(
     city: "",
@@ -45,6 +48,21 @@ class PersonaliseController {
     zipcode: "",
     neighborhood: "-",
   );
+
+  var showMobileNumber = false;
+  var showEmailId = false;
+
+  void updateMobileNumber(String number) {
+    mobileController.text = number;
+  }
+
+  void updateShowMobile(bool val) {
+    showMobileNumber = val;
+  }
+
+  void updateShowEmailId(bool val) {
+    showEmailId = val;
+  }
 
   void clearFields() async {
     selectedInterests.clear();
@@ -116,7 +134,11 @@ class PersonaliseController {
     if (currentEmail == email) {
       return false;
     }
-    return !(await ref.read(dioServicesProvider).checkEmail(email));
+    final token = await FirebaseMessaging.instance.getToken() ?? 'zipbuzz-null';
+    final id = await ref
+        .read(dioServicesProvider)
+        .getUserId(UserIdRequestModel(email: email, deviceToken: token));
+    return id != null;
   }
 
   Future<bool> newPhone() async {
@@ -130,7 +152,6 @@ class PersonaliseController {
 
   void sumbitInterests() async {
     final check = await validate();
-    // showSnackBar(message: "CHECK: $check");
     if (check) {
       if (zipcodeController.text.trim().isEmpty) {
         zipcodeController.text = 95050.toString();
@@ -148,14 +169,25 @@ class PersonaliseController {
             .read(userLocationProvider.notifier)
             .getLocationFromZipcode(zipcodeController.text.trim());
         final localUid = ref.read(userProvider).email.split("@").first;
-        final currentUser = FirebaseAuth.instance.currentUser!;
-        final updatedUser = ref.read(userProvider).copyWith(
-              name: localUid == currentUser.uid ? nameController.text.trim() : null,
-              email: emailController.text.trim(),
-              zipcode: zipcodeController.text.trim(),
-              mobileNumber: "$countryDialCode${mobileController.text.trim()}",
-              interests: selectedInterests,
-            );
+        final currentUser = FirebaseAuth.instance.currentUser;
+        UserModel updatedUser;
+        if (currentUser != null) {
+          updatedUser = ref.read(userProvider).copyWith(
+                name: localUid == currentUser.uid ? nameController.text.trim() : null,
+                email: emailController.text.trim(),
+                zipcode: zipcodeController.text.trim(),
+                mobileNumber: "$countryDialCode${mobileController.text.trim()}",
+                interests: selectedInterests,
+              );
+        } else {
+          updatedUser = ref.read(userProvider).copyWith(
+                name: nameController.text.trim(),
+                email: emailController.text.trim(),
+                zipcode: zipcodeController.text.trim(),
+                mobileNumber: "$countryDialCode${mobileController.text.trim()}",
+                interests: selectedInterests,
+              );
+        }
         box.write(BoxConstants.countryDialCode, countryDialCode);
         final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: updatedUser.id,
@@ -198,7 +230,8 @@ class PersonaliseController {
         ref.read(loadingTextProvider.notifier).reset();
         navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
       } catch (e) {
-        debugPrint("Error crearting user in personalise page: $e");
+        ref.read(loadingTextProvider.notifier).reset();
+        debugPrint("Error updating user in personalise page: $e");
       }
     }
   }

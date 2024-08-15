@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -41,8 +40,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final currentUser = ref.read(authProvider).currentUser!;
-    final localUid = ref.read(userProvider).email.split("@").first;
+    final currentUser = ref.read(authProvider).currentUser;
     final personaliseController = ref.read(personaliseControllerProvider);
     // final userInterest = ref.read(userProvider);
     // personaliseController.selectedInterests.addAll(userInterest.interests);
@@ -105,38 +103,51 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const SizedBox(height: 54),
-                            Text(
-                              "Hi ${localUid == currentUser.uid ? personaliseController.nameController.text : currentUser.displayName ?? ""}!",
-                              style: AppStyles.extraLarge.copyWith(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              softWrap: true,
-                            ),
+                            Consumer(builder: (context, ref, child) {
+                              return Text(
+                                "Hi ${ref.read(personaliseControllerProvider).nameController.text}!",
+                                style: AppStyles.extraLarge.copyWith(
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                softWrap: true,
+                              );
+                            }),
                             const SizedBox(height: 8),
                             Text(
                               "Lets start by personalize your experience...",
                               style: AppStyles.h2,
                             ),
                             const SizedBox(height: 12),
-                            if (localUid == currentUser.uid)
-                              buildTextField(
-                                Assets.icons.personName,
-                                "Name",
-                                personaliseController.nameController,
-                                currentUser.displayName ?? "Enter name",
-                                keyboardType: TextInputType.text,
-                              ),
-                            if (localUid == currentUser.uid) const SizedBox(height: 12),
-                            if (localUid == currentUser.uid)
-                              buildTextField(
-                                Assets.icons.email,
-                                "Email",
-                                personaliseController.emailController,
-                                currentUser.displayName ?? "Enter email",
-                                keyboardType: TextInputType.text,
-                              ),
-                            if (localUid == currentUser.uid) const SizedBox(height: 12),
+                            Consumer(builder: (context, ref, child) {
+                              final showName = ref.watch(personaliseControllerProvider).showEmailId;
+                              if (!showName) return const SizedBox();
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: buildTextField(
+                                  Assets.icons.personName,
+                                  "Name",
+                                  personaliseController.nameController,
+                                  "Enter name",
+                                  keyboardType: TextInputType.text,
+                                ),
+                              );
+                            }),
+                            Consumer(builder: (context, ref, child) {
+                              final showEmailId =
+                                  ref.watch(personaliseControllerProvider).showEmailId;
+                              if (!showEmailId) return const SizedBox();
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: buildTextField(
+                                  Assets.icons.email,
+                                  "Email",
+                                  personaliseController.emailController,
+                                  "Enter email",
+                                  keyboardType: TextInputType.text,
+                                ),
+                              );
+                            }),
                             Consumer(builder: (context, subRef, child) {
                               final userLocation = subRef.watch(userLocationProvider);
                               return buildTextField(
@@ -153,7 +164,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                               Assets.icons.telephone_filled,
                               "Mobile no",
                               personaliseController.mobileController,
-                              currentUser.phoneNumber ?? "9998887776",
+                              currentUser == null ? "Number" : currentUser.phoneNumber ?? "Number",
                               keyboardType: TextInputType.phone,
                               maxLength: 10,
                               prefixWidget: countryCodeSelector(),
@@ -358,7 +369,10 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
 
   Widget buildTextField(
       String iconPath, String label, TextEditingController controller, String hintText,
-      {TextInputType? keyboardType, int? maxLength, Widget? prefixWidget}) {
+      {TextInputType? keyboardType,
+      int? maxLength,
+      Widget? prefixWidget,
+      VoidCallback? onChanged}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -387,6 +401,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                       keyboardType: keyboardType,
                       maxLength: maxLength,
                       onChanged: (value) {
+                        if (onChanged != null) onChanged();
                         if (value.length == maxLength) {
                           //close keyboard
                           FocusScope.of(context).requestFocus(FocusNode());

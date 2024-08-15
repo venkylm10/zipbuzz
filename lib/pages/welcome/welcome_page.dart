@@ -77,6 +77,7 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           Expanded(
