@@ -127,6 +127,8 @@ class AuthServices {
     box.write(BoxConstants.id, id);
     box.write(BoxConstants.login, true);
     _ref.read(newEventProvider.notifier).updateHostId(id);
+    _ref.read(personaliseControllerProvider).updateShowMobile(true);
+    _ref.read(personaliseControllerProvider).updateShowEmailId(false);
     await _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
 
@@ -303,6 +305,7 @@ class AuthServices {
       notificationCount: 0,
     );
     final userId = await _ref.read(dioServicesProvider).getIdFromPhone(number);
+    _ref.read(personaliseControllerProvider).updateCountryCode(countryCodeController.text);
     if (userId == null) {
       _ref.read(loadingTextProvider.notifier).reset();
       _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");

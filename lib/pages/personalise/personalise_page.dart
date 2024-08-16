@@ -160,15 +160,24 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                               );
                             }),
                             const SizedBox(height: 12),
-                            buildTextField(
-                              Assets.icons.telephone_filled,
-                              "Mobile no",
-                              personaliseController.mobileController,
-                              currentUser == null ? "Number" : currentUser.phoneNumber ?? "Number",
-                              keyboardType: TextInputType.phone,
-                              maxLength: 10,
-                              prefixWidget: countryCodeSelector(),
-                            ),
+                            Consumer(builder: (context, ref, child) {
+                              final enabled =
+                                  !(ref.watch(personaliseControllerProvider).showEmailId);
+                              return buildTextField(
+                                Assets.icons.telephone_filled,
+                                "Mobile no",
+                                personaliseController.mobileController,
+                                currentUser == null
+                                    ? "Number"
+                                    : currentUser.phoneNumber ?? "Number",
+                                keyboardType: TextInputType.phone,
+                                maxLength: 10,
+                                prefixWidget: countryCodeSelector(
+                                  enabled: enabled,
+                                ),
+                                enabled: enabled,
+                              );
+                            }),
                             const SizedBox(height: 12),
                             Text(
                               "Select at least one interest:",
@@ -228,7 +237,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
     );
   }
 
-  Widget countryCodeSelector() {
+  Widget countryCodeSelector({bool enabled = true}) {
     final personaliseController = ref.read(personaliseControllerProvider);
     return Container(
       height: 54,
@@ -251,26 +260,28 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
           ),
           items: [
             DropdownMenuItem(
-              value: "+1",
+              value: "1",
               child: Text(
                 " + 1 ",
                 style: AppStyles.h4,
               ),
             ),
             DropdownMenuItem(
-              value: "+91",
+              value: "91",
               child: Text(
                 " + 91 ",
                 style: AppStyles.h4,
               ),
             ),
           ],
-          onChanged: (val) {
-            if (val != null) {
-              personaliseController.updateCountryCode(val);
-              setState(() {});
-            }
-          },
+          onChanged: enabled
+              ? (val) {
+                  if (val != null) {
+                    personaliseController.updateCountryCode(val as String);
+                    setState(() {});
+                  }
+                }
+              : null,
         ),
       ),
     );
@@ -372,7 +383,8 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
       {TextInputType? keyboardType,
       int? maxLength,
       Widget? prefixWidget,
-      VoidCallback? onChanged}) {
+      VoidCallback? onChanged,
+      bool enabled = true}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -400,6 +412,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                       style: AppStyles.h4,
                       keyboardType: keyboardType,
                       maxLength: maxLength,
+                      enabled: enabled,
                       onChanged: (value) {
                         if (onChanged != null) onChanged();
                         if (value.length == maxLength) {

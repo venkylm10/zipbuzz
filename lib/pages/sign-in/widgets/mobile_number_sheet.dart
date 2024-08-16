@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
+import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/pages/sign-in/widgets/country_code_selector.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -147,8 +148,10 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
     });
     try {
       final otp = (await ref.read(dioServicesProvider).sendOTP(number)).toString();
-      // TODO: Remove printing otp
-      debugPrint(otp);
+      if (AppEnvironment.environment == Environment.dev) {
+        debugPrint("OTP: $otp");
+        showSnackBar(message: "OTP: $otp", duration: 5);
+      }
       setState(() {
         this.otp = otp;
         if (otp.isNotEmpty) {
