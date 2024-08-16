@@ -39,7 +39,7 @@ class PersonaliseController {
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
   final nameController = TextEditingController();
-  var countryDialCode = "+91";
+  var countryDialCode = "91";
   var selectedInterests = <String>['Hangouts'];
   var userLocation = LocationModel(
     city: "",
@@ -76,7 +76,12 @@ class PersonaliseController {
     emailController.text = user.email;
     if (user.mobileNumber != 'zipbuzz-null' && user.mobileNumber != '+11234567890') {
       mobileController.text = user.mobileNumber.substring(user.mobileNumber.length - 10);
-      countryDialCode = user.mobileNumber.substring(0, user.mobileNumber.length - 10);
+      var temp = user.mobileNumber.substring(0, user.mobileNumber.length - 10);
+      if (temp[0] == '+') {
+        countryDialCode = temp.substring(1);
+      } else {
+        countryDialCode = temp;
+      }
     } else {
       mobileController.text = "";
     }

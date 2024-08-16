@@ -304,6 +304,7 @@ class AuthServices {
       notificationCount: 0,
     );
     final userId = await _ref.read(dioServicesProvider).getIdFromPhone(number);
+    _ref.read(personaliseControllerProvider).updateCountryCode(countryCodeController.text);
     if (userId == null) {
       _ref.read(loadingTextProvider.notifier).reset();
       _ref.read(loadingTextProvider.notifier).updateLoadingText("Signing Up...");
