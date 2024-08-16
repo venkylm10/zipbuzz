@@ -316,14 +316,14 @@ class AuthServices {
       final id = await _ref.read(dioServicesProvider).getIdFromPhone(number);
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
-      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
       _ref.read(loadingTextProvider.notifier).reset();
       _ref.read(personaliseControllerProvider).updateShowMobile(false);
       _ref.read(personaliseControllerProvider).updateShowEmailId(true);
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
     } else {
-      await _ref.read(dbServicesProvider).getUserData(UserDetailsRequestModel(userId: userId));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: userId));
       box.write(BoxConstants.id, userId);
       box.write(BoxConstants.login, true);
       _ref.read(newEventProvider.notifier).updateHostId(userId);
