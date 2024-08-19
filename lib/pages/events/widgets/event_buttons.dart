@@ -67,8 +67,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               ],
             ),
             const SizedBox(height: 8),
-            const Expanded(
-              child: EventPublishButton(),
+            Expanded(
+              child: EventPublishButton(groupEvent: widget.groupEvent),
             ),
           ],
         ),

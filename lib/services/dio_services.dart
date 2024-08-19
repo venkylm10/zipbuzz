@@ -7,6 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
@@ -847,6 +848,7 @@ class DioServices {
   Future<void> inviteToGroup(InviteGroupMemberModel model) async {
     try {
       await dio.post(DioConstants.inviteGroupMember, data: model.toJson());
+      debugPrint("Invited user ${model.userId} to group ${model.groupId}");
     } catch (e) {
       debugPrint("Error add member to group: $e");
       rethrow;
@@ -887,6 +889,40 @@ class DioServices {
     } catch (e) {
       debugPrint(
           "Error Updated permission to $permissionType for user $userId in group $groupId : $e");
+      rethrow;
+    }
+  }
+
+  Future<int> createGroupEvent(EventPostModel eventPostModel) async {
+    debugPrint("POSTING EVENT");
+    debugPrint(eventPostModel.toMap().toString());
+    try {
+      final response = await dio.post(DioConstants.createGroupEvent, data: eventPostModel.toMap());
+      if (response.data[DioConstants.status] == DioConstants.success) {
+        debugPrint("POSTING GROUP EVENT SUCESSFULL");
+        return response.data['id'] as int;
+      } else {
+        throw "POSTING GROUP EVENT FAILED";
+      }
+    } catch (e) {
+      debugPrint("POSTING GROUP EVENT FAILED");
+      debugPrint(e.toString());
+      throw "POSTING GROUP EVENT FAILED";
+    }
+  }
+
+  Future<List> getGroupEvents(int groupId, int userId) async {
+    try {
+      final data = {
+        'group_id': groupId,
+        'user_id': userId,
+        'month': '2024-08',
+      };
+      final res = await dio.get(DioConstants.getGroupEvents, data: data);
+      final events = res.data['data'] as List;
+      return events;
+    } catch (e) {
+      debugPrint("Error getting group events: $e");
       rethrow;
     }
   }

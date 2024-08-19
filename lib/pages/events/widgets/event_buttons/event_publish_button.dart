@@ -24,12 +24,14 @@ class EventPublishButton extends ConsumerWidget {
             context: navigatorKey.currentContext!,
             barrierDismissible: true,
             builder: (context) {
-              return const InviteGuestAlert();
+              return InviteGuestAlert(groupEvent: groupEvent);
             },
           );
           return;
         }
-        await ref.read(newEventProvider.notifier).publishEvent();
+        await ref.read(newEventProvider.notifier).publishEvent(
+              groupEvent: groupEvent,
+            );
         publishedAlertBox(ref);
       },
       child: Container(

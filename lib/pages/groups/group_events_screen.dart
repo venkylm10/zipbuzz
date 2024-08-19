@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card.dart';
+import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -30,15 +33,35 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
   @override
   Widget build(BuildContext context) {
     final selectedTab = ref.watch(groupControllerProvider).groupEventsTab;
+    final groupId = ref.watch(groupControllerProvider).currentGroupDescription!.id;
+    final userId = ref.read(userProvider).id;
     return Scaffold(
       appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
             _buildTabs(ref, selectedTab),
             const SizedBox(height: 24),
+            Expanded(
+              child: FutureBuilder(
+                future: ref.read(dbServicesProvider).getGroupEvents(groupId, userId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (!snapshot.hasData) {
+                    return const Center(child: Text("No events found"));
+                  }
+                  final events = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      return EventCard(event: events[index]);
+                    },
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),

@@ -7,7 +7,8 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/pages/events/widgets/published_event_alert.dart';
 
 class InviteGuestAlert extends ConsumerStatefulWidget {
-  const InviteGuestAlert({super.key});
+  final bool groupEvent;
+  const InviteGuestAlert({super.key, this.groupEvent = false});
 
   @override
   ConsumerState<InviteGuestAlert> createState() => _InviteGuestAlertState();
@@ -16,12 +17,12 @@ class InviteGuestAlert extends ConsumerStatefulWidget {
 class _InviteGuestAlertState extends ConsumerState<InviteGuestAlert> {
   void publishEvent() async {
     navigatorKey.currentState!.pop();
-    await ref.read(newEventProvider.notifier).publishEvent();
+    await ref.read(newEventProvider.notifier).publishEvent(groupEvent: widget.groupEvent);
     showDialog(
       context: navigatorKey.currentContext!,
       barrierDismissible: false,
       builder: (context) {
-        return const PublishedEventAlertBox();
+        return PublishedEventAlertBox(groupEvent: widget.groupEvent);
       },
     );
   }

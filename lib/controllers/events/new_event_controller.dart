@@ -377,6 +377,13 @@ class NewEvent extends StateNotifier<EventModel> {
     final check = validateNewEvent();
     if (!check) return;
     try {
+      final groupId =
+          groupEvent ? ref.read(groupControllerProvider).currentGroupDescription!.id : 0;
+      final groupName = groupEvent
+          ? ref.read(groupControllerProvider).currentGroupDescription!.groupName
+          : "zipbuzz-null";
+      print("Group ID: $groupId");
+      print("Group Name: $groupName");
       final currentDay = ref.read(eventsControllerProvider.notifier).currentDay;
       ref
           .read(eventsControllerProvider.notifier)
@@ -394,11 +401,7 @@ class NewEvent extends StateNotifier<EventModel> {
       state = state.copyWith(
         privateGuestList: state.isPrivate ? state.privateGuestList : false,
       );
-      final groupId =
-          groupEvent ? ref.read(groupControllerProvider).currentGroupDescription!.id : 0;
-      final groupName = groupEvent
-          ? ref.read(groupControllerProvider).currentGroupDescription!.groupName
-          : "zipbuzz-null";
+
       final eventPostModel = EventPostModel(
         banner: bannerUrl,
         category: state.category,
@@ -425,7 +428,12 @@ class NewEvent extends StateNotifier<EventModel> {
       // return;
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
-      final eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
+      int eventId = 0;
+      if (groupEvent) {
+        eventId = await ref.read(dioServicesProvider).createGroupEvent(eventPostModel);
+      } else {
+        eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
+      }
 
       //update eventId locally
       state = state.copyWith(id: eventId);

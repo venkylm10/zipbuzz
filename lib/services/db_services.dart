@@ -297,6 +297,25 @@ class DBServices {
     return [];
   }
 
+  Future<List<EventModel>> getGroupEvents(int groupId, int userId) async {
+    if (box.read(BoxConstants.guestUser) == null) {
+      try {
+        final list = await _dioServices.getGroupEvents(groupId, userId);
+        final events = <EventModel>[];
+        for (var e in list) {
+          final res = EventResponseModel.fromMap(e);
+          events.add(EventModel.fromEventResModel(res));
+        }
+        return events..sort((a, b) => a.date.compareTo(b.date));
+      } catch (e) {
+        debugPrint("Error In Getting Events: $e");
+        return [];
+      }
+    }
+    // return guestEventsList;
+    return [];
+  }
+
   Future<EventModel> getEventDetails(int eventId) async {
     final e = await _dioServices.getEventDetails(eventId);
     final res = EventResponseModel.fromMap(e);

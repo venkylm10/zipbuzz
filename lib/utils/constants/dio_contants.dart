@@ -68,4 +68,6 @@ class DioConstants {
   static const String acceptInvite = '/groups/group_member_add/';
   static const String deleteMember = '/groups/group_member_delete/';
   static const String updateMember = '/groups/group_member_update/';
+  static const String createGroupEvent = 'groups/group_event/';
+  static const String getGroupEvents = '/events/fetch_group_events/';
 }

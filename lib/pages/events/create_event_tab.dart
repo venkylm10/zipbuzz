@@ -132,6 +132,7 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
       //   'randInt': randInt,
       //   'clone': clone,
       // };
+      print("Group event : ${widget.groupEvent}");
       navigatorKey.currentState!.push(
         NavigationController.getTransition(
           EventDetailsPage(
