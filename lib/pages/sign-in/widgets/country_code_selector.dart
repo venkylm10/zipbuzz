@@ -3,9 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
-class CountryCodeSelector extends StatelessWidget {
+class CountryCodeSelector extends StatefulWidget {
   const CountryCodeSelector({super.key});
 
+  @override
+  State<CountryCodeSelector> createState() => _CountryCodeSelectorState();
+}
+
+class _CountryCodeSelectorState extends State<CountryCodeSelector> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
@@ -43,6 +48,7 @@ class CountryCodeSelector extends StatelessWidget {
             onChanged: (val) {
               if (val == null) return;
               ref.read(authServicesProvider).updateCountryCode(val);
+              setState(() {});
             },
           ),
         ),
