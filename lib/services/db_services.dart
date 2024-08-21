@@ -155,7 +155,7 @@ class DBServices {
     return await _dioServices.getUserId(userIdRequestModel);
   }
 
-  Future<void> getUserData(UserDetailsRequestModel userDetailsRequestModel) async {
+  Future<void> getOwnUserData(UserDetailsRequestModel userDetailsRequestModel) async {
     final events = _ref.read(eventsControllerProvider).currentMonthEvents;
     try {
       final res = await _dioServices.getUserData(userDetailsRequestModel);

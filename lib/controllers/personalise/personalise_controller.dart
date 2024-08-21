@@ -39,7 +39,7 @@ class PersonaliseController {
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
   final nameController = TextEditingController();
-  var countryDialCode = "91";
+  var countryDialCode = "1";
   var selectedInterests = <String>['Hangouts'];
   var userLocation = LocationModel(
     city: "",
@@ -225,7 +225,7 @@ class PersonaliseController {
 
         // showSnackBar(message: "2 $selectedInterests");
         final requestModel = UserDetailsRequestModel(userId: id);
-        await ref.read(dbServicesProvider).getUserData(requestModel);
+        await ref.read(dbServicesProvider).getOwnUserData(requestModel);
         debugPrint("UPDATED USER DATA SUCCESSFULLY");
         final user = ref.read(userProvider);
         ref.read(newEventProvider.notifier).updateHostId(id);

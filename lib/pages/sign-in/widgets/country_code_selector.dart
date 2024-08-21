@@ -19,6 +19,13 @@ class CountryCodeSelector extends StatelessWidget {
             underline: const SizedBox(),
             items: [
               DropdownMenuItem(
+                value: "1",
+                child: Text(
+                  "+1",
+                  style: AppStyles.h4,
+                ),
+              ),
+              DropdownMenuItem(
                 value: "91",
                 child: Text(
                   "+91",
@@ -26,9 +33,9 @@ class CountryCodeSelector extends StatelessWidget {
                 ),
               ),
               DropdownMenuItem(
-                value: "1",
+                value: "971",
                 child: Text(
-                  "+1",
+                  "+971",
                   style: AppStyles.h4,
                 ),
               ),

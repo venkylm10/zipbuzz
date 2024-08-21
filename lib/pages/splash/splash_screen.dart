@@ -41,7 +41,7 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
       return;
     }
     final requestModel = UserDetailsRequestModel(userId: id);
-    await ref.read(dbServicesProvider).getUserData(requestModel);
+    await ref.read(dbServicesProvider).getOwnUserData(requestModel);
     await ref
         .read(userLocationProvider.notifier)
         .getLocationFromZipcode(ref.read(userProvider).zipcode);
