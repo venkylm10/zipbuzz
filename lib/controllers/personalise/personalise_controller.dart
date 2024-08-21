@@ -181,7 +181,7 @@ class PersonaliseController {
                 name: localUid == currentUser.uid ? nameController.text.trim() : null,
                 email: emailController.text.trim(),
                 zipcode: zipcodeController.text.trim(),
-                mobileNumber: "$countryDialCode${mobileController.text.trim()}",
+                mobileNumber: "+$countryDialCode${mobileController.text.trim()}",
                 interests: selectedInterests,
               );
         } else {
@@ -189,7 +189,7 @@ class PersonaliseController {
                 name: nameController.text.trim(),
                 email: emailController.text.trim(),
                 zipcode: zipcodeController.text.trim(),
-                mobileNumber: "$countryDialCode${mobileController.text.trim()}",
+                mobileNumber: "+$countryDialCode${mobileController.text.trim()}",
                 interests: selectedInterests,
               );
         }
