@@ -7,7 +7,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
-import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';

@@ -67,7 +67,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        6,
+                        ref.read(authServicesProvider).otpDigits.length,
                         (index) {
                           final controller = ref.watch(authServicesProvider).otpDigits[index];
                           final focusNode = ref.watch(authServicesProvider).otpFocusNodes[index];
@@ -75,7 +75,9 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
                             child: Padding(
                               padding: const EdgeInsets.all(8).copyWith(
                                 left: index == 0 ? 0 : 8,
-                                right: index == 5 ? 0 : 8,
+                                right: index == ref.read(authServicesProvider).otpDigits.length - 1
+                                    ? 0
+                                    : 8,
                               ),
                               child: CustomTextField(
                                 controller: controller,
@@ -85,7 +87,8 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
                                 keyboardType: TextInputType.phone,
                                 onChanged: (val) {
                                   if (val.isEmpty) return;
-                                  if (index == 5) {
+                                  if (index ==
+                                      ref.read(authServicesProvider).otpDigits.length - 1) {
                                     FocusScope.of(context).unfocus();
                                   }
                                   FocusScope.of(context).nextFocus();

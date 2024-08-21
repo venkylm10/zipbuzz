@@ -222,6 +222,7 @@ class AuthServices {
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
       await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
       _ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
       return;
@@ -239,6 +240,7 @@ class AuthServices {
             ),
           );
       await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
@@ -255,13 +257,9 @@ class AuthServices {
     TextEditingController(),
     TextEditingController(),
     TextEditingController(),
-    TextEditingController(),
-    TextEditingController(),
   ];
 
   final otpFocusNodes = [
-    FocusNode(),
-    FocusNode(),
     FocusNode(),
     FocusNode(),
     FocusNode(),
@@ -274,7 +272,7 @@ class AuthServices {
     }
   }
 
-  final countryCodeController = TextEditingController(text: "91");
+  final countryCodeController = TextEditingController(text: "1");
 
   void updateCountryCode(String code) {
     countryCodeController.text = code;
@@ -317,12 +315,14 @@ class AuthServices {
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
       await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
       _ref.read(loadingTextProvider.notifier).reset();
       _ref.read(personaliseControllerProvider).updateShowMobile(false);
       _ref.read(personaliseControllerProvider).updateShowEmailId(true);
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
     } else {
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: userId));
       await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: userId));
       box.write(BoxConstants.id, userId);
       box.write(BoxConstants.login, true);

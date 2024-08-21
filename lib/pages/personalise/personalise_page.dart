@@ -115,7 +115,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
                             }),
                             const SizedBox(height: 8),
                             Text(
-                              "Lets start by personalize your experience...",
+                              "Personalize your experience",
                               style: AppStyles.h2,
                             ),
                             const SizedBox(height: 12),
@@ -270,6 +270,13 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
               value: "91",
               child: Text(
                 " + 91 ",
+                style: AppStyles.h4,
+              ),
+            ),
+            DropdownMenuItem(
+              value: "971",
+              child: Text(
+                " + 971 ",
                 style: AppStyles.h4,
               ),
             ),

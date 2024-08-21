@@ -39,7 +39,7 @@ class PersonaliseController {
   final emailController = TextEditingController();
   final mobileController = TextEditingController();
   final nameController = TextEditingController();
-  var countryDialCode = "91";
+  var countryDialCode = "1";
   var selectedInterests = <String>['Hangouts'];
   var userLocation = LocationModel(
     city: "",
