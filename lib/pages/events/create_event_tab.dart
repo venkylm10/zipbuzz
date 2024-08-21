@@ -14,6 +14,7 @@ import 'package:zipbuzz/utils/widgets/broad_divider.dart';
 import 'package:zipbuzz/pages/events/widgets/add_hosts.dart';
 import 'package:zipbuzz/pages/events/widgets/event_type_and_capacity.dart';
 import 'package:zipbuzz/pages/events/widgets/add_event_photos.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class CreateEvent extends ConsumerStatefulWidget {
   const CreateEvent({super.key, this.rePublish = false});
@@ -100,40 +101,48 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
   }
 
   Future<Color> getDominantColor() async {
-    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    Color dominantColor = Colors.green;
-    if (previewBanner != null) {
-      final image = FileImage(previewBanner);
-      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-        image,
-      );
-      dominantColor = generator.dominantColor!.color;
-    } else {
-      final image = NetworkImage(interestBanners[ref.read(newEventProvider).category]!);
-      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-        image,
-      );
-      dominantColor = generator.dominantColor!.color;
+    try {
+      final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
+      Color dominantColor = Colors.green;
+      if (previewBanner != null) {
+        final image = FileImage(previewBanner);
+        final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+          image,
+        );
+        dominantColor = generator.dominantColor!.color;
+      } else {
+        final image = NetworkImage(interestBanners[ref.read(newEventProvider).category]!);
+        final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+          image,
+        );
+        dominantColor = generator.dominantColor!.color;
+      }
+      return dominantColor;
+    } catch (e) {
+      return Colors.green;
     }
-    return dominantColor;
   }
 
   void showPreview() async {
     if (ref.read(newEventProvider.notifier).validateNewEvent()) {
-      final dominantColor = await getDominantColor();
-      ref.read(newEventProvider.notifier).updateHyperlinks();
-      final clone = ref.read(newEventProvider.notifier).cloneEvent;
-      Map<String, dynamic> args = {
-        'event': ref.read(newEventProvider),
-        'isPreview': true,
-        'dominantColor': dominantColor,
-        'randInt': randInt,
-        'clone': clone,
-      };
-      navigatorKey.currentState!.pushNamed(
-        EventDetailsPage.id,
-        arguments: args,
-      );
+      try {
+        final dominantColor = await getDominantColor();
+        ref.read(newEventProvider.notifier).updateHyperlinks();
+        final clone = ref.read(newEventProvider.notifier).cloneEvent;
+        Map<String, dynamic> args = {
+          'event': ref.read(newEventProvider),
+          'isPreview': true,
+          'dominantColor': dominantColor,
+          'randInt': randInt,
+          'clone': clone,
+        };
+        navigatorKey.currentState!.pushNamed(
+          EventDetailsPage.id,
+          arguments: args,
+        );
+      } catch (e) {
+        showSnackBar(message: e.toString(), duration: 5);
+      }
     }
   }
 }
