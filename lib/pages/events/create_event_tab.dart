@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/pages/events/widgets/create_event_urls.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -56,9 +57,6 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Removed banner selector in create event tab
-          // const EventBannerSelector(),
-          // const SizedBox(height: 16),
           const CreateEventForm(),
           broadDivider(),
           const AddHosts(),
@@ -68,6 +66,9 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           broadDivider(),
           const AddEventPhotos(),
           broadDivider(),
+          CreateEventUrls(rebuild: () {
+            setState(() {});
+          }),
           InkWell(
             onTap: () {
               showPreview();

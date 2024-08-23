@@ -691,10 +691,11 @@ packages:
   interval_time_picker:
     dependency: "direct main"
     description:
-      name: interval_time_picker
-      sha256: "9b44333c1616ef433da77600d7dcd3ef5242e79c6e28bb8c9c9b1653eb33c81e"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "90d3c61b72f50a04b6907d73f488e3985e4e808b"
+      url: "https://github.com/venkylm10/interval_time_picker.git"
+    source: git
     version: "3.0.0+6"
   intl:
     dependency: "direct main"
