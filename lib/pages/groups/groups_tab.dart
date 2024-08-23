@@ -9,7 +9,7 @@ class GroupsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (value) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
+      onPopInvokedWithResult: (didPop,result) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: const Scaffold(
         body: Center(child: Text("Groups")),
       ),

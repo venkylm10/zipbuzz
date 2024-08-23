@@ -306,7 +306,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     if (pickedImage == null) return;
     CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: pickedImage.path,
-      aspectRatioPresets: [CropAspectRatioPreset.ratio16x9],
+      aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9),
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Cropper',

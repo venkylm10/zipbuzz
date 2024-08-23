@@ -88,7 +88,12 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void removeUrlField(int index) {
     if (urlControllers.length == 1) {
-      showSnackBar(message: "This is field optional");
+      if (urlControllers.first.text.isNotEmpty || urlNameControllers.first.text.isNotEmpty) {
+        urlControllers.first.clear();
+        urlNameControllers.first.clear();
+        return;
+      }
+      showSnackBar(message: "This field is optional");
       return;
     }
     urlControllers.removeAt(index);
