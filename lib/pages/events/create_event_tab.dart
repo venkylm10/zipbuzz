@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/pages/events/widgets/create_event_urls.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -69,6 +70,9 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
           broadDivider(),
           const AddEventPhotos(),
           broadDivider(),
+          CreateEventUrls(rebuild: () {
+            setState(() {});
+          }),
           InkWell(
             onTap: () {
               showPreview();
@@ -102,22 +106,26 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
   }
 
   Future<Color> getDominantColor() async {
-    final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
-    Color dominantColor = Colors.green;
-    if (previewBanner != null) {
-      final image = FileImage(previewBanner);
-      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-        image,
-      );
-      dominantColor = generator.dominantColor!.color;
-    } else {
-      final image = NetworkImage(interestBanners[ref.read(newEventProvider).category]!);
-      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-        image,
-      );
-      dominantColor = generator.dominantColor!.color;
+    try {
+      final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
+      Color dominantColor = Colors.green;
+      if (previewBanner != null) {
+        final image = FileImage(previewBanner);
+        final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+          image,
+        );
+        dominantColor = generator.dominantColor!.color;
+      } else {
+        final image = NetworkImage(interestBanners[ref.read(newEventProvider).category]!);
+        final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+          image,
+        );
+        dominantColor = generator.dominantColor!.color;
+      }
+      return dominantColor;
+    } catch (e) {
+      return Colors.green;
     }
-    return dominantColor;
   }
 
   void showPreview() async {
@@ -125,14 +133,6 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
       final dominantColor = await getDominantColor();
       ref.read(newEventProvider.notifier).updateHyperlinks();
       final clone = ref.read(newEventProvider.notifier).cloneEvent;
-      // Map<String, dynamic> args = {
-      //   'event': ref.read(newEventProvider),
-      //   'isPreview': true,
-      //   'dominantColor': dominantColor,
-      //   'randInt': randInt,
-      //   'clone': clone,
-      // };
-      print("Group event : ${widget.groupEvent}");
       navigatorKey.currentState!.push(
         NavigationController.getTransition(
           EventDetailsPage(

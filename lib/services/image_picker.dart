@@ -14,7 +14,7 @@ final imageServicesProvider = Provider((ref) => ImageServices());
 class ImageServices {
   final imagePicker = ImagePicker();
 
-  Future<File?> pickImage({List<CropAspectRatioPreset>? aspectRatios}) async {
+  Future<File?> pickImage({CropAspectRatio? aspectRatio}) async {
     if (kIsWeb) {
       showSnackBar(message: "Not available on web");
       return null;
@@ -24,10 +24,10 @@ class ImageServices {
       imageQuality: 20,
     );
 
-    if (pickedImage != null && aspectRatios != null) {
+    if (pickedImage != null && aspectRatio != null) {
       CroppedFile? croppedFile = await ImageCropper().cropImage(
         sourcePath: pickedImage.path,
-        aspectRatioPresets: aspectRatios,
+        aspectRatio: aspectRatio,
         uiSettings: [
           AndroidUiSettings(
               toolbarTitle: 'Cropper',

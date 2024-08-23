@@ -4,13 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:interval_time_picker/models/visible_step.dart';
 import 'package:intl/intl.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/pages/events/widgets/create_event_category_drop_down.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
-import 'package:zipbuzz/utils/widgets/broad_divider.dart';
 import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
@@ -68,6 +68,10 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
 
   void updateEventName(String value) {
     newEventController.updateName(value);
+  }
+
+  void updateCategory({String? category = 'Hiking'}) {
+    newEventController.updateCategory(category!);
   }
 
   void updateDescription(String value) {
@@ -215,7 +219,6 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           onChanged: updateDescription,
         ),
         const SizedBox(height: 16),
-        buildUrlFields(),
         // broadDivider(),
         // Text(
         //   "Location & Time",
@@ -334,99 +337,70 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     );
   }
 
-  Widget buildUrlFields() {
-    return Consumer(
-      builder: (context, ref, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Event url",
-              style: AppStyles.h4,
-            ),
-            const SizedBox(height: 4),
-            Column(
-              children: List.generate(
-                ref.read(newEventProvider.notifier).urlControllers.length,
-                (index) => Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomTextField(
-                                controller:
-                                    ref.read(newEventProvider.notifier).urlNameControllers[index],
-                                hintText: "HyperLink Name",
-                                textInputAction: TextInputAction.next,
-                              ),
-                              const SizedBox(height: 4),
-                              CustomTextField(
-                                controller:
-                                    ref.read(newEventProvider.notifier).urlControllers[index],
-                                hintText: "URL",
-                                textInputAction: TextInputAction.next,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        InkWell(
-                          onTap: () {
-                            ref.read(newEventProvider.notifier).removeUrlField(index);
-                            setState(() {});
-                          },
-                          child: SvgPicture.asset(
-                            Assets.icons.delete_fill,
-                            height: 36,
-                            colorFilter: const ColorFilter.mode(
-                              AppColors.greyColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-                    broadDivider(gap: 16),
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                ref.read(newEventProvider.notifier).addUrlField();
-                setState(() {});
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.bgGrey,
-                  border: Border.all(
-                    color: AppColors.borderGrey,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+  Container categoryDropDown() {
+    var interests =
+        ref.read(homeTabControllerProvider).currentInterests.map((e) => e.activity).toList();
+    interests.sort((a, b) => a.compareTo(b));
+    for (var e in allInterests) {
+      if (!interests.contains(e.activity)) {
+        interests.add(e.activity);
+      }
+    }
+    final category = ref.watch(newEventProvider).category;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+      decoration: BoxDecoration(
+        color: AppColors.bgGrey,
+        border: Border.all(
+          color: AppColors.borderGrey,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: DropdownButtonFormField(
+        value: category,
+        menuMaxHeight: 300,
+        style: AppStyles.h4,
+        hint: Text(
+          "eg: Sports",
+          style: AppStyles.h4.copyWith(
+            color: AppColors.lightGreyColor,
+          ),
+        ),
+        dropdownColor: AppColors.bgGrey,
+        elevation: 1,
+        onSaved: (newValue) => updateCategory(category: newValue),
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsets.zero,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+          ),
+        ),
+        items: ['Please select', ...interests]
+            .map(
+              (e) => DropdownMenuItem(
+                value: e,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(Assets.icons.add_circle, height: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Add URL",
-                      style: AppStyles.h4,
-                    ),
+                    Text(e),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-          ],
-        );
-      },
+            )
+            .toList(),
+        onChanged: (value) => updateCategory(category: value),
+      ),
     );
   }
 }

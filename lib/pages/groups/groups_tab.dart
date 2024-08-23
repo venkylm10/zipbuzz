@@ -21,7 +21,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (value) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
+      onPopInvokedWithResult: (didPop,result) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
         appBar: _buildAppBar(),
         body: Padding(

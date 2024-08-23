@@ -56,7 +56,7 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void pickProfileImage() async {
-    final image = await ImageServices().pickImage(aspectRatios: [CropAspectRatioPreset.square]);
+    final image = await ImageServices().pickImage(aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1));
     if (image != null) {
       state = state.copyWith(
         profileImage: File(image.path),
@@ -66,7 +66,7 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void pickBannerImage() async {
-    final image = await ImageServices().pickImage(aspectRatios: [CropAspectRatioPreset.ratio16x9]);
+    final image = await ImageServices().pickImage(aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9));
     if (image != null) {
       state = state.copyWith(
         bannerImage: File(image.path),
