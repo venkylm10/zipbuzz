@@ -68,7 +68,8 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
     final user = ref.watch(userProvider);
     return PopScope(
       canPop: false,
-      onPopInvoked: (value) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
+      onPopInvokedWithResult: (didPop, result) =>
+          ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
