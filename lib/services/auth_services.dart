@@ -281,7 +281,7 @@ class AuthServices {
       id: 1,
       name: "BuzzMe User",
       mobileNumber: number,
-      email: '$number@gmail.com',
+      email: 'null@zipbuzz.com',
       imageUrl: _ref.read(defaultsProvider).profilePictureUrl,
       handle: "zipbuzz-null",
       isAmbassador: false,
@@ -349,7 +349,7 @@ class AuthServices {
   }
 
   String _generateRandomEmail(String uid) {
-    String email = '$uid@zbuzz.com';
+    String email = 'null@zipbuzz.com';
     return email;
   }
 
