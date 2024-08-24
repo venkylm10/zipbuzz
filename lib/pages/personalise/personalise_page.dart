@@ -392,6 +392,7 @@ class _PersonalisePageState extends ConsumerState<PersonalisePage> {
       Widget? prefixWidget,
       VoidCallback? onChanged,
       bool enabled = true}) {
+    controller.text = controller.text == "null@zipbuzz.com" ? "" : controller.text;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

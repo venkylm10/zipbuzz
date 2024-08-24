@@ -53,7 +53,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Enter OTP", style: AppStyles.h4),
+                      Text("Enter Verification Code", style: AppStyles.h4),
                       GestureDetector(
                         onTap: () {
                           ref.read(authServicesProvider).clearOTPs();
@@ -117,7 +117,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
                     ),
                     child: Center(
                       child: Text(
-                        otpSent ? "Verify OTP" : "Send OTP",
+                        otpSent ? "Verify code" : "Send code",
                         style: AppStyles.h4.copyWith(
                           color: Colors.white,
                         ),
@@ -153,7 +153,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
       final otp = (await ref.read(dioServicesProvider).sendOTP(number)).toString();
       if (AppEnvironment.environment == Environment.dev) {
         debugPrint("OTP: $otp");
-        showSnackBar(message: "OTP: $otp", duration: 5);
+        // showSnackBar(message: "OTP: $otp", duration: 5);
       }
       setState(() {
         this.otp = otp;
@@ -167,7 +167,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
     } catch (e) {
       showSnackBar(
           message:
-              "Error sending OTP to ${ref.read(personaliseControllerProvider).mobileController.text}");
+              "Error sending verification to ${ref.read(personaliseControllerProvider).mobileController.text}");
       setState(() {
         loading = false;
       });

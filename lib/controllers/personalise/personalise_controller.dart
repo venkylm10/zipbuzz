@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -73,7 +74,13 @@ class PersonaliseController {
   Future<void> initialiseLoggedInUser() async {
     ref.read(loadingTextProvider.notifier).reset();
     final user = ref.read(userProvider);
-    emailController.text = user.email;
+
+    if (user.email != 'null@zipbuzz.com') {
+      emailController.text = user.email;
+    } else {
+      emailController.text = "";
+    }
+
     if (user.mobileNumber != 'zipbuzz-null' && user.mobileNumber != '+11234567890') {
       mobileController.text = user.mobileNumber.substring(user.mobileNumber.length - 10);
       var temp = user.mobileNumber.substring(0, user.mobileNumber.length - 10);
