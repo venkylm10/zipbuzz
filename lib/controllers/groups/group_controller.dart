@@ -56,7 +56,8 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void pickProfileImage() async {
-    final image = await ImageServices().pickImage(aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1));
+    final image =
+        await ImageServices().pickImage(aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1));
     if (image != null) {
       state = state.copyWith(
         profileImage: File(image.path),
@@ -66,7 +67,8 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void pickBannerImage() async {
-    final image = await ImageServices().pickImage(aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9));
+    final image =
+        await ImageServices().pickImage(aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9));
     if (image != null) {
       state = state.copyWith(
         bannerImage: File(image.path),
@@ -189,6 +191,10 @@ class GroupController extends StateNotifier<GroupState> {
     updateLoading(false);
   }
 
+  // Edit Group
+
+  
+
   void resetController() {
     nameController.clear();
     descriptionController.clear();
@@ -200,7 +206,11 @@ class GroupController extends StateNotifier<GroupState> {
       members: [],
       isAdmin: false,
     );
-    state = state.removeFiles();
+    state = state.copyWith(
+      removingFiles: true,
+      profileImage: null,
+      bannerImage: null,
+    );
   }
 
   // Contacts
@@ -386,31 +396,6 @@ class GroupState {
     this.invitingMembers = false,
   });
 
-  GroupState removeFiles() {
-    return GroupState(
-      loading: loading,
-      groupEventsTab: groupEventsTab,
-      currentTab: currentTab,
-      creatingGroup: creatingGroup,
-      profileImage: null,
-      bannerImage: null,
-      privateGroup: privateGroup,
-      currentGroupDescription: currentGroupDescription,
-      fetchingList: fetchingList,
-      currentGroups: currentGroups,
-      currentCommunities: currentCommunities,
-      fetchingMembers: fetchingMembers,
-      admins: admins,
-      members: members,
-      currentGroupMember: currentGroupMember,
-      isAdmin: isAdmin,
-      contactSearchResult: contactSearchResult,
-      selectedContacts: selectedContacts,
-      selectedContactsSearchResult: selectedContactsSearchResult,
-      invitingMembers: invitingMembers,
-    );
-  }
-
   GroupState copyWith({
     bool? loading,
     GroupEventsTab? groupEventsTab,
@@ -432,14 +417,15 @@ class GroupState {
     List<Contact>? contactSearchResult,
     List<Contact>? selectedContactsSearchResult,
     bool? invitingMembers,
+    bool removingFiles = false,
   }) {
     return GroupState(
       loading: loading ?? this.loading,
       groupEventsTab: groupEventsTab ?? this.groupEventsTab,
       currentTab: currentTab ?? this.currentTab,
       creatingGroup: creatingGroup ?? this.creatingGroup,
-      profileImage: profileImage ?? this.profileImage,
-      bannerImage: bannerImage ?? this.bannerImage,
+      profileImage: removingFiles ? profileImage : profileImage ?? this.profileImage,
+      bannerImage: removingFiles ? bannerImage : bannerImage ?? this.bannerImage,
       privateGroup: privateGroup ?? this.privateGroup,
       currentGroupDescription: currentGroupDescription ?? this.currentGroupDescription,
       fetchingList: fetchingList ?? this.fetchingList,

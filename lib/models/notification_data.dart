@@ -55,7 +55,7 @@ class NotificationData {
       eventName: map['event_name'],
       deviceToken: map['device_token'],
       eventCategory: map['event_category'],
-      groupId: map['group_id'],
+      groupId: map['group_id'] == 'zipbuzz-null' ? 0 : map['group_id'],
       groupName: map['group_name'],
     );
   }

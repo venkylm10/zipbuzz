@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/community/community_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/pages/community/create_community_form.dart';
+import 'package:zipbuzz/pages/community/widgets/create_community_button.dart';
 import 'package:zipbuzz/pages/groups/create_group_form.dart';
 import 'package:zipbuzz/pages/groups/widgets/create_group_button.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_tab_description_list.dart';
@@ -21,24 +24,46 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop,result) => ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
+      onPopInvokedWithResult: (didPop, result) =>
+          ref.read(homeTabControllerProvider.notifier).backToHomeTab(),
       child: Scaffold(
         appBar: _buildAppBar(),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ref.watch(groupControllerProvider).creatingGroup
-              ? const CreateGroupForm()
-              : Column(
-                  children: [
-                    _buildGroupTabs(ref),
-                    const SizedBox(height: 16),
-                    const GroupTabDescriptionList(),
-                  ],
-                ),
+          child: _buildBody(ref),
         ),
-        floatingActionButton: const CreateGroupButton(),
+        floatingActionButton: _createButton(),
       ),
     );
+  }
+
+  Widget _buildBody(WidgetRef ref) {
+    return Consumer(
+      builder: (context, ref, child) {
+        if (ref.watch(groupControllerProvider).creatingGroup) {
+          return const CreateGroupForm();
+        } else if (ref.watch(communityControllerProvider).creatingCommunity) {
+          return const CreateCommunityForm();
+        }
+        return Column(
+          children: [
+            _buildGroupTabs(ref),
+            const SizedBox(height: 16),
+            const GroupTabDescriptionList(),
+          ],
+        );
+      },
+    );
+  }
+
+  Consumer _createButton() {
+    return Consumer(builder: (context, ref, child) {
+      final tab = ref.watch(groupControllerProvider).currentTab;
+      if (tab == GroupTab.communities) {
+        return const CreateCommunityButton();
+      }
+      return const CreateGroupButton();
+    });
   }
 
   AppBar _buildAppBar() {
