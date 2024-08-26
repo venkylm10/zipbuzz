@@ -9,7 +9,8 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 
 class CreateGroupForm extends ConsumerWidget {
-  const CreateGroupForm({super.key});
+  final bool editing;
+  const CreateGroupForm({super.key, this.editing = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,7 +21,7 @@ class CreateGroupForm extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildClosingButton(ref),
+              if (!editing) _buildClosingButton(ref),
               _buildFieldTitle("Group Name", true),
               CustomTextField(
                 controller: ref.read(groupControllerProvider.notifier).nameController,
@@ -33,9 +34,9 @@ class CreateGroupForm extends ConsumerWidget {
                 maxLines: 4,
               ),
               _buildFieldTitle("Group Profile Image", false),
-              _buildAddButton(ref, isProfile: true),
+              _buildGroupImage(ref, isProfile: true),
               _buildFieldTitle("Group Banner Image", false),
-              _buildAddButton(ref, isProfile: false),
+              _buildGroupImage(ref, isProfile: false),
               // _buildFieldTitle("Group url", false),
               // HyperlinkFields(
               //   nameController: TextEditingController(),
@@ -81,7 +82,11 @@ class CreateGroupForm extends ConsumerWidget {
 
   Widget createGroupButton(WidgetRef ref) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        if (editing) {
+        ref.read(groupControllerProvider.notifier).updateGroup();
+          return;
+        }
         ref.read(groupControllerProvider.notifier).createGroup();
       },
       child: Ink(
@@ -96,7 +101,7 @@ class CreateGroupForm extends ConsumerWidget {
             SvgPicture.asset(Assets.icons.save_event),
             const SizedBox(width: 8),
             Text(
-              "Save & Invite Members",
+              editing ? "Update Group" : "Save & Invite Members",
               style: AppStyles.h3.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -160,10 +165,13 @@ class CreateGroupForm extends ConsumerWidget {
     );
   }
 
-  InkWell _buildAddButton(WidgetRef ref, {bool isProfile = true}) {
+  Widget _buildGroupImage(WidgetRef ref, {bool isProfile = true}) {
     final image = isProfile
         ? ref.watch(groupControllerProvider).profileImage
         : ref.watch(groupControllerProvider).bannerImage;
+    if (image == null) {
+      return _buildAddImageButton(isProfile, ref);
+    }
     return InkWell(
       onTap: () {
         if (isProfile) {
@@ -172,8 +180,34 @@ class CreateGroupForm extends ConsumerWidget {
           ref.read(groupControllerProvider.notifier).pickBannerImage();
         }
       },
-      child: image == null
-          ? Container(
+      child: isProfile ? _buildProfileImage(image, ref) : _buildBannerImage(image, ref),
+    );
+  }
+
+  Widget _buildAddImageButton(bool isProfile, WidgetRef ref) {
+    return InkWell(
+      onTap: () {
+        if (isProfile) {
+          ref.read(groupControllerProvider.notifier).pickProfileImage();
+        } else {
+          ref.read(groupControllerProvider.notifier).pickBannerImage();
+        }
+      },
+      child: editing
+          ? Align(
+              alignment: Alignment.center,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Image.network(
+                  isProfile
+                      ? ref.read(groupControllerProvider).currentGroup!.image
+                      : ref.read(groupControllerProvider).currentGroup!.banner,
+                  height: 100,
+                  width: 100,
+                ),
+              ),
+            )
+          : Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               decoration: BoxDecoration(
                 color: AppColors.bgGrey,
@@ -193,26 +227,18 @@ class CreateGroupForm extends ConsumerWidget {
                   ),
                 ],
               ),
-            )
-          : isProfile
-              ? _buildProfileImage(image, ref)
-              : _buildBannerImage(image, ref),
+            ),
     );
   }
 
   Widget _buildBannerImage(File image, WidgetRef ref) {
     return Align(
       alignment: Alignment.center,
-      child: InkWell(
-        onTap: () {
-          ref.read(groupControllerProvider.notifier).pickProfileImage();
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.file(
-            image,
-            width: double.infinity,
-          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.file(
+          image,
+          width: double.infinity,
         ),
       ),
     );
@@ -221,17 +247,12 @@ class CreateGroupForm extends ConsumerWidget {
   Widget _buildProfileImage(File image, WidgetRef ref) {
     return Align(
       alignment: Alignment.center,
-      child: InkWell(
-        onTap: () {
-          ref.read(groupControllerProvider.notifier).pickProfileImage();
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: Image.file(
-            image,
-            height: 100,
-            width: 100,
-          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(50),
+        child: Image.file(
+          image,
+          height: 100,
+          width: 100,
         ),
       ),
     );

@@ -70,4 +70,7 @@ class DioConstants {
   static const String updateMember = '/groups/group_member_update/';
   static const String createGroupEvent = 'groups/group_event/';
   static const String getGroupEvents = '/events/fetch_group_events/';
+  static const String uploadBannerImage = '/groups/group_banner_images/';
+  static const String uploadMainImage = '/groups/group_main_images/';
+  static const String updateGroup = '/groups/group_update/';
 }

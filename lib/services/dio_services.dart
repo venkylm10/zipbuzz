@@ -21,6 +21,7 @@ import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_members_response_model.dart';
 import 'package:zipbuzz/models/groups/group_model.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
+import 'package:zipbuzz/models/groups/post/edit_group_model.dart';
 import 'package:zipbuzz/models/groups/post/invite_group_member_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/community_and_group_res.dart';
@@ -879,7 +880,7 @@ class DioServices {
 
   Future<void> updateGroupMember(int userId, int groupId, String permissionType) async {
     try {
-      await dio.post(DioConstants.deleteMember, data: {
+      await dio.post(DioConstants.updateMember, data: {
         'user_id': userId,
         'group_id': groupId,
         'permission_type': permissionType,
@@ -922,6 +923,31 @@ class DioServices {
       return events;
     } catch (e) {
       debugPrint("Error getting group events: $e");
+      rethrow;
+    }
+  }
+
+  Future<String?> uploadInvidualGroupImage(File image, {bool profileImage = true}) async {
+    try {
+      final url = profileImage ? DioConstants.uploadMainImage : DioConstants.uploadBannerImage;
+      final imageName = image.path.split('/').last;
+      final key = profileImage ? 'group_image' : 'banner_image';
+      final formData = FormData.fromMap({
+        key: await MultipartFile.fromFile(image.path, filename: imageName),
+      });
+      final res = await dio.post(url, data: formData);
+      return profileImage ? res.data['group_image_url'] : res.data['banner_image_url'];
+    } catch (e) {
+      debugPrint("Error uploading individual group image: $e");
+      return null;
+    }
+  }
+
+  Future<void> updateGroup(EditGroupModel model) async {
+    try {
+      await dio.post(DioConstants.updateGroup, data: model.toJson());
+    } catch (e) {
+      debugPrint("Error updating group: $e");
       rethrow;
     }
   }

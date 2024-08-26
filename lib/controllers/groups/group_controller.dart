@@ -8,7 +8,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
+import 'package:zipbuzz/models/groups/group_model.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
+import 'package:zipbuzz/models/groups/post/edit_group_model.dart';
 import 'package:zipbuzz/models/groups/post/invite_group_member_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
@@ -124,6 +126,72 @@ class GroupController extends StateNotifier<GroupState> {
     }
   }
 
+  void updateGroup() async {
+    try {
+      final currentGroup = state.currentGroup!;
+      updateLoading(true);
+      final name = nameController.text;
+      final description = descriptionController.text;
+      if (name.isEmpty || description.isEmpty) {
+        updateLoading(false);
+        showSnackBar(message: "Please fill all fields");
+        return;
+      }
+      String image = state.currentGroup!.image;
+      String banner = state.currentGroup!.banner;
+      if (state.profileImage != null) {
+        final url =
+            await ref.read(dioServicesProvider).uploadInvidualGroupImage(state.profileImage!);
+        image = url ?? image;
+      }
+      if (state.bannerImage != null) {
+        final url = await ref
+            .read(dioServicesProvider)
+            .uploadInvidualGroupImage(state.bannerImage!, profileImage: false);
+        banner = url ?? image;
+      }
+      final user = ref.read(userProvider);
+      final model = EditGroupModel(
+        userId: user.id,
+        groupId: currentGroup.id,
+        name: name,
+        description: description,
+        banner: banner,
+        image: image,
+        listed: currentGroup.listed,
+      );
+      await ref.read(dioServicesProvider).updateGroup(model);
+      await fetchCommunityAndGroupDescriptions();
+      final desc = state.currentGroups.firstWhere((e) => e.id == currentGroup.id);
+      state = state.copyWith(
+        currentGroupDescription: GroupDescriptionModel(
+          id: desc.id,
+          groupName: desc.name,
+          groupDescription: desc.description,
+        ),
+        currentGroup: currentGroup.copyWith(
+          name: name,
+          description: description,
+          image: image,
+          banner: banner,
+          listed: model.listed,
+        ),
+      );
+      await getGroupMembers();
+      updateLoading(false);
+      state = state.copyWith(
+        removingFiles: true,
+        profileImage: null,
+        bannerImage: null,
+      );
+      navigatorKey.currentState!.pop();
+      showSnackBar(message: "Group updated successfully");
+    } catch (e) {
+      updateLoading(false);
+      showSnackBar(message: "Failed to update group");
+    }
+  }
+
   void updateCurrentGroupDescription(GroupDescriptionModel groupDescription) {
     state = state.copyWith(currentGroupDescription: groupDescription);
   }
@@ -142,6 +210,21 @@ class GroupController extends StateNotifier<GroupState> {
       showSnackBar(message: "Error fetching groups and communities");
     }
     state = state.copyWith(fetchingList: false);
+  }
+
+  Future<void> getGroupDetails() async {
+    state = state.copyWith(loading: true);
+    try {
+      final group = await ref
+          .read(dioServicesProvider)
+          .getGroupDetails(ref.read(userProvider).id, state.currentGroupDescription!.id);
+      state = state.copyWith(currentGroup: group);
+      state = state.copyWith(loading: false);
+    } catch (e) {
+      showSnackBar(message: "Something went wrong while fetching group details");
+      debugPrint(e.toString());
+      state = state.copyWith(loading: false);
+    }
   }
 
   Future<void> getGroupMembers() async {
@@ -192,8 +275,13 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   // Edit Group
-
-  
+  void initEditGroup(GroupModel group) {
+    nameController.text = group.name;
+    descriptionController.text = group.description;
+    state = state.copyWith(
+      privateGroup: !group.listed,
+    );
+  }
 
   void resetController() {
     nameController.clear();
@@ -373,6 +461,7 @@ class GroupState {
   final List<Contact> contactSearchResult;
   final List<Contact> selectedContactsSearchResult;
   final bool invitingMembers;
+  final GroupModel? currentGroup;
   GroupState({
     this.loading = false,
     this.groupEventsTab = GroupEventsTab.upcoming,
@@ -394,6 +483,7 @@ class GroupState {
     this.contactSearchResult = const [],
     this.selectedContactsSearchResult = const [],
     this.invitingMembers = false,
+    this.currentGroup,
   });
 
   GroupState copyWith({
@@ -417,6 +507,7 @@ class GroupState {
     List<Contact>? contactSearchResult,
     List<Contact>? selectedContactsSearchResult,
     bool? invitingMembers,
+    GroupModel? currentGroup,
     bool removingFiles = false,
   }) {
     return GroupState(
@@ -441,6 +532,7 @@ class GroupState {
       invitingMembers: invitingMembers ?? this.invitingMembers,
       selectedContactsSearchResult:
           selectedContactsSearchResult ?? this.selectedContactsSearchResult,
+      currentGroup: currentGroup ?? this.currentGroup,
     );
   }
 }
