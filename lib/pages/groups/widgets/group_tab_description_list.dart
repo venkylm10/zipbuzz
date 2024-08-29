@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/group_events_screen.dart';
@@ -15,7 +16,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tab = ref.watch(groupControllerProvider).currentTab;
-    final groups = ref.watch(groupControllerProvider).currentGroups;
+    final allGroups = ref.watch(groupControllerProvider).currentGroups;
     final communities = ref.watch(groupControllerProvider).currentCommunities;
     if (ref.watch(groupControllerProvider).fetchingList) {
       return const Padding(
@@ -26,20 +27,55 @@ class GroupTabDescriptionList extends ConsumerWidget {
       );
     }
     return tab == GroupTab.communities
-        ? ListView.builder(
-            itemCount: communities.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return _buildGroupTitleCard(communities[index], ref);
-            },
-          )
-        : ListView.builder(
-            itemCount: groups.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return _buildGroupTitleCard(groups[index], ref);
-            },
-          );
+        ? _buildCommunityList(communities, ref)
+        : _buildGroupsList(tab, allGroups, ref);
+  }
+
+  Widget _buildGroupsList(GroupTab tab, List<DescriptionModel> allGroups, WidgetRef ref) {
+    final user = ref.read(userProvider);
+    final groups =
+        tab == GroupTab.all ? allGroups : allGroups.where((e) => e.creatorId == user.id).toList();
+    if (groups.isEmpty) {
+      return Center(
+        child: Text(
+          "No groups to show",
+          style: AppStyles.h4.copyWith(
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.italic,
+            color: AppColors.lightGreyColor,
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: groups.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return _buildGroupTitleCard(groups[index], ref);
+      },
+    );
+  }
+
+  Widget _buildCommunityList(List<DescriptionModel> communities, WidgetRef ref) {
+    if (communities.isEmpty) {
+      return Center(
+        child: Text(
+          "No communities to show",
+          style: AppStyles.h4.copyWith(
+            fontWeight: FontWeight.w500,
+            fontStyle: FontStyle.italic,
+            color: AppColors.lightGreyColor,
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: communities.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return _buildGroupTitleCard(communities[index], ref);
+      },
+    );
   }
 
   Widget _buildGroupTitleCard(DescriptionModel description, WidgetRef ref) {

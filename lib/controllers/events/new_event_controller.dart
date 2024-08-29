@@ -216,6 +216,18 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void updateInvites(List<Contact> contacts) {
     eventInvites = contacts;
+    final members = eventInvites
+        .map((e) => EventInviteMember(
+              image: Defaults().contactAvatarUrl,
+              phone: e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", ""),
+              name: e.displayName ?? "",
+              status: 'invited',
+            ))
+        .toList();
+    state = state.copyWith(
+      eventMembers: members,
+      attendees: members.length,
+    );
   }
 
   void resetContactSearch() {

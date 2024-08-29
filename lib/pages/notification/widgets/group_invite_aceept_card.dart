@@ -6,6 +6,7 @@ import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class GroupInviteAceeptCard extends ConsumerWidget {
   final NotificationData notification;
@@ -78,6 +79,7 @@ class GroupInviteAceeptCard extends ConsumerWidget {
               await ref.read(groupControllerProvider.notifier).acceptInvite(model);
               clicked = false;
               rebuild();
+              showSnackBar(message: "Group invite accepted for ${notification.groupName}");
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

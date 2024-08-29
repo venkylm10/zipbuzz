@@ -1,11 +1,13 @@
 class GroupMemberModel {
   final int userId;
   final String name;
+  final String phone;
   final GroupPermissionType permissionType;
 
   GroupMemberModel({
     required this.userId,
     required this.name,
+    required this.phone,
     required this.permissionType,
   });
 
@@ -21,6 +23,7 @@ class GroupMemberModel {
     return GroupMemberModel(
       userId: json['user_id'],
       name: json['username'],
+      phone: json['phone'],
       permissionType: permissionType,
     );
   }

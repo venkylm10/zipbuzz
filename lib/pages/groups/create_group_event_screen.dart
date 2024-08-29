@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/pages/events/create_event_tab.dart';
+import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
@@ -27,10 +30,34 @@ class CreateGroupEventScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: CreateEventTab(rePublish: false, groupEvent: true),
+      body: Stack(
+        children: [
+          const SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: CreateEventTab(rePublish: false, groupEvent: true),
+          ),
+          _buildLoader(),
+        ],
       ),
+    );
+  }
+
+  Widget _buildLoader() {
+    return Consumer(
+      builder: (context, ref, child) {
+        return ref.watch(groupControllerProvider).loading
+            ? Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+              )
+            : const SizedBox();
+      },
     );
   }
 }
