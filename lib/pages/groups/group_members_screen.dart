@@ -148,11 +148,16 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           color: AppColors.bgGrey,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.borderGrey),
         ),
         child: Row(
           children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundImage: NetworkImage(member.profilePicture),
+            ),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 member.name,

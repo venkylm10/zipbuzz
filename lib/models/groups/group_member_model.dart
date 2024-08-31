@@ -3,12 +3,14 @@ class GroupMemberModel {
   final String name;
   final String phone;
   final GroupPermissionType permissionType;
+  final String profilePicture;
 
   GroupMemberModel({
     required this.userId,
     required this.name,
     required this.phone,
     required this.permissionType,
+    required this.profilePicture,
   });
 
   factory GroupMemberModel.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class GroupMemberModel {
       name: json['username'],
       phone: json['phone'],
       permissionType: permissionType,
+      profilePicture: json['profile_picture'],
     );
   }
 }

@@ -84,6 +84,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
       onTap: () async {
         // Update the current group description
         if (description.type == 'group') {
+          debugPrint("Group Id: ${description.id}");
           ref.read(groupControllerProvider.notifier).resetController();
           final groupDescription = GroupDescriptionModel(
             id: description.id,
