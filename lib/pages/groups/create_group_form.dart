@@ -84,7 +84,7 @@ class CreateGroupForm extends ConsumerWidget {
     return InkWell(
       onTap: () async {
         if (editing) {
-        ref.read(groupControllerProvider.notifier).updateGroup();
+          ref.read(groupControllerProvider.notifier).updateGroup();
           return;
         }
         ref.read(groupControllerProvider.notifier).createGroup();
@@ -197,13 +197,13 @@ class CreateGroupForm extends ConsumerWidget {
           ? Align(
               alignment: Alignment.center,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(isProfile ? 50 : 12),
                 child: Image.network(
                   isProfile
                       ? ref.read(groupControllerProvider).currentGroup!.image
                       : ref.read(groupControllerProvider).currentGroup!.banner,
-                  height: 100,
-                  width: 100,
+                  height: isProfile ? 100 : null,
+                  width: isProfile ? 100 : double.infinity,
                 ),
               ),
             )
