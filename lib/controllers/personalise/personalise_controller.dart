@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
@@ -9,11 +8,15 @@ import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
+import 'package:zipbuzz/models/user/post/user_details_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/personalise/own_mobile_check_page.dart';
+import 'package:zipbuzz/pages/personalise/widgets/own_mobile_check_popup.dart';
+import 'package:zipbuzz/services/auth_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -155,11 +158,55 @@ class PersonaliseController {
 
   Future<bool> newPhone() async {
     final currentNumber = ref.read(userProvider).mobileNumber;
-    final mobileNumber = "$countryDialCode${mobileController.text.trim()}";
+    final mobileNumber = "+$countryDialCode${mobileController.text.trim()}";
     if (currentNumber == mobileNumber) {
       return true;
     }
-    return !(await ref.read(dioServicesProvider).checkPhone(mobileNumber));
+    final check = await ref.read(dioServicesProvider).checkPhone(mobileNumber);
+    if (check) {
+      try {
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Checking phone");
+        final id = await ref.read(dioServicesProvider).getIdFromPhone(mobileNumber);
+        final data =
+            await ref.read(dioServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+        final userDetails = UserDetailsModel.fromMap(data['data']);
+        ref.read(authServicesProvider).clearOTPs();
+        final currentUser = ref.read(userProvider);
+        if (currentUser.mobileNumber == 'zipbuzz-null' && userDetails.email == 'zipbuzz-null') {
+          ref.read(loadingTextProvider.notifier).reset();
+          showDialog(
+            context: navigatorKey.currentContext!,
+            barrierDismissible: true,
+            builder: (context) {
+              return OwnMobileCheckPopUp(
+                onConfirm: () {
+                  navigatorKey.currentState!.pop();
+                  navigatorKey.currentState!.push(
+                    MaterialPageRoute(
+                      builder: (_) => ConfirmOwnMobilePage(
+                        otherUserId: id,
+                        otherUserDetails: userDetails,
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+          return !check;
+        } else {
+          showSnackBar(
+            message: "Mobile number already in use. Please use another number.",
+            duration: 2,
+          );
+          return !check;
+        }
+      } catch (e) {
+        debugPrint("Error checking phone: $e");
+      }
+      ref.read(loadingTextProvider.notifier).reset();
+    }
+    return !check;
   }
 
   void sumbitInterests() async {
@@ -169,13 +216,7 @@ class PersonaliseController {
         zipcodeController.text = 95050.toString();
       }
       final newUser = await newPhone();
-      if (!newUser) {
-        showSnackBar(
-          message: "Mobile number already in use. Please use another number.",
-          duration: 2,
-        );
-        return;
-      }
+      if (!newUser) return;
       try {
         await ref
             .read(userLocationProvider.notifier)
