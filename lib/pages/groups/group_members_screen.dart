@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
+import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
 import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -22,19 +24,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
   Widget build(BuildContext context) {
     final groupDes = ref.read(groupControllerProvider).currentGroupDescription;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          groupDes!.groupName,
-          style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-        ),
-        leading: IconButton(
-          onPressed: () {
-            navigatorKey.currentState!.pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios),
-        ),
-        elevation: 0,
-      ),
+      appBar: _buildAppBar(groupDes),
       body: ref.watch(groupControllerProvider).fetchingMembers
           ? const Center(
               child: CircularProgressIndicator(
@@ -53,6 +43,47 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
               ),
             ),
       floatingActionButton: _buildInviteMembersButton(),
+    );
+  }
+
+  AppBar _buildAppBar(GroupDescriptionModel? groupDes) {
+    return AppBar(
+      title: Text(
+        groupDes!.groupName,
+        style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+      ),
+      leadingWidth: 80,
+      leading: Row(
+        children: [
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {
+              navigatorKey.currentState!.pop();
+            },
+            child: const Icon(Icons.arrow_back_ios),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Image.network(
+              groupDes.groupProfileImage,
+              width: 44,
+              height: 44,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Center(
+                    child: CupertinoActivityIndicator(),
+                  ),
+                );
+              },
+            ),
+          )
+        ],
+      ),
+      elevation: 0,
     );
   }
 

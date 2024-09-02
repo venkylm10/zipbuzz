@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
@@ -90,6 +91,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
             id: description.id,
             groupName: description.name,
             groupDescription: description.description,
+            groupProfileImage: description.profileImage,
           );
           ref
               .read(groupControllerProvider.notifier)
@@ -103,10 +105,30 @@ class GroupTabDescriptionList extends ConsumerWidget {
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.borderGrey),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: Image.network(
+                description.profileImage,
+                width: 44,
+                height: 44,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Center(
+                      child: CupertinoActivityIndicator(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 description.name,

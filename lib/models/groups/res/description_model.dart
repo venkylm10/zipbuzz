@@ -5,6 +5,7 @@ class DescriptionModel {
   final int creatorId;
   final String type;
   final bool archive;
+  final String profileImage;
 
   DescriptionModel({
     required this.id,
@@ -13,6 +14,7 @@ class DescriptionModel {
     required this.creatorId,
     required this.type,
     required this.archive,
+    required this.profileImage,
   });
 
   factory DescriptionModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class DescriptionModel {
       creatorId: json['creator_id'],
       type: json['type'],
       archive: json['archive'],
+      profileImage: json['profile_image'],
     );
   }
 }

@@ -111,7 +111,7 @@ class GroupController extends StateNotifier<GroupState> {
       final desc = state.currentGroups.firstWhere((e) => e.id == groupId);
       state = state.copyWith(
         currentGroupDescription: GroupDescriptionModel(
-            id: desc.id, groupName: desc.name, groupDescription: desc.description),
+            id: desc.id, groupName: desc.name, groupDescription: desc.description, groupProfileImage: desc.profileImage),
       );
       await getGroupMembers();
       updateLoading(false);
@@ -168,6 +168,7 @@ class GroupController extends StateNotifier<GroupState> {
           id: desc.id,
           groupName: desc.name,
           groupDescription: desc.description,
+          groupProfileImage: desc.profileImage,
         ),
         currentGroup: currentGroup.copyWith(
           name: name,
