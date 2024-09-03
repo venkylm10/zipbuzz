@@ -10,11 +10,11 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
-class GroupInviteAceeptCard extends ConsumerWidget {
+class GroupInviteCard extends ConsumerWidget {
   final NotificationData notification;
   final String time;
   final VoidCallback rebuild;
-  const GroupInviteAceeptCard({
+  const GroupInviteCard({
     super.key,
     required this.notification,
     required this.time,
