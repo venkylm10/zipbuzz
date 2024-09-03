@@ -177,11 +177,11 @@ class DioServices {
     }
   }
 
-  Future<void> updateRespondedNotification(int userId, int senderId, int eventId) async {
+  Future<void> updateRespondedNotification(int userId, int senderId, int eventId, {String notificationType = 'accepted'}) async {
     final data = {
       "user_id": userId,
       "sender_id": senderId,
-      "notification_type": 'accepted',
+      "notification_type": notificationType,
       "event_id": eventId,
     };
     try {
