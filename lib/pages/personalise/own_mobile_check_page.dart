@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/user/post/user_details_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
@@ -196,12 +197,15 @@ class _ConfirmOwnMobilePageState extends ConsumerState<ConfirmOwnMobilePage> {
       loading = true;
     });
     try {
+      final user = ref.read(userProvider);
       final userDetailsUpdateRequestModel = UserDetailsUpdateRequestModel(
           id: widget.otherUserId,
           phoneNumber: 'zipbuzz-null',
           zipcode: widget.otherUserDetails.zipcode,
           email: widget.otherUserDetails.email,
-          profilePicture: widget.otherUserDetails.profilePicture,
+          profilePicture: widget.otherUserDetails.profilePicture == 'zipbuzz-null'
+              ? user.imageUrl
+              : widget.otherUserDetails.profilePicture,
           description: widget.otherUserDetails.description,
           username: widget.otherUserDetails.username,
           isAmbassador: false,

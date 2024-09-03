@@ -209,7 +209,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
           try {
             await ref
                 .read(dioServicesProvider)
-                .updateRespondedNotification(widget.senderId, user.id, widget.eventId);
+                .updateRespondedNotification(widget.senderId, user.id, eventId: widget.eventId);
           } catch (e) {
             debugPrint(e.toString());
           }

@@ -199,7 +199,7 @@ class EventHostGuestList extends StatelessWidget {
                             .editUserStatus(event.id, member.userId, "confirm");
                         await ref
                             .read(dioServicesProvider)
-                            .updateRespondedNotification(member.userId, event.hostId, event.id);
+                            .updateRespondedNotification(member.userId, event.hostId, eventId :event.id);
                       },
                       child: buildGuestTag(member.status),
                     );
