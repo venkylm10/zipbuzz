@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
@@ -70,16 +72,30 @@ class GroupInviteAceeptCard extends ConsumerWidget {
           GestureDetector(
             onTap: () async {
               if (clicked) return;
-              final user = ref.read(userProvider);
-              final model = AcceptGroupModel(
-                groupId: notification.groupId,
-                userId: user.id,
-                groupUserAddedBy: notification.senderId,
-              );
-              await ref.read(groupControllerProvider.notifier).acceptInvite(model);
-              clicked = false;
-              rebuild();
-              showSnackBar(message: "Group invite accepted for ${notification.groupName}");
+              ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+              try {
+                final user = ref.read(userProvider);
+                final model = AcceptGroupModel(
+                  groupId: notification.groupId,
+                  userId: user.id,
+                  groupUserAddedBy: notification.senderId,
+                );
+                await ref.read(groupControllerProvider.notifier).acceptInvite(model);
+                await ref.read(dioServicesProvider).updateRespondedNotification(
+                      notification.senderId,
+                      ref.read(userProvider).id,
+                      groupId: notification.groupId,
+                      notificationType: 'group_accepted',
+                    );
+                clicked = false;
+                ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                await Future.delayed(const Duration(milliseconds: 300));
+                rebuild();
+                showSnackBar(message: "Group invite accepted for ${notification.groupName}");
+              } catch (e) {
+                ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                showSnackBar(message: "Something went wrong");
+              }
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

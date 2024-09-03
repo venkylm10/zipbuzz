@@ -185,13 +185,19 @@ class DioServices {
     }
   }
 
-  Future<void> updateRespondedNotification(int userId, int senderId, int eventId, {String notificationType = 'accepted'}) async {
+  Future<void> updateRespondedNotification(int userId, int senderId,
+      {int? eventId, String notificationType = 'accepted', int? groupId}) async {
     final data = {
       "user_id": userId,
       "sender_id": senderId,
       "notification_type": notificationType,
-      "event_id": eventId,
     };
+    if (eventId != null) {
+      data['event_id'] = eventId;
+    }
+    if (groupId != null) {
+      data['group_id'] = groupId;
+    }
     try {
       await dio.put(DioConstants.updateNotification, data: data);
     } catch (e) {
