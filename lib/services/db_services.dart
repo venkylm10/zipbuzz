@@ -267,10 +267,15 @@ class DBServices {
     try {
       final list = await _dioServices.fetchEvents(userEventsRequestModel);
       final userEvents = list;
-      final events = userEvents.map((e) {
+      final events = <EventModel>[];
+      for (var e in userEvents) {
         final res = EventResponseModel.fromMap(e);
-        return EventModel.fromEventResModel(res);
-      }).toList();
+        final event = EventModel.fromEventResModel(res);
+        if (event.status == 'nothing' && event.isPrivate) {
+          continue;
+        }
+        events.add(event);
+      }
       return events..sort((a, b) => a.date.compareTo(b.date));
     } catch (e) {
       debugPrint("Error In Getting Events: $e");

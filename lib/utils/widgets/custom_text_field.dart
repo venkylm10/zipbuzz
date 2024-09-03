@@ -19,6 +19,7 @@ class CustomTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final TextAlign textAlign;
+  final Color? borderColor;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -36,6 +37,7 @@ class CustomTextField extends StatelessWidget {
     this.focusNode,
     this.textInputAction,
     this.textAlign = TextAlign.start,
+    this.borderColor,
   });
 
   Widget? buildCounter() {
@@ -58,7 +60,7 @@ class CustomTextField extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.bgGrey,
         borderRadius: BorderRadius.circular(borderRadius!),
-        border: Border.all(color: AppColors.borderGrey),
+        border: Border.all(color: borderColor ?? AppColors.borderGrey),
       ),
       child: Row(
         crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,

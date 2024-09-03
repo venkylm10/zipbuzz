@@ -21,7 +21,7 @@ class OwnMobileCheckPopUp extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Is this your own mobile number?",
+              "Send verification code to this mobile number?",
               style: AppStyles.h4,
               textAlign: TextAlign.center,
             ),
