@@ -302,10 +302,11 @@ class DBServices {
     return [];
   }
 
-  Future<List<EventModel>> getGroupEvents(int groupId, int userId) async {
+  Future<List<EventModel>> getGroupEvents(int groupId, int userId, String month) async {
     if (box.read(BoxConstants.guestUser) == null) {
       try {
-        final list = await _dioServices.getGroupEvents(groupId, userId);
+        
+        final list = await _dioServices.getGroupEvents(groupId, userId, month);
         final events = <EventModel>[];
         for (var e in list) {
           final res = EventResponseModel.fromMap(e);

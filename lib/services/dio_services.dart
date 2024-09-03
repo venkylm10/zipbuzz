@@ -911,12 +911,12 @@ class DioServices {
     }
   }
 
-  Future<List> getGroupEvents(int groupId, int userId) async {
+  Future<List> getGroupEvents(int groupId, int userId, String month) async {
     try {
       final data = {
         'group_id': groupId,
         'user_id': userId,
-        'month': '2024-08',
+        'month': month,
       };
       final res = await dio.get(DioConstants.getGroupEvents, data: data);
       final events = res.data['data'] as List;

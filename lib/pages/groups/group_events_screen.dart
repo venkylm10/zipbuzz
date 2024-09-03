@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
+import 'package:zipbuzz/pages/groups/widgets/group_event_calendar.dart';
+import 'package:zipbuzz/pages/groups/widgets/group_event_screen_tabs.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card.dart';
-import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -28,43 +29,21 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
   @override
   void initState() {
     groupDescription = ref.read(groupControllerProvider).currentGroupDescription!;
+    ref.read(groupControllerProvider.notifier).fetchGroupEvents();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectedTab = ref.watch(groupControllerProvider).groupEventsTab;
-    final groupId = ref.watch(groupControllerProvider).currentGroupDescription!.id;
-    final userId = ref.read(userProvider).id;
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            _buildTabs(ref, selectedTab),
-            const SizedBox(height: 24),
-            Expanded(
-              child: FutureBuilder(
-                future: ref.read(dbServicesProvider).getGroupEvents(groupId, userId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (!snapshot.hasData) {
-                    return const Center(child: Text("No events found"));
-                  }
-                  final events = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: events.length,
-                    itemBuilder: (context, index) {
-                      return EventCard(event: events[index]);
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+      body: ListView(
+        children: [
+          const GroupEventScreenTabs(),
+          const SizedBox(height: 12),
+          _buildCalendar(),
+          _buildFocusedDayEvents(),
+        ],
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
@@ -89,6 +68,51 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildFocusedDayEvents() {
+    return Consumer(builder: (context, ref, child) {
+      final calendar = ref.watch(groupControllerProvider).showCalendar;
+      if (!calendar) {
+        final upcoming =
+            ref.watch(groupControllerProvider).groupEventsTab == GroupEventsTab.upcoming;
+        final events = ref.watch(groupControllerProvider).currentGroupMonthEvents.where((e) {
+          final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+          final eventDay = DateFormat('yyyy-MM-dd').parse(e.date);
+          return upcoming ? eventDay.isAfter(today) : eventDay.isBefore(today);
+        }).toList();
+        return ListView.builder(
+          itemCount: events.length,
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return EventCard(event: events[index]);
+          },
+        );
+      }
+      final eventMap = ref.watch(groupControllerProvider).currentGroupMonthEventsMap;
+      final focusedDay = ref.watch(groupControllerProvider).focusedDay;
+      final events = eventMap[focusedDay] ?? [];
+      return ListView.builder(
+        itemCount: events.length,
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return EventCard(event: events[index]);
+        },
+      );
+    });
+  }
+
+  Consumer _buildCalendar() {
+    return Consumer(builder: (context, ref, child) {
+      if (!ref.watch(groupControllerProvider).showCalendar) {
+        return const SizedBox();
+      }
+      return const GroupEventCalendar();
+    });
   }
 
   AppBar _buildAppBar() {
@@ -141,48 +165,6 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTabs(WidgetRef ref, GroupEventsTab selectedTab) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.borderGrey,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: List.generate(
-          GroupEventsTab.values.length,
-          (index) {
-            final tab = GroupEventsTab.values[index];
-            return Expanded(
-              child: InkWell(
-                onTap: () {
-                  ref.read(groupControllerProvider.notifier).changeGroupEventsTab(tab);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: selectedTab == tab ? AppColors.bgGrey : Colors.transparent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Text(
-                      GroupEventsTab.values[index].name,
-                      style: AppStyles.h5.copyWith(
-                        color: selectedTab == tab ? AppColors.primaryColor : AppColors.textColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
     );
   }
 }

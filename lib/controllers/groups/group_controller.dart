@@ -5,8 +5,10 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/models/groups/group_model.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
@@ -51,6 +53,10 @@ class GroupController extends StateNotifier<GroupState> {
 
   void updateGroupVisibility(bool isPrivate) {
     state = state.copyWith(privateGroup: isPrivate);
+  }
+
+  void toggleEventCalendarVisibility() {
+    state = state.copyWith(showCalendar: !state.showCalendar);
   }
 
   void updateLoading(bool loading) {
@@ -111,7 +117,10 @@ class GroupController extends StateNotifier<GroupState> {
       final desc = state.currentGroups.firstWhere((e) => e.id == groupId);
       state = state.copyWith(
         currentGroupDescription: GroupDescriptionModel(
-            id: desc.id, groupName: desc.name, groupDescription: desc.description, groupProfileImage: desc.profileImage),
+            id: desc.id,
+            groupName: desc.name,
+            groupDescription: desc.description,
+            groupProfileImage: desc.profileImage),
       );
       await getGroupMembers();
       updateLoading(false);
@@ -439,6 +448,41 @@ class GroupController extends StateNotifier<GroupState> {
   void clearSelectedContacts() {
     state = state.copyWith(selectedContacts: []);
   }
+
+  // Group Events
+
+  void updateFocusedDay(DateTime dateTime) {
+    state = state.copyWith(focusedDay: DateTime(dateTime.year, dateTime.month, dateTime.day));
+  }
+
+  DateTime getDateTimeFromEventData(String date) {
+    return DateFormat('yyyy-MM-dd').parse(date);
+  }
+
+  void updateEventsMap() {
+    Map<DateTime, List<EventModel>> map = {};
+    for (final event in state.currentGroupMonthEvents) {
+      final date = getDateTimeFromEventData(event.date);
+      if (map.containsKey(date)) {
+        map[date]!.add(event);
+      } else {
+        map[date] = [event];
+      }
+    }
+    for (var dayEvents in map.entries) {
+      dayEvents.value.sort((a, b) => a.date.compareTo(b.date));
+    }
+    state = state.copyWith(currentGroupMonthEventsMap: map);
+  }
+
+  Future<void> fetchGroupEvents() async {
+    final month = DateFormat('yyyy-MM').format(state.focusedDay);
+    final allEvents = await ref
+        .read(dbServicesProvider)
+        .getGroupEvents(state.currentGroupDescription!.id, ref.read(userProvider).id, month);
+    state = state.copyWith(currentGroupMonthEvents: allEvents);
+    updateEventsMap();
+  }
 }
 
 class GroupState {
@@ -463,29 +507,40 @@ class GroupState {
   final List<Contact> selectedContactsSearchResult;
   final bool invitingMembers;
   final GroupModel? currentGroup;
-  GroupState({
-    this.loading = false,
-    this.groupEventsTab = GroupEventsTab.upcoming,
-    this.currentTab = GroupTab.all,
-    this.creatingGroup = false,
-    this.profileImage,
-    this.bannerImage,
-    this.privateGroup = true,
-    this.currentGroupDescription,
-    this.fetchingList = false,
-    this.currentGroups = const [],
-    this.currentCommunities = const [],
-    this.fetchingMembers = false,
-    this.admins = const [],
-    this.members = const [],
-    this.currentGroupMember,
-    this.isAdmin = false,
-    this.selectedContacts = const [],
-    this.contactSearchResult = const [],
-    this.selectedContactsSearchResult = const [],
-    this.invitingMembers = false,
-    this.currentGroup,
-  });
+  final bool showCalendar;
+  late final DateTime focusedDay;
+  final List<EventModel> currentGroupMonthEvents;
+  late final Map<DateTime, List<EventModel>> currentGroupMonthEventsMap;
+  GroupState(
+      {this.loading = false,
+      this.groupEventsTab = GroupEventsTab.upcoming,
+      this.currentTab = GroupTab.all,
+      this.creatingGroup = false,
+      this.profileImage,
+      this.bannerImage,
+      this.privateGroup = true,
+      this.currentGroupDescription,
+      this.fetchingList = false,
+      this.currentGroups = const [],
+      this.currentCommunities = const [],
+      this.fetchingMembers = false,
+      this.admins = const [],
+      this.members = const [],
+      this.currentGroupMember,
+      this.isAdmin = false,
+      this.selectedContacts = const [],
+      this.contactSearchResult = const [],
+      this.selectedContactsSearchResult = const [],
+      this.invitingMembers = false,
+      this.currentGroup,
+      this.showCalendar = false,
+      DateTime? focusedDay,
+      this.currentGroupMonthEvents = const <EventModel>[],
+      Map<DateTime, List<EventModel>>? currentGroupMonthEventsMap}) {
+    this.focusedDay =
+        focusedDay ?? DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    this.currentGroupMonthEventsMap = currentGroupMonthEventsMap ?? {};
+  }
 
   GroupState copyWith({
     bool? loading,
@@ -510,6 +565,10 @@ class GroupState {
     bool? invitingMembers,
     GroupModel? currentGroup,
     bool removingFiles = false,
+    bool? showCalendar,
+    DateTime? focusedDay,
+    List<EventModel>? currentGroupMonthEvents,
+    Map<DateTime, List<EventModel>>? currentGroupMonthEventsMap,
   }) {
     return GroupState(
       loading: loading ?? this.loading,
@@ -534,6 +593,10 @@ class GroupState {
       selectedContactsSearchResult:
           selectedContactsSearchResult ?? this.selectedContactsSearchResult,
       currentGroup: currentGroup ?? this.currentGroup,
+      showCalendar: showCalendar ?? this.showCalendar,
+      focusedDay: focusedDay ?? this.focusedDay,
+      currentGroupMonthEvents: currentGroupMonthEvents ?? this.currentGroupMonthEvents,
+      currentGroupMonthEventsMap: currentGroupMonthEventsMap ?? this.currentGroupMonthEventsMap,
     );
   }
 }
