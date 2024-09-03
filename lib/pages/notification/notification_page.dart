@@ -150,6 +150,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             setState(() {});
           },
         );
+      case 'group_accepted' || 'group_invited':
+        return const SizedBox();
       default:
         return BroadcastNotiCard(
           notification: notification,
