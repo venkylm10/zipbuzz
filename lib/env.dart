@@ -1,8 +1,16 @@
+import 'dart:io';
+
 enum Environment { dev, prod, stage, testing }
 
 abstract class AppEnvironment {
   static late Environment _env;
   static Environment get environment => _env;
+  static late String _appVersion;
+  static String get appVersion => _appVersion;
+  static const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.abacus.zipbuzz';
+  static const appStoreUrl = 'https://apps.apple.com/in/app/buzz-me/id6477519288';
+
+  static String get getStoreUrl => Platform.isAndroid ? playStoreUrl : appStoreUrl;
 
   static late String cloudFunctionBaseUrl,
       realtimeDataBaseUrl,
@@ -13,6 +21,9 @@ abstract class AppEnvironment {
 
   static setupEnv(Environment env) {
     _env = env;
+
+    /// Update this before every release
+    _appVersion = "1.0.50";
     switch (env) {
       case Environment.dev:
         cloudFunctionBaseUrl = "https://dev.zipbuzz.me/";

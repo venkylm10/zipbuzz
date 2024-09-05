@@ -65,6 +65,18 @@ class DioServices {
     GetStorage().write(BoxConstants.accessToken, token);
   }
 
+  /// Get latest App version
+  Future<bool> isLatestAppVersion() async {
+    try {
+      final res = await dio.get(DioConstants.versionMaster);
+      final latestVersion = res.data['latest_version_data']['version_number'];
+      return latestVersion == AppEnvironment.appVersion;
+    } catch (e) {
+      debugPrint("Error getting latest version: $e");
+      return true;
+    }
+  }
+
   // send event urls
   Future<void> sendEventUrls(int eventId, List<TextEditingController> urls,
       List<TextEditingController> hyperLinkName) async {
@@ -177,7 +189,8 @@ class DioServices {
     }
   }
 
-  Future<void> updateRespondedNotification(int userId, int senderId, int eventId, {String notificationType = 'accepted'}) async {
+  Future<void> updateRespondedNotification(int userId, int senderId, int eventId,
+      {String notificationType = 'accepted'}) async {
     final data = {
       "user_id": userId,
       "sender_id": senderId,
