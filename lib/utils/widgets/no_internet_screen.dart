@@ -20,8 +20,8 @@ Stream<bool> checkInternetStream() async* {
 }
 
 Future<bool> checkInternet() async {
+  if (kIsWeb) return true;
   try {
-    if (kIsWeb) return true;
     final res = await InternetAddress.lookup('www.google.com');
     return res.isNotEmpty && res[0].rawAddress.isNotEmpty;
   } catch (e) {

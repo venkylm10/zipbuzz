@@ -1,5 +1,6 @@
 class DioConstants {
   static const String getTokenApi = "/users/user_token/";
+  static const String versionMaster = "users/version_master/";
   static const String onboardingDetails = "/users/onboard_images/";
   static const String createUser = "/users/create_user/";
   static const String getUserId = "/users/sign_in/";

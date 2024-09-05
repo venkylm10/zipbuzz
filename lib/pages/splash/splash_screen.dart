@@ -11,6 +11,7 @@ import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
+import 'package:zipbuzz/pages/splash/widgets/version_check_pop_up.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
@@ -72,6 +73,17 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
 
   void buildNextScreen() async {
     bool? login = box.read(BoxConstants.login) as bool?;
+    final isLatest = await ref.read(dioServicesProvider).isLatestAppVersion();
+    if (!isLatest) {
+      await showDialog(
+        context: navigatorKey.currentContext!,
+        barrierDismissible: false,
+        builder: (context) {
+          return const LatestVersionCheckPopUp();
+        },
+      );
+      return;
+    }
     await Future.delayed(const Duration(milliseconds: 500));
     await DioServices.getToken();
     await updateInterestsData();

@@ -53,7 +53,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Enter Verification Code", style: AppStyles.h4),
+                      Text("Enter verification code", style: AppStyles.h4),
                       GestureDetector(
                         onTap: () {
                           ref.read(authServicesProvider).clearOTPs();
@@ -93,6 +93,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
                                   }
                                   FocusScope.of(context).nextFocus();
                                 },
+                                borderColor: AppColors.primaryColor,
                               ),
                             ),
                           );
