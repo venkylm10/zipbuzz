@@ -111,6 +111,7 @@ class Images {
   final art_museum = 'assets/images/events/art_museum.png';
   final no_events = 'assets/images/events/no_events.png';
   final default_contact_avatar = 'assets/images/events/default_contact_avatar.png';
+  final no_events_image = 'assets/images/events/no_event_image.png';
 
   // profile
   final profile = 'assets/images/profile.png';
