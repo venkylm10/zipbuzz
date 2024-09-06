@@ -62,22 +62,12 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     super.dispose();
   }
 
-  void onTapRowCategory(String interest) {
-    final selectedCategory = ref.read(homeTabControllerProvider).selectedCategory;
-    if (selectedCategory != interest) {
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: interest);
-    } else {
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
-    }
-    setState(() {});
-  }
-
-  void toggleHomeCategory(String interest) async {
+  void _toggleHomeCategory(String interest) async {
     await ref.read(homeTabControllerProvider.notifier).toggleHomeCategory(interest);
-    scrollDownInterests();
+    _scrollDownInterests();
   }
 
-  void scrollDownInterests() {
+  void _scrollDownInterests() {
     ref.read(homeTabControllerProvider.notifier).bodyScrollController.animateTo(width * 1.1,
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
@@ -107,7 +97,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildInterests(context),
+                  _buildInterests(context),
                   homeTabController.queryController.text.trim().isNotEmpty
                       ? const EventsSearchResults()
                       : const SizedBox(),
@@ -156,7 +146,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     );
   }
 
-  Widget buildInterests(BuildContext context) {
+  Widget _buildInterests(BuildContext context) {
     final isSearching = ref.watch(homeTabControllerProvider).isSearching;
     return AnimatedOpacity(
       key: ref.read(homeTabControllerProvider.notifier).categoryPageKey,
@@ -247,7 +237,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               child: HomeInterestChip(
                 interest: interest,
                 toggleHomeCategory: () {
-                  toggleHomeCategory(interest.activity);
+                  _toggleHomeCategory(interest.activity);
                 },
               ),
             );
