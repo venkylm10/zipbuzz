@@ -392,6 +392,7 @@ class NewEvent extends StateNotifier<EventModel> {
       } else {
         bannerUrl = interestBanners[state.category]!;
       }
+      final user = ref.read(userProvider);
       state = state.copyWith(bannerPath: bannerUrl);
       debugPrint("New Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
@@ -407,9 +408,9 @@ class NewEvent extends StateNotifier<EventModel> {
         venue: state.location,
         startTime: state.startTime,
         endTime: state.endTime.isEmpty ? "null" : state.endTime,
-        hostId: state.hostId,
-        hostName: state.hostName,
-        hostPic: state.hostPic,
+        hostId: user.id,
+        hostName: user.name,
+        hostPic: user.imageUrl,
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: eventInvites.length,

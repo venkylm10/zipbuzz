@@ -302,7 +302,7 @@ class EditEventController extends StateNotifier<EventModel> {
       },
     ).toList();
   }
-  
+
   String getDateFromDateTime(DateTime dateTime) {
     return DateFormat('yyyy-MM-dd').format(dateTime);
   }
@@ -377,6 +377,7 @@ class EditEventController extends StateNotifier<EventModel> {
       state = state.copyWith(
         privateGuestList: state.isPrivate ? state.privateGuestList : false,
       );
+      final user = ref.read(userProvider);
       final eventPostModel = EditEventRequestModel(
         eventId: eventId,
         banner: bannerUrl,
@@ -387,9 +388,9 @@ class EditEventController extends StateNotifier<EventModel> {
         venue: state.location,
         startTime: state.startTime,
         endTime: state.endTime.isEmpty ? "null" : state.endTime,
-        hostId: state.hostId,
-        hostName: state.hostName,
-        hostPic: state.hostPic,
+        hostId: user.id,
+        hostName: user.name,
+        hostPic: user.imageUrl,
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: state.attendees,

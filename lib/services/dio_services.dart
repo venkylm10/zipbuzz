@@ -67,6 +67,8 @@ class DioServices {
 
   /// Get latest App version
   Future<bool> isLatestAppVersion() async {
+    // TODO: Remove this return
+    return true;
     try {
       final res = await dio.get(DioConstants.versionMaster);
       final latestVersion = res.data['latest_version_data']['version_number'];

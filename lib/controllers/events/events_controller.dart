@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,10 +45,18 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     var month = day.month.toString();
     month = month.length == 1 ? '0$month' : month;
     final year = day.year.toString();
+    late final List<String> interests;
+    if (ref.read(homeTabControllerProvider).isSearching) {
+      interests =
+          ref.read(homeTabControllerProvider).queryInterests.map((e) => e.activity).toList();
+    } else {
+      interests = ref.read(userProvider).interests;
+    }
     final userEventsRequestModel = UserEventsRequestModel(
-        userId: ref.read(userProvider).id,
-        month: "$year-$month",
-        category: ref.read(userProvider).interests);
+      userId: ref.read(userProvider).id,
+      month: "$year-$month",
+      category: interests,
+    );
     final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
     state = state.copyWith(currentMonthEvents: list);
     adjustEventData();
