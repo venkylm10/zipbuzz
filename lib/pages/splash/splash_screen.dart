@@ -73,6 +73,8 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
 
   void buildNextScreen() async {
     bool? login = box.read(BoxConstants.login) as bool?;
+    await Future.delayed(const Duration(milliseconds: 500));
+    await DioServices.getToken();
     final isLatest = await ref.read(dioServicesProvider).isLatestAppVersion();
     if (!isLatest) {
       await showDialog(
@@ -84,8 +86,6 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
       );
       return;
     }
-    await Future.delayed(const Duration(milliseconds: 500));
-    await DioServices.getToken();
     await updateInterestsData();
     if (login != null && login) {
       await getLoggedInUserData();

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
-import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card.dart';
 import 'package:zipbuzz/pages/home/widgets/home_calendar.dart';
 import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/utils/tabs.dart';
 
 class HomeUpcomingEvents extends StatelessWidget {
   const HomeUpcomingEvents({super.key});
