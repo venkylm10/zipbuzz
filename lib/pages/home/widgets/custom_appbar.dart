@@ -97,59 +97,9 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                 );
               }),
               actions: [
-                InkWell(
-                  onTap: () async {
-                    widget.toggleSearching();
-                  },
-                  child: SvgPicture.asset(Assets.icons.search, height: 40),
-                ),
+                _searchIcon(),
                 const SizedBox(width: 12),
-                InkWell(
-                  onTap: () async {
-                    final events = ref.read(eventsControllerProvider).currentMonthEvents;
-                    await navigatorKey.currentState!.pushNamed(NotificationPage.id);
-                    ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
-                    ref.read(eventsControllerProvider.notifier).fetchEvents();
-                  },
-                  child: SizedBox(
-                    height: 44,
-                    width: 40,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          bottom: 0,
-                          child: SvgPicture.asset(
-                            Assets.icons.notification,
-                            height: 40,
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          top: -6,
-                          child: Consumer(
-                            builder: (context, ref, child) {
-                              final notificationCount = ref.watch(userProvider).notificationCount;
-                              return notificationCount == 0
-                                  ? const SizedBox()
-                                  : Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: AppColors.primaryColor, width: 4),
-                                      ),
-                                      child: Text(
-                                        ref.read(userProvider).notificationCount.toString(),
-                                        style: AppStyles.h6.copyWith(color: AppColors.primaryColor),
-                                      ),
-                                    );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                _notificationBellIcon(),
                 const SizedBox(width: 12),
               ],
             ),
@@ -203,76 +153,191 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                               ],
                             ),
                           ),
-                          Consumer(builder: (context, ref, child) {
-                            final interests = ref.watch(homeTabControllerProvider).queryInterests;
-                            return SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: List.generate(
-                                  interests.length,
-                                  (index) {
-                                    final first = index == 0;
-                                    final last = index == interests.length - 1;
-                                    final interest = interests[index];
-                                    return Padding(
-                                      padding: EdgeInsets.only(
-                                          left: first ? 12 : 0, right: last ? 12 : 0),
-                                      child: Stack(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 8),
-                                            margin: const EdgeInsets.all(4)
-                                                .copyWith(top: 10, right: 10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: Text(
-                                              interest.activity,
-                                              style: AppStyles.h5.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: Container(
-                                              padding: const EdgeInsets.all(2),
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  ref
-                                                      .read(homeTabControllerProvider.notifier)
-                                                      .toggleQueryInterest(interest);
-                                                },
-                                                child: const Icon(
-                                                  Icons.cancel_outlined,
-                                                  color: AppColors.primaryColor,
-                                                  size: 16,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            );
-                          }),
-                          const SizedBox(height: 24),
+                          _buildQueryInterests(),
+                          _buildClearText(),
                         ],
                       ),
                     ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Consumer _buildClearText() {
+    return Consumer(builder: (context, ref, child) {
+      final inQuery = ref.watch(homeTabControllerProvider).inQuery;
+      if (!inQuery) return const SizedBox(height: 24);
+      return Align(
+        alignment: Alignment.center,
+        child: GestureDetector(
+          onTap: () {
+            ref.read(homeTabControllerProvider.notifier).resetInQuery();
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "clear",
+              style: AppStyles.h5.copyWith(color: Colors.white),
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Consumer _buildQueryInterests() {
+    return Consumer(builder: (context, ref, child) {
+      final interests = ref.watch(homeTabControllerProvider).queryInterests;
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(
+            interests.length,
+            (index) {
+              final first = index == 0;
+              final last = index == interests.length - 1;
+              final interest = interests[index];
+              return Padding(
+                padding: EdgeInsets.only(left: first ? 12 : 0, right: last ? 12 : 0),
+                child: Stack(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      margin: const EdgeInsets.all(4).copyWith(top: 10, right: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        interest.activity,
+                        style: AppStyles.h5.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            ref
+                                .read(homeTabControllerProvider.notifier)
+                                .toggleQueryInterest(interest);
+                            ref.read(homeTabControllerProvider.notifier).updateInQuery();
+                          },
+                          child: const Icon(
+                            Icons.cancel_outlined,
+                            color: AppColors.primaryColor,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    });
+  }
+
+  InkWell _notificationBellIcon() {
+    return InkWell(
+      onTap: () async {
+        final events = ref.read(eventsControllerProvider).currentMonthEvents;
+        await navigatorKey.currentState!.pushNamed(NotificationPage.id);
+        ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
+        ref.read(eventsControllerProvider.notifier).fetchEvents();
+      },
+      child: SizedBox(
+        height: 44,
+        width: 40,
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              child: SvgPicture.asset(
+                Assets.icons.notification,
+                height: 40,
+              ),
+            ),
+            Positioned(
+              right: 0,
+              top: -6,
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final notificationCount = ref.watch(userProvider).notificationCount;
+                  return notificationCount == 0
+                      ? const SizedBox()
+                      : Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.primaryColor, width: 4),
+                          ),
+                          child: Text(
+                            ref.read(userProvider).notificationCount.toString(),
+                            style: AppStyles.h6.copyWith(color: AppColors.primaryColor),
+                          ),
+                        );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _searchIcon() {
+    return GestureDetector(
+      onTap: () {
+        widget.toggleSearching();
+      },
+      child: SizedBox(
+        height: 44,
+        width: 40,
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              child: SvgPicture.asset(
+                Assets.icons.search,
+                height: 40,
+              ),
+            ),
+            Positioned(
+              right: 2,
+              top: 6,
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final inQuery = ref.watch(homeTabControllerProvider).inQuery;
+                  return !inQuery
+                      ? const SizedBox()
+                      : Container(
+                          height: 8,
+                          width: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -288,6 +353,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
           style: AppStyles.h4.copyWith(color: Colors.white),
           onChanged: (value) {
             ref.read(homeTabControllerProvider.notifier).refresh();
+            ref.read(homeTabControllerProvider.notifier).updateInQuery();
           },
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
@@ -306,6 +372,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
             suffixIcon: InkWell(
               onTap: () {
                 ref.read(homeTabControllerProvider.notifier).zipcodeControler.clear();
+                ref.read(homeTabControllerProvider.notifier).updateInQuery();
                 ref.read(homeTabControllerProvider.notifier).refresh();
               },
               child: Icon(
@@ -362,6 +429,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
           style: AppStyles.h4.copyWith(color: Colors.white),
           onChanged: (value) {
             ref.read(homeTabControllerProvider.notifier).refresh();
+            ref.read(homeTabControllerProvider.notifier).updateInQuery();
           },
           decoration: InputDecoration(
             hintText: 'Search for an event',
@@ -379,6 +447,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
             suffixIcon: InkWell(
               onTap: () {
                 ref.read(homeTabControllerProvider.notifier).queryController.clear();
+                ref.read(homeTabControllerProvider.notifier).updateInQuery();
                 ref.read(homeTabControllerProvider.notifier).refresh();
               },
               child: Icon(

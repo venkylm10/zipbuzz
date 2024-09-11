@@ -37,7 +37,6 @@ class HomeUpcomingEvents extends StatelessWidget {
         final visible = ref.watch(homeTabControllerProvider).homeCalenderVisible;
         if (visible) return const SizedBox();
         final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
-        final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
         if (upcomingEvents.isEmpty) {
           return const NoUpcomingEventsBanner();
         }
@@ -48,12 +47,11 @@ class HomeUpcomingEvents extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: upcomingEvents.map((e) {
-              final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-              var display = containsQuery;
-              if (selectedCategory.isNotEmpty) {
-                display = display && e.category == selectedCategory;
+              if (!ref.watch(homeTabControllerProvider).inQuery) {
+                return EventCard(event: e);
               }
-              if (!display) return const SizedBox();
+              final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
+              if (!containsQuery) return const SizedBox();
               return EventCard(event: e);
             }).toList(),
           ),

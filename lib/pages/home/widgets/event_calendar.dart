@@ -68,7 +68,6 @@ class EventCalendar extends ConsumerWidget {
 
   CalendarBuilders<dynamic> customCalendarBuilders(WidgetRef ref) {
     final eventMaps = ref.watch(eventsControllerProvider).eventsMap;
-    final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
     return CalendarBuilders(
       headerTitleBuilder: (context, day) {
         updateCurrentDay(ref, day);
@@ -179,18 +178,11 @@ class EventCalendar extends ConsumerWidget {
         final dayEvents = eventMaps[formatedDay] ?? [];
         final formatedEvents = (dayEvents.length > 6 ? dayEvents.sublist(0, 6) : dayEvents);
         final displayEvents = formatedEvents.where((e) {
-          // final containsInterest =
-          //     ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
-          final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-          // var display = containsInterest && containsQuery;
-          var display = containsQuery;
-
-          if (selectedCategory.isNotEmpty) {
-            display = display && e.category == selectedCategory;
+          if (!ref.watch(homeTabControllerProvider).inQuery) {
+            return true;
           }
-          return display;
+          return ref.read(homeTabControllerProvider.notifier).containsQuery(e);
         }).toList();
-
         return SizedBox(
           height: 6,
           width: 36,

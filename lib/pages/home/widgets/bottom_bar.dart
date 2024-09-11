@@ -39,7 +39,6 @@ class BottomBar extends ConsumerWidget {
         await Future.delayed(const Duration(milliseconds: 100));
         if (tab == AppTabs.home) {
           ref.read(homeTabControllerProvider.notifier).updateSearching(false);
-          ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
           ref.read(newEventProvider.notifier).resetNewEvent();
           ref.read(homeTabControllerProvider.notifier).queryController.clear();
           ref.read(homeTabControllerProvider.notifier).refresh();

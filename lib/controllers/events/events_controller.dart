@@ -46,16 +46,21 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     month = month.length == 1 ? '0$month' : month;
     final year = day.year.toString();
     late final List<String> interests;
-    if (ref.read(homeTabControllerProvider).isSearching) {
+    late String zipcode;
+    if (ref.read(homeTabControllerProvider).inQuery) {
+      debugPrint("Query Active");
       interests =
           ref.read(homeTabControllerProvider).queryInterests.map((e) => e.activity).toList();
+      zipcode = ref.read(homeTabControllerProvider.notifier).zipcodeControler.text.trim();
     } else {
       interests = ref.read(userProvider).interests;
+      zipcode = ref.read(userProvider).zipcode;
     }
     final userEventsRequestModel = UserEventsRequestModel(
       userId: ref.read(userProvider).id,
       month: "$year-$month",
       category: interests,
+      zipcode: zipcode,
     );
     final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
     state = state.copyWith(currentMonthEvents: list);
@@ -164,27 +169,6 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
 
   String getformatedDate(DateTime date) {
     return DateFormat('yyyy-MM-dd').format(date);
-  }
-
-  Future<void> updateFavoriteEvents() async {
-    if (!state.showingFavorites) {
-      state = state.copyWith(showingFavorites: true);
-      final day = currentDay;
-      var month = day.month.toString();
-      month = month.length == 1 ? '0$month' : month;
-      final year = day.year.toString();
-      final userEventsRequestModel = UserEventsRequestModel(
-        userId: ref.read(userProvider).id,
-        month: "$year-$month",
-        category: ref.read(userProvider).interests,
-      );
-      final list = await ref.read(dbServicesProvider).getUserFavoriteEvents(userEventsRequestModel);
-      state = state.copyWith(currentMonthEvents: list);
-      adjustEventData();
-      return;
-    }
-    state = state.copyWith(showingFavorites: false);
-    fetchEvents();
   }
 
   Future<void> addEventToFavorites(int eventId) async {

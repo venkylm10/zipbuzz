@@ -46,10 +46,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     super.dispose();
   }
 
-  void _toggleHomeCategory(String interest) async {
-    await ref.read(homeTabControllerProvider.notifier).toggleHomeCategory(interest);
-  }
-
   @override
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
@@ -75,9 +71,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildInterests(context),
-                  homeTabController.queryController.text.trim().isNotEmpty
-                      ? const EventsSearchResults()
-                      : const SizedBox(),
+                  // homeTabController.queryController.text.trim().isNotEmpty
+                  //     ? const EventsSearchResults()
+                  //     : const SizedBox(),
                   const SizedBox(height: 8),
                   const HomeUpcomingEvents(),
                   const SizedBox(height: 200)
@@ -214,7 +210,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               child: HomeInterestChip(
                 interest: interest,
                 toggleHomeCategory: () {
-                  _toggleHomeCategory(interest.activity);
                 },
               ),
             );

@@ -12,7 +12,6 @@ class FocusedEvents extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final focusedEvents = ref.watch(eventsControllerProvider).focusedEvents;
-        final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: focusedEvents.isNotEmpty
@@ -28,9 +27,6 @@ class FocusedEvents extends StatelessWidget {
                           ref.read(homeTabControllerProvider.notifier).containsQuery(e);
                       // var display = containsInterest && containsQuery;
                       var display = containsQuery;
-                      if (selectedCategory.isNotEmpty) {
-                        display = display && e.category == selectedCategory;
-                      }
                       if (!display) return const SizedBox();
                       return EventCard(event: e, focusedEvent: true);
                     },

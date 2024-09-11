@@ -23,7 +23,6 @@ class HomeTabController extends StateNotifier<HomeTabState> {
             index: 0,
             selectedTab: AppTabs.home,
             previousOffset: 0,
-            selectedCategory: '',
             interestViewType: InterestViewType.user,
             currentInterests: [],
             queryInterests: [],
@@ -59,17 +58,12 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   }
 
   void updateSelectedTab(AppTabs tab) {
-    ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
     state = state.copyWith(selectedTab: tab);
   }
 
   Future<bool> backToHomeTab() async {
     state = state.copyWith(selectedTab: AppTabs.home);
     return false;
-  }
-
-  void selectCategory({String category = ''}) {
-    state = state.copyWith(selectedCategory: category);
   }
 
   bool updatePageIndex(BuildContext context) {
@@ -133,9 +127,11 @@ class HomeTabController extends StateNotifier<HomeTabState> {
       final interests =
           state.queryInterests.where((element) => element.activity != interest.activity).toList();
       state = state.copyWith(queryInterests: interests);
+      updateInQuery();
       return;
     }
     addQueryInterest(interest);
+    updateInQuery();
   }
 
   void addQueryInterest(InterestModel interest) {
@@ -152,11 +148,20 @@ class HomeTabController extends StateNotifier<HomeTabState> {
 
   bool containsQuery(EventModel event) {
     final query = queryController.text.trim().toLowerCase();
-    final res = event.title.toLowerCase().contains(query) ||
+    var res = event.title.toLowerCase().contains(query) ||
         event.about.toLowerCase().contains(query) ||
         event.hostName.toLowerCase().contains(query) ||
         event.category.toLowerCase().contains(query);
+    if (state.queryInterests.isNotEmpty) {
+      res = res && state.queryInterests.any((interest) => event.category == interest.activity);
+    }
     return res;
+  }
+
+  void resetInQuery() {
+    queryController.clear();
+    zipcodeControler.clear();
+    state = state.copyWith(inQuery: false, queryInterests: []);
   }
 
   void refresh() {
@@ -190,18 +195,18 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     );
   }
 
-  Future<void> toggleHomeCategory(String interest) async {
-    updateRowInterests(true);
-    if (state.selectedCategory != interest) {
-      selectCategory(category: interest);
-      await Future.delayed(const Duration(milliseconds: 500));
-    } else {
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
-    }
-  }
-
   void toggleHomeCalenderVisibility() {
     state = state.copyWith(homeCalenderVisible: !state.homeCalenderVisible);
+  }
+
+  void updateInQuery() {
+    if (queryController.text.trim().isNotEmpty ||
+        zipcodeControler.text.trim().isNotEmpty ||
+        state.queryInterests.isNotEmpty) {
+      state = state.copyWith(inQuery: true);
+      return;
+    }
+    state = state.copyWith(inQuery: false);
   }
 }
 
@@ -210,10 +215,10 @@ class HomeTabState {
   int index;
   AppTabs selectedTab;
   double previousOffset;
-  String selectedCategory;
   InterestViewType interestViewType;
   List<InterestModel> currentInterests;
   List<InterestModel> queryInterests;
+  bool inQuery;
   bool homeCalenderVisible;
 
   HomeTabState({
@@ -221,11 +226,11 @@ class HomeTabState {
     required this.index,
     required this.selectedTab,
     required this.previousOffset,
-    required this.selectedCategory,
     required this.interestViewType,
     required this.currentInterests,
     required this.queryInterests,
     this.homeCalenderVisible = false,
+    this.inQuery = false,
   });
 
   HomeTabState copyWith({
@@ -233,23 +238,23 @@ class HomeTabState {
     int? index,
     AppTabs? selectedTab,
     double? previousOffset,
-    String? selectedCategory,
     InterestViewType? interestViewType,
     List<InterestModel>? currentInterests,
     List<InterestModel>? queryInterests,
     bool? rowInterests,
     bool? homeCalenderVisible,
+    bool? inQuery,
   }) {
     return HomeTabState(
       isSearching: isSearching ?? this.isSearching,
       index: index ?? this.index,
       selectedTab: selectedTab ?? this.selectedTab,
       previousOffset: previousOffset ?? this.previousOffset,
-      selectedCategory: selectedCategory ?? this.selectedCategory,
       interestViewType: interestViewType ?? this.interestViewType,
       currentInterests: currentInterests ?? this.currentInterests,
       homeCalenderVisible: homeCalenderVisible ?? this.homeCalenderVisible,
       queryInterests: queryInterests ?? this.queryInterests,
+      inQuery: inQuery ?? this.inQuery,
     );
   }
 }

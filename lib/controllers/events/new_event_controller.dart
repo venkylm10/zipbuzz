@@ -515,7 +515,6 @@ class NewEvent extends StateNotifier<EventModel> {
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
       final interests =
           ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
       if (!interests) {
