@@ -16,6 +16,5 @@ void main() async {
   ]);
   AppEnvironment.setupEnv(Environment.prod);
   await GetStorage.init();
-  // await DioServices.getToken();
   runApp(const ProviderScope(child: MyApp()));
 }
