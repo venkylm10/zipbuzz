@@ -58,6 +58,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
         }
         group = ref.watch(groupControllerProvider).currentGroup!;
         return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               _buildCoverImages(),
@@ -71,7 +72,6 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                 style: AppStyles.h3.copyWith(fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
-              _buildDescription(),
               _buildDetailTab("Members", onTap: () {
                 ref.read(groupControllerProvider.notifier).getGroupMembers();
                 navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
@@ -159,23 +159,6 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
         ),
       );
     });
-  }
-
-  Container _buildDescription() {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppColors.bgGrey,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.borderGrey),
-      ),
-      child: Text(
-        group.description,
-        style: AppStyles.h4,
-      ),
-    );
   }
 
   AppBar _buildAppBar() {
@@ -282,8 +265,8 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
       child: Stack(
         children: [
           Positioned(
-            left: 16,
-            right: 16,
+            left: 0,
+            right: 0,
             child: Container(
               height: 120,
               decoration: BoxDecoration(
@@ -306,7 +289,6 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                 shape: BoxShape.circle,
                 image: DecorationImage(
                   image: NetworkImage(group.image),
-                  fit: BoxFit.cover,
                 ),
               ),
             ),

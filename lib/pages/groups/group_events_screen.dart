@@ -10,6 +10,7 @@ import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_event_calendar.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_event_screen_tabs.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card.dart';
+import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -81,6 +82,20 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
           final eventDay = DateFormat('yyyy-MM-dd').parse(e.date);
           return upcoming ? eventDay.isAfter(today) : eventDay.isBefore(today);
         }).toList();
+        if (events.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 44),
+            child: NoUpcomingEventsBanner(
+              title: "No events ${upcoming ? "Upcoming " : "Past "}events lined up",
+              subtitle: "Your group events will show up here",
+              onTap: (ref) {
+                navigatorKey.currentState!.push(
+                  NavigationController.getTransition(const CreateGroupEventScreen()),
+                );
+              },
+            ),
+          );
+        }
         return ListView.builder(
           itemCount: events.length,
           padding: EdgeInsets.zero,

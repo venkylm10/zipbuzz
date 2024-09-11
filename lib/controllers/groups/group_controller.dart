@@ -95,21 +95,34 @@ class GroupController extends StateNotifier<GroupState> {
         showSnackBar(message: "Please fill all fields");
         return;
       }
-      if (state.profileImage == null || state.bannerImage == null) {
-        updateLoading(false);
-        showSnackBar(message: "Please add profile and banner image");
-        return;
+      var profileUrl = "";
+      var bannerUrl = "";
+      // TODO: Update default banner url here
+      if (state.profileImage == null) {
+        profileUrl =
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpvTpq1qpxBAIdvC2qU730hg1ccggEZJFOBQ&s";
+      } else {
+        final url = await ref
+            .read(dioServicesProvider)
+            .uploadInvidualGroupImage(state.profileImage!, profileImage: true);
+        profileUrl = url ?? 'zipbuzz-null';
       }
-      final urls = await ref
-          .read(dioServicesProvider)
-          .addGroupImages(state.profileImage!, state.bannerImage!);
+      if (state.bannerImage == null) {
+        bannerUrl =
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpvTpq1qpxBAIdvC2qU730hg1ccggEZJFOBQ&s";
+      } else {
+        final url = await ref
+            .read(dioServicesProvider)
+            .uploadInvidualGroupImage(state.bannerImage!, profileImage: false);
+        bannerUrl = url ?? 'zipbuzz-null';
+      }
       final user = ref.read(userProvider);
       final model = CreateGroupModel(
         userId: user.id,
         groupName: name,
         groupDescription: description,
-        groupImage: urls['group_image_url'] ?? 'zipbuzz-null',
-        groupBanner: urls['group_banner_url'] ?? 'zipbuzz-null',
+        groupImage: profileUrl,
+        groupBanner: bannerUrl,
         groupListed: !state.privateGroup,
       );
       final groupId = await ref.read(dbServicesProvider).createGroup(model);
@@ -117,10 +130,11 @@ class GroupController extends StateNotifier<GroupState> {
       final desc = state.currentGroups.firstWhere((e) => e.id == groupId);
       state = state.copyWith(
         currentGroupDescription: GroupDescriptionModel(
-            id: desc.id,
-            groupName: desc.name,
-            groupDescription: desc.description,
-            groupProfileImage: desc.profileImage),
+          id: desc.id,
+          groupName: desc.name,
+          groupDescription: desc.description,
+          groupProfileImage: desc.profileImage,
+        ),
       );
       await getGroupMembers();
       updateLoading(false);

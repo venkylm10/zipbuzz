@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
-import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
-import 'package:zipbuzz/utils/tabs.dart';
 
 class NoUpcomingEventsBanner extends ConsumerWidget {
+  final String title;
+  final String subtitle;
+  final Function(WidgetRef) onTap;
+  final String buttonLabel;
   const NoUpcomingEventsBanner({
     super.key,
+    this.title = "No events lined up",
+    this.subtitle = "Your registered events will show up here",
+    required this.onTap,
+    this.buttonLabel = "Create Event",
   });
 
   @override
@@ -19,33 +24,41 @@ class NoUpcomingEventsBanner extends ConsumerWidget {
         Positioned(
           left: 0,
           right: 0,
-          top: 260,
+          top: 220,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              InkWell(
-                onTap: () {
-                  ref
-                      .read(homeTabControllerProvider.notifier)
-                      .updateSelectedTab(AppTabs.events);
-                  ref.read(eventTabControllerProvider.notifier).updateIndex(2);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xffFF9635),
-                        const Color(0xffFF0099).withOpacity(0.65),
-                      ],
+              Column(
+                children: [
+                  Text(
+                    title,
+                    style: AppStyles.h3.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    subtitle,
+                    style: AppStyles.h4.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 16),
+                  InkWell(
+                    onTap: () => onTap(ref),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color(0xffFF9635),
+                            const Color(0xffFF0099).withOpacity(0.65),
+                          ],
+                        ),
+                      ),
+                      child: Text(
+                        buttonLabel,
+                        style: AppStyles.h4.copyWith(color: Colors.white),
+                      ),
                     ),
                   ),
-                  child: Text(
-                    "Create Event",
-                    style: AppStyles.h4.copyWith(color: Colors.white),
-                  ),
-                ),
+                ],
               ),
             ],
           ),

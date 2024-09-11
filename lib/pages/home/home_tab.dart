@@ -14,7 +14,6 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/custom_appbar.dart';
-import 'package:zipbuzz/pages/home/widgets/event_search_results.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -209,8 +208,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               padding: EdgeInsets.only(left: first ? 12 : 0, right: last ? 12 : 0),
               child: HomeInterestChip(
                 interest: interest,
-                toggleHomeCategory: () {
-                },
+                toggleHomeCategory: () {},
               ),
             );
           },

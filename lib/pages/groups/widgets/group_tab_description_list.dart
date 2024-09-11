@@ -6,6 +6,7 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/group_events_screen.dart';
+import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -37,14 +38,15 @@ class GroupTabDescriptionList extends ConsumerWidget {
     final groups =
         tab == GroupTab.all ? allGroups : allGroups.where((e) => e.creatorId == user.id).toList();
     if (groups.isEmpty) {
-      return Center(
-        child: Text(
-          "No groups to show",
-          style: AppStyles.h4.copyWith(
-            fontWeight: FontWeight.w500,
-            fontStyle: FontStyle.italic,
-            color: AppColors.lightGreyColor,
-          ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 44),
+        child: NoUpcomingEventsBanner(
+          title: "No groups to show",
+          subtitle: "Create a group to get started",
+          onTap: (ref) {
+            ref.read(groupControllerProvider.notifier).toggleCreatingGroup();
+          },
+          buttonLabel: "Create Group",
         ),
       );
     }
@@ -59,14 +61,15 @@ class GroupTabDescriptionList extends ConsumerWidget {
 
   Widget _buildCommunityList(List<DescriptionModel> communities, WidgetRef ref) {
     if (communities.isEmpty) {
-      return Center(
-        child: Text(
-          "No communities to show",
-          style: AppStyles.h4.copyWith(
-            fontWeight: FontWeight.w500,
-            fontStyle: FontStyle.italic,
-            color: AppColors.lightGreyColor,
-          ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 44),
+        child: NoUpcomingEventsBanner(
+          title: "No communities to show",
+          subtitle: "Create a community to get started",
+          onTap: (ref) {
+            ref.read(groupControllerProvider.notifier).toggleCreatingGroup();
+          },
+          buttonLabel: "Create Community",
         ),
       );
     }
