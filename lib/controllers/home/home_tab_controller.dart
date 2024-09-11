@@ -26,6 +26,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
             selectedCategory: '',
             interestViewType: InterestViewType.user,
             currentInterests: [],
+            queryInterests: [],
           ),
         );
 
@@ -39,8 +40,8 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   ];
 
   final pageScrollController = ScrollController();
-  final bodyScrollController = ScrollController();
   final queryController = TextEditingController();
+  final zipcodeControler = TextEditingController();
   final categoryPageKey = GlobalKey();
   final rowCategoryKey = GlobalKey();
   final homeButtonsKey = GlobalKey();
@@ -99,7 +100,10 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     state = state.copyWith(currentInterests: interests);
   }
 
-  bool containsInterest(String activity) {
+  bool containsInterest(String activity, {bool querySheet = false}) {
+    if (querySheet) {
+      return state.queryInterests.any((interest) => interest.activity == activity);
+    }
     return state.currentInterests.any((interest) => interest.activity == activity);
   }
 
@@ -113,13 +117,31 @@ class HomeTabController extends StateNotifier<HomeTabState> {
       state = state.copyWith(currentInterests: interests);
       return;
     }
+
     final contains = ref.read(userProvider).interests.contains(interest.activity);
     if (!contains) {
       var interests = ref.read(userProvider).interests;
       interests.add(interest.activity);
       ref.read(userProvider).copyWith(interests: interests);
     }
+
     addInterest(interest);
+  }
+
+  void toggleQueryInterest(InterestModel interest) {
+    if (containsInterest(interest.activity, querySheet: true)) {
+      final interests =
+          state.queryInterests.where((element) => element.activity != interest.activity).toList();
+      state = state.copyWith(queryInterests: interests);
+      return;
+    }
+    addQueryInterest(interest);
+  }
+
+  void addQueryInterest(InterestModel interest) {
+    final interests = state.queryInterests;
+    interests.add(interest);
+    state = state.copyWith(queryInterests: interests);
   }
 
   void addInterest(InterestModel interest) {
@@ -191,6 +213,7 @@ class HomeTabState {
   String selectedCategory;
   InterestViewType interestViewType;
   List<InterestModel> currentInterests;
+  List<InterestModel> queryInterests;
   bool homeCalenderVisible;
 
   HomeTabState({
@@ -201,6 +224,7 @@ class HomeTabState {
     required this.selectedCategory,
     required this.interestViewType,
     required this.currentInterests,
+    required this.queryInterests,
     this.homeCalenderVisible = false,
   });
 
@@ -212,6 +236,7 @@ class HomeTabState {
     String? selectedCategory,
     InterestViewType? interestViewType,
     List<InterestModel>? currentInterests,
+    List<InterestModel>? queryInterests,
     bool? rowInterests,
     bool? homeCalenderVisible,
   }) {
@@ -224,6 +249,7 @@ class HomeTabState {
       interestViewType: interestViewType ?? this.interestViewType,
       currentInterests: currentInterests ?? this.currentInterests,
       homeCalenderVisible: homeCalenderVisible ?? this.homeCalenderVisible,
+      queryInterests: queryInterests ?? this.queryInterests,
     );
   }
 }

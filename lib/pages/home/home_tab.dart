@@ -27,7 +27,6 @@ class HomeTab extends ConsumerStatefulWidget {
 class _HomeTabState extends ConsumerState<HomeTab> {
   double topPadding = 0;
   bool isMounted = true;
-  double width = 0;
 
   @override
   void initState() {
@@ -38,21 +37,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         if (check && mounted) setState(() {});
       });
     }
-    ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(
-      () {
-        if (!isMounted) return;
-        final check =
-            ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset == 0 &&
-                ref.read(homeTabControllerProvider).isSearching;
-        if (check) {
-          if (isMounted) ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
-          if (isMounted) ref.read(homeTabControllerProvider.notifier).updateSearching(false);
-        }
-        if (width == 0) {
-          width = MediaQuery.of(context).size.width * 0.6;
-        }
-      },
-    );
     super.initState();
   }
 
@@ -64,12 +48,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   void _toggleHomeCategory(String interest) async {
     await ref.read(homeTabControllerProvider.notifier).toggleHomeCategory(interest);
-    _scrollDownInterests();
-  }
-
-  void _scrollDownInterests() {
-    ref.read(homeTabControllerProvider.notifier).bodyScrollController.animateTo(width * 1.1,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
@@ -93,7 +71,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           children: [
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              controller: homeTabController.bodyScrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
