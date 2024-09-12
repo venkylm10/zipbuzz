@@ -9,8 +9,10 @@ import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/home/activities_sheet.dart';
 import 'package:zipbuzz/pages/home/widgets/home_interest_chip.dart';
 import 'package:zipbuzz/pages/home/widgets/home_upcoming_events.dart';
+import 'package:zipbuzz/pages/splash/widgets/version_check_pop_up.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/custom_appbar.dart';
@@ -53,6 +55,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         }
       },
     );
+    _checkLatestVersion();
     super.initState();
   }
 
@@ -60,6 +63,22 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   void dispose() {
     isMounted = false;
     super.dispose();
+  }
+
+  void _checkLatestVersion() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (ref.read(userProvider).id == 3) return;
+    final isLatest = await ref.read(dioServicesProvider).isLatestAppVersion();
+    if (!isLatest) {
+      await showDialog(
+        context: navigatorKey.currentContext!,
+        barrierDismissible: false,
+        builder: (context) {
+          return const LatestVersionCheckPopUp();
+        },
+      );
+      return;
+    }
   }
 
   void _toggleHomeCategory(String interest) async {
