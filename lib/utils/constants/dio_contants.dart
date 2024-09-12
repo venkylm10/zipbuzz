@@ -50,6 +50,7 @@ class DioConstants {
   static const String sendInviteNotification = 'users/invite_notification/';
   static const String sendBroadcastMessage = 'users/broadcast_message/';
   static const String sendMobileOTP = '/users/verify_mobile/';
+  static const String traceLog = "/helpers/create_log/";
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

@@ -16,10 +16,12 @@ import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
+import 'package:zipbuzz/models/trace_log_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/models/user/post/user_details_model.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
@@ -102,7 +104,7 @@ class DBServices {
   }
 
   Future<int> createEvent(EventPostModel eventPostModel) async {
-    return await _dioServices.postEvent(eventPostModel);
+    return await _dioServices.createEvent(eventPostModel);
   }
 
   Future<void> editEvent(EditEventRequestModel editEventRequestModel) async {
@@ -143,6 +145,13 @@ class DBServices {
         throw "FAILED TO CREATE USER";
       }
     } catch (e) {
+      const trace = TraceLogModel(
+        userId: 0,
+        actionCode: ActionCode.NewUser,
+        actionDetails: "Failed to create user",
+        successFlag: false,
+      );
+      _ref.read(dioServicesProvider).traceLog(trace);
       debugPrint("FAILED TO CREATE USER $e");
       throw "FAILED TO CREATE USER $e";
     }
@@ -305,7 +314,6 @@ class DBServices {
   Future<List<EventModel>> getGroupEvents(int groupId, int userId, String month) async {
     if (box.read(BoxConstants.guestUser) == null) {
       try {
-        
         final list = await _dioServices.getGroupEvents(groupId, userId, month);
         final events = <EventModel>[];
         for (var e in list) {

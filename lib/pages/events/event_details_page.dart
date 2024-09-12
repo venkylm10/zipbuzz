@@ -11,6 +11,7 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
+import 'package:zipbuzz/models/trace_log_model.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_app_bar.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_attendee_numbers.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_banner.dart';
@@ -20,6 +21,7 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
+import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
 import 'package:zipbuzz/utils/widgets/custom_hyper_linked_textspan.dart';
@@ -113,6 +115,15 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     if (widget.isPreview || widget.rePublish || widget.clone) {
       return;
     }
+    final user = ref.read(userProvider);
+    final trace = TraceLogModel(
+      userId: user.id,
+      actionCode: ActionCode.ViewEvent,
+      actionDetails: "Event Details Page",
+      eventId: widget.event.id,
+      successFlag: true,
+    );
+    ref.read(dioServicesProvider).traceLog(trace);
     await ref.read(dbServicesProvider).getEventRequestMembers(widget.event.id);
     final members = await ref
         .read(dioServicesProvider)

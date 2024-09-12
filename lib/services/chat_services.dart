@@ -40,7 +40,8 @@ class ChatServices {
           eventId: event.id, messageId: messageId, message: newMessage.toMap());
       debugPrint("MESSAGE SENT");
       _ref.read(dioServicesProvider).increaseCommentCount(event.id);
-      final host = await _ref.read(notificationServicesProvider).getToken() == event.userDeviceToken;
+      final host =
+          await _ref.read(notificationServicesProvider).getToken() == event.userDeviceToken;
       if (!host) {
         NotificationServices.sendMessageNotification(
           event.title,

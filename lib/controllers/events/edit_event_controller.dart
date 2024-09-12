@@ -15,7 +15,6 @@ import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/storage_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
@@ -366,10 +365,7 @@ class EditEventController extends StateNotifier<EventModel> {
       var bannerUrl = state.bannerPath;
       if (bannerImage != null) {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading banner image...");
-        bannerUrl = await ref
-                .read(storageServicesProvider)
-                .uploadEventBanner(id: ref.read(userProvider).id, file: bannerImage!) ??
-            state.bannerPath;
+        bannerUrl = await ref.read(dioServicesProvider).postEventBanner(bannerImage!);
       }
       state = state.copyWith(bannerPath: bannerUrl);
       debugPrint("Updated Event: ${state.toMap()}");

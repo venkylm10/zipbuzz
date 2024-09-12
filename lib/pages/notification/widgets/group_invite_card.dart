@@ -5,7 +5,9 @@ import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
+import 'package:zipbuzz/models/trace_log_model.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
@@ -92,8 +94,27 @@ class GroupInviteCard extends ConsumerWidget {
                 await Future.delayed(const Duration(milliseconds: 300));
                 rebuild();
                 showSnackBar(message: "Group invite accepted for ${notification.groupName}");
+                final trace = TraceLogModel(
+                  userId: user.id,
+                  actionCode: ActionCode.GroupJoin,
+                  actionDetails:
+                      "Group invite accepted for ${notification.groupName}, id: ${notification.groupId}",
+                  groupId: model.groupId,
+                  successFlag: true,
+                );
+                ref.read(dioServicesProvider).traceLog(trace);
               } catch (e) {
                 ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                final user = ref.read(userProvider);
+                final trace = TraceLogModel(
+                  userId: user.id,
+                  actionCode: ActionCode.GroupJoin,
+                  actionDetails:
+                      "Failed invite accepted for ${notification.groupName}, id: ${notification.groupId}",
+                  groupId: notification.groupId,
+                  successFlag: false,
+                );
+                ref.read(dioServicesProvider).traceLog(trace);
                 showSnackBar(message: "Something went wrong");
               }
             },
