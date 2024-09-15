@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
-import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
@@ -141,11 +139,13 @@ class GroupController extends StateNotifier<GroupState> {
       toggleCreatingGroup();
       navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
       await Future.delayed(const Duration(seconds: 1));
+      resetController();
       showSnackBar(message: "Group created successfully!. Invite members to group");
     } catch (e) {
       updateLoading(false);
+      toggleCreatingGroup();
       debugPrint(e.toString());
-      showSnackBar(message: "Failed to create group : $e");
+      showSnackBar(message: "Failed to create group!");
     }
   }
 
@@ -317,8 +317,6 @@ class GroupController extends StateNotifier<GroupState> {
       admins: [],
       members: [],
       isAdmin: false,
-    );
-    state = state.copyWith(
       removingFiles: true,
       profileImage: null,
       bannerImage: null,

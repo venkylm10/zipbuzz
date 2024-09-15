@@ -45,17 +45,9 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     var month = day.month.toString();
     month = month.length == 1 ? '0$month' : month;
     final year = day.year.toString();
-    late final List<String> interests;
-    late String zipcode;
-    if (ref.read(homeTabControllerProvider).inQuery) {
-      debugPrint("Query Active");
-      interests =
-          ref.read(homeTabControllerProvider).queryInterests.map((e) => e.activity).toList();
-      zipcode = ref.read(homeTabControllerProvider.notifier).zipcodeControler.text.trim();
-    } else {
-      interests = ref.read(userProvider).interests;
-      zipcode = ref.read(userProvider).zipcode;
-    }
+    final interests =
+        ref.read(homeTabControllerProvider).queryInterests.map((e) => e.activity).toList();
+    final zipcode = ref.read(homeTabControllerProvider.notifier).zipcodeControler.text.trim();
     final userEventsRequestModel = UserEventsRequestModel(
       userId: ref.read(userProvider).id,
       month: "$year-$month",
