@@ -418,7 +418,11 @@ class GroupController extends StateNotifier<GroupState> {
         members.add(member);
         await ref.read(dioServicesProvider).inviteToGroup(member);
       }
-      state = state.copyWith(invitingMembers: false);
+      state = state.copyWith(
+        invitingMembers: false,
+        selectedContacts: [],
+        selectedContactsSearchResult: [],
+      );
       navigatorKey.currentState!.pop();
     } catch (e) {
       debugPrint(e.toString());
