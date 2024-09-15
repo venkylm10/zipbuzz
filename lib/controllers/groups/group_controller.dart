@@ -452,8 +452,11 @@ class GroupController extends StateNotifier<GroupState> {
         members: !isAdmin ? state.members.where((e) => e.userId != userId).toList() : null,
         admins: isAdmin ? state.admins.where((e) => e.userId != userId).toList() : null,
       );
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (_) => false);
+      fetchCommunityAndGroupDescriptions();
     } catch (e) {
       debugPrint(e.toString());
+      showSnackBar(message: "Failed to exit group");
     }
   }
 

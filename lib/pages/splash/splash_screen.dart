@@ -67,8 +67,8 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
       return;
     }
     ref.read(contactsServicesProvider).updateAllContacts();
-    ref.read(eventsControllerProvider.notifier).fetchEvents();
     ref.read(homeTabControllerProvider.notifier).cloneUserDataToQuery();
+    ref.read(eventsControllerProvider.notifier).fetchEvents();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 

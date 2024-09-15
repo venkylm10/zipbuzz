@@ -84,11 +84,12 @@ class GroupInviteCard extends ConsumerWidget {
                 );
                 await ref.read(groupControllerProvider.notifier).acceptInvite(model);
                 await ref.read(dioServicesProvider).updateRespondedNotification(
-                      notification.senderId,
                       ref.read(userProvider).id,
+                      notification.senderId,
                       groupId: notification.groupId,
                       notificationType: 'group_accepted',
                     );
+                debugPrint("Group invite accepted for ${notification.groupName}");
                 clicked = false;
                 ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                 await Future.delayed(const Duration(milliseconds: 300));

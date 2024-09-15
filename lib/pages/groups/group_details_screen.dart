@@ -114,19 +114,25 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
     });
   }
 
-  Container _buildExitButton() {
-    return Container(
-      margin: const EdgeInsets.only(top: 32, bottom: 16),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primaryColor),
-      ),
-      child: Text(
-        "Exit from Group",
-        style: AppStyles.h4.copyWith(
-          color: AppColors.primaryColor,
-          fontWeight: FontWeight.w500,
+  Widget _buildExitButton() {
+    return GestureDetector(
+      onTap: () {
+        final userId = ref.read(userProvider).id;
+        ref.read(groupControllerProvider.notifier).deleteGroupMember(userId);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(top: 32, bottom: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.primaryColor),
+        ),
+        child: Text(
+          "Exit from Group",
+          style: AppStyles.h4.copyWith(
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
