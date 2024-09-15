@@ -177,18 +177,21 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
       ),
       elevation: 0,
       actions: [
-        IconButton(
-          onPressed: () {
-            try {
-              ref.read(groupControllerProvider.notifier).initEditGroup(group);
-              navigatorKey.currentState!
-                  .push(NavigationController.getTransition(const EditGroupScreen()));
-            } catch (e) {
-              showSnackBar(message: "Please wait till the details are fetched and try again");
-            }
-          },
-          icon: const Icon(Icons.edit_rounded, color: AppColors.primaryColor),
-        )
+        Consumer(builder: (context, ref, child) {
+          if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
+          return IconButton(
+            onPressed: () {
+              try {
+                ref.read(groupControllerProvider.notifier).initEditGroup(group);
+                navigatorKey.currentState!
+                    .push(NavigationController.getTransition(const EditGroupScreen()));
+              } catch (e) {
+                showSnackBar(message: "Please wait till the details are fetched and try again");
+              }
+            },
+            icon: const Icon(Icons.edit_rounded, color: AppColors.primaryColor),
+          );
+        })
       ],
     );
   }
