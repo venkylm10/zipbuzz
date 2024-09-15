@@ -53,6 +53,19 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
                   onChanged: (val) {
                     ref.read(groupControllerProvider.notifier).updateContactSearchResult(val);
                   },
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      ref.read(groupControllerProvider.notifier).contactSearchController.clear();
+                      ref.read(groupControllerProvider.notifier).updateContactSearchResult("");
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 12, top: 12),
+                      child: Icon(
+                        Icons.cancel_outlined,
+                        color: AppColors.greyColor,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 _buildSearchResult(),
@@ -114,8 +127,7 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
       final searchResults = ref.watch(groupControllerProvider).contactSearchResult;
       final selectedContactsSearchResult =
           ref.watch(groupControllerProvider).selectedContactsSearchResult;
-      final result = [...selectedContactsSearchResult, ...searchResults];
-      if (result.isEmpty) {
+      if (searchResults.isEmpty) {
         return Align(
           alignment: Alignment.center,
           child: Padding(
@@ -130,15 +142,51 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
           ),
         );
       }
-      return ListView.builder(
-        itemCount: result.length,
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          final contact = result[index];
-          return _buildMemberCard(contact);
-        },
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (selectedContactsSearchResult.isNotEmpty)
+            Text(
+              "Selected Members",
+              style: AppStyles.h5.copyWith(
+                color: AppColors.greyColor,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          if (selectedContactsSearchResult.isNotEmpty) const SizedBox(height: 4),
+          if (selectedContactsSearchResult.isNotEmpty)
+            ListView.builder(
+              itemCount: selectedContactsSearchResult.length,
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final contact = selectedContactsSearchResult[index];
+                return _buildMemberCard(contact);
+              },
+            ),
+          if (selectedContactsSearchResult.isNotEmpty) const SizedBox(height: 8),
+          Text(
+            "Search results",
+            style: AppStyles.h5.copyWith(
+              color: AppColors.greyColor,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          ListView.builder(
+            itemCount: searchResults.length,
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              final contact = searchResults[index];
+              return _buildMemberCard(contact);
+            },
+          )
+        ],
       );
     });
   }

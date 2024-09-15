@@ -139,13 +139,13 @@ class GroupController extends StateNotifier<GroupState> {
       await getGroupMembers();
       updateLoading(false);
       toggleCreatingGroup();
-      navigatorKey.currentState!.push(
-        NavigationController.getTransition(const AddGroupMembers()),
-      );
-      showSnackBar(message: "Group created successfully");
+      navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+      await Future.delayed(const Duration(seconds: 1));
+      showSnackBar(message: "Group created successfully!. Invite members to group");
     } catch (e) {
       updateLoading(false);
-      showSnackBar(message: "Failed to create group");
+      debugPrint(e.toString());
+      showSnackBar(message: "Failed to create group : $e");
     }
   }
 
