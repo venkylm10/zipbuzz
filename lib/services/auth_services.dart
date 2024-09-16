@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/trace_log_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
@@ -19,6 +20,7 @@ import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/firebase_providers.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/services/notification_services.dart';
+import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -97,11 +99,18 @@ class AuthServices {
                   deviceToken: box.read(BoxConstants.deviceToken),
                 ),
               );
+          final trace = TraceLogModel(
+            userId: id!,
+            actionCode: ActionCode.NewUser,
+            actionDetails: "New user created",
+            successFlag: true,
+          );
           // storing id
           box.write(BoxConstants.id, id);
           box.write(BoxConstants.login, true);
-
-          await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+          _ref.read(dioServicesProvider).traceLog(trace);
+          await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
+          await _ref.read(personaliseControllerProvider).initialiseLoggedInUser();
           navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
           return;
         } else {
@@ -216,11 +225,18 @@ class AuthServices {
               deviceToken: await FirebaseMessaging.instance.getToken() ?? "zipbuzz-null",
             ),
           );
-
+      final trace = TraceLogModel(
+        userId: id!,
+        actionCode: ActionCode.NewUser,
+        actionDetails: "New user created",
+        successFlag: true,
+      );
+      _ref.read(dioServicesProvider).traceLog(trace);
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
-      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
       _ref.read(loadingTextProvider.notifier).reset();
       navigatorKey.currentState!.pushNamedAndRemoveUntil(SplashScreen.id, (route) => false);
       return;
@@ -238,6 +254,7 @@ class AuthServices {
             ),
           );
       await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
       // storing id
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
@@ -309,15 +326,24 @@ class AuthServices {
       debugPrint("USER CREATED SUCCESSFULLY");
       _ref.read(loadingTextProvider.notifier).reset();
       final id = await _ref.read(dioServicesProvider).getIdFromPhone(number);
+      final trace = TraceLogModel(
+        userId: id!,
+        actionCode: ActionCode.NewUser,
+        actionDetails: "New user created",
+        successFlag: true,
+      );
+      _ref.read(dioServicesProvider).traceLog(trace);
       box.write(BoxConstants.id, id);
       box.write(BoxConstants.login, true);
-      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id));
       _ref.read(loadingTextProvider.notifier).reset();
       _ref.read(personaliseControllerProvider).updateShowMobile(false);
       _ref.read(personaliseControllerProvider).updateShowEmailId(true);
       navigatorKey.currentState!.pushNamedAndRemoveUntil(PersonalisePage.id, (route) => false);
       return;
     } else {
+      await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: userId));
       await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: userId));
       box.write(BoxConstants.id, userId);
       box.write(BoxConstants.login, true);

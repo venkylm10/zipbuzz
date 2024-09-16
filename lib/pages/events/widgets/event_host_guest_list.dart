@@ -13,6 +13,24 @@ final guestListTagProvider = StateProvider<String>((ref) => "Invited");
 final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);
 
 class EventHostGuestList extends StatelessWidget {
+
+   String formatName(String fullName) {
+    // Split the full name into parts (assuming a first and last name)
+    List<String> nameParts = fullName.split(' ');
+
+    // Ensure that there are at least two parts (first and last name)
+    if (nameParts.length < 2) {
+      return fullName; // Return the original name if there's no last name
+    }
+
+    // Extract the first name and the first letter of the last name
+    String firstName = nameParts[0];
+    String lastInitial = nameParts[1][0]; // First character of the last name
+
+    // Return the formatted name: "FirstName L."
+    return '$firstName $lastInitial.';
+  }
+
   const EventHostGuestList({
     super.key,
     required this.event,
@@ -125,6 +143,7 @@ class EventHostGuestList extends StatelessWidget {
 
   Column buildRequestMemberCard(EventRequestMember member, BuildContext context, int index,
       {bool isPending = false, bool isLast = false}) {
+    String formattedName = formatName(member.name);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,15 +168,16 @@ class EventHostGuestList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      member.name,
+                      // member.name,
+                      formattedName,
                       style: AppStyles.h5,
                     ),
-                    if (member.phone != 'zipbuzz-null')
-                      Text(
-                        member.phone,
-                        style: AppStyles.h6
-                            .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
-                      ),
+                    // if (member.phone != 'zipbuzz-null')
+                      // Text(
+                      //   member.phone,
+                      //   style: AppStyles.h6
+                      //       .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
+                      // ),
                   ],
                 ),
               ),
@@ -199,7 +219,7 @@ class EventHostGuestList extends StatelessWidget {
                             .editUserStatus(event.id, member.userId, "confirm");
                         await ref
                             .read(dioServicesProvider)
-                            .updateRespondedNotification(member.userId, event.hostId, event.id);
+                            .updateRespondedNotification(member.userId, event.hostId, eventId :event.id);
                       },
                       child: buildGuestTag(member.status),
                     );

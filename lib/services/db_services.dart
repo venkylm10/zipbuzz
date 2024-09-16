@@ -13,12 +13,15 @@ import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
 import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
+import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
+import 'package:zipbuzz/models/trace_log_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/services/location_services.dart';
+import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/models/user/post/user_details_model.dart';
 import 'package:zipbuzz/models/user/post/user_post_model.dart';
@@ -101,7 +104,7 @@ class DBServices {
   }
 
   Future<int> createEvent(EventPostModel eventPostModel) async {
-    return await _dioServices.postEvent(eventPostModel);
+    return await _dioServices.createEvent(eventPostModel);
   }
 
   Future<void> editEvent(EditEventRequestModel editEventRequestModel) async {
@@ -142,6 +145,13 @@ class DBServices {
         throw "FAILED TO CREATE USER";
       }
     } catch (e) {
+      const trace = TraceLogModel(
+        userId: 0,
+        actionCode: ActionCode.NewUser,
+        actionDetails: "Failed to create user",
+        successFlag: false,
+      );
+      _ref.read(dioServicesProvider).traceLog(trace);
       debugPrint("FAILED TO CREATE USER $e");
       throw "FAILED TO CREATE USER $e";
     }
@@ -158,7 +168,7 @@ class DBServices {
   Future<void> getOwnUserData(UserDetailsRequestModel userDetailsRequestModel) async {
     final events = _ref.read(eventsControllerProvider).currentMonthEvents;
     try {
-      final res = await _dioServices.getUserData(userDetailsRequestModel);
+      final res = await _dioServices.getUserData(userDetailsRequestModel.userId);
       if (res['status'] == "success") {
         final userDetails = UserDetailsModel.fromMap(res['data']);
         var homeTabInterests = <InterestModel>[];
@@ -204,6 +214,44 @@ class DBServices {
       showSnackBar(message: e.toString());
     }
     _ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
+  }
+
+  Future<UserModel> getUserModel(int userId) async {
+    try {
+      final res = await _dioServices.getUserData(userId);
+      final userDetails = UserDetailsModel.fromMap(res['data']);
+      var homeTabInterests = <InterestModel>[];
+      final interests = (res['interests'] as List).map((e) {
+        final interest = InterestModel.fromMap(e);
+        homeTabInterests.add(interest);
+        return interest.activity;
+      }).toList();
+      final userSocials = UserSocialsModel.fromMap(res['socials']);
+      final updatedUser = UserModel(
+        id: userId,
+        name: userDetails.username,
+        mobileNumber: userDetails.phoneNumber,
+        email: userDetails.email,
+        imageUrl: userDetails.profilePicture,
+        about: userDetails.description,
+        zipcode: userDetails.zipcode,
+        interests: interests,
+        isAmbassador: userDetails.isAmbassador,
+        instagramId: userSocials.instagram,
+        linkedinId: userSocials.linkedin,
+        twitterId: userSocials.twitter,
+        country: _ref.read(userLocationProvider).country,
+        notificationCount: userDetails.notificationCount,
+        handle: 'zipbuzz-null',
+        eventsHosted: 0,
+        rating: 0,
+        city: 'zipbuzz-null',
+      );
+      return updatedUser;
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
   }
 
   Future<void> postUserInterests(UserInterestPostModel userInterestPostModel) async {
@@ -263,6 +311,25 @@ class DBServices {
     return [];
   }
 
+  Future<List<EventModel>> getGroupEvents(int groupId, int userId, String month) async {
+    if (box.read(BoxConstants.guestUser) == null) {
+      try {
+        final list = await _dioServices.getGroupEvents(groupId, userId, month);
+        final events = <EventModel>[];
+        for (var e in list) {
+          final res = EventResponseModel.fromMap(e);
+          events.add(EventModel.fromEventResModel(res));
+        }
+        return events..sort((a, b) => a.date.compareTo(b.date));
+      } catch (e) {
+        debugPrint("Error In Getting Events: $e");
+        return [];
+      }
+    }
+    // return guestEventsList;
+    return [];
+  }
+
   Future<EventModel> getEventDetails(int eventId) async {
     final e = await _dioServices.getEventDetails(eventId);
     final res = EventResponseModel.fromMap(e);
@@ -294,5 +361,14 @@ class DBServices {
   Future<void> getEventRequestMembers(int eventId) async {
     final requests = await _dioServices.getEventRequestMembers(eventId);
     _ref.read(eventRequestMembersProvider.notifier).update((state) => requests);
+  }
+
+  // Groups
+
+  Future<int> createGroup(CreateGroupModel model) async {
+    debugPrint("CREATING GROUP");
+    final groupId = await _dioServices.createGroup(model);
+    debugPrint("GROUP CREATED");
+    return groupId;
   }
 }

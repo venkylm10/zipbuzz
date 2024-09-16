@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/pages/events/widgets/create_event_urls.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -17,15 +20,20 @@ import 'package:zipbuzz/pages/events/widgets/event_type_and_capacity.dart';
 import 'package:zipbuzz/pages/events/widgets/add_event_photos.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
-class CreateEvent extends ConsumerStatefulWidget {
-  const CreateEvent({super.key, this.rePublish = false});
-  final bool? rePublish;
+class CreateEventTab extends ConsumerStatefulWidget {
+  const CreateEventTab({
+    super.key,
+    this.rePublish = false,
+    this.groupEvent = false,
+  });
+  final bool rePublish;
+  final bool groupEvent;
 
   @override
-  ConsumerState<CreateEvent> createState() => _CreateEventState();
+  ConsumerState<CreateEventTab> createState() => _CreateEventState();
 }
 
-class _CreateEventState extends ConsumerState<CreateEvent> {
+class _CreateEventState extends ConsumerState<CreateEventTab> {
   String category = allInterests.first.activity;
   late TextEditingController nameController;
   late TextEditingController descriptionController;
@@ -49,7 +57,7 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
 
   @override
   Widget build(BuildContext context) {
-    newIsPrivate = widget.rePublish!
+    newIsPrivate = widget.rePublish
         ? ref.watch(editEventControllerProvider).isPrivate
         : ref.watch(newEventProvider).isPrivate;
     return Padding(
@@ -60,7 +68,6 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           const CreateEventForm(),
           broadDivider(),
           const AddHosts(),
-          // broadDivider(),
           const SizedBox(height: 16),
           const EventTypeAndCapacity(),
           broadDivider(),
@@ -69,39 +76,41 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
           CreateEventUrls(rebuild: () {
             setState(() {});
           }),
-          InkWell(
-            onTap: () {
-              showPreview();
-            },
-            child: Ink(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(Assets.icons.save_event),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Save & Invite Guests",
-                    style: AppStyles.h3.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _showAndInviteGuestsButton(),
           const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Future<Color> getDominantColor() async {
+  InkWell _showAndInviteGuestsButton() {
+    return InkWell(
+      onTap: () => _showPreview(),
+      child: Ink(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.primaryColor,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(Assets.icons.save_event),
+            const SizedBox(width: 8),
+            Text(
+              "Save & Invite Guests",
+              style: AppStyles.h3.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<Color> _getDominantColor() async {
     try {
       final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
       Color dominantColor = Colors.green;
@@ -124,26 +133,41 @@ class _CreateEventState extends ConsumerState<CreateEvent> {
     }
   }
 
-  void showPreview() async {
+  void _showPreview() async {
     if (ref.read(newEventProvider.notifier).validateNewEvent()) {
-      try {
-        final dominantColor = await getDominantColor();
-        ref.read(newEventProvider.notifier).updateHyperlinks();
-        final clone = ref.read(newEventProvider.notifier).cloneEvent;
-        Map<String, dynamic> args = {
-          'event': ref.read(newEventProvider),
-          'isPreview': true,
-          'dominantColor': dominantColor,
-          'randInt': randInt,
-          'clone': clone,
-        };
-        navigatorKey.currentState!.pushNamed(
-          EventDetailsPage.id,
-          arguments: args,
-        );
-      } catch (e) {
-        showSnackBar(message: e.toString(), duration: 5);
+      final dominantColor = await _getDominantColor();
+      ref.read(newEventProvider.notifier).updateHyperlinks();
+      final clone = ref.read(newEventProvider.notifier).cloneEvent;
+      if (widget.groupEvent) {
+        try {
+          ref.read(groupControllerProvider.notifier).updateLoading(true);
+          await ref.read(groupControllerProvider.notifier).getGroupMembers();
+          final phones = [
+            ...ref.read(groupControllerProvider).admins.map((e) => e.phone),
+            ...ref.read(groupControllerProvider).members.map((e) => e.phone),
+          ];
+          final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(phones);
+          ref.read(newEventProvider.notifier).updateInvites(matchingContacts);
+        } catch (e) {
+          showSnackBar(message: "Something went wrong. Please try again later.");
+          debugPrint(e.toString());
+        }
+        ref.read(groupControllerProvider.notifier).updateLoading(false);
       }
+      navigatorKey.currentState!.push(
+        NavigationController.getTransition(
+          EventDetailsPage(
+            event: ref.read(newEventProvider),
+            isPreview: true,
+            dominantColor: dominantColor,
+            randInt: randInt,
+            clone: clone,
+            groupEvent: widget.groupEvent,
+            rePublish: false,
+            showBottomBar: false,
+          ),
+        ),
+      );
     }
   }
 }

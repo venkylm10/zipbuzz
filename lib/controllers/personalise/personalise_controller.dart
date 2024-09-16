@@ -168,7 +168,7 @@ class PersonaliseController {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Checking phone");
         final id = await ref.read(dioServicesProvider).getIdFromPhone(mobileNumber);
         final data =
-            await ref.read(dioServicesProvider).getUserData(UserDetailsRequestModel(userId: id!));
+            await ref.read(dioServicesProvider).getUserData(id!);
         final userDetails = UserDetailsModel.fromMap(data['data']);
         ref.read(authServicesProvider).clearOTPs();
         final currentUser = ref.read(userProvider);

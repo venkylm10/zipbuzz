@@ -10,7 +10,8 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/loader.dart';
 
 class EventPublishButton extends ConsumerWidget {
-  const EventPublishButton({super.key});
+  final bool groupEvent;
+  const EventPublishButton({super.key, this.groupEvent = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,12 +24,14 @@ class EventPublishButton extends ConsumerWidget {
             context: navigatorKey.currentContext!,
             barrierDismissible: true,
             builder: (context) {
-              return const InviteGuestAlert();
+              return InviteGuestAlert(groupEvent: groupEvent);
             },
           );
           return;
         }
-        await ref.read(newEventProvider.notifier).publishEvent();
+        await ref.read(newEventProvider.notifier).publishEvent(
+              groupEvent: groupEvent,
+            );
         publishedAlertBox(ref);
       },
       child: Container(
@@ -59,10 +62,11 @@ class EventPublishButton extends ConsumerWidget {
 
   Future<dynamic> publishedAlertBox(WidgetRef ref) {
     return showDialog(
-        context: navigatorKey.currentContext!,
-        barrierDismissible: false,
-        builder: (context) {
-          return const PublishedEventAlertBox();
-        });
+      context: navigatorKey.currentContext!,
+      barrierDismissible: false,
+      builder: (context) {
+        return PublishedEventAlertBox(groupEvent: groupEvent);
+      },
+    );
   }
 }

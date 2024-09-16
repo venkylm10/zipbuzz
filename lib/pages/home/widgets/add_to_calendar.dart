@@ -2,15 +2,20 @@ import 'dart:io';
 
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/trace_log_model.dart';
+import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import '../../../models/events/event_model.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/styles.dart';
 
-class AddToCalendar extends StatelessWidget {
+class AddToCalendar extends ConsumerWidget {
   final EventModel event;
   const AddToCalendar({super.key, required this.event});
 
@@ -18,12 +23,12 @@ class AddToCalendar extends StatelessWidget {
     var hr = int.parse(time.split(":").first);
     final min = int.parse(time.split(":").last.split(' ').first);
     final pm = time.split(" ").last == 'PM';
-    if(pm && hr != 12) {
+    if (pm && hr != 12) {
       hr += 12;
     }
     final eventDate = DateTime.parse(event.date);
-    var date = DateTime(eventDate.year, eventDate.month,
-        eventDate.day + (endTime && endsNextDay ? 1 : 0), hr, min);
+    var date = DateTime(
+        eventDate.year, eventDate.month, eventDate.day + (endTime && endsNextDay ? 1 : 0), hr, min);
     return date;
   }
 
@@ -33,7 +38,7 @@ class AddToCalendar extends StatelessWidget {
     return startPm && endAm;
   }
 
-  Future<void> addToAppleCalendar() async {
+  Future<void> addToAppleCalendar(WidgetRef ref) async {
     final nextDay = endsNextDay(event.startTime, event.endTime);
     final startTime = getTime(event.startTime, nextDay);
     final endTime = event.endTime != 'null'
@@ -46,42 +51,54 @@ class AddToCalendar extends StatelessWidget {
       startDate: startTime,
       endDate: endTime,
     );
-    Add2Calendar.addEvent2Cal(calEvent);
+    await Add2Calendar.addEvent2Cal(calEvent);
+    final user = ref.read(userProvider);
+    final trace = TraceLogModel(
+      userId: user.id,
+      actionCode: ActionCode.Add2Calendar,
+      actionDetails: "Added ${event.title} to Apple Calendar",
+      successFlag: true,
+      eventId: event.id,
+    );
+    ref.read(dioServicesProvider).traceLog(trace);
   }
 
-  Future<void> addToGoogleCalendar() async {
+  Future<void> addToGoogleCalendar(WidgetRef ref) async {
     final nextDay = endsNextDay(event.startTime, event.endTime);
-    var googleCalendarUrl =
-        'https://www.google.com/calendar/render?action=TEMPLATE';
+    var googleCalendarUrl = 'https://www.google.com/calendar/render?action=TEMPLATE';
     final startTime = getTime(event.startTime, nextDay);
     final endTime = event.endTime != 'null'
-        ? getTime(event.endTime,nextDay, endTime: true)
+        ? getTime(event.endTime, nextDay, endTime: true)
         : startTime.add(const Duration(hours: 1));
-    String formattedStartTime =
-        '${DateFormat("yyyyMMddTHHmmss").format(startTime.toUtc())}Z';
-    String formattedEndTime =
-        '${DateFormat("yyyyMMddTHHmmss").format(endTime.toUtc())}Z';
+    String formattedStartTime = '${DateFormat("yyyyMMddTHHmmss").format(startTime.toUtc())}Z';
+    String formattedEndTime = '${DateFormat("yyyyMMddTHHmmss").format(endTime.toUtc())}Z';
     googleCalendarUrl += '&text=${Uri.encodeComponent(event.title)}';
     googleCalendarUrl += '&dates=$formattedStartTime/$formattedEndTime';
     googleCalendarUrl += '&location=${Uri.encodeComponent(event.location)}';
     debugPrint("Google Calendar URL: $googleCalendarUrl");
     if (await canLaunchUrlString(googleCalendarUrl)) {
       await launchUrlString(googleCalendarUrl);
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.Add2Calendar,
+        actionDetails: "Added ${event.title} to Google Calendar",
+        successFlag: true,
+        eventId: event.id,
+      );
+      ref.read(dioServicesProvider).traceLog(trace);
     }
   }
 
-  Future<void> addToMicrosoftCalendar() async {
+  Future<void> addToMicrosoftCalendar(WidgetRef ref) async {
     final nextDay = endsNextDay(event.startTime, event.endTime);
-    var microsoftCalendarUrl =
-        'https://outlook.live.com/calendar/action/compose';
-    final startTime = getTime(event.startTime,nextDay);
+    var microsoftCalendarUrl = 'https://outlook.live.com/calendar/action/compose';
+    final startTime = getTime(event.startTime, nextDay);
     final endTime = event.endTime != 'null'
         ? getTime(event.endTime, nextDay, endTime: true)
         : startTime.add(const Duration(hours: 1));
-    String formattedStartTime =
-        '${DateFormat("yyyyMMddTHHmmss").format(startTime.toUtc())}Z';
-    String formattedEndTime =
-        '${DateFormat("yyyyMMddTHHmmss").format(endTime.toUtc())}Z';
+    String formattedStartTime = '${DateFormat("yyyyMMddTHHmmss").format(startTime.toUtc())}Z';
+    String formattedEndTime = '${DateFormat("yyyyMMddTHHmmss").format(endTime.toUtc())}Z';
     microsoftCalendarUrl += '?startdt=$formattedStartTime';
     microsoftCalendarUrl += '&enddt=$formattedEndTime';
     microsoftCalendarUrl += '&subject=${Uri.encodeComponent(event.title)}';
@@ -89,16 +106,24 @@ class AddToCalendar extends StatelessWidget {
     debugPrint("Microsoft Calendar URL: $microsoftCalendarUrl");
     if (await canLaunchUrlString(microsoftCalendarUrl)) {
       await launchUrlString(microsoftCalendarUrl);
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.Add2Calendar,
+        actionDetails: "Added ${event.title} to Microsoft Calendar",
+        successFlag: true,
+        eventId: event.id,
+      );
+      ref.read(dioServicesProvider).traceLog(trace);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding:
-            const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 12),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -134,7 +159,7 @@ class AddToCalendar extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    addToGoogleCalendar();
+                    addToGoogleCalendar(ref);
                   },
                   child: Container(
                     padding: const EdgeInsets.all(8),
@@ -158,7 +183,7 @@ class AddToCalendar extends StatelessWidget {
                 if (Platform.isIOS)
                   InkWell(
                     onTap: () {
-                      addToAppleCalendar();
+                      addToAppleCalendar(ref);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8),
@@ -180,7 +205,7 @@ class AddToCalendar extends StatelessWidget {
                     ),
                   ),
                 InkWell(
-                  onTap: () => addToMicrosoftCalendar(),
+                  onTap: () => addToMicrosoftCalendar(ref),
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(

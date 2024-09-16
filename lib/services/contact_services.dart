@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
@@ -30,6 +31,8 @@ class Contacts {
         ref.read(newEventProvider.notifier).resetContactSearch();
         ref.read(editEventControllerProvider.notifier).updateAllContacts(contacts);
         ref.read(editEventControllerProvider.notifier).resetContactSearch();
+        ref.read(groupControllerProvider.notifier).updateAllContacts(contacts);
+        ref.read(groupControllerProvider.notifier).resetContactSearchResult();
       } else {
         showSnackBar(message: "We need contact permission to invite people");
         if (await ref.read(appPermissionsProvider).getContactsPermission()) {
@@ -54,6 +57,7 @@ class Contacts {
         .then((value) => value.where((element) => element.phones != null).toList());
     ref.read(newEventProvider.notifier).updateAllContacts(contacts);
     ref.read(editEventControllerProvider.notifier).updateAllContacts(contacts);
+    ref.read(groupControllerProvider.notifier).updateAllContacts(contacts);
   }
 
   List<Contact> getMatchingContacts(List<String> numbers) {

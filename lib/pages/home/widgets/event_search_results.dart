@@ -24,19 +24,12 @@ class EventsSearchResults extends StatelessWidget {
         Consumer(
           builder: (context, ref, child) {
             final allEvents = ref.watch(eventsControllerProvider).currentMonthEvents;
-            // ignore: unused_local_variable
-            final homeTabController = ref.read(homeTabControllerProvider);
-            final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
-
             final filteredEvents = allEvents.where((e) {
               // final containsInterest =
               //     ref.read(homeTabControllerProvider.notifier).containsInterest(e.category);
               final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
               // var display = containsInterest && containsQuery;
               var display = containsQuery;
-              if (selectedCategory.isNotEmpty) {
-                display = display && e.category == selectedCategory;
-              }
               return display;
             }).toList();
 

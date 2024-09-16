@@ -14,14 +14,15 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
+// ignore: must_be_immutable
 class EventCardRsvpUpdateButton extends ConsumerWidget {
-  const EventCardRsvpUpdateButton({
+  EventCardRsvpUpdateButton({
     super.key,
     required this.event,
     required this.updateStatus,
   });
 
-  final EventModel event;
+  EventModel event;
   final Function(String, int) updateStatus;
 
   @override

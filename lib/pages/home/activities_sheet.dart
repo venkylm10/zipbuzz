@@ -11,7 +11,8 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 
 class ActivitiesSheet extends StatefulWidget {
-  const ActivitiesSheet({super.key});
+  final bool querySheet;
+  const ActivitiesSheet({super.key, this.querySheet = false});
 
   @override
   State<ActivitiesSheet> createState() => _ActivitiesSheetState();
@@ -41,13 +42,16 @@ class _ActivitiesSheetState extends State<ActivitiesSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(width: 16),
-              Text(
-                "Note: Select minimum of 3 interests",
-                style: AppStyles.h5.copyWith(
-                  fontStyle: FontStyle.italic,
-                ),
+              Expanded(
+                child: widget.querySheet
+                    ? const SizedBox()
+                    : Text(
+                        "Note: Select minimum of 3 interests",
+                        style: AppStyles.h5.copyWith(
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
               ),
-              const Expanded(child: SizedBox()),
               InkWell(
                 onTap: () {
                   navigatorKey.currentState!.pop();
@@ -115,12 +119,18 @@ class _ActivitiesSheetState extends State<ActivitiesSheet> {
                         return Consumer(builder: (context, ref, child) {
                           final selected = ref
                               .watch(homeTabControllerProvider.notifier)
-                              .containsInterest(interest.activity);
+                              .containsInterest(interest.activity, querySheet: widget.querySheet);
                           return InkWell(
                             onTap: () {
-                              ref
-                                  .read(homeTabControllerProvider.notifier)
-                                  .toggleHomeTabInterest(interest);
+                              if (widget.querySheet) {
+                                ref
+                                    .read(homeTabControllerProvider.notifier)
+                                    .toggleQueryInterest(interest);
+                              } else {
+                                ref
+                                    .read(homeTabControllerProvider.notifier)
+                                    .toggleHomeTabInterest(interest);
+                              }
                               setState(() {});
                             },
                             child: Container(

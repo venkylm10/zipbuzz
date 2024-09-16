@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
+import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card.dart';
 import 'package:zipbuzz/pages/home/widgets/home_calendar.dart';
 import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/utils/tabs.dart';
 
 class HomeUpcomingEvents extends StatelessWidget {
   const HomeUpcomingEvents({super.key});
@@ -37,9 +39,13 @@ class HomeUpcomingEvents extends StatelessWidget {
         final visible = ref.watch(homeTabControllerProvider).homeCalenderVisible;
         if (visible) return const SizedBox();
         final upcomingEvents = ref.watch(eventsControllerProvider).upcomingEvents;
-        final selectedCategory = ref.watch(homeTabControllerProvider).selectedCategory;
         if (upcomingEvents.isEmpty) {
-          return const NoUpcomingEventsBanner();
+          return NoUpcomingEventsBanner(
+            onTap: (ref) {
+              ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
+              ref.read(eventTabControllerProvider.notifier).updateIndex(2);
+            },
+          );
         }
         return SizedBox(
           width: double.infinity,
@@ -48,12 +54,11 @@ class HomeUpcomingEvents extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             children: upcomingEvents.map((e) {
-              final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
-              var display = containsQuery;
-              if (selectedCategory.isNotEmpty) {
-                display = display && e.category == selectedCategory;
+              if (!ref.watch(homeTabControllerProvider).inQuery) {
+                return EventCard(event: e);
               }
-              if (!display) return const SizedBox();
+              final containsQuery = ref.read(homeTabControllerProvider.notifier).containsQuery(e);
+              if (!containsQuery) return const SizedBox();
               return EventCard(event: e);
             }).toList(),
           ),

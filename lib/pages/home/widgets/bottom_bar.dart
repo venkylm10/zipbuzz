@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -36,7 +37,26 @@ class BottomBar extends ConsumerWidget {
         final tab = AppTabsExtension.fromIndex(value);
         ref.read(homeTabControllerProvider.notifier).updateSelectedTab(tab);
         await Future.delayed(const Duration(milliseconds: 100));
-        await updateIndex(tab, userId, ref);
+        if (tab == AppTabs.home) {
+          ref.read(homeTabControllerProvider.notifier).updateSearching(false);
+          ref.read(newEventProvider.notifier).resetNewEvent();
+          ref.read(homeTabControllerProvider.notifier).queryController.clear();
+          ref.read(homeTabControllerProvider.notifier).refresh();
+        } else if (tab == AppTabs.events) {
+          final user = ref.read(userProvider);
+          ref.read(newEventProvider.notifier).updateHostId(user.id);
+          ref.read(newEventProvider.notifier).updateHostName(user.name);
+          ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
+          await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+        } else if (tab == AppTabs.groups) {
+          ref.read(groupControllerProvider.notifier).fetchCommunityAndGroupDescriptions();
+        } else {
+          await ref
+              .read(dbServicesProvider)
+              .getOwnUserData(UserDetailsRequestModel(userId: userId));
+          ref.read(newEventProvider.notifier).resetNewEvent();
+        }
+
         pop != null ? pop!() : null;
       },
       items: List.generate(AppTabs.values.length, (index) {
@@ -47,24 +67,5 @@ class BottomBar extends ConsumerWidget {
         );
       }),
     );
-  }
-
-  Future<void> updateIndex(AppTabs tab, int userId, WidgetRef ref) async {
-    if (tab == AppTabs.home) {
-      ref.read(homeTabControllerProvider.notifier).updateSearching(false);
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
-      ref.read(newEventProvider.notifier).resetNewEvent();
-      ref.read(homeTabControllerProvider.notifier).queryController.clear();
-      ref.read(homeTabControllerProvider.notifier).refresh();
-    } else if (tab == AppTabs.events) {
-      final user = ref.read(userProvider);
-      ref.read(newEventProvider.notifier).updateHostId(user.id);
-      ref.read(newEventProvider.notifier).updateHostName(user.name);
-      ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
-      await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
-    } else {
-      await ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: userId));
-      ref.read(newEventProvider.notifier).resetNewEvent();
-    }
   }
 }

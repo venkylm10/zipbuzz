@@ -69,11 +69,15 @@ class _EventCardState extends ConsumerState<EventCard> {
 
   Future<Color> getDominantColor() async {
     Color dominantColor = Colors.green;
-    final image = NetworkImage(widget.event.bannerPath);
-    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-      image,
-    );
-    dominantColor = generator.dominantColor!.color;
+    try {
+      final image = NetworkImage(widget.event.bannerPath);
+      final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+        image,
+      );
+      dominantColor = generator.dominantColor!.color;
+    } catch (e) {
+      debugPrint("Error getting dominant color: $e");
+    }
     return dominantColor;
   }
 

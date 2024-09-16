@@ -12,7 +12,7 @@ class EventTabController extends StateNotifier<int> {
   final Ref ref;
   EventTabController({required this.ref}) : super(0);
   var selectedIndex = 0;
-  var tabs = const [UpcomingEvents(), PastEvents(), CreateEvent()];
+  var tabs = const [UpcomingEvents(), PastEvents(), CreateEventTab()];
   var tabTitles = const ["Upcoming", "Past", "Create"];
 
   void updateIndex(int index) {

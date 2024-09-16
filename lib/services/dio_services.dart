@@ -19,16 +19,26 @@ import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_members_response_model.dart';
+import 'package:zipbuzz/models/groups/group_model.dart';
+import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
+import 'package:zipbuzz/models/groups/post/edit_group_model.dart';
+import 'package:zipbuzz/models/groups/post/invite_group_member_model.dart';
+import 'package:zipbuzz/models/groups/post/create_group_model.dart';
+import 'package:zipbuzz/models/groups/res/community_and_group_res.dart';
+import 'package:zipbuzz/models/groups/res/get_group_display_model.dart';
+import 'package:zipbuzz/models/groups/res/group_description_res.dart';
+import 'package:zipbuzz/models/groups/res/group_member_res_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/models/onboarding_page_model.dart';
+import 'package:zipbuzz/models/trace_log_model.dart';
 import 'package:zipbuzz/models/user/faq_model.dart';
-import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_details_update_request_model.dart';
 import 'package:zipbuzz/models/user/requests/user_id_request_model.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
+import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/dio_contants.dart';
@@ -189,14 +199,19 @@ class DioServices {
     }
   }
 
-  Future<void> updateRespondedNotification(int userId, int senderId, int eventId,
-      {String notificationType = 'accepted'}) async {
+  Future<void> updateRespondedNotification(int userId, int senderId,
+      {int? eventId, String notificationType = 'accepted', int? groupId}) async {
     final data = {
       "user_id": userId,
       "sender_id": senderId,
       "notification_type": notificationType,
-      "event_id": eventId,
     };
+    if (eventId != null) {
+      data['event_id'] = eventId;
+    }
+    if (groupId != null) {
+      data['group_id'] = groupId;
+    }
     try {
       await dio.put(DioConstants.updateNotification, data: data);
     } catch (e) {
@@ -302,9 +317,26 @@ class DioServices {
     try {
       final res = await dio.post(DioConstants.postUserImage, data: formData);
       debugPrint("Posted user image");
-      return res.data['pic_url'] as String;
+      final url = res.data['pic_url'] as String;
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Uploaded User Image : $url",
+        successFlag: true,
+      );
+      traceLog(trace);
+      return url;
     } catch (error) {
       debugPrint('Error in putUserImage: $error');
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Failed To Upload User Image",
+        successFlag: false,
+      );
+      traceLog(trace);
       throw ('Failed to put user image');
     }
   }
@@ -317,9 +349,26 @@ class DioServices {
     try {
       final res = await dio.post(DioConstants.postEventBanner, data: formData);
       debugPrint("Posted Event Banner");
-      return res.data['pic_url'] as String;
+      final url = res.data['pic_url'] as String;
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Uploaded Event Banner : $url",
+        successFlag: true,
+      );
+      traceLog(trace);
+      return url;
     } catch (error) {
       debugPrint('Error in postEventBanner: $error');
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Failed To Upload Event Banner",
+        successFlag: true,
+      );
+      traceLog(trace);
       throw ('Failed to post Event Banner');
     }
   }
@@ -337,8 +386,26 @@ class DioServices {
         "event_id": eventId.toString(),
       });
       await dio.post(DioConstants.postEventImages, data: formData);
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Uploaded Event Images",
+        successFlag: true,
+        eventId: eventId,
+      );
+      traceLog(trace);
     } catch (error) {
       debugPrint('Error in postEventImages: $error');
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Failed To Upload Event Images",
+        successFlag: false,
+        eventId: eventId,
+      );
+      traceLog(trace);
       throw ('Failed to post Event Images');
     }
   }
@@ -392,18 +459,22 @@ class DioServices {
     }
   }
 
-  Future<Map<String, dynamic>> getUserData(UserDetailsRequestModel userDetailsRequestModel) async {
+  Future<Map<String, dynamic>> getUserData(int userId) async {
     debugPrint("GETTING USER DATA");
 
     try {
       final response = kIsWeb
           ? await dio.post(
               DioConstants.getUserDetailsWeb,
-              data: userDetailsRequestModel.toMap(),
+              data: {
+                'user_id': userId,
+              },
             )
           : await dio.get(
               DioConstants.getUserDetails,
-              data: userDetailsRequestModel.toMap(),
+              data: {
+                'user_id': userId,
+              },
             );
       debugPrint("GETTING USER DATA COMPLETE");
       return response.data as Map<String, dynamic>;
@@ -416,21 +487,35 @@ class DioServices {
     }
   }
 
-  Future<int> postEvent(EventPostModel eventPostModel) async {
-    debugPrint("POSTING EVENT");
+  Future<int> createEvent(EventPostModel eventPostModel) async {
+    debugPrint("CREATING EVENT");
     debugPrint(eventPostModel.toMap().toString());
     try {
       final response = await dio.post(DioConstants.postEvent, data: eventPostModel.toMap());
-      if (response.data[DioConstants.status] == DioConstants.success) {
-        debugPrint("POSTING EVENT SUCESSFULL");
-        return response.data['id'] as int;
-      } else {
-        throw "POSTING EVENT FAILED";
-      }
+      debugPrint("CREATING EVENT SUCESSFULL");
+      int id = response.data['id'] as int;
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.CreateEvent,
+        actionDetails: "Create Event",
+        successFlag: true,
+        eventId: id,
+      );
+      traceLog(trace);
+      return id;
     } catch (e) {
-      debugPrint("POSTING EVENT FAILED");
+      debugPrint("CREATING EVENT FAILED");
       debugPrint(e.toString());
-      throw "POSTING EVENT FAILED";
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.CreateEvent,
+        actionDetails: "Create Event Failed",
+        successFlag: false,
+      );
+      traceLog(trace);
+      throw "CREATING EVENT FAILED";
     }
   }
 
@@ -481,16 +566,41 @@ class DioServices {
       final response = kIsWeb
           ? await dio.post(DioConstants.fetchUserEventsWeb, data: data)
           : await dio.get(DioConstants.fetchUserEvents, data: data);
-      if (response.data[DioConstants.status] == DioConstants.success) {
-        final list = response.data['data'] as List;
-        // print(response.data['data']);
-        debugPrint("GETTING USER EVENTS SUCCESSFULL");
-        return list;
-      } else {
-        throw 'FAILED TO GET USER EVENTS';
-      }
+      final list = response.data['data'] as List;
+      debugPrint("GETTING USER EVENTS SUCCESSFULL");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.MyEventUpcoming,
+        actionDetails: "Fetch User Events",
+        successFlag: true,
+      );
+      traceLog(trace);
+      final trace2 = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.MyEventPast,
+        actionDetails: "Fetch User Events",
+        successFlag: true,
+      );
+      traceLog(trace2);
+      return list;
     } catch (e) {
       debugPrint("FAILED TO GET USER EVENTS$e");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.MyEventUpcoming,
+        actionDetails: "Fetch User Events Failed",
+        successFlag: false,
+      );
+      traceLog(trace);
+      final trace2 = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.MyEventPast,
+        actionDetails: "Fetch User Events Failed",
+        successFlag: false,
+      );
+      traceLog(trace2);
       throw 'FAILED TO GET USER EVENTS';
     }
   }
@@ -571,25 +681,57 @@ class DioServices {
         debugPrint("SENDING EVENT INVITE");
         await dio.post(DioConstants.sendInvitation, data: eventInvitePostModel.toMap());
         debugPrint("SENDING EVENT INVITE SUCCESSFULL");
+        final user = ref.read(userProvider);
+        final trace = TraceLogModel(
+          userId: user.id,
+          actionCode: ActionCode.EventInvSent,
+          actionDetails: "Create Event Invite Success",
+          successFlag: true,
+          eventId: eventInvitePostModel.eventId,
+        );
+        traceLog(trace);
       } catch (e) {
         debugPrint("ERROR SENDING EVENT INVITE: $e");
+        final user = ref.read(userProvider);
+        final trace = TraceLogModel(
+          userId: user.id,
+          actionCode: ActionCode.EventInvSent,
+          actionDetails: "Create Event Invite Failure",
+          successFlag: false,
+          eventId: eventInvitePostModel.eventId,
+        );
+        traceLog(trace);
       }
     }
   }
 
   Future<void> updateUserDetails(
       UserDetailsUpdateRequestModel userDetailsUpdateRequestModel) async {
+    final user = ref.read(userProvider);
+    final details = userDetailsUpdateRequestModel;
+    final interests = details.interests.join(',');
     try {
       debugPrint("UPDATING USER DETAILS");
-      final res = await dio.put(DioConstants.updateUserDetails,
-          data: userDetailsUpdateRequestModel.toMap());
-      if (res.data[DioConstants.status] == DioConstants.success) {
-        debugPrint("UPDATING USER DETAILS SUCCESSFULL");
-      } else {
-        debugPrint("UPDATING USER DETAILS FAILED");
-      }
+      await dio.put(DioConstants.updateUserDetails, data: userDetailsUpdateRequestModel.toMap());
+      debugPrint("UPDATING USER DETAILS SUCCESSFULL");
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.ProfileUpdate,
+        actionDetails:
+            "Name=${user.id} Email=${details.email} Phone=${details.phoneNumber} Pic=${details.profilePicture} Interests=[$interests]",
+        successFlag: true,
+      );
+      traceLog(trace);
     } catch (e) {
       debugPrint("UPDATING USER DETAILS FAILED");
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.ProfileUpdate,
+        actionDetails:
+            "Name=${user.id} Email=${details.email} Phone=${details.phoneNumber} Pic=${details.profilePicture} Interests=[$interests]",
+        successFlag: false,
+      );
+      traceLog(trace);
       debugPrint(e.toString());
     }
   }
@@ -711,8 +853,26 @@ class DioServices {
       };
       await dio.put(DioConstants.updateRsvp, data: data);
       debugPrint("Updated RSVP to ${status == 'pending' ? "yes" : "no"}");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.TextSent,
+        actionDetails: "Updated RSVP to ${status == 'pending' ? "yes" : "no"}",
+        successFlag: true,
+        eventId: eventId,
+      );
+      traceLog(trace);
     } catch (e) {
       debugPrint(e.toString());
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.TextSent,
+        actionDetails: "Updated RSVP to ${status == 'pending' ? "yes" : "no"} Failed",
+        successFlag: false,
+        eventId: eventId,
+      );
+      traceLog(trace);
       rethrow;
     }
   }
@@ -748,6 +908,306 @@ class DioServices {
     } catch (e) {
       debugPrint("Error sending otp: $e");
       return null;
+    }
+  }
+
+  // Groups
+
+  /// Add Image To Group Before Creating To Get Image URLs
+  Future<Map<String, String>> addGroupImages(File image, File banner) async {
+    final form = FormData.fromMap({
+      'group_image': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last),
+      'banner_image':
+          await MultipartFile.fromFile(banner.path, filename: banner.path.split('/').last),
+    });
+    try {
+      final res = await dio.post(DioConstants.addGroupImages, data: form);
+      final imageUrl = res.data['group_image_url'] as String;
+      final bannerUrl = res.data['banner_image_url'] as String;
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Uploaded Group Images : $imageUrl, $bannerUrl",
+        successFlag: true,
+      );
+      traceLog(trace);
+      return {
+        'group_image_url': imageUrl,
+        'group_banner_url': bannerUrl,
+      };
+    } catch (e) {
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Failed To Group Images",
+        successFlag: false,
+      );
+      traceLog(trace);
+      debugPrint("Error adding group images: $e");
+      rethrow;
+    }
+  }
+
+  /// Create Group
+  Future<int> createGroup(CreateGroupModel model) async {
+    try {
+      final res = await dio.post(DioConstants.createGroup, data: model.toJson());
+      final id = res.data['query_details']['group_id'] as int;
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.GroupCreate,
+        actionDetails: "Created Group : $id",
+        groupId: id,
+        successFlag: true,
+      );
+      traceLog(trace);
+      return id;
+    } catch (e) {
+      debugPrint("Error creating group: $e");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.GroupCreate,
+        actionDetails: "Failed To Created Group",
+        successFlag: false,
+      );
+      traceLog(trace);
+      rethrow;
+    }
+  }
+
+  /// Fetch Group Descriptions
+  Future<GroupDescriptionRes> getGroupDescriptions(int userId) async {
+    try {
+      final res = await dio.post(DioConstants.getUserGroupDescription, data: {
+        'user_id': userId,
+      });
+      return GroupDescriptionRes.fromJson(res.data);
+    } catch (e) {
+      debugPrint("Error get user group descritpions : $e");
+      rethrow;
+    }
+  }
+
+  Future<CommunityAndGroupRes> getCommunityAndGroupsDescriptions(int userId) async {
+    try {
+      final res = await dio.post(DioConstants.getCommunityAndGroupsForUser, data: {
+        'user_id': userId,
+      });
+      return CommunityAndGroupRes.fromJson(res.data);
+    } catch (e) {
+      debugPrint("Error get community descriptions : $e");
+      rethrow;
+    }
+  }
+
+  /// Fetch group display details
+  Future<GroupModel> getGroupDetails(int userId, int groupId) async {
+    try {
+      final res = await dio.post(DioConstants.getGroupDetails, data: {
+        'user_id': userId,
+        'group_id': groupId,
+      });
+      return GroupDisplayResModel.fromJson(res.data).group;
+    } catch (e) {
+      debugPrint("Error get group details : $e");
+      rethrow;
+    }
+  }
+
+  Future<GroupMemberResModel> getGroupMembers(int groupId) async {
+    try {
+      final res = await dio.post(DioConstants.getGroupMembers, data: {
+        'group_id': groupId,
+      });
+      return GroupMemberResModel.fromJson(res.data);
+    } catch (e) {
+      debugPrint("Error get group members : $e");
+      rethrow;
+    }
+  }
+
+  Future<void> archiveGroup(int userId, int groupId) async {
+    try {
+      await dio.post(DioConstants.archiveGroup, data: {
+        'user_id': userId,
+        'group_id': groupId,
+      });
+    } catch (e) {
+      debugPrint("Error archiving group: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> inviteToGroup(InviteGroupMemberModel model) async {
+    try {
+      await dio.post(DioConstants.inviteGroupMember, data: model.toJson());
+      debugPrint("Invited user ${model.userId} to group ${model.groupId}");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.GroupInvite,
+        actionDetails:
+            "Invited user ${model.userId} (${model.phoneNumber}) to group ${model.groupId}",
+        groupId: model.groupId,
+        successFlag: true,
+      );
+      traceLog(trace);
+    } catch (e) {
+      debugPrint("Error add member to group: $e");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.GroupInvite,
+        actionDetails:
+            "Failed To Invite user ${model.userId} (${model.phoneNumber}) to group ${model.groupId}",
+        groupId: model.groupId,
+        successFlag: false,
+      );
+      traceLog(trace);
+      rethrow;
+    }
+  }
+
+  Future<void> acceptGroup(AcceptGroupModel model) async {
+    try {
+      await dio.post(DioConstants.acceptInvite, data: model.toJson());
+      debugPrint("Accepted Group ${model.groupId}");
+    } catch (e) {
+      debugPrint("Error accepting group: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> deleteGroupMember(int userId, int groupId) async {
+    try {
+      await dio.post(DioConstants.deleteMember, data: {
+        'user_id': userId,
+        'group_id': groupId,
+      });
+      debugPrint("Removed user $userId from group $groupId");
+    } catch (e) {
+      debugPrint("Error removing $userId from group $groupId : $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateGroupMember(int userId, int groupId, String permissionType) async {
+    try {
+      await dio.post(DioConstants.updateMember, data: {
+        'user_id': userId,
+        'group_id': groupId,
+        'permission_type': permissionType,
+      });
+      debugPrint("Updated permission to $permissionType for user $userId in group $groupId");
+    } catch (e) {
+      debugPrint(
+          "Error Updated permission to $permissionType for user $userId in group $groupId : $e");
+      rethrow;
+    }
+  }
+
+  Future<int> createGroupEvent(EventPostModel eventPostModel) async {
+    debugPrint("POSTING EVENT");
+    debugPrint(eventPostModel.toMap().toString());
+    try {
+      final response = await dio.post(DioConstants.createGroupEvent, data: eventPostModel.toMap());
+      final id = response.data['id'] as int;
+      debugPrint("POSTING GROUP EVENT SUCESSFULL");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.CreateEvent,
+        actionDetails: "Create Group Event Invite Success",
+        successFlag: true,
+        eventId: id,
+        groupId: eventPostModel.groupId!,
+      );
+      traceLog(trace);
+      return id;
+    } catch (e) {
+      debugPrint("POSTING GROUP EVENT FAILED");
+      debugPrint(e.toString());
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.CreateEvent,
+        actionDetails: "Create Group Event Invite Failed",
+        successFlag: false,
+        groupId: eventPostModel.groupId!,
+      );
+      traceLog(trace);
+      throw "POSTING GROUP EVENT FAILED";
+    }
+  }
+
+  Future<List> getGroupEvents(int groupId, int userId, String month) async {
+    try {
+      final data = {
+        'group_id': groupId,
+        'user_id': userId,
+        'month': month,
+      };
+      final res = await dio.get(DioConstants.getGroupEvents, data: data);
+      final events = res.data['data'] as List;
+      return events;
+    } catch (e) {
+      debugPrint("Error getting group events: $e");
+      rethrow;
+    }
+  }
+
+  Future<String?> uploadInvidualGroupImage(File image, {bool profileImage = true}) async {
+    try {
+      final path = profileImage ? DioConstants.uploadMainImage : DioConstants.uploadBannerImage;
+      final imageName = image.path.split('/').last;
+      final key = profileImage ? 'group_image' : 'banner_image';
+      final formData = FormData.fromMap({
+        key: await MultipartFile.fromFile(image.path, filename: imageName),
+      });
+      final res = await dio.post(path, data: formData);
+      final url = profileImage ? res.data['group_image_url'] : res.data['banner_image_url'];
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Uploaded Group ${profileImage ? "Profile" : "Banner"} Image : $url ",
+        successFlag: true,
+      );
+      traceLog(trace);
+      return url;
+    } catch (e) {
+      debugPrint("Error uploading individual group image: $e");
+      final user = ref.read(userProvider);
+      final trace = TraceLogModel(
+        userId: user.id,
+        actionCode: ActionCode.PhotoUpload,
+        actionDetails: "Failed To Upload Group ${profileImage ? "Profile" : "Banner"} Image",
+        successFlag: false,
+      );
+      traceLog(trace);
+      return null;
+    }
+  }
+
+  Future<void> updateGroup(EditGroupModel model) async {
+    try {
+      await dio.post(DioConstants.updateGroup, data: model.toJson());
+    } catch (e) {
+      debugPrint("Error updating group: $e");
+      rethrow;
+    }
+  }
+
+  void traceLog(TraceLogModel trace) async {
+    try {
+      await dio.post(DioConstants.traceLog, data: trace.toJson());
+      debugPrint("Logged action: ${trace.actionDetails}");
+    } catch (e) {
+      debugPrint("Error logging: $e");
     }
   }
 }

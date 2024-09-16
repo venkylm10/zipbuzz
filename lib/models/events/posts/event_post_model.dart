@@ -1,22 +1,23 @@
 class EventPostModel {
-  EventPostModel({
-    required this.banner,
-    required this.category,
-    required this.name,
-    required this.description,
-    required this.date,
-    required this.venue,
-    required this.startTime,
-    required this.endTime,
-    required this.hostId,
-    required this.hostName,
-    required this.hostPic,
-    required this.eventType,
-    required this.capacity,
-    required this.filledCapacity,
-    required this.guestList,
-    required this.isPrivate,
-  });
+  EventPostModel(
+      {required this.banner,
+      required this.category,
+      required this.name,
+      required this.description,
+      required this.date,
+      required this.venue,
+      required this.startTime,
+      required this.endTime,
+      required this.hostId,
+      required this.hostName,
+      required this.hostPic,
+      required this.eventType,
+      required this.capacity,
+      required this.filledCapacity,
+      required this.guestList,
+      required this.isPrivate,
+      this.groupId = 0,
+      this.groupName = 'zipbuzz-null'});
   final String banner;
   final String category;
   final String name;
@@ -33,6 +34,8 @@ class EventPostModel {
   final int filledCapacity;
   final bool guestList;
   final bool isPrivate;
+  final int? groupId;
+  final String? groupName;
 
   factory EventPostModel.fromMap(Map<String, dynamic> json) {
     return EventPostModel(
@@ -73,6 +76,8 @@ class EventPostModel {
     data['filled_capacity'] = filledCapacity;
     data['guest_list'] = guestList;
     data['is_private'] = isPrivate;
+    data['group_id'] = groupId;
+    data['group_name'] = groupName;
     return data;
   }
 }

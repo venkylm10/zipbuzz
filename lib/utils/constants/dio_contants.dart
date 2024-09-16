@@ -50,10 +50,29 @@ class DioConstants {
   static const String sendInviteNotification = 'users/invite_notification/';
   static const String sendBroadcastMessage = 'users/broadcast_message/';
   static const String sendMobileOTP = '/users/verify_mobile/';
+  static const String traceLog = "/helpers/create_log/";
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";
 
   static const String status = "status";
   static const String success = "success";
+
+  // Groups
+  static const String addGroupImages = '/groups/group_images/';
+  static const String createGroup = "/groups/group_add/";
+  static const String getUserGroupDescription = "/groups/get_group_description_listing_for_user/";
+  static const String getGroupDetails = '/groups/group_display/';
+  static const String getCommunityAndGroupsForUser = 'groups/get_communities_and_groups_for_users/';
+  static const String getGroupMembers = "/groups/group_members_listing/";
+  static const String archiveGroup = '/groups/group_archive/';
+  static const String inviteGroupMember = '/groups/group_member_invite/';
+  static const String acceptInvite = '/groups/group_member_add/';
+  static const String deleteMember = '/groups/group_member_delete/';
+  static const String updateMember = '/groups/group_member_update/';
+  static const String createGroupEvent = 'groups/group_event/';
+  static const String getGroupEvents = '/events/fetch_group_events/';
+  static const String uploadBannerImage = '/groups/group_banner_images/';
+  static const String uploadMainImage = '/groups/group_main_images/';
+  static const String updateGroup = '/groups/group_update/';
 }

@@ -5,6 +5,7 @@ import 'package:interval_time_picker/interval_time_picker.dart';
 import 'package:interval_time_picker/models/visible_step.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/pages/events/widgets/create_event_category_drop_down.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -172,7 +173,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           ],
         ),
         const SizedBox(height: 4),
-        categoryDropDown(),
+        const CreateEventCategoryDropDown(),
         // broadDivider(),
         // Text(
         //   "Title & Description",

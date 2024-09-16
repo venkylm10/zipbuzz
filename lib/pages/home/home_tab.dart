@@ -16,7 +16,6 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/custom_appbar.dart';
-import 'package:zipbuzz/pages/home/widgets/event_search_results.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
@@ -29,7 +28,6 @@ class HomeTab extends ConsumerStatefulWidget {
 class _HomeTabState extends ConsumerState<HomeTab> {
   double topPadding = 0;
   bool isMounted = true;
-  double width = 0;
 
   @override
   void initState() {
@@ -40,21 +38,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         if (check && mounted) setState(() {});
       });
     }
-    ref.read(homeTabControllerProvider.notifier).bodyScrollController.addListener(
-      () {
-        if (!isMounted) return;
-        final check =
-            ref.read(homeTabControllerProvider.notifier).bodyScrollController.offset == 0 &&
-                ref.read(homeTabControllerProvider).isSearching;
-        if (check) {
-          if (isMounted) ref.read(homeTabControllerProvider.notifier).selectCategory(category: '');
-          if (isMounted) ref.read(homeTabControllerProvider.notifier).updateSearching(false);
-        }
-        if (width == 0) {
-          width = MediaQuery.of(context).size.width * 0.6;
-        }
-      },
-    );
     _checkLatestVersion();
     super.initState();
   }
@@ -81,16 +64,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
     }
   }
 
-  void _toggleHomeCategory(String interest) async {
-    await ref.read(homeTabControllerProvider.notifier).toggleHomeCategory(interest);
-    _scrollDownInterests();
-  }
-
-  void _scrollDownInterests() {
-    ref.read(homeTabControllerProvider.notifier).bodyScrollController.animateTo(width * 1.1,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-  }
-
   @override
   Widget build(BuildContext context) {
     topPadding = MediaQuery.of(context).padding.top;
@@ -112,14 +85,13 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           children: [
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              controller: homeTabController.bodyScrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildInterests(context),
-                  homeTabController.queryController.text.trim().isNotEmpty
-                      ? const EventsSearchResults()
-                      : const SizedBox(),
+                  // homeTabController.queryController.text.trim().isNotEmpty
+                  //     ? const EventsSearchResults()
+                  //     : const SizedBox(),
                   const SizedBox(height: 8),
                   const HomeUpcomingEvents(),
                   const SizedBox(height: 200)
@@ -138,7 +110,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
             margin: const EdgeInsets.only(top: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(360),
-              color: const Color(0xff1F98A9),
+              color: AppColors.buttonColor,
             ),
             child: Text(
               "Create Event",
@@ -255,9 +227,7 @@ class _HomeTabState extends ConsumerState<HomeTab> {
               padding: EdgeInsets.only(left: first ? 12 : 0, right: last ? 12 : 0),
               child: HomeInterestChip(
                 interest: interest,
-                toggleHomeCategory: () {
-                  _toggleHomeCategory(interest.activity);
-                },
+                toggleHomeCategory: () {},
               ),
             );
           },

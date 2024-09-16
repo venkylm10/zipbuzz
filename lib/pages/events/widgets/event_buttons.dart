@@ -25,12 +25,14 @@ class EventButtons extends ConsumerStatefulWidget {
     required this.event,
     this.isPreview = false,
     this.rePublish = false,
+    this.groupEvent = false,
     super.key,
   });
 
   final EventModel event;
   final bool isPreview;
   final bool rePublish;
+  final bool groupEvent;
 
   @override
   ConsumerState<EventButtons> createState() => _EventButtonsState();
@@ -65,8 +67,8 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
               ],
             ),
             const SizedBox(height: 8),
-            const Expanded(
-              child: EventPublishButton(),
+            Expanded(
+              child: EventPublishButton(groupEvent: widget.groupEvent),
             ),
           ],
         ),

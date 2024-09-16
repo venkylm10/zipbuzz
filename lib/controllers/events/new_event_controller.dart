@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
@@ -215,6 +216,18 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void updateInvites(List<Contact> contacts) {
     eventInvites = contacts;
+    final members = eventInvites
+        .map((e) => EventInviteMember(
+              image: Defaults().contactAvatarUrl,
+              phone: e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", ""),
+              name: e.displayName ?? "",
+              status: 'invited',
+            ))
+        .toList();
+    state = state.copyWith(
+      eventMembers: members,
+      attendees: members.length,
+    );
   }
 
   void resetContactSearch() {
@@ -370,7 +383,7 @@ class NewEvent extends StateNotifier<EventModel> {
     );
   }
 
-  Future<void> publishEvent() async {
+  Future<void> publishEvent({bool groupEvent = false}) async {
     ref.read(loadingTextProvider.notifier).reset();
     if (GetStorage().read(BoxConstants.guestUser) != null) {
       showSnackBar(message: "You need to be Signed In to create an event!", duration: 2);
@@ -381,6 +394,11 @@ class NewEvent extends StateNotifier<EventModel> {
     final check = validateNewEvent();
     if (!check) return;
     try {
+      final groupId =
+          groupEvent ? ref.read(groupControllerProvider).currentGroupDescription!.id : 0;
+      final groupName = groupEvent
+          ? ref.read(groupControllerProvider).currentGroupDescription!.groupName
+          : "zipbuzz-null";
       final currentDay = ref.read(eventsControllerProvider.notifier).currentDay;
       ref
           .read(eventsControllerProvider.notifier)
@@ -392,12 +410,14 @@ class NewEvent extends StateNotifier<EventModel> {
       } else {
         bannerUrl = interestBanners[state.category]!;
       }
+      final user = ref.read(userProvider);
       state = state.copyWith(bannerPath: bannerUrl);
       debugPrint("New Event: ${state.toMap()}");
       final date = DateTime.parse(state.date);
       state = state.copyWith(
         privateGuestList: state.isPrivate ? state.privateGuestList : false,
       );
+
       final eventPostModel = EventPostModel(
         banner: bannerUrl,
         category: state.category,
@@ -407,14 +427,16 @@ class NewEvent extends StateNotifier<EventModel> {
         venue: state.location,
         startTime: state.startTime,
         endTime: state.endTime.isEmpty ? "null" : state.endTime,
-        hostId: state.hostId,
-        hostName: state.hostName,
-        hostPic: state.hostPic,
+        hostId: user.id,
+        hostName: user.name,
+        hostPic: user.imageUrl,
         eventType: state.isPrivate,
         capacity: state.capacity,
         filledCapacity: eventInvites.length,
         guestList: !state.privateGuestList,
         isPrivate: state.isPrivate,
+        groupId: groupId,
+        groupName: groupName,
       );
 
       // print(eventPostModel.toMap());
@@ -422,7 +444,12 @@ class NewEvent extends StateNotifier<EventModel> {
       // return;
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
-      final eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
+      int eventId = 0;
+      if (groupEvent) {
+        eventId = await ref.read(dioServicesProvider).createGroupEvent(eventPostModel);
+      } else {
+        eventId = await ref.read(dbServicesProvider).createEvent(eventPostModel);
+      }
 
       //update eventId locally
       state = state.copyWith(id: eventId);
@@ -488,7 +515,6 @@ class NewEvent extends StateNotifier<EventModel> {
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
-      ref.read(homeTabControllerProvider.notifier).selectCategory(category: "");
       final interests =
           ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
       if (!interests) {
