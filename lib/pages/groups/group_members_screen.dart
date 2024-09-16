@@ -31,16 +31,16 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
                 color: AppColors.primaryColor,
               ),
             )
-          : SingleChildScrollView(
+          : ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildAdmins(),
-                  const SizedBox(height: 8),
-                  _buildMembers(),
-                ],
-              ),
+              physics: const BouncingScrollPhysics(),
+              children: [
+                _buildAdmins(),
+                const SizedBox(height: 8),
+                _buildMembers(),
+                const SizedBox(height: 8),
+                _buildInvites(),
+              ],
             ),
       floatingActionButton: _buildInviteMembersButton(),
     );
@@ -104,8 +104,35 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
         ListView.builder(
           itemCount: admins.length,
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             return _buildMemberCard(admins[index], isAdmin: true);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInvites() {
+    final invites = ref.watch(groupControllerProvider).invites;
+    if (invites.isEmpty) return const SizedBox();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Invites",
+          style: AppStyles.h3.copyWith(
+            color: AppColors.greyColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ListView.builder(
+          itemCount: invites.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return _buildMemberCard(invites[index], invitee: true);
           },
         ),
       ],
@@ -129,6 +156,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
         ListView.builder(
           itemCount: members.length,
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
             return _buildMemberCard(members[index]);
           },
@@ -163,9 +191,11 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
     );
   }
 
-  GestureDetector _buildMemberCard(GroupMemberModel member, {bool isAdmin = false}) {
+  GestureDetector _buildMemberCard(GroupMemberModel member,
+      {bool isAdmin = false, bool invitee = false}) {
     return GestureDetector(
       onTap: () {
+        if (invitee) return;
         ref.read(groupControllerProvider.notifier).updateCurrentGroupMember(member, isAdmin);
         navigatorKey.currentState!.push(
           NavigationController.getTransition(
@@ -190,16 +220,29 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                member.name,
-                style: AppStyles.h4.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.greyColor,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    member.name == 'zipbuzz-null' ? member.phone : member.name,
+                    style: AppStyles.h4.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.greyColor,
+                    ),
+                  ),
+                  if (member.name != 'zipbuzz-null')
+                    Text(
+                      member.phone,
+                      style: AppStyles.h5.copyWith(
+                        color: AppColors.lightGreyColor,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    )
+                ],
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_ios_rounded, size: 14)
+            if (!invitee) const Icon(Icons.arrow_forward_ios_rounded, size: 14)
           ],
         ),
       ),

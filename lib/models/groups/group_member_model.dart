@@ -1,3 +1,5 @@
+import 'package:zipbuzz/utils/constants/assets.dart';
+
 class GroupMemberModel {
   final int userId;
   final String name;
@@ -19,6 +21,9 @@ class GroupMemberModel {
       case 'o' || 'a':
         permissionType = GroupPermissionType.admin;
         break;
+      case 'i':
+        permissionType = GroupPermissionType.invite;
+        break;
       default:
         permissionType = GroupPermissionType.member;
     }
@@ -27,7 +32,9 @@ class GroupMemberModel {
       name: json['username'],
       phone: json['phone'],
       permissionType: permissionType,
-      profilePicture: json['profile_picture'],
+      profilePicture: json['profile_picture'] == 'zipbuzz-null'
+          ? Assets.images.defaultGroupImage
+          : json['profile_picture'],
     );
   }
 }
@@ -35,4 +42,5 @@ class GroupMemberModel {
 enum GroupPermissionType {
   admin,
   member,
+  invite,
 }

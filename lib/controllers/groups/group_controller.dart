@@ -16,6 +16,7 @@ import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
+import 'package:zipbuzz/pages/groups/group_members_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -259,6 +260,7 @@ class GroupController extends StateNotifier<GroupState> {
       state = state.copyWith(
         admins: res.admins,
         members: res.members,
+        invites: res.invites,
         isAdmin: admin,
       );
     } catch (e) {
@@ -421,11 +423,20 @@ class GroupController extends StateNotifier<GroupState> {
         selectedContacts: [],
         selectedContactsSearchResult: [],
       );
-      navigatorKey.currentState!.pop();
+      await Future.delayed(const Duration(milliseconds: 300));
+      navigatorKey.currentState!.pushReplacementNamed(GroupMembersScreen.id);
+      showSnackBar(message: "Invited Users Successfully!");
     } catch (e) {
       debugPrint(e.toString());
+      state = state.copyWith(
+        invitingMembers: false,
+        selectedContacts: [],
+        selectedContactsSearchResult: [],
+      );
+      await Future.delayed(const Duration(milliseconds: 300));
+      navigatorKey.currentState!.pushReplacementNamed(GroupMembersScreen.id);
+      showSnackBar(message: "Failed to invite all the users!");
     }
-    state = state.copyWith(invitingMembers: false);
   }
 
   Future<void> acceptInvite(AcceptGroupModel model) async {
@@ -517,6 +528,7 @@ class GroupState {
   final bool fetchingMembers;
   final List<GroupMemberModel> admins;
   final List<GroupMemberModel> members;
+  final List<GroupMemberModel> invites;
   final GroupMemberModel? currentGroupMember;
   final bool isAdmin;
   final List<Contact> selectedContacts;
@@ -543,6 +555,7 @@ class GroupState {
       this.fetchingMembers = false,
       this.admins = const [],
       this.members = const [],
+      this.invites = const [],
       this.currentGroupMember,
       this.isAdmin = false,
       this.selectedContacts = const [],
@@ -574,6 +587,7 @@ class GroupState {
     bool? fetchingMembers,
     List<GroupMemberModel>? admins,
     List<GroupMemberModel>? members,
+    List<GroupMemberModel>? invites,
     GroupMemberModel? currentGroupMember,
     bool? isAdmin,
     List<Contact>? selectedContacts,
@@ -602,6 +616,7 @@ class GroupState {
       fetchingMembers: fetchingMembers ?? this.fetchingMembers,
       admins: admins ?? this.admins,
       members: members ?? this.members,
+      invites: invites ?? this.invites,
       currentGroupMember: currentGroupMember ?? this.currentGroupMember,
       isAdmin: isAdmin ?? this.isAdmin,
       selectedContacts: selectedContacts ?? this.selectedContacts,
