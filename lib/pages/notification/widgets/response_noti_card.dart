@@ -142,7 +142,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
         );
       case "accepted":
         return Text(
-          "${widget.senderName} has accepted your request for ${widget.eventName}",
+          "You have accepted ${widget.eventName}",
           style: AppStyles.h5.copyWith(
             color: AppColors.greyColor,
           ),

@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
-import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
@@ -139,13 +137,15 @@ class GroupController extends StateNotifier<GroupState> {
       await getGroupMembers();
       updateLoading(false);
       toggleCreatingGroup();
-      navigatorKey.currentState!.push(
-        NavigationController.getTransition(const AddGroupMembers()),
-      );
-      showSnackBar(message: "Group created successfully");
+      navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+      await Future.delayed(const Duration(seconds: 1));
+      resetController();
+      showSnackBar(message: "Group created successfully!. Invite members to group");
     } catch (e) {
       updateLoading(false);
-      showSnackBar(message: "Failed to create group");
+      toggleCreatingGroup();
+      debugPrint(e.toString());
+      showSnackBar(message: "Failed to create group!");
     }
   }
 
@@ -317,8 +317,6 @@ class GroupController extends StateNotifier<GroupState> {
       admins: [],
       members: [],
       isAdmin: false,
-    );
-    state = state.copyWith(
       removingFiles: true,
       profileImage: null,
       bannerImage: null,
@@ -420,7 +418,11 @@ class GroupController extends StateNotifier<GroupState> {
         members.add(member);
         await ref.read(dioServicesProvider).inviteToGroup(member);
       }
-      state = state.copyWith(invitingMembers: false);
+      state = state.copyWith(
+        invitingMembers: false,
+        selectedContacts: [],
+        selectedContactsSearchResult: [],
+      );
       navigatorKey.currentState!.pop();
     } catch (e) {
       debugPrint(e.toString());
@@ -454,8 +456,11 @@ class GroupController extends StateNotifier<GroupState> {
         members: !isAdmin ? state.members.where((e) => e.userId != userId).toList() : null,
         admins: isAdmin ? state.admins.where((e) => e.userId != userId).toList() : null,
       );
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (_) => false);
+      fetchCommunityAndGroupDescriptions();
     } catch (e) {
       debugPrint(e.toString());
+      showSnackBar(message: "Failed to exit group");
     }
   }
 

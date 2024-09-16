@@ -49,7 +49,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
           children: [
             _buildGroupTabs(ref),
             const SizedBox(height: 16),
-            const GroupTabDescriptionList(),
+            const Expanded(child: GroupTabDescriptionList()),
           ],
         );
       },
@@ -78,6 +78,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
       leading: const SizedBox(),
       centerTitle: true,
       elevation: 0,
+      scrolledUnderElevation: 0,
     );
   }
 

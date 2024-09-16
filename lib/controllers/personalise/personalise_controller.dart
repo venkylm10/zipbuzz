@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/location/location_model.dart';
@@ -167,8 +168,7 @@ class PersonaliseController {
       try {
         ref.read(loadingTextProvider.notifier).updateLoadingText("Checking phone");
         final id = await ref.read(dioServicesProvider).getIdFromPhone(mobileNumber);
-        final data =
-            await ref.read(dioServicesProvider).getUserData(id!);
+        final data = await ref.read(dioServicesProvider).getUserData(id!);
         final userDetails = UserDetailsModel.fromMap(data['data']);
         ref.read(authServicesProvider).clearOTPs();
         final currentUser = ref.read(userProvider);
@@ -279,8 +279,9 @@ class PersonaliseController {
         ref.read(newEventProvider.notifier).updateHostId(id);
         ref.read(newEventProvider.notifier).updateHostName(user.name);
         ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
-        await ref.read(eventsControllerProvider.notifier).fetchEvents();
         ref.read(loadingTextProvider.notifier).reset();
+        ref.read(homeTabControllerProvider.notifier).cloneUserDataToQuery();
+        await ref.read(eventsControllerProvider.notifier).fetchEvents();
         navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
       } catch (e) {
         ref.read(loadingTextProvider.notifier).reset();

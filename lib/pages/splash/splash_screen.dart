@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/user/requests/user_details_request_model.dart';
@@ -66,6 +67,7 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
       return;
     }
     ref.read(contactsServicesProvider).updateAllContacts();
+    ref.read(homeTabControllerProvider.notifier).cloneUserDataToQuery();
     ref.read(eventsControllerProvider.notifier).fetchEvents();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }

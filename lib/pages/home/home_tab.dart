@@ -131,6 +131,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
       isSearching: isSearching,
       toggleSearching: () {
         homeTabController.updateSearching(!isSearching);
+        if (isSearching) {
+          ref.read(eventsControllerProvider.notifier).fetchEvents();
+        }
         setState(() {});
       },
       topPadding: topPadding,

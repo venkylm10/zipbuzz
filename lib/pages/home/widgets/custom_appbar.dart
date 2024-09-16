@@ -25,7 +25,7 @@ class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget
   });
   @override
   Size get preferredSize =>
-      Size.fromHeight(AppBar().preferredSize.height + (isSearching ? 220 : 5) + topPadding);
+      Size.fromHeight(AppBar().preferredSize.height + (isSearching ? 250 : 5) + topPadding);
 
   @override
   ConsumerState<CustomAppBar> createState() => _CustomAppBarState();
@@ -153,6 +153,7 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerPr
                               ],
                             ),
                           ),
+                          const SizedBox(height: 8),
                           _buildQueryInterests(),
                           _buildClearText(),
                         ],

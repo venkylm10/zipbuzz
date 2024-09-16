@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/community/community_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
@@ -21,10 +22,12 @@ class GroupTabDescriptionList extends ConsumerWidget {
     final allGroups = ref.watch(groupControllerProvider).currentGroups;
     final communities = ref.watch(groupControllerProvider).currentCommunities;
     if (ref.watch(groupControllerProvider).fetchingList) {
-      return const Padding(
-        padding: EdgeInsets.all(24),
-        child: CircularProgressIndicator(
-          color: AppColors.primaryColor,
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: CircularProgressIndicator(
+            color: AppColors.primaryColor,
+          ),
         ),
       );
     }
@@ -67,7 +70,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
           title: "No communities to show",
           subtitle: "Create a community to get started",
           onTap: (ref) {
-            ref.read(groupControllerProvider.notifier).toggleCreatingGroup();
+            ref.read(communityControllerProvider.notifier).toggleCreatingCommunity();
           },
           buttonLabel: "Create Community",
         ),

@@ -7,6 +7,7 @@ import 'package:zipbuzz/pages/events/event_tab.dart';
 import 'package:zipbuzz/pages/groups/groups_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 
 enum InterestViewType { user, all }
@@ -207,6 +208,15 @@ class HomeTabController extends StateNotifier<HomeTabState> {
       return;
     }
     state = state.copyWith(inQuery: false);
+  }
+
+  void cloneUserDataToQuery() {
+    final user = ref.read(userProvider);
+    final interests = user.interests;
+    final zipcode = user.zipcode;
+    final models = allInterests.where((e) => interests.contains(e.activity)).toList();
+    zipcodeControler.text = zipcode;
+    state = state.copyWith(queryInterests: models, inQuery: false);
   }
 }
 

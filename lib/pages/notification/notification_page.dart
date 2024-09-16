@@ -160,7 +160,10 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
               setState(() {});
             });
       case 'group_accepted':
-        return GroupAcceptCard(notification: notification, time: time);
+        return GroupAcceptCard(
+          notification: notification,
+          time: timeago.format(notiTime, locale: 'en_short'),
+        );
       default:
         return BroadcastNotiCard(
           notification: notification,

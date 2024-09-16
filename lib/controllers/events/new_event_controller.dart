@@ -517,9 +517,16 @@ class NewEvent extends StateNotifier<EventModel> {
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
       final interests =
           ref.read(homeTabControllerProvider.notifier).containsInterest(state.category);
+      final queryInterest = ref
+          .read(homeTabControllerProvider.notifier)
+          .containsInterest(state.category, querySheet: true);
       if (!interests) {
         final interest = allInterests.firstWhere((element) => element.activity == state.category);
         updateInterests(interest);
+      }
+      if (!queryInterest) {
+        final interest = allInterests.firstWhere((element) => element.activity == state.category);
+        ref.read(homeTabControllerProvider.notifier).addQueryInterest(interest);
       }
       ref.read(loadingTextProvider.notifier).updateLoadingText("Updating events...");
 
