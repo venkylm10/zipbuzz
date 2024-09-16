@@ -119,6 +119,12 @@ class Images {
   // ipad_border
   final ipad_border = 'assets/images/ipad_border.png';
   final border_ratio = 1484 / 2000;
+
+  //Group urls
+  final defaultGroupImage =
+      'https://zb-prod.s3.us-west-1.amazonaws.com/default/default_group_icon.jpeg';
+  final defaultGroupBanner =
+      'https://zb-prod.s3.us-west-1.amazonaws.com/default/default_group_banner.jpeg';
 }
 
 class LottieFiles {

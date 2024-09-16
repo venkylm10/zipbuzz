@@ -20,6 +20,7 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
@@ -95,10 +96,8 @@ class GroupController extends StateNotifier<GroupState> {
       }
       var profileUrl = "";
       var bannerUrl = "";
-      // TODO: Update default banner url here
       if (state.profileImage == null) {
-        profileUrl =
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpvTpq1qpxBAIdvC2qU730hg1ccggEZJFOBQ&s";
+        profileUrl = Assets.images.defaultGroupImage;
       } else {
         final url = await ref
             .read(dioServicesProvider)
@@ -106,8 +105,7 @@ class GroupController extends StateNotifier<GroupState> {
         profileUrl = url ?? 'zipbuzz-null';
       }
       if (state.bannerImage == null) {
-        bannerUrl =
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpvTpq1qpxBAIdvC2qU730hg1ccggEZJFOBQ&s";
+        bannerUrl = Assets.images.defaultGroupBanner;
       } else {
         final url = await ref
             .read(dioServicesProvider)

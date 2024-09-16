@@ -85,13 +85,13 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
   Row _buildGroupTabs(WidgetRef ref) {
     return Row(
       children: List.generate(
-        GroupTab.values.length,
+        GroupTab.values.length - 1,
         (index) {
           final tab = GroupTab.values[index];
           final currentTab = ref.watch(groupControllerProvider).currentTab;
-          final first = index == 0;
           return Expanded(
-            flex: first ? 2 : 3,
+            // flex: first ? 2 : 3,
+            flex: 1,
             child: InkWell(
               onTap: () {
                 ref.read(groupControllerProvider.notifier).changeCurrentTab(tab);
