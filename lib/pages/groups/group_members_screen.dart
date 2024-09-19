@@ -146,7 +146,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Members",
+          "Group members",
           style: AppStyles.h3.copyWith(
             color: AppColors.greyColor,
             fontWeight: FontWeight.w600,
@@ -230,7 +230,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
                       color: AppColors.greyColor,
                     ),
                   ),
-                  if (member.name != 'zipbuzz-null')
+                  if (member.name != 'zipbuzz-null' && member.phone != 'zipbuzz-null')
                     Text(
                       member.phone,
                       style: AppStyles.h5.copyWith(

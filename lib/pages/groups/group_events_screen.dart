@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_event_calendar.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_event_screen_tabs.dart';
+import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/home/widgets/bottom_bar.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card.dart';
 import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/tabs.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
 
 class GroupEventsScreen extends ConsumerStatefulWidget {
   static const id = '/groups/group-events';
@@ -36,36 +40,44 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: ListView(
-        children: [
-          const GroupEventScreenTabs(),
-          const SizedBox(height: 12),
-          _buildCalendar(),
-          _buildFocusedDayEvents(),
-        ],
-      ),
-      floatingActionButton: GestureDetector(
-        onTap: () {
-          navigatorKey.currentState!.push(
-            NavigationController.getTransition(const CreateGroupEventScreen()),
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          margin: const EdgeInsets.only(top: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(360),
-            color: const Color(0xff1F98A9),
-          ),
-          child: Text(
-            "Create Event",
-            style: AppStyles.h4.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
+    return CustomBezel(
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: ListView(
+          children: [
+            const GroupEventScreenTabs(),
+            const SizedBox(height: 12),
+            _buildCalendar(),
+            _buildFocusedDayEvents(),
+          ],
+        ),
+        floatingActionButton: GestureDetector(
+          onTap: () {
+            navigatorKey.currentState!.push(
+              NavigationController.getTransition(const CreateGroupEventScreen()),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.only(top: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(360),
+              color: const Color(0xff1F98A9),
+            ),
+            child: Text(
+              "Create Group Event",
+              style: AppStyles.h4.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
+        ),
+        bottomNavigationBar: BottomBar(
+          selectedTab: ref.watch(homeTabControllerProvider).selectedTab.index,
+          pop: () {
+            navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
+          },
         ),
       ),
     );
@@ -93,6 +105,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
                   NavigationController.getTransition(const CreateGroupEventScreen()),
                 );
               },
+              buttonLabel: "Create Group Event",
             ),
           );
         }

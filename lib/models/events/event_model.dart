@@ -30,6 +30,8 @@ class EventModel {
   final List<HyperLinks> hyperlinks;
   final int notificationId;
   int members;
+  int groupId;
+  String groupName;
   EventModel({
     required this.id,
     required this.title,
@@ -57,6 +59,8 @@ class EventModel {
     required this.hyperlinks,
     this.notificationId = -1,
     required this.members,
+    this.groupId = -1,
+    this.groupName = "zipbuzz-null",
   });
 
   EventModel copyWith({
@@ -85,6 +89,8 @@ class EventModel {
     String? userDeviceToken,
     List<HyperLinks>? hyperlinks,
     int? members,
+    int? groupId,
+    String? groupName,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -112,6 +118,8 @@ class EventModel {
       userDeviceToken: userDeviceToken ?? this.userDeviceToken,
       hyperlinks: hyperlinks ?? this.hyperlinks,
       members: members ?? this.members,
+      groupId: groupId ?? this.groupId,
+      groupName: groupName ?? this.groupName,
     );
   }
 
@@ -147,6 +155,8 @@ class EventModel {
           .toList(),
       notificationId: map['notificationId'] ?? -1,
       members: map['members'] ?? 0,
+      groupId: map['group_id'] ?? 0,
+      groupName: map['group_name'] ?? "zipbuzz-null",
     );
   }
 
@@ -174,6 +184,12 @@ class EventModel {
       'eventMembers': eventMembers.map((e) => e.toMap()).toList(),
       "invite_url": inviteUrl,
       "status": status,
+      "user_device_token": userDeviceToken,
+      "hyperlinks": hyperlinks.map((e) => e.toMap()).toList(),
+      "notificationId": notificationId,
+      "members": members,
+      "group_id": groupId,
+      "group_name": groupName,
     };
   }
 

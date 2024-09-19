@@ -416,7 +416,13 @@ class GroupController extends StateNotifier<GroupState> {
           invitingUserName: user.name,
         );
         members.add(member);
-        await ref.read(dioServicesProvider).inviteToGroup(member);
+        try {
+          print(member.toJson());
+          await ref.read(dioServicesProvider).inviteToGroup(member);
+        } catch (e) {
+          debugPrint(e.toString());
+          debugPrint("Failed to invite user: ${member.phoneNumber}");
+        }
       }
       state = state.copyWith(
         invitingMembers: false,

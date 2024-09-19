@@ -156,15 +156,13 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
             ),
           if (selectedContactsSearchResult.isNotEmpty) const SizedBox(height: 4),
           if (selectedContactsSearchResult.isNotEmpty)
-            ListView.builder(
-              itemCount: selectedContactsSearchResult.length,
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(selectedContactsSearchResult.length, (index) {
                 final contact = selectedContactsSearchResult[index];
-                return _buildMemberCard(contact);
-              },
+                return _buildSelectedCardChip(contact);
+              }),
             ),
           if (selectedContactsSearchResult.isNotEmpty) const SizedBox(height: 8),
           Text(
@@ -189,6 +187,32 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
         ],
       );
     });
+  }
+
+  Widget _buildSelectedCardChip(Contact contact) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(groupControllerProvider.notifier).toggleSelectedContact(contact);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: AppColors.primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              contact.displayName ?? contact.phones!.first.value!,
+              style: AppStyles.h4,
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.cancel_outlined),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildMemberCard(Contact contact) {
