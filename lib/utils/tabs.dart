@@ -6,7 +6,7 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 enum AppTabs {
   home,
   events,
-  groups,
+  // groups,
   profile,
 }
 
@@ -17,8 +17,8 @@ extension AppTabsExtension on AppTabs {
         return 'Home';
       case AppTabs.events:
         return 'My Events';
-      case AppTabs.groups:
-        return 'Groups';
+      // case AppTabs.groups:
+      //   return 'Groups';
       case AppTabs.profile:
         return 'Profile';
     }
@@ -30,8 +30,8 @@ extension AppTabsExtension on AppTabs {
         return 0;
       case AppTabs.events:
         return 1;
-      case AppTabs.groups:
-        return 2;
+      // case AppTabs.groups:
+      //   return 2;
       case AppTabs.profile:
         return 3;
     }
@@ -43,8 +43,8 @@ extension AppTabsExtension on AppTabs {
         return Assets.icons.home;
       case AppTabs.events:
         return Assets.icons.events;
-      case AppTabs.groups:
-        return Assets.icons.group_tab;
+      // case AppTabs.groups:
+      //   return Assets.icons.group_tab;
       case AppTabs.profile:
         return Assets.icons.person;
     }
@@ -62,8 +62,8 @@ extension AppTabsExtension on AppTabs {
             BlendMode.srcIn,
           ),
         );
-      case AppTabs.groups:
-        return Image.asset(iconPath, height: 20);
+      // case AppTabs.groups:
+      //   return Image.asset(iconPath, height: 20);
     }
   }
 
@@ -79,12 +79,12 @@ extension AppTabsExtension on AppTabs {
             BlendMode.srcIn,
           ),
         );
-      case AppTabs.groups:
-        return Image.asset(
-          iconPath,
-          height: 20,
-          color: AppColors.primaryColor,
-        );
+      // case AppTabs.groups:
+      //   return Image.asset(
+      //     iconPath,
+      //     height: 20,
+      //     color: AppColors.primaryColor,
+      //   );
     }
   }
 
@@ -94,8 +94,8 @@ extension AppTabsExtension on AppTabs {
         return AppTabs.home;
       case 1:
         return AppTabs.events;
-      case 2:
-        return AppTabs.groups;
+      // case 2:
+      //   return AppTabs.groups;
       case 3:
         return AppTabs.profile;
       default:
