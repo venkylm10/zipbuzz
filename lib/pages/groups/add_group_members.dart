@@ -197,7 +197,7 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -205,10 +205,10 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
           children: [
             Text(
               contact.displayName ?? contact.phones!.first.value!,
-              style: AppStyles.h4,
+              style: AppStyles.h4.copyWith(color: Colors.white),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.cancel_outlined),
+            const Icon(Icons.cancel_outlined, color: Colors.white),
           ],
         ),
       ),

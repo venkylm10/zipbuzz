@@ -98,7 +98,7 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
             SvgPicture.asset(Assets.icons.save_event),
             const SizedBox(width: 8),
             Text(
-              "Invite Guests",
+              "Invite ${widget.groupEvent ? "More " : ""}Guests",
               style: AppStyles.h3.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.white,

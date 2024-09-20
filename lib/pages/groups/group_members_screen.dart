@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
-import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
-import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
+import 'package:zipbuzz/pages/groups/widgets/group_member_card.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -106,7 +104,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return _buildMemberCard(admins[index], isAdmin: true);
+            return GroupMemberCard(member: admins[index], isAdmin: true);
           },
         ),
       ],
@@ -132,7 +130,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return _buildMemberCard(invites[index], invitee: true);
+            return GroupMemberCard(member: invites[index], invitee: true);
           },
         ),
       ],
@@ -158,7 +156,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return _buildMemberCard(members[index]);
+            return GroupMemberCard(member: members[index]);
           },
         ),
       ],
@@ -186,64 +184,6 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
             color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
-        ),
-      ),
-    );
-  }
-
-  GestureDetector _buildMemberCard(GroupMemberModel member,
-      {bool isAdmin = false, bool invitee = false}) {
-    return GestureDetector(
-      onTap: () {
-        if (invitee) return;
-        ref.read(groupControllerProvider.notifier).updateCurrentGroupMember(member, isAdmin);
-        navigatorKey.currentState!.push(
-          NavigationController.getTransition(
-            GroupMemberDetailsScreen(userId: member.userId),
-          ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          color: AppColors.bgGrey,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderGrey),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 16,
-              backgroundImage: NetworkImage(member.profilePicture),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    member.name == 'zipbuzz-null' ? member.phone : member.name,
-                    style: AppStyles.h4.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.greyColor,
-                    ),
-                  ),
-                  if (member.name != 'zipbuzz-null' && member.phone != 'zipbuzz-null')
-                    Text(
-                      member.phone,
-                      style: AppStyles.h5.copyWith(
-                        color: AppColors.lightGreyColor,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    )
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            if (!invitee) const Icon(Icons.arrow_forward_ios_rounded, size: 14)
-          ],
         ),
       ),
     );

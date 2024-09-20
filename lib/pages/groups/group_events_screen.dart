@@ -51,28 +51,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
             _buildFocusedDayEvents(),
           ],
         ),
-        floatingActionButton: GestureDetector(
-          onTap: () {
-            navigatorKey.currentState!.push(
-              NavigationController.getTransition(const CreateGroupEventScreen()),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            margin: const EdgeInsets.only(top: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(360),
-              color: const Color(0xff1F98A9),
-            ),
-            child: Text(
-              "Create Group Event",
-              style: AppStyles.h4.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
+        floatingActionButton: _floatingButton(),
         bottomNavigationBar: BottomBar(
           selectedTab: ref.watch(homeTabControllerProvider).selectedTab.index,
           pop: () {
@@ -81,6 +60,40 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
         ),
       ),
     );
+  }
+
+  Widget _floatingButton() {
+    return Consumer(builder: (context, ref, child) {
+      final upcoming = ref.watch(groupControllerProvider).groupEventsTab == GroupEventsTab.upcoming;
+      final events = ref.watch(groupControllerProvider).currentGroupMonthEvents.where((e) {
+        final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+        final eventDay = DateFormat('yyyy-MM-dd').parse(e.date);
+        return upcoming ? eventDay.isAfter(today) : eventDay.isBefore(today);
+      }).toList();
+      if (events.isEmpty) return const SizedBox();
+      return GestureDetector(
+        onTap: () {
+          navigatorKey.currentState!.push(
+            NavigationController.getTransition(const CreateGroupEventScreen()),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: const EdgeInsets.only(top: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(360),
+            color: const Color(0xff1F98A9),
+          ),
+          child: Text(
+            "Create Group Event",
+            style: AppStyles.h4.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildFocusedDayEvents() {
@@ -98,7 +111,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
           return Padding(
             padding: const EdgeInsets.only(top: 44),
             child: NoUpcomingEventsBanner(
-              title: "No events ${upcoming ? "Upcoming " : "Past "}events lined up",
+              title: "No ${upcoming ? "Upcoming " : "Past "}events lined up",
               subtitle: "Your group events will show up here",
               onTap: (ref) {
                 navigatorKey.currentState!.push(
