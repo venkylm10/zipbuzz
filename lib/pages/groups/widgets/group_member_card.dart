@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
-import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -97,13 +95,7 @@ class GroupMemberCard extends ConsumerWidget {
       if (member.permissionType != GroupPermissionType.pending) return const SizedBox();
       return GestureDetector(
         onTap: () async {
-          final AcceptGroupModel model = AcceptGroupModel(
-            groupId: ref.read(groupControllerProvider).currentGroup!.id,
-            userId: member.userId,
-            groupUserAddedBy: ref.read(userProvider).id,
-            permissionType: 'm',
-          );
-          await ref.read(groupControllerProvider.notifier).addMemberToGroup(model);
+          await ref.read(groupControllerProvider.notifier).addMemberToGroup(member.userId);
         },
         child: Container(
           margin: const EdgeInsets.only(left: 6),

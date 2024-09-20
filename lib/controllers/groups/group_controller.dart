@@ -447,10 +447,10 @@ class GroupController extends StateNotifier<GroupState> {
     }
   }
 
-  Future<void> addMemberToGroup(AcceptGroupModel model) async {
+  Future<void> addMemberToGroup(int userId) async {
     try {
       state = state.copyWith(loading: true);
-      await acceptInvite(model);
+      await updateGroupMemberStatus(userId, 'm');
       await getGroupMembers();
       showSnackBar(message: "User added to group successfully");
     } catch (e) {
