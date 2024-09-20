@@ -23,23 +23,47 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
     final groupDes = ref.read(groupControllerProvider).currentGroupDescription;
     return Scaffold(
       appBar: _buildAppBar(groupDes),
-      body: ref.watch(groupControllerProvider).fetchingMembers
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primaryColor,
-              ),
-            )
-          : ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              physics: const BouncingScrollPhysics(),
-              children: [
-                _buildAdmins(),
-                const SizedBox(height: 8),
-                _buildMembers(),
-                const SizedBox(height: 8),
-                _buildInvites(),
-              ],
+      body: Stack(
+        children: [
+          SizedBox(
+            height: MediaQuery.sizeOf(context).height,
+            width: MediaQuery.sizeOf(context).width,
+            child: ref.watch(groupControllerProvider).fetchingMembers
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                    ),
+                  )
+                : ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      _buildAdmins(),
+                      const SizedBox(height: 8),
+                      _buildMembers(),
+                      const SizedBox(height: 8),
+                      _buildInvites(),
+                    ],
+                  ),
+          ),
+          Positioned.fill(
+            child: Consumer(
+              builder: (context, ref, child) {
+                return ref.watch(groupControllerProvider).loading
+                    ? Container(
+                        color: Colors.black.withOpacity(0.5),
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      )
+                    : const SizedBox();
+              },
             ),
+          )
+        ],
+      ),
       floatingActionButton: _buildInviteMembersButton(),
     );
   }

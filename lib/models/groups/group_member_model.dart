@@ -24,6 +24,9 @@ class GroupMemberModel {
       case 'i':
         permissionType = GroupPermissionType.invite;
         break;
+      case 'p':
+        permissionType = GroupPermissionType.pending;
+        break;
       default:
         permissionType = GroupPermissionType.member;
     }
@@ -43,4 +46,5 @@ enum GroupPermissionType {
   admin,
   member,
   invite,
+  pending,
 }

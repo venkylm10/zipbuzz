@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
+import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -24,6 +26,11 @@ class GroupMemberCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final borderColor = member.permissionType == GroupPermissionType.invite
+        ? Colors.red.withOpacity(0.6)
+        : member.permissionType == GroupPermissionType.pending
+            ? Colors.green.withOpacity(0.6)
+            : AppColors.borderGrey;
     return GestureDetector(
       onTap: () {
         if (invitee) return;
@@ -41,7 +48,7 @@ class GroupMemberCard extends ConsumerWidget {
         decoration: BoxDecoration(
           color: AppColors.bgGrey,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderGrey),
+          border: Border.all(color: borderColor),
         ),
         child: Row(
           children: [
@@ -75,10 +82,46 @@ class GroupMemberCard extends ConsumerWidget {
             const SizedBox(width: 8),
             if (!invitee) const Icon(Icons.arrow_forward_ios_rounded, size: 14),
             _buildInviteToBuzzMeButton(),
+            _buildMemberAcceptButton(ref)
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildMemberAcceptButton(WidgetRef ref) {
+    if (!invitee || member.name == 'zipbuzz-null') return const SizedBox();
+    return Consumer(builder: (context, ref, child) {
+      final admin = ref.watch(groupControllerProvider).isAdmin;
+      if (!admin) return const SizedBox();
+      if (member.permissionType != GroupPermissionType.pending) return const SizedBox();
+      return GestureDetector(
+        onTap: () async {
+          final AcceptGroupModel model = AcceptGroupModel(
+            groupId: ref.read(groupControllerProvider).currentGroup!.id,
+            userId: member.userId,
+            groupUserAddedBy: ref.read(userProvider).id,
+            permissionType: 'm',
+          );
+          await ref.read(groupControllerProvider.notifier).addMemberToGroup(model);
+        },
+        child: Container(
+          margin: const EdgeInsets.only(left: 6),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Text(
+            "Accept",
+            style: AppStyles.h5.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildInviteToBuzzMeButton() {

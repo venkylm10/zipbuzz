@@ -20,7 +20,8 @@ class GroupMemberResModel {
       final model = GroupMemberModel.fromJson(user);
       if (model.permissionType == GroupPermissionType.admin) {
         admins.add(model);
-      } else if (model.permissionType == GroupPermissionType.invite) {
+      } else if (model.permissionType == GroupPermissionType.invite ||
+          model.permissionType == GroupPermissionType.pending) {
         invites.add(model);
       } else {
         members.add(model);

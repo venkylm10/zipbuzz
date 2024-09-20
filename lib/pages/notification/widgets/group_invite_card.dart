@@ -45,24 +45,21 @@ class GroupInviteCard extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: InkWell(
-                  onTap: () {},
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        notification.senderName,
-                        style: AppStyles.h5.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                        softWrap: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      notification.senderName,
+                      style: AppStyles.h5.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                      Text(
-                        '${notification.senderName} has invited to join the group - ${notification.groupName}',
-                        style: AppStyles.h5,
-                      ),
-                    ],
-                  ),
+                      softWrap: true,
+                    ),
+                    Text(
+                      '${notification.senderName} has invited to join the group - ${notification.groupName}',
+                      style: AppStyles.h5,
+                    ),
+                  ],
                 ),
               ),
               Text(
@@ -81,6 +78,7 @@ class GroupInviteCard extends ConsumerWidget {
                   groupId: notification.groupId,
                   userId: user.id,
                   groupUserAddedBy: notification.senderId,
+                  permissionType: 'p',
                 );
                 await ref.read(groupControllerProvider.notifier).acceptInvite(model);
                 await ref.read(dioServicesProvider).updateRespondedNotification(

@@ -447,6 +447,19 @@ class GroupController extends StateNotifier<GroupState> {
     }
   }
 
+  Future<void> addMemberToGroup(AcceptGroupModel model) async {
+    try {
+      state = state.copyWith(loading: true);
+      await acceptInvite(model);
+      await getGroupMembers();
+      showSnackBar(message: "User added to group successfully");
+    } catch (e) {
+      debugPrint(e.toString());
+      showSnackBar(message: "Failed to add user to group");
+    }
+    state = state.copyWith(loading: false);
+  }
+
   Future<void> acceptInvite(AcceptGroupModel model) async {
     await ref.read(dioServicesProvider).acceptGroup(model);
   }
