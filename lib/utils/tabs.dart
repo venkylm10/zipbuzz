@@ -33,7 +33,7 @@ extension AppTabsExtension on AppTabs {
       // case AppTabs.groups:
       //   return 2;
       case AppTabs.profile:
-        return 3;
+        return 2;
     }
   }
 
@@ -96,7 +96,7 @@ extension AppTabsExtension on AppTabs {
         return AppTabs.events;
       // case 2:
       //   return AppTabs.groups;
-      case 3:
+      case 2:
         return AppTabs.profile;
       default:
         return AppTabs.home;
