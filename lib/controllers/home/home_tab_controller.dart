@@ -35,7 +35,7 @@ class HomeTabController extends StateNotifier<HomeTabState> {
   final tabs = const [
     HomeTab(),
     EventsTab(),
-    GroupsTab(),
+    // GroupsTab(),
     ProfileTab(),
   ];
 
