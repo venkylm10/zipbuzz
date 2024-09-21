@@ -23,7 +23,7 @@ abstract class AppEnvironment {
     _env = env;
 
     /// Update this before every release
-    _appVersion = "1.0.53";
+    _appVersion = "1.0.54";
     switch (env) {
       case Environment.dev:
         cloudFunctionBaseUrl = "https://dev.zipbuzz.me/";
