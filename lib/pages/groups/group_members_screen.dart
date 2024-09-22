@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_member_card.dart';
+import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/home/widgets/bottom_bar.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -65,6 +68,12 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
         ],
       ),
       floatingActionButton: _buildInviteMembersButton(),
+      bottomNavigationBar: BottomBar(
+        selectedTab: ref.watch(homeTabControllerProvider).selectedTab.index,
+        pop: () {
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
+        },
+      ),
     );
   }
 

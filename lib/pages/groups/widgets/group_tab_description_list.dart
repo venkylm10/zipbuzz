@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/community/community_controller.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/group_events_screen.dart';
 import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
+import 'package:zipbuzz/pages/notification/notification_page.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -40,7 +42,9 @@ class GroupTabDescriptionList extends ConsumerWidget {
     final user = ref.read(userProvider);
     final groups =
         tab == GroupTab.all ? allGroups : allGroups.where((e) => e.creatorId == user.id).toList();
-    if (groups.isEmpty) {
+    final pendingOrRequestedGroups =
+        allGroups.where((e) => e.permissionType == 'i' || e.permissionType == 'p').toList();
+    if (groups.isEmpty && pendingOrRequestedGroups.isEmpty) {
       return Padding(
         padding: const EdgeInsets.only(top: 44),
         child: NoUpcomingEventsBanner(
@@ -53,12 +57,72 @@ class GroupTabDescriptionList extends ConsumerWidget {
         ),
       );
     }
+    if (tab == GroupTab.personal) {
+      return ListView.builder(
+        itemCount: groups.length,
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return _buildGroupTitleCard(groups[index], ref);
+        },
+      );
+    }
+    final length = groups.length + (tab != GroupTab.all ? 0 : pendingOrRequestedGroups.length) + 1;
     return ListView.builder(
-      itemCount: groups.length,
+      itemCount: length,
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        return _buildGroupTitleCard(groups[index], ref);
+        if (index < groups.length) {
+          return _buildJoinedGroups(groups, index, ref);
+        } else if (index != length - 1) {
+          return _buildPendingOrRequestedGroups(index, groups, pendingOrRequestedGroups, ref);
+        }
+        return const SizedBox(height: 100);
       },
+    );
+  }
+
+  Column _buildPendingOrRequestedGroups(int index, List<DescriptionModel> groups,
+      List<DescriptionModel> pendingOrRequestedGroups, WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (index == groups.length && pendingOrRequestedGroups.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              "Pending/Requested Groups",
+              style: AppStyles.h4.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        _buildGroupTitleCard(
+          pendingOrRequestedGroups[index - groups.length],
+          ref,
+          redirectToNotificationScreen: true,
+        ),
+      ],
+    );
+  }
+
+  Column _buildJoinedGroups(List<DescriptionModel> groups, int index, WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (groups.isNotEmpty && index == 0)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 8),
+            child: Text(
+              "Joined Groups",
+              style: AppStyles.h4.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        _buildGroupTitleCard(groups[index], ref),
+      ],
     );
   }
 
@@ -85,10 +149,20 @@ class GroupTabDescriptionList extends ConsumerWidget {
     );
   }
 
-  Widget _buildGroupTitleCard(DescriptionModel description, WidgetRef ref) {
+  Widget _buildGroupTitleCard(DescriptionModel description, WidgetRef ref,
+      {bool redirectToNotificationScreen = false}) {
     if (description.archive) return const SizedBox();
     return GestureDetector(
       onTap: () async {
+        if (redirectToNotificationScreen) {
+          final events = ref.read(eventsControllerProvider).currentMonthEvents;
+          await navigatorKey.currentState!.pushNamed(NotificationPage.id, arguments: {
+            'group_id': description.id,
+          });
+          ref.read(eventsControllerProvider.notifier).fixHomeEvents(events);
+          ref.read(eventsControllerProvider.notifier).fetchEvents();
+          return;
+        }
         // Update the current group description
         if (description.type == 'group') {
           debugPrint("Group Id: ${description.id}");
@@ -145,13 +219,14 @@ class GroupTabDescriptionList extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              ">",
-              style: AppStyles.h4.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 12.5,
+            if (!redirectToNotificationScreen)
+              Text(
+                ">",
+                style: AppStyles.h4.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
+                ),
               ),
-            ),
           ],
         ),
       ),

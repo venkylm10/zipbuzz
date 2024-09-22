@@ -161,7 +161,7 @@ class DioServices {
       return list.map((e) => NotificationData.fromMap(e)).toList();
     } catch (e) {
       debugPrint(e.toString());
-      return <NotificationData>[];
+      rethrow;
     }
   }
 

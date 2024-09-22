@@ -6,6 +6,7 @@ class DescriptionModel {
   final String type;
   final bool archive;
   final String profileImage;
+  final String permissionType;
 
   DescriptionModel({
     required this.id,
@@ -15,6 +16,7 @@ class DescriptionModel {
     required this.type,
     required this.archive,
     required this.profileImage,
+    required this.permissionType,
   });
 
   factory DescriptionModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class DescriptionModel {
       type: json['type'],
       archive: json['archive'],
       profileImage: json['profile_image'],
+      permissionType: json['permission_type'],
     );
   }
 }

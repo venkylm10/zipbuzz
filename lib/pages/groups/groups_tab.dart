@@ -12,16 +12,11 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 
-class GroupsTab extends ConsumerStatefulWidget {
+class GroupsTab extends ConsumerWidget {
   const GroupsTab({super.key});
 
   @override
-  ConsumerState<GroupsTab> createState() => _GroupsTabState();
-}
-
-class _GroupsTabState extends ConsumerState<GroupsTab> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) =>
@@ -47,6 +42,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
         }
         return Column(
           children: [
+            const SizedBox(height: 8),
             _buildGroupTabs(ref),
             const SizedBox(height: 16),
             const Expanded(child: GroupTabDescriptionList()),

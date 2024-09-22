@@ -48,3 +48,18 @@ enum GroupPermissionType {
   invite,
   pending,
 }
+
+extension GroupPermissionTypeExtension on GroupPermissionType {
+  String get short {
+    switch (this) {
+      case GroupPermissionType.admin:
+        return 'a';
+      case GroupPermissionType.member:
+        return 'm';
+      case GroupPermissionType.invite:
+        return 'i';
+      case GroupPermissionType.pending:
+        return 'p';
+    }
+  }
+}
