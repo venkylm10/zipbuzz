@@ -9,6 +9,7 @@ import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
+import 'package:zipbuzz/models/events/notifications/post_notification_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/posts/broadcast_post_model.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
@@ -214,6 +215,18 @@ class DioServices {
     }
     try {
       await dio.put(DioConstants.updateNotification, data: data);
+    } catch (e) {
+      debugPrint(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> postGroupNotification(PostNotificationModel model) async {
+    try {
+      await dio.post(DioConstants.postGroupNotification, data: {
+        "notification_data": model.toMap(),
+      });
+      debugPrint("Posted notification");
     } catch (e) {
       debugPrint(e.toString());
       rethrow;

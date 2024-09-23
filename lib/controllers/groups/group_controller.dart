@@ -7,6 +7,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/models/events/notifications/post_notification_model.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/models/groups/group_model.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
@@ -270,8 +271,8 @@ class GroupController extends StateNotifier<GroupState> {
     state = state.copyWith(fetchingMembers: false);
   }
 
-  void updateCurrentGroupMember(GroupMemberModel member, bool isAdmin) {
-    state = state.copyWith(currentGroupMember: member, isAdmin: isAdmin);
+  void updateCurrentGroupMember(GroupMemberModel member) {
+    state = state.copyWith(currentGroupMember: member);
   }
 
   Future<void> archiveGroup() async {
@@ -431,7 +432,7 @@ class GroupController extends StateNotifier<GroupState> {
         selectedContactsSearchResult: [],
       );
       await Future.delayed(const Duration(milliseconds: 300));
-      navigatorKey.currentState!.pushReplacementNamed(GroupMembersScreen.id);
+      navigatorKey.currentState!.pop();
       await Future.delayed(const Duration(milliseconds: 300));
       showSnackBar(message: "Invited Users Successfully!");
     } catch (e) {
@@ -442,7 +443,7 @@ class GroupController extends StateNotifier<GroupState> {
         selectedContactsSearchResult: [],
       );
       await Future.delayed(const Duration(milliseconds: 300));
-      navigatorKey.currentState!.pushReplacementNamed(GroupMembersScreen.id);
+      navigatorKey.currentState!.pop();
       showSnackBar(message: "Failed to invite all the users!");
     }
   }
@@ -452,6 +453,14 @@ class GroupController extends StateNotifier<GroupState> {
       state = state.copyWith(loading: true);
       await updateGroupMemberStatus(userId, 'm');
       await getGroupMembers();
+      final model = PostNotificationModel(
+        userId: userId,
+        groupId: state.currentGroupDescription!.id,
+        notificationType: 'group_confirmed',
+        senderId: ref.read(userProvider).id,
+      );
+      print(model.toMap());
+      ref.read(dioServicesProvider).postGroupNotification(model);
       showSnackBar(message: "User added to group successfully");
     } catch (e) {
       debugPrint(e.toString());
@@ -486,8 +495,6 @@ class GroupController extends StateNotifier<GroupState> {
         members: !isAdmin ? state.members.where((e) => e.userId != userId).toList() : null,
         admins: isAdmin ? state.admins.where((e) => e.userId != userId).toList() : null,
       );
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (_) => false);
-      fetchCommunityAndGroupDescriptions();
     } catch (e) {
       debugPrint(e.toString());
       showSnackBar(message: "Failed to exit group");

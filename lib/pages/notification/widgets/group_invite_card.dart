@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
@@ -56,7 +57,7 @@ class GroupInviteCard extends ConsumerWidget {
                       softWrap: true,
                     ),
                     Text(
-                      '${notification.senderName} has invited to join the group - ${notification.groupName}',
+                      '${notification.senderName} has invited you to join the group - ${notification.groupName}',
                       style: AppStyles.h5,
                     ),
                   ],
@@ -91,6 +92,7 @@ class GroupInviteCard extends ConsumerWidget {
                 clicked = false;
                 ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                 await Future.delayed(const Duration(milliseconds: 300));
+                await ref.read(homeTabControllerProvider.notifier).getNotifications();
                 rebuild();
                 showSnackBar(message: "Group invite accepted for ${notification.groupName}");
                 final trace = TraceLogModel(
