@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
@@ -79,7 +81,7 @@ class GroupMemberCard extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             if (!invitee) const Icon(Icons.arrow_forward_ios_rounded, size: 14),
-            _buildInviteToBuzzMeButton(),
+            _buildInviteToBuzzMeButton(ref),
             _buildMemberAcceptButton(ref)
           ],
         ),
@@ -116,11 +118,14 @@ class GroupMemberCard extends ConsumerWidget {
     });
   }
 
-  Widget _buildInviteToBuzzMeButton() {
+  Widget _buildInviteToBuzzMeButton(WidgetRef ref) {
     if (!invitee || member.name != 'zipbuzz-null') return const SizedBox();
     return GestureDetector(
       onTap: () {
-        launchUrlString(AppEnvironment.websiteUrl);
+        final user = ref.read(userProvider);
+        final shareText =
+            "${user.name} invites to you to join Buzz.Me\n\nDownload Buzz.Me at https://zipbuzz.me/";
+        Share.share(shareText);
       },
       child: Container(
         margin: const EdgeInsets.only(left: 6),
