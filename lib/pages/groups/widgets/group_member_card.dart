@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
-import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';

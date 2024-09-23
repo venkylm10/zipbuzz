@@ -53,7 +53,6 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
     final int index = notifications.indexWhere(
       (notification) => notification.groupId == widget.groupId,
     );
-    print("GOT ONE");
     if (index != -1) {
       _scrollController.animateTo(
         index * 100.0,
