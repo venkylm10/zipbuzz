@@ -57,7 +57,7 @@ class GroupInviteCard extends ConsumerWidget {
                       softWrap: true,
                     ),
                     Text(
-                      '${notification.senderName} has invited to join the group - ${notification.groupName}',
+                      '${notification.senderName} has invited you to join the group - ${notification.groupName}',
                       style: AppStyles.h5,
                     ),
                   ],

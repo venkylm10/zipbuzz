@@ -181,6 +181,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
               .updateCurrentGroupDescription(groupDescription);
           ref.read(groupControllerProvider.notifier).getGroupMembers();
           await navigatorKey.currentState!.pushNamed(GroupEventsScreen.id);
+          ref.read(groupControllerProvider.notifier).fetchCommunityAndGroupDescriptions();
         }
       },
       child: Container(

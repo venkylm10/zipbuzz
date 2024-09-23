@@ -32,7 +32,7 @@ class GroupMemberCard extends ConsumerWidget {
     return GestureDetector(
       onTap: () {
         if (invitee) return;
-        ref.read(groupControllerProvider.notifier).updateCurrentGroupMember(member, isAdmin);
+        ref.read(groupControllerProvider.notifier).updateCurrentGroupMember(member);
         navigatorKey.currentState!.push(
           NavigationController.getTransition(
             GroupMemberDetailsScreen(userId: member.userId),

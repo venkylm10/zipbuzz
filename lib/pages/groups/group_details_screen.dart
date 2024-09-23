@@ -159,6 +159,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
           ref.read(groupControllerProvider.notifier).clearSelectedContacts();
           ref.read(groupControllerProvider.notifier).contactSearchController.clear();
           await navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+          await navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

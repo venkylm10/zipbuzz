@@ -157,10 +157,11 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             rebuild: () {
               setState(() {});
             });
-      case 'group_accepted':
+      case 'group_accepted' || 'group_confirmed':
         return GroupAcceptCard(
           notification: notification,
           time: timeago.format(notiTime, locale: 'en_short'),
+          confirmed: notification.notificationType == 'group_confirmed',
         );
       default:
         return BroadcastNotiCard(
