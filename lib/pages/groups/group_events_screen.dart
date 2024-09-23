@@ -3,18 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_event_calendar.dart';
 import 'package:zipbuzz/pages/groups/widgets/group_event_screen_tabs.dart';
+import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/home/widgets/bottom_bar.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card.dart';
 import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/tabs.dart';
+import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
 
 class GroupEventsScreen extends ConsumerStatefulWidget {
   static const id = '/groups/group-events';
@@ -36,17 +40,38 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: ListView(
-        children: [
-          const GroupEventScreenTabs(),
-          const SizedBox(height: 12),
-          _buildCalendar(),
-          _buildFocusedDayEvents(),
-        ],
+    return CustomBezel(
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: ListView(
+          children: [
+            const GroupEventScreenTabs(),
+            const SizedBox(height: 12),
+            _buildCalendar(),
+            _buildFocusedDayEvents(),
+          ],
+        ),
+        floatingActionButton: _floatingButton(),
+        bottomNavigationBar: BottomBar(
+          selectedTab: ref.watch(homeTabControllerProvider).selectedTab.index,
+          pop: () {
+            navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
+          },
+        ),
       ),
-      floatingActionButton: GestureDetector(
+    );
+  }
+
+  Widget _floatingButton() {
+    return Consumer(builder: (context, ref, child) {
+      final upcoming = ref.watch(groupControllerProvider).groupEventsTab == GroupEventsTab.upcoming;
+      final events = ref.watch(groupControllerProvider).currentGroupMonthEvents.where((e) {
+        final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+        final eventDay = DateFormat('yyyy-MM-dd').parse(e.date);
+        return upcoming ? eventDay.isAfter(today) : eventDay.isBefore(today);
+      }).toList();
+      if (events.isEmpty) return const SizedBox();
+      return GestureDetector(
         onTap: () {
           navigatorKey.currentState!.push(
             NavigationController.getTransition(const CreateGroupEventScreen()),
@@ -60,15 +85,15 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
             color: const Color(0xff1F98A9),
           ),
           child: Text(
-            "Create Event",
+            "Create Group Event",
             style: AppStyles.h4.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildFocusedDayEvents() {
@@ -86,13 +111,14 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
           return Padding(
             padding: const EdgeInsets.only(top: 44),
             child: NoUpcomingEventsBanner(
-              title: "No events ${upcoming ? "Upcoming " : "Past "}events lined up",
+              title: "No ${upcoming ? "Upcoming " : "Past "}events lined up",
               subtitle: "Your group events will show up here",
               onTap: (ref) {
                 navigatorKey.currentState!.push(
                   NavigationController.getTransition(const CreateGroupEventScreen()),
                 );
               },
+              buttonLabel: "Create Group Event",
             ),
           );
         }

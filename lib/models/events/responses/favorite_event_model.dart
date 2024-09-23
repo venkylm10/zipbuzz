@@ -22,6 +22,8 @@ class FavoriteEventModel {
   List<HyperLinks> hyperlinks;
   int notificationId;
   int members;
+  int groupId;
+  String groupName;
   FavoriteEventModel({
     required this.eventId,
     required this.image,
@@ -44,6 +46,8 @@ class FavoriteEventModel {
     required this.hyperlinks,
     this.notificationId = -1,
     required this.members,
+    this.groupId = -1,
+    this.groupName = "zipbuzz-null",
   });
 
   Map<String, dynamic> toMap() {
@@ -69,6 +73,8 @@ class FavoriteEventModel {
       'hyperlinks': hyperlinks.map((hyperlink) => hyperlink.toMap()).toList(),
       'notification_id': notificationId,
       'members': members,
+      'group_id': groupId,
+      'group_name': groupName,
     };
   }
 
@@ -97,6 +103,8 @@ class FavoriteEventModel {
           .toList(),
       notificationId: map['notification_id'] ?? -1,
       members: map['members'] ?? 0,
+      groupId: map['group_id'] ?? -1,
+      groupName: map['group_name'] ?? "zipbuzz-null",
     );
   }
 }

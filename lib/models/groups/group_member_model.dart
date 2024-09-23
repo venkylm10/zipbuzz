@@ -24,6 +24,9 @@ class GroupMemberModel {
       case 'i':
         permissionType = GroupPermissionType.invite;
         break;
+      case 'p':
+        permissionType = GroupPermissionType.pending;
+        break;
       default:
         permissionType = GroupPermissionType.member;
     }
@@ -43,4 +46,20 @@ enum GroupPermissionType {
   admin,
   member,
   invite,
+  pending,
+}
+
+extension GroupPermissionTypeExtension on GroupPermissionType {
+  String get short {
+    switch (this) {
+      case GroupPermissionType.admin:
+        return 'a';
+      case GroupPermissionType.member:
+        return 'm';
+      case GroupPermissionType.invite:
+        return 'i';
+      case GroupPermissionType.pending:
+        return 'p';
+    }
+  }
 }

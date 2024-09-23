@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/notification_data.dart';
@@ -9,7 +10,6 @@ import 'package:zipbuzz/pages/notification/widgets/broadcast_noti_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/group_accepted_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/group_invite_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/reminder_noti_card.dart';
-import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/back_button.dart';
@@ -20,7 +20,8 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationPage extends ConsumerStatefulWidget {
   static const id = "/notification_page";
-  const NotificationPage({super.key});
+  final int? groupId;
+  const NotificationPage({super.key, this.groupId});
 
   @override
   ConsumerState<NotificationPage> createState() => _NotificationPageState();
@@ -28,17 +29,38 @@ class NotificationPage extends ConsumerStatefulWidget {
 
 class _NotificationPageState extends ConsumerState<NotificationPage> {
   final currentTime = DateTime.now();
+  late ScrollController _scrollController;
 
   @override
   void initState() {
-    updateNotification();
     super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      updateNotification();
+      _scrollToHighlightedCard();
+    });
   }
 
   void updateNotification() async {
     ref.read(editProfileControllerProvider).resetNotificationCount();
-    await Future.delayed(const Duration(milliseconds: 500));
     ref.read(userProvider.notifier).update((state) => state.copyWith(notificationCount: 0));
+  }
+
+  void _scrollToHighlightedCard() async {
+    await ref.read(homeTabControllerProvider.notifier).getNotifications();
+    if (widget.groupId == null) return;
+    final notifications = ref.read(homeTabControllerProvider).notifications;
+    final int index = notifications.indexWhere(
+      (notification) => notification.groupId == widget.groupId,
+    );
+    print("GOT ONE");
+    if (index != -1) {
+      _scrollController.animateTo(
+        index * 100.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -68,42 +90,19 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: FutureBuilder(
-                    future: ref.read(dioServicesProvider).getNotifications(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                          ),
-                        );
-                      }
-                      final notifications = snapshot.data as List<NotificationData>;
-                      if (notifications.isEmpty) {
-                        return Center(
-                          child: Text(
-                            "No Notifications",
-                            style: AppStyles.h4.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.lightGreyColor,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        );
-                      }
-                      return SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16).copyWith(bottom: 0),
-                          child: Column(
-                            children: notifications
-                                .map(
-                                  (e) => buildNotificationCard(e),
-                                )
-                                .toList(),
-                          ),
-                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16).copyWith(bottom: 0),
+                    child: Consumer(builder: (context, ref, child) {
+                      final notifications = ref.watch(homeTabControllerProvider).notifications;
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: notifications.length,
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context, index) {
+                          return buildNotificationCard(notifications[index]);
+                        },
                       );
-                    },
+                    }),
                   ),
                 ),
                 buildLoader(),

@@ -161,7 +161,7 @@ class DioServices {
       return list.map((e) => NotificationData.fromMap(e)).toList();
     } catch (e) {
       debugPrint(e.toString());
-      return <NotificationData>[];
+      rethrow;
     }
   }
 
@@ -466,15 +466,11 @@ class DioServices {
       final response = kIsWeb
           ? await dio.post(
               DioConstants.getUserDetailsWeb,
-              data: {
-                'user_id': userId,
-              },
+              data: {'user_id': userId},
             )
           : await dio.get(
               DioConstants.getUserDetails,
-              data: {
-                'user_id': userId,
-              },
+              data: {'user_id': userId},
             );
       debugPrint("GETTING USER DATA COMPLETE");
       return response.data as Map<String, dynamic>;

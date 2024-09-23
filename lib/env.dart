@@ -12,6 +12,8 @@ abstract class AppEnvironment {
 
   static String get getStoreUrl => Platform.isAndroid ? playStoreUrl : appStoreUrl;
 
+  static const websiteUrl = 'https://zipbuzz.me';
+
   static late String cloudFunctionBaseUrl,
       realtimeDataBaseUrl,
       dynamicLinkBaseUrl,
@@ -23,7 +25,7 @@ abstract class AppEnvironment {
     _env = env;
 
     /// Update this before every release
-    _appVersion = "1.0.54";
+    _appVersion = "1.0.556";
     switch (env) {
       case Environment.dev:
         cloudFunctionBaseUrl = "https://dev.zipbuzz.me/";

@@ -47,8 +47,9 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
         reverseDuration: const Duration(milliseconds: 250),
       );
     case NotificationPage.id:
+      final groupId = (settings.arguments as Map<String, dynamic>?)?['group_id'] as int?;
       return PageTransition(
-        child: const NotificationPage(),
+        child: NotificationPage(groupId: groupId),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),

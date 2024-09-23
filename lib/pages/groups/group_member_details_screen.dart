@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/pages/home/widgets/home_interest_chip.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -123,8 +122,7 @@ class _GroupMemberDetailsScreenState extends ConsumerState<GroupMemberDetailsScr
   }
 
   Widget _buildRemoveFromGroupButton() {
-    final currentUser = ref.read(userProvider);
-    final admin = ref.watch(groupControllerProvider).admins.any((e) => e.userId == currentUser.id);
+    final admin = ref.watch(groupControllerProvider).isAdmin;
     if (!admin) return const SizedBox();
     var clicked = false;
     return GestureDetector(
@@ -153,8 +151,7 @@ class _GroupMemberDetailsScreenState extends ConsumerState<GroupMemberDetailsScr
   }
 
   Widget _buildRemoveAdminButton() {
-    final currentUser = ref.read(userProvider);
-    final admin = ref.watch(groupControllerProvider).admins.any((e) => e.userId == currentUser.id);
+    final admin = ref.watch(groupControllerProvider).isAdmin;
     if (!admin) return const SizedBox();
     final isMemberAdmin =
         ref.watch(groupControllerProvider).admins.any((e) => e.userId == widget.userId);

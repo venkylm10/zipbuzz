@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
+import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/events/event_tab.dart';
 import 'package:zipbuzz/pages/groups/groups_tab.dart';
 import 'package:zipbuzz/pages/home/home_tab.dart';
 import 'package:zipbuzz/pages/profile/profile_tab.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/tabs.dart';
+import 'package:zipbuzz/utils/widgets/loader.dart';
+import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 enum InterestViewType { user, all }
 
@@ -218,6 +223,21 @@ class HomeTabController extends StateNotifier<HomeTabState> {
     zipcodeControler.text = zipcode;
     state = state.copyWith(queryInterests: models, inQuery: false);
   }
+
+  Future<void> getNotifications() async {
+    List<NotificationData> notifications = [];
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+    try {
+      notifications = await ref.read(dioServicesProvider).getNotifications();
+    } catch (e) {
+      debugPrint("Error getting notifications: $e");
+      notifications = state.notifications;
+      showSnackBar(message: "Error getting notifications");
+    }
+    ref.read(loadingTextProvider.notifier).reset();
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+    state = state.copyWith(notifications: notifications);
+  }
 }
 
 class HomeTabState {
@@ -230,6 +250,7 @@ class HomeTabState {
   List<InterestModel> queryInterests;
   bool inQuery;
   bool homeCalenderVisible;
+  List<NotificationData> notifications;
 
   HomeTabState({
     required this.isSearching,
@@ -241,6 +262,7 @@ class HomeTabState {
     required this.queryInterests,
     this.homeCalenderVisible = false,
     this.inQuery = false,
+    this.notifications = const [],
   });
 
   HomeTabState copyWith({
@@ -254,6 +276,7 @@ class HomeTabState {
     bool? rowInterests,
     bool? homeCalenderVisible,
     bool? inQuery,
+    List<NotificationData>? notifications,
   }) {
     return HomeTabState(
       isSearching: isSearching ?? this.isSearching,
@@ -265,6 +288,7 @@ class HomeTabState {
       homeCalenderVisible: homeCalenderVisible ?? this.homeCalenderVisible,
       queryInterests: queryInterests ?? this.queryInterests,
       inQuery: inQuery ?? this.inQuery,
+      notifications: notifications ?? this.notifications,
     );
   }
 }

@@ -227,11 +227,24 @@ class _EventCardState extends ConsumerState<EventCard> {
             ],
           ),
           const SizedBox(height: 5),
-          Text(
-            widget.event.title,
+          RichText(
             softWrap: true,
-            style: AppStyles.h4.copyWith(
-              fontWeight: FontWeight.w600,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: widget.event.title,
+                  style: AppStyles.h4.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (widget.event.groupName != 'zipbuzz-null')
+                  TextSpan(
+                    text: ' > ${widget.event.groupName}',
+                    style: AppStyles.h5.copyWith(
+                      color: AppColors.lightGreyColor,
+                    ),
+                  ),
+              ],
             ),
           ),
           const SizedBox(height: 5),

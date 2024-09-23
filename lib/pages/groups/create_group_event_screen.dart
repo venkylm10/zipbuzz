@@ -16,7 +16,7 @@ class CreateGroupEventScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Create Event",
+          "Create Group Event",
           style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
         ),
         elevation: 0,

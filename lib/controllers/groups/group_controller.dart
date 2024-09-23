@@ -416,8 +416,15 @@ class GroupController extends StateNotifier<GroupState> {
           invitingUserName: user.name,
         );
         members.add(member);
-        await ref.read(dioServicesProvider).inviteToGroup(member);
+        try {
+          await ref.read(dioServicesProvider).inviteToGroup(member);
+        } catch (e) {
+          debugPrint(e.toString());
+          debugPrint("Failed to invite user: ${member.phoneNumber}");
+        }
       }
+      await getGroupMembers();
+      contactSearchController.clear();
       state = state.copyWith(
         invitingMembers: false,
         selectedContacts: [],
@@ -425,6 +432,7 @@ class GroupController extends StateNotifier<GroupState> {
       );
       await Future.delayed(const Duration(milliseconds: 300));
       navigatorKey.currentState!.pushReplacementNamed(GroupMembersScreen.id);
+      await Future.delayed(const Duration(milliseconds: 300));
       showSnackBar(message: "Invited Users Successfully!");
     } catch (e) {
       debugPrint(e.toString());
@@ -437,6 +445,19 @@ class GroupController extends StateNotifier<GroupState> {
       navigatorKey.currentState!.pushReplacementNamed(GroupMembersScreen.id);
       showSnackBar(message: "Failed to invite all the users!");
     }
+  }
+
+  Future<void> addMemberToGroup(int userId) async {
+    try {
+      state = state.copyWith(loading: true);
+      await updateGroupMemberStatus(userId, 'm');
+      await getGroupMembers();
+      showSnackBar(message: "User added to group successfully");
+    } catch (e) {
+      debugPrint(e.toString());
+      showSnackBar(message: "Failed to add user to group");
+    }
+    state = state.copyWith(loading: false);
   }
 
   Future<void> acceptInvite(AcceptGroupModel model) async {

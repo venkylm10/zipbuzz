@@ -15,7 +15,7 @@ class AcceptGroupModel {
     return {
       "group_id": groupId,
       "user_id": userId,
-      "permission_type": "m",
+      "permission_type": permissionType,
       "group_user_added_by": groupUserAddedBy,
     };
   }

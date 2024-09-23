@@ -101,7 +101,7 @@ class CreateGroupForm extends ConsumerWidget {
             SvgPicture.asset(Assets.icons.save_event),
             const SizedBox(width: 8),
             Text(
-              editing ? "Update Group" : "Save & Invite Members",
+              editing ? "Update Group" : "Invite Members",
               style: AppStyles.h3.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.white,

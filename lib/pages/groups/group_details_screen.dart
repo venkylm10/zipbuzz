@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/group_model.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
 import 'package:zipbuzz/pages/groups/edit_group_screen.dart';
 import 'package:zipbuzz/pages/groups/group_members_screen.dart';
+import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/pages/home/widgets/bottom_bar.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -38,54 +41,62 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Consumer(builder: (context, ref, child) {
-        if (ref.watch(groupControllerProvider).loading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.primaryColor,
+      body: Consumer(
+        builder: (context, ref, child) {
+          if (ref.watch(groupControllerProvider).loading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primaryColor,
+              ),
+            );
+          }
+          if (ref.watch(groupControllerProvider).currentGroup == null) {
+            return Center(
+              child: IconButton(
+                onPressed: () {
+                  ref.read(groupControllerProvider.notifier).getGroupDetails();
+                },
+                icon: const Icon(Icons.refresh_rounded),
+              ),
+            );
+          }
+          group = ref.watch(groupControllerProvider).currentGroup!;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                _buildCoverImages(),
+                const SizedBox(height: 16),
+                Text(
+                  group.name,
+                  style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  group.description,
+                  style: AppStyles.h3.copyWith(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                _buildDetailTab("Members", onTap: () {
+                  ref.read(groupControllerProvider.notifier).getGroupMembers();
+                  navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
+                }),
+                _buildDetailTab("Links and Media"),
+                // _buildPublicToggleButton(),
+                const SizedBox(height: 16),
+                _buildInviteMembersButton(),
+                _buildExitButton(),
+                _buildDeleteButton()
+              ],
             ),
           );
-        }
-        if (ref.watch(groupControllerProvider).currentGroup == null) {
-          return Center(
-            child: IconButton(
-              onPressed: () {
-                ref.read(groupControllerProvider.notifier).getGroupDetails();
-              },
-              icon: const Icon(Icons.refresh_rounded),
-            ),
-          );
-        }
-        group = ref.watch(groupControllerProvider).currentGroup!;
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              _buildCoverImages(),
-              const SizedBox(height: 16),
-              Text(
-                group.name,
-                style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
-              ),
-              Text(
-                group.description,
-                style: AppStyles.h3.copyWith(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 8),
-              _buildDetailTab("Members", onTap: () {
-                ref.read(groupControllerProvider.notifier).getGroupMembers();
-                navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
-              }),
-              _buildDetailTab("Links and Media"),
-              // _buildPublicToggleButton(),
-              const SizedBox(height: 16),
-              _buildInviteMembersButton(),
-              _buildExitButton(),
-              _buildDeleteButton()
-            ],
-          ),
-        );
-      }),
+        },
+      ),
+      bottomNavigationBar: BottomBar(
+        selectedTab: ref.watch(homeTabControllerProvider).selectedTab.index,
+        pop: () {
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
+        },
+      ),
     );
   }
 

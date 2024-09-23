@@ -47,16 +47,17 @@ class BottomBar extends ConsumerWidget {
           ref.read(newEventProvider.notifier).updateHostId(user.id);
           ref.read(newEventProvider.notifier).updateHostName(user.name);
           ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
-          await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+          ref.read(eventsControllerProvider.notifier).fetchUserEvents();
         } else if (tab == AppTabs.groups) {
           ref.read(groupControllerProvider.notifier).fetchCommunityAndGroupDescriptions();
         } else {
+          pop != null ? pop!() : null;
           await ref
               .read(dbServicesProvider)
               .getOwnUserData(UserDetailsRequestModel(userId: userId));
           ref.read(newEventProvider.notifier).resetNewEvent();
+          return;
         }
-
         pop != null ? pop!() : null;
       },
       items: List.generate(AppTabs.values.length, (index) {
