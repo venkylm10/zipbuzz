@@ -4,6 +4,7 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/notifications/post_notification_model.dart';
 import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/models/trace_log_model.dart';
@@ -88,6 +89,13 @@ class GroupInviteCard extends ConsumerWidget {
                       groupId: notification.groupId,
                       notificationType: 'group_accepted',
                     );
+                final data = PostNotificationModel(
+                  userId: notification.senderId,
+                  senderId: user.id,
+                  notificationType: 'group_member_request',
+                  groupId: notification.groupId,
+                );
+                ref.read(dioServicesProvider).postGroupNotification(data);
                 debugPrint("Group invite accepted for ${notification.groupName}");
                 clicked = false;
                 ref.read(eventsControllerProvider.notifier).updateLoadingState(false);

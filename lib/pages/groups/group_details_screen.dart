@@ -17,7 +17,8 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class GroupDetailsScreen extends ConsumerStatefulWidget {
   static const id = '/groups/group-details';
-  const GroupDetailsScreen({super.key});
+  final int? groupId;
+  const GroupDetailsScreen({super.key, this.groupId});
 
   @override
   ConsumerState<GroupDetailsScreen> createState() => _GroupDetailsScreenState();
@@ -29,12 +30,11 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    getGroupDetails();
-  }
-
-  void getGroupDetails() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    ref.read(groupControllerProvider.notifier).getGroupDetails();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(groupControllerProvider.notifier).getGroupDetails(
+            groupId: widget.groupId,
+          );
+    });
   }
 
   @override

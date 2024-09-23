@@ -9,6 +9,7 @@ import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/notification/widgets/broadcast_noti_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/group_accepted_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/group_invite_card.dart';
+import 'package:zipbuzz/pages/notification/widgets/group_member_accepted_card.dart';
 import 'package:zipbuzz/pages/notification/widgets/reminder_noti_card.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -118,19 +119,20 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         ? notification.notificationTime
         : "${notification.notificationTime}Z";
     final notiTime = DateTime.parse(time);
+    final formattedTime = timeago.format(notiTime, locale: 'en_short');
     switch (notification.notificationType) {
       case 'invited':
         return InviteNotiCard(
           notification: notification,
-          time: timeago.format(notiTime, locale: 'en_short'),
+          time: formattedTime,
           rebuildCall: () {
-            setState(() {});
+            ref.read(homeTabControllerProvider.notifier).getNotifications();
           },
         );
       case 'reminder':
         return ReminderNotiCard(
           notification: notification,
-          time: timeago.format(notiTime, locale: 'en_short'),
+          time: formattedTime,
           rebuildCall: () {
             setState(() {});
           },
@@ -142,31 +144,38 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
           senderProfilePic: notification.senderProfilePicture,
           eventId: notification.eventId,
           eventName: notification.eventName,
-          time: timeago.format(notiTime, locale: 'en_short'),
+          time: formattedTime,
           notificationId: notification.id,
           senderDeviceToken: notification.deviceToken,
           notificationType: notification.notificationType,
           rebuild: () {
-            setState(() {});
+            ref.read(homeTabControllerProvider.notifier).getNotifications();
           },
         );
       case 'group_invited':
         return GroupInviteCard(
             notification: notification,
-            time: timeago.format(notiTime, locale: 'en_short'),
+            time: formattedTime,
             rebuild: () {
-              setState(() {});
+              ref.read(homeTabControllerProvider.notifier).getNotifications();
             });
       case 'group_accepted' || 'group_confirmed':
         return GroupAcceptCard(
           notification: notification,
-          time: timeago.format(notiTime, locale: 'en_short'),
+          time: formattedTime,
           confirmed: notification.notificationType == 'group_confirmed',
         );
+      case 'group_member_request' || 'group_member_confirm':
+        return GroupMemberRequestCard(
+          notification: notification,
+          time: formattedTime,
+          confirmed: notification.notificationType == 'group_member_confirm',
+        );
+
       default:
         return BroadcastNotiCard(
           notification: notification,
-          time: timeago.format(notiTime, locale: 'en_short'),
+          time: formattedTime,
         );
     }
   }

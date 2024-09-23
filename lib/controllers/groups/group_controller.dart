@@ -17,7 +17,6 @@ import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
-import 'package:zipbuzz/pages/groups/group_members_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -236,12 +235,12 @@ class GroupController extends StateNotifier<GroupState> {
     state = state.copyWith(fetchingList: false);
   }
 
-  Future<void> getGroupDetails() async {
+  Future<void> getGroupDetails({int? groupId}) async {
     state = state.copyWith(loading: true);
     try {
       final group = await ref
           .read(dioServicesProvider)
-          .getGroupDetails(ref.read(userProvider).id, state.currentGroupDescription!.id);
+          .getGroupDetails(ref.read(userProvider).id, groupId ?? state.currentGroupDescription!.id);
       state = state.copyWith(currentGroup: group);
       state = state.copyWith(loading: false);
     } catch (e) {
@@ -377,6 +376,22 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void toggleSelectedContact(Contact contact) {
+    final userNumber = ref.read(userProvider).mobileNumber;
+    final countryDialCode = userNumber.substring(0, userNumber.length - 10);
+    var number =
+        contact.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+    (" ", "");
+    final code = number.substring(0, number.length - 10);
+    if (number.length == 10) {
+      number = countryDialCode + number;
+    } else if (number.length > 10 && !number.startsWith("+")) {
+      number = number.substring(number.length - 10);
+      number = "+$code$number";
+    }
+    if (state.members.any((e) => e.phone == number)) {
+      showSnackBar(message: "User is already a member of the group");
+      return;
+    }
     var contacts = [...state.selectedContacts];
     var search = [...state.selectedContactsSearchResult];
     if (contacts.contains(contact)) {
