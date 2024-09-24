@@ -23,7 +23,7 @@ class EventRepublishButtons extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: EventInviteGuestsButton(
             inviteContacts: inviteContacts,
-            title: "Invite More Guests",
+            title: "Add More Guests",
           ),
         ),
         const SizedBox(height: 8),

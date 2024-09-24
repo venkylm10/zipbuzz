@@ -88,7 +88,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
   AppBar _buildAppBar(GroupDescriptionModel? groupDes) {
     return AppBar(
       title: Text(
-        groupDes!.groupName,
+        "${groupDes!.groupName} members",
         style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
       ),
       leadingWidth: 80,

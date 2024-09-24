@@ -110,7 +110,7 @@ class GroupMemberCard extends ConsumerWidget {
             borderRadius: BorderRadius.circular(30),
           ),
           child: Text(
-            "Accept",
+            "Confirm",
             style: AppStyles.h5.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w500,
@@ -127,7 +127,7 @@ class GroupMemberCard extends ConsumerWidget {
       onTap: () {
         final user = ref.read(userProvider);
         final shareText =
-            "${user.name} invites to you to join Buzz.Me\n\nDownload Buzz.Me at https://zipbuzz.me/";
+            "${user.name} invites to you to join Buzz.Me\n\nDownload Buzz.Me at https://zipbuzz.me/download";
         Share.share(shareText);
       },
       child: Container(
