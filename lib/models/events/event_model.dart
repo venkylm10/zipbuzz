@@ -1,6 +1,5 @@
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
-import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 
 class EventModel {
@@ -60,7 +59,7 @@ class EventModel {
     this.notificationId = -1,
     required this.members,
     this.groupId = -1,
-    this.groupName = "zipbuzz-null",
+    required this.groupName,
   });
 
   EventModel copyWith({
@@ -193,37 +192,6 @@ class EventModel {
     };
   }
 
-  factory EventModel.fromFavEventModel(FavoriteEventModel fav) {
-    return EventModel(
-      id: fav.eventId,
-      title: fav.name,
-      hostId: fav.hostId,
-      location: fav.venue,
-      date: fav.date,
-      startTime: fav.startTime,
-      endTime: fav.endTime,
-      attendees: fav.filledCapacity,
-      category: fav.category,
-      isFavorite: true,
-      bannerPath: fav.image,
-      iconPath: interestIcons[fav.category]!,
-      about: fav.description,
-      isPrivate: fav.eventType,
-      capacity: fav.capacity,
-      imageUrls: [],
-      privateGuestList: true,
-      hostName: fav.hostName,
-      hostPic: fav.hostPic,
-      eventMembers: [],
-      inviteUrl: fav.inviteUrl,
-      status: fav.status,
-      userDeviceToken: fav.userDeviceToken,
-      hyperlinks: fav.hyperlinks,
-      notificationId: fav.notificationId,
-      members: fav.members,
-    );
-  }
-
   factory EventModel.fromEventResModel(EventResponseModel res) {
     return EventModel(
       id: res.id,
@@ -252,6 +220,7 @@ class EventModel {
       hyperlinks: res.hyperlinks,
       notificationId: res.notificationId,
       members: res.members,
+      groupName: res.groupName,
     );
   }
 }

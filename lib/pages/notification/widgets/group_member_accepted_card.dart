@@ -4,10 +4,8 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
-import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -110,14 +108,10 @@ class GroupMemberRequestCard extends ConsumerWidget {
   Future<void> acceptMemberRequest(WidgetRef ref) async {
     try {
       ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
-      await ref.read(groupControllerProvider.notifier).addMemberToGroup(notification.senderId);
-      await ref.read(dioServicesProvider).updateRespondedNotification(
-            ref.read(userProvider).id,
+      await ref.read(groupControllerProvider.notifier).addMemberToGroup(
             notification.senderId,
-            groupId: notification.groupId,
-            notificationType: 'group_member_confirm',
+            notification.groupId,
           );
-      await ref.read(homeTabControllerProvider.notifier).getNotifications();
     } catch (e) {
       debugPrint(e.toString());
     }

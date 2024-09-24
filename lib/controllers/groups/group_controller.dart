@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/notifications/post_notification_model.dart';
@@ -17,6 +18,7 @@ import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
+import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -136,10 +138,14 @@ class GroupController extends StateNotifier<GroupState> {
       await getGroupMembers();
       updateLoading(false);
       toggleCreatingGroup();
-      navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
-      await Future.delayed(const Duration(seconds: 1));
-      resetController();
       showSnackBar(message: "Group created successfully!. Invite members to group");
+      await navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+      resetController();
+      await navigatorKey.currentState!.pushNamed(GroupDetailsScreen.id, arguments: {
+        'group_id': groupId,
+        'redirect_to_members': true,
+      });
+      await Future.delayed(const Duration(seconds: 1));
     } catch (e) {
       updateLoading(false);
       toggleCreatingGroup();
@@ -464,7 +470,7 @@ class GroupController extends StateNotifier<GroupState> {
     }
   }
 
-  Future<void> addMemberToGroup(int userId) async {
+  Future<void> addMemberToGroup(int userId, int groupId) async {
     try {
       state = state.copyWith(loading: true);
       await updateGroupMemberStatus(userId, 'm');
@@ -475,7 +481,14 @@ class GroupController extends StateNotifier<GroupState> {
         notificationType: 'group_confirmed',
         senderId: ref.read(userProvider).id,
       );
-      ref.read(dioServicesProvider).postGroupNotification(model);
+      await ref.read(dioServicesProvider).postGroupNotification(model);
+      await ref.read(dioServicesProvider).updateRespondedNotification(
+            ref.read(userProvider).id,
+            userId,
+            groupId: groupId,
+            notificationType: 'group_member_confirm',
+          );
+      ref.read(homeTabControllerProvider.notifier).getNotifications();
       showSnackBar(message: "User added to group successfully");
     } catch (e) {
       debugPrint(e.toString());

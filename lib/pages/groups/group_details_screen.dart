@@ -18,7 +18,8 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 class GroupDetailsScreen extends ConsumerStatefulWidget {
   static const id = '/groups/group-details';
   final int? groupId;
-  const GroupDetailsScreen({super.key, this.groupId});
+  final bool redirectToMembers;
+  const GroupDetailsScreen({super.key, this.groupId, this.redirectToMembers = false});
 
   @override
   ConsumerState<GroupDetailsScreen> createState() => _GroupDetailsScreenState();
@@ -30,10 +31,13 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(groupControllerProvider.notifier).getGroupDetails(
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(groupControllerProvider.notifier).getGroupDetails(
             groupId: widget.groupId,
           );
+      if (widget.redirectToMembers) {
+        navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
+      }
     });
   }
 
@@ -77,7 +81,6 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                 ),
                 const SizedBox(height: 8),
                 _buildDetailTab("Members", onTap: () {
-                  ref.read(groupControllerProvider.notifier).getGroupMembers();
                   navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
                 }),
                 _buildDetailTab("Links and Media"),
@@ -127,9 +130,14 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
 
   Widget _buildExitButton() {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         final userId = ref.read(userProvider).id;
-        ref.read(groupControllerProvider.notifier).deleteGroupMember(userId);
+        final groupName = group.name;
+        await ref.read(groupControllerProvider.notifier).deleteGroupMember(userId);
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
+        Future.delayed(const Duration(milliseconds: 500));
+        ref.read(groupControllerProvider.notifier).fetchCommunityAndGroupDescriptions();
+        showSnackBar(message: "You have exited $groupName");
       },
       child: Container(
         margin: const EdgeInsets.only(top: 32, bottom: 16),
@@ -192,20 +200,21 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
         Consumer(builder: (context, ref, child) {
           if (!ref.watch(groupControllerProvider).isAdmin) return const SizedBox();
           return IconButton(
-            onPressed: () {
-              try {
-                ref.read(groupControllerProvider.notifier).initEditGroup(group);
-                navigatorKey.currentState!
-                    .push(NavigationController.getTransition(const EditGroupScreen()));
-              } catch (e) {
-                showSnackBar(message: "Please wait till the details are fetched and try again");
-              }
-            },
+            onPressed: _moveToEditScreen,
             icon: const Icon(Icons.edit_rounded, color: AppColors.primaryColor),
           );
         })
       ],
     );
+  }
+
+  void _moveToEditScreen() {
+    try {
+      ref.read(groupControllerProvider.notifier).initEditGroup(group);
+      navigatorKey.currentState!.push(NavigationController.getTransition(const EditGroupScreen()));
+    } catch (e) {
+      showSnackBar(message: "Please wait till the details are fetched and try again");
+    }
   }
 
   Widget _buildPublicToggleButton() {

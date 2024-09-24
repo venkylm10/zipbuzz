@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/edit_profile_controller.dart';
+import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -216,7 +217,7 @@ class _ProfileTabState extends ConsumerState<ProfileTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Version: 1.0.55",
+                      "Version: ${AppEnvironment.appVersion}",
                       style: AppStyles.h5.copyWith(
                         fontStyle: FontStyle.italic,
                       ),

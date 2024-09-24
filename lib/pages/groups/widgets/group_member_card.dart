@@ -64,7 +64,7 @@ class GroupMemberCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    member.userId == 0 ? "Un-Registered User" : member.name,
+                    member.name,
                     style: AppStyles.h4.copyWith(
                       fontWeight: FontWeight.w600,
                       color: AppColors.greyColor,
@@ -99,7 +99,8 @@ class GroupMemberCard extends ConsumerWidget {
       if (member.permissionType != GroupPermissionType.pending) return const SizedBox();
       return GestureDetector(
         onTap: () async {
-          await ref.read(groupControllerProvider.notifier).addMemberToGroup(member.userId);
+          final groupId = ref.read(groupControllerProvider).currentGroup!.id;
+          await ref.read(groupControllerProvider.notifier).addMemberToGroup(member.userId,groupId);
         },
         child: Container(
           margin: const EdgeInsets.only(left: 6),

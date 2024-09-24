@@ -12,7 +12,6 @@ import 'package:zipbuzz/models/events/posts/event_post_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
 import 'package:zipbuzz/models/events/responses/event_response_model.dart';
-import 'package:zipbuzz/models/events/responses/favorite_event_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/interests/posts/user_interests_post_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
@@ -337,34 +336,12 @@ class DBServices {
     return EventModel.fromEventResModel(res);
   }
 
-  Future<List<EventModel>> getUserFavoriteEvents(
-      UserEventsRequestModel userEventsRequestModel) async {
-    if (box.read(BoxConstants.guestUser) == null) {
-      try {
-        final list = await _dioServices.getUserFavoriteEvents(userEventsRequestModel);
-        final events = list.map((e) async {
-          final fav = FavoriteEventModel.fromMap(e);
-          final eventModel = EventModel.fromFavEventModel(fav);
-          return eventModel;
-        }).toList();
-        return await Future.wait(events)
-          ..sort((a, b) => a.date.compareTo(b.date));
-      } catch (e) {
-        debugPrint("Error getting favorite events: $e");
-        return [];
-      }
-    }
-    // return guestEventsList;
-    return [];
-  }
-
   Future<void> getEventRequestMembers(int eventId) async {
     final requests = await _dioServices.getEventRequestMembers(eventId);
     _ref.read(eventRequestMembersProvider.notifier).update((state) => requests);
   }
 
   // Groups
-
   Future<int> createGroup(CreateGroupModel model) async {
     debugPrint("CREATING GROUP");
     final groupId = await _dioServices.createGroup(model);

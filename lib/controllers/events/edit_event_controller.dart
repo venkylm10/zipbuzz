@@ -60,6 +60,7 @@ class EditEventController extends StateNotifier<EventModel> {
             userDeviceToken: "",
             hyperlinks: [],
             members: 0,
+            groupName: 'zipbuzz-null',
           ),
         );
   int eventId = 1;

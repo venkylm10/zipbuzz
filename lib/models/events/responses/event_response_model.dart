@@ -26,6 +26,7 @@ class EventResponseModel {
   final bool guestList;
   final int notificationId;
   final int members;
+  final String groupName;
 
   EventResponseModel({
     required this.id,
@@ -53,6 +54,7 @@ class EventResponseModel {
     required this.guestList,
     required this.notificationId,
     required this.members,
+    required this.groupName,
   });
 
   Map<String, dynamic> toMap() {
@@ -112,6 +114,7 @@ class EventResponseModel {
       guestList: map['guest_list'] as bool,
       notificationId: map['notification_id'] as int,
       members: map['members'] as int,
+      groupName: map['group_name'] as String? ?? 'zipbuzz-null',
     );
   }
 }

@@ -36,9 +36,10 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      updateNotification();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(homeTabControllerProvider.notifier).getNotifications();
       _scrollToHighlightedCard();
+      updateNotification();
     });
   }
 
@@ -48,7 +49,6 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
   }
 
   void _scrollToHighlightedCard() async {
-    await ref.read(homeTabControllerProvider.notifier).getNotifications();
     if (widget.groupId == null) return;
     final notifications = ref.read(homeTabControllerProvider).notifications;
     final int index = notifications.indexWhere(

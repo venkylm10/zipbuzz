@@ -231,19 +231,17 @@ class _EventCardState extends ConsumerState<EventCard> {
             softWrap: true,
             text: TextSpan(
               children: [
-                TextSpan(
-                  text: widget.event.title,
-                  style: AppStyles.h4.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
                 if (widget.event.groupName != 'zipbuzz-null')
                   TextSpan(
-                    text: ' > ${widget.event.groupName}',
-                    style: AppStyles.h5.copyWith(
-                      color: AppColors.lightGreyColor,
+                    text: '${widget.event.groupName} > ',
+                    style: AppStyles.h4.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
+                TextSpan(
+                  text: widget.event.title,
+                  style: AppStyles.h4,
+                ),
               ],
             ),
           ),

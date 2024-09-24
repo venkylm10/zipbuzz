@@ -215,8 +215,9 @@ class DioServices {
     }
     try {
       await dio.put(DioConstants.updateNotification, data: data);
+      debugPrint("Updated notification");
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Error updating notification : $e");
       rethrow;
     }
   }
