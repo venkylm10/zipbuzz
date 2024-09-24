@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -15,27 +16,13 @@ import '../../../utils/constants/globals.dart';
 class ResponseNotiCard extends ConsumerStatefulWidget {
   const ResponseNotiCard({
     super.key,
-    required this.senderId,
-    required this.senderName,
-    required this.senderProfilePic,
-    required this.eventId,
-    required this.eventName,
+    required this.notification,
     required this.time,
-    required this.notificationId,
-    required this.senderDeviceToken,
-    required this.notificationType,
     required this.rebuild,
   });
 
-  final int senderId;
-  final String senderName;
-  final String senderProfilePic;
-  final int notificationId;
-  final int eventId;
-  final String eventName;
+  final NotificationData notification;
   final String time;
-  final String senderDeviceToken;
-  final String notificationType;
   final VoidCallback rebuild;
 
   @override
@@ -47,7 +34,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
   var notificationType = "";
   @override
   void initState() {
-    notificationType = widget.notificationType;
+    notificationType = widget.notification.notificationType;
     status = notificationType == 'yes' ? "Confirm" : "Confirmed";
     setState(() {});
     super.initState();
@@ -55,7 +42,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
 
   void navigateToEventDetails(WidgetRef ref) async {
     showSnackBar(message: "Getting event details...");
-    final event = await ref.read(dbServicesProvider).getEventDetails(widget.eventId);
+    final event = await ref.read(dbServicesProvider).getEventDetails(widget.notification.eventId);
     final dominantColor = await getDominantColor(event.bannerPath);
     ref.read(guestListTagProvider.notifier).update((state) => "Invited");
     await navigatorKey.currentState!.pushNamed(EventDetailsPage.id, arguments: {
@@ -91,7 +78,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                widget.senderProfilePic,
+                widget.notification.senderProfilePicture,
                 height: 44,
                 width: 44,
                 fit: BoxFit.cover,
@@ -103,7 +90,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.senderName,
+                    widget.notification. senderName,
                     style: AppStyles.h5.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -128,28 +115,28 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
     switch (notificationType) {
       case 'requested':
         return Text(
-          "You have requested for ${widget.eventName}",
+          "You have requested for ${widget.notification.eventName}",
           style: AppStyles.h5.copyWith(
             color: AppColors.greyColor,
           ),
         );
       case 'declined':
         return Text(
-          "You have declined for ${widget.eventName}",
+          "You have declined for ${widget.notification.eventName}",
           style: AppStyles.h5.copyWith(
             color: AppColors.greyColor,
           ),
         );
       case "accepted":
         return Text(
-          "You have accepted ${widget.eventName}",
+          "You have accepted ${widget.notification.eventName}",
           style: AppStyles.h5.copyWith(
             color: AppColors.greyColor,
           ),
         );
       case "confirmed":
         return Text(
-          "${widget.senderName} is confirmed for ${widget.eventName}",
+          "${widget.notification.senderName} is confirmed for ${widget.notification.eventName}",
           style: AppStyles.h5.copyWith(
             color: AppColors.greyColor,
           ),
@@ -161,7 +148,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: "${widget.senderName} - RSVP'd ",
+                text: "${widget.notification.senderName} - RSVP'd ",
                 style: AppStyles.h5.copyWith(
                   color: AppColors.greyColor,
                 ),
@@ -173,7 +160,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
                 ),
               ),
               TextSpan(
-                text: ' to your invite for ${widget.eventName}',
+                text: ' to your invite for ${widget.notification.eventName}',
                 style: AppStyles.h5.copyWith(
                   color: AppColors.greyColor,
                 ),
@@ -187,7 +174,7 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
   }
 
   Widget buildConfirmButton() {
-    final show = widget.notificationType == 'yes';
+    final show = widget.notification.notificationType == 'yes';
     if (!show) return const SizedBox();
     return Align(
       alignment: Alignment.center,
@@ -202,25 +189,25 @@ class _ResponseNotiCardState extends ConsumerState<ResponseNotiCard> {
           try {
             await ref
                 .read(dioServicesProvider)
-                .editUserStatus(widget.eventId, widget.senderId, "confirm");
+                .editUserStatus(widget.notification.eventId, widget.notification.senderId, "confirm");
           } catch (e) {
             debugPrint(e.toString());
           }
           try {
             await ref
                 .read(dioServicesProvider)
-                .updateRespondedNotification(widget.senderId, user.id, eventId: widget.eventId);
+                .updateRespondedNotification(widget.notification.senderId, user.id, eventId: widget.notification.eventId);
           } catch (e) {
             debugPrint(e.toString());
           }
           try {
             await ref
                 .read(dioServicesProvider)
-                .updateUserNotification(widget.notificationId, "confirmed");
+                .updateUserNotification(widget.notification.id, "confirmed");
           } catch (e) {
             debugPrint(e.toString());
           }
-          showSnackBar(message: "Confirmed ${widget.senderName} for ${widget.eventName}.");
+          showSnackBar(message: "Confirmed ${widget.notification.senderName} for ${widget.notification.eventName}.");
           await Future.delayed(const Duration(seconds: 2));
           widget.rebuild();
         },

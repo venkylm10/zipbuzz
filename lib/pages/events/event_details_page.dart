@@ -194,10 +194,23 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    widget.event.title,
-                                    style: AppStyles.h2.copyWith(fontWeight: FontWeight.w600),
+                                  RichText(
                                     softWrap: true,
+                                    text: TextSpan(
+                                      children: [
+                                        if (widget.event.groupName != 'zipbuzz-null')
+                                          TextSpan(
+                                            text: '${widget.event.groupName} > ',
+                                            style: AppStyles.h2.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        TextSpan(
+                                          text: widget.event.title,
+                                          style: AppStyles.h2,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   const SizedBox(height: 10),
                                   _buildDetailTags(),

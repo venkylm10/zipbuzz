@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/notifications/post_notification_model.dart';
@@ -17,7 +18,7 @@ import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
-import 'package:zipbuzz/pages/groups/group_members_screen.dart';
+import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -137,10 +138,14 @@ class GroupController extends StateNotifier<GroupState> {
       await getGroupMembers();
       updateLoading(false);
       toggleCreatingGroup();
-      navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
-      await Future.delayed(const Duration(seconds: 1));
-      resetController();
       showSnackBar(message: "Group created successfully!. Invite members to group");
+      await navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+      resetController();
+      await navigatorKey.currentState!.pushNamed(GroupDetailsScreen.id, arguments: {
+        'group_id': groupId,
+        'redirect_to_members': true,
+      });
+      await Future.delayed(const Duration(seconds: 1));
     } catch (e) {
       updateLoading(false);
       toggleCreatingGroup();
@@ -236,12 +241,12 @@ class GroupController extends StateNotifier<GroupState> {
     state = state.copyWith(fetchingList: false);
   }
 
-  Future<void> getGroupDetails() async {
+  Future<void> getGroupDetails({int? groupId}) async {
     state = state.copyWith(loading: true);
     try {
       final group = await ref
           .read(dioServicesProvider)
-          .getGroupDetails(ref.read(userProvider).id, state.currentGroupDescription!.id);
+          .getGroupDetails(ref.read(userProvider).id, groupId ?? state.currentGroupDescription!.id);
       state = state.copyWith(currentGroup: group);
       state = state.copyWith(loading: false);
     } catch (e) {
@@ -377,6 +382,22 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void toggleSelectedContact(Contact contact) {
+    final userNumber = ref.read(userProvider).mobileNumber;
+    final countryDialCode = userNumber.substring(0, userNumber.length - 10);
+    var number =
+        contact.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+    (" ", "");
+    final code = number.substring(0, number.length - 10);
+    if (number.length == 10) {
+      number = countryDialCode + number;
+    } else if (number.length > 10 && !number.startsWith("+")) {
+      number = number.substring(number.length - 10);
+      number = "+$code$number";
+    }
+    if (state.members.any((e) => e.phone == number)) {
+      showSnackBar(message: "User is already a member of the group");
+      return;
+    }
     var contacts = [...state.selectedContacts];
     var search = [...state.selectedContactsSearchResult];
     if (contacts.contains(contact)) {
@@ -413,6 +434,7 @@ class GroupController extends StateNotifier<GroupState> {
           groupId: state.currentGroupDescription!.id,
           userId: user.id,
           title: state.currentGroupDescription!.groupName,
+          inviteName: e.displayName ?? 'zipbuzz-null',
           phoneNumber: number,
           invitingUserName: user.name,
         );
@@ -448,7 +470,7 @@ class GroupController extends StateNotifier<GroupState> {
     }
   }
 
-  Future<void> addMemberToGroup(int userId) async {
+  Future<void> addMemberToGroup(int userId, int groupId) async {
     try {
       state = state.copyWith(loading: true);
       await updateGroupMemberStatus(userId, 'm');
@@ -459,8 +481,14 @@ class GroupController extends StateNotifier<GroupState> {
         notificationType: 'group_confirmed',
         senderId: ref.read(userProvider).id,
       );
-      print(model.toMap());
-      ref.read(dioServicesProvider).postGroupNotification(model);
+      await ref.read(dioServicesProvider).postGroupNotification(model);
+      await ref.read(dioServicesProvider).updateRespondedNotification(
+            ref.read(userProvider).id,
+            userId,
+            groupId: groupId,
+            notificationType: 'group_member_confirm',
+          );
+      ref.read(homeTabControllerProvider.notifier).getNotifications();
       showSnackBar(message: "User added to group successfully");
     } catch (e) {
       debugPrint(e.toString());
@@ -497,7 +525,7 @@ class GroupController extends StateNotifier<GroupState> {
       );
     } catch (e) {
       debugPrint(e.toString());
-      showSnackBar(message: "Failed to exit group");
+      showSnackBar(message: "Failed to exit group: $e");
     }
   }
 

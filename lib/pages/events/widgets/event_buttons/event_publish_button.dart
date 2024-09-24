@@ -16,45 +16,47 @@ class EventPublishButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loadingText = ref.watch(loadingTextProvider);
-    return InkWell(
-      onTap: () async {
-        if (loadingText != null) return;
-        if (ref.read(newEventProvider).eventMembers.isEmpty && !kIsWeb) {
-          showDialog(
-            context: navigatorKey.currentContext!,
-            barrierDismissible: true,
-            builder: (context) {
-              return InviteGuestAlert(groupEvent: groupEvent);
-            },
-          );
-          return;
-        }
-        await ref.read(newEventProvider.notifier).publishEvent(
-              groupEvent: groupEvent,
+    return Expanded(
+      child: InkWell(
+        onTap: () async {
+          if (loadingText != null) return;
+          if (ref.read(newEventProvider).eventMembers.isEmpty && !kIsWeb) {
+            showDialog(
+              context: navigatorKey.currentContext!,
+              barrierDismissible: true,
+              builder: (context) {
+                return InviteGuestAlert(groupEvent: groupEvent);
+              },
             );
-        publishedAlertBox(ref);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Center(
-          child: loadingText == null
-              ? Text(
-                  "Publish",
-                  style: AppStyles.h3.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+            return;
+          }
+          await ref.read(newEventProvider.notifier).publishEvent(
+                groupEvent: groupEvent,
+              );
+          publishedAlertBox(ref);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Center(
+            child: loadingText == null
+                ? Text(
+                    "Publish",
+                    style: AppStyles.h3.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                : Text(
+                    loadingText,
+                    style: AppStyles.h4.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                )
-              : Text(
-                  loadingText,
-                  style: AppStyles.h4.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+          ),
         ),
       ),
     );

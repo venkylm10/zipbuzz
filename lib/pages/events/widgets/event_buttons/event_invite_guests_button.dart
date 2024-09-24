@@ -7,7 +7,11 @@ import 'package:zipbuzz/utils/constants/styles.dart';
 class EventInviteGuestsButton extends StatelessWidget {
   final VoidCallback inviteContacts;
   final String title;
-  const EventInviteGuestsButton({super.key, required this.inviteContacts, this.title = "Invite Guests"});
+  const EventInviteGuestsButton({
+    super.key,
+    required this.inviteContacts,
+    this.title = "Invite Guests",
+  });
 
   @override
   Widget build(BuildContext context) {

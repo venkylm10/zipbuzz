@@ -47,9 +47,12 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
         reverseDuration: const Duration(milliseconds: 250),
       );
     case NotificationPage.id:
-      final groupId = (settings.arguments as Map<String, dynamic>?)?['group_id'] as int?;
+      final data = (settings.arguments as Map<String, dynamic>?);
+      final groupId = data?['group_id'] as int?;
       return PageTransition(
-        child: NotificationPage(groupId: groupId),
+        child: NotificationPage(
+          groupId: groupId,
+        ),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),
@@ -148,8 +151,14 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
         reverseDuration: const Duration(milliseconds: 250),
       );
     case GroupDetailsScreen.id:
+      final data = settings.arguments as Map<String, dynamic>?;
+      final groupId = data?['group_id'] as int?;
+      final redirectToMembers = data?['redirect_to_members'] as bool?;
       return PageTransition(
-        child: const GroupDetailsScreen(),
+        child: GroupDetailsScreen(
+          groupId: groupId,
+          redirectToMembers: redirectToMembers ?? false,
+        ),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),

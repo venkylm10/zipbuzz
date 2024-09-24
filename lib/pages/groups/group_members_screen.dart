@@ -22,6 +22,14 @@ class GroupMembersScreen extends ConsumerStatefulWidget {
 
 class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(groupControllerProvider.notifier).getGroupMembers();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final groupDes = ref.read(groupControllerProvider).currentGroupDescription;
     return Scaffold(
@@ -151,7 +159,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Invites",
+          "Invited",
           style: AppStyles.h3.copyWith(
             color: AppColors.greyColor,
             fontWeight: FontWeight.w600,

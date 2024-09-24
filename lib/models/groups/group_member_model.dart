@@ -1,4 +1,4 @@
-import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 
 class GroupMemberModel {
   final int userId;
@@ -36,7 +36,7 @@ class GroupMemberModel {
       phone: json['phone'],
       permissionType: permissionType,
       profilePicture: json['profile_picture'] == 'zipbuzz-null'
-          ? Assets.images.defaultGroupImage
+          ? Defaults().contactAvatarUrl
           : json['profile_picture'],
     );
   }
