@@ -151,7 +151,7 @@ class _GroupMembersScreenState extends ConsumerState<GroupMembersScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Invites",
+          "Invited",
           style: AppStyles.h3.copyWith(
             color: AppColors.greyColor,
             fontWeight: FontWeight.w600,

@@ -69,8 +69,8 @@ class GroupMemberRequestCard extends ConsumerWidget {
                       ),
                       Text(
                         confirmed
-                            ? '${notification.senderName} is now a member of the group - ${notification.groupName}'
-                            : '${notification.senderName} has accepted your request to join the group - ${notification.groupName}',
+                            ? '${notification.senderName} is now a member of ${notification.groupName}'
+                            : '${notification.senderName} accepted invitation to ${notification.groupName}',
                         style: AppStyles.h5,
                       ),
                     ],

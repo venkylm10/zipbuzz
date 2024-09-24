@@ -428,6 +428,7 @@ class GroupController extends StateNotifier<GroupState> {
           groupId: state.currentGroupDescription!.id,
           userId: user.id,
           title: state.currentGroupDescription!.groupName,
+          inviteName: e.displayName ?? 'zipbuzz-null',
           phoneNumber: number,
           invitingUserName: user.name,
         );
@@ -474,7 +475,6 @@ class GroupController extends StateNotifier<GroupState> {
         notificationType: 'group_confirmed',
         senderId: ref.read(userProvider).id,
       );
-      print(model.toMap());
       ref.read(dioServicesProvider).postGroupNotification(model);
       showSnackBar(message: "User added to group successfully");
     } catch (e) {
@@ -512,7 +512,7 @@ class GroupController extends StateNotifier<GroupState> {
       );
     } catch (e) {
       debugPrint(e.toString());
-      showSnackBar(message: "Failed to exit group");
+      showSnackBar(message: "Failed to exit group: $e");
     }
   }
 

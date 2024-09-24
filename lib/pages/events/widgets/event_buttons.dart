@@ -62,14 +62,13 @@ class _EventButtonsState extends ConsumerState<EventButtons> {
                 Expanded(
                   child: EventInviteGuestsButton(
                     inviteContacts: () => inviteContacts(false),
+                    title: widget.groupEvent ? "Invite more guests" : "Invite guests",
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Expanded(
-              child: EventPublishButton(groupEvent: widget.groupEvent),
-            ),
+            EventPublishButton(groupEvent: widget.groupEvent),
           ],
         ),
       ),

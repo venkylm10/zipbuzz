@@ -46,8 +46,8 @@ class GroupAcceptCard extends ConsumerWidget {
                 ),
                 Text(
                   confirmed
-                      ? "You have joined ${notification.groupName} invited by ${notification.senderName}"
-                      : 'You have requested to join ${notification.groupName} invited by ${notification.senderName}',
+                      ? "${notification.senderName} has enrolled you into ${notification.groupName}"
+                      : 'You requested to join ${notification.groupName} invited by ${notification.senderName}',
                   style: AppStyles.h5,
                 ),
               ],

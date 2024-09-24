@@ -7,6 +7,7 @@ import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/group_member_model.dart';
 import 'package:zipbuzz/pages/groups/group_member_details_screen.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
@@ -52,7 +53,10 @@ class GroupMemberCard extends ConsumerWidget {
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundImage: NetworkImage(member.profilePicture),
+              backgroundImage: NetworkImage(
+                member.userId == 0 ? Defaults().contactAvatarUrl : member.profilePicture,
+              ),
+              backgroundColor: AppColors.bgGrey,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -60,7 +64,7 @@ class GroupMemberCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    member.name == 'zipbuzz-null' ? "Un-Registered User" : member.name,
+                    member.userId == 0 ? "Un-Registered User" : member.name,
                     style: AppStyles.h4.copyWith(
                       fontWeight: FontWeight.w600,
                       color: AppColors.greyColor,
@@ -88,7 +92,7 @@ class GroupMemberCard extends ConsumerWidget {
   }
 
   Widget _buildMemberAcceptButton(WidgetRef ref) {
-    if (!invitee || member.name == 'zipbuzz-null') return const SizedBox();
+    if (!invitee || member.userId == 0) return const SizedBox();
     return Consumer(builder: (context, ref, child) {
       final admin = ref.watch(groupControllerProvider).isAdmin;
       if (!admin) return const SizedBox();
@@ -117,7 +121,7 @@ class GroupMemberCard extends ConsumerWidget {
   }
 
   Widget _buildInviteToBuzzMeButton(WidgetRef ref) {
-    if (!invitee || member.name != 'zipbuzz-null') return const SizedBox();
+    if (!invitee || member.userId != 0) return const SizedBox();
     return GestureDetector(
       onTap: () {
         final user = ref.read(userProvider);

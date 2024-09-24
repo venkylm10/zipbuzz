@@ -139,15 +139,8 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
         );
       case 'requested' || 'declined' || 'accepted' || 'confirmed' || 'yes' || 'no':
         return ResponseNotiCard(
-          senderId: notification.senderId,
-          senderName: notification.senderName,
-          senderProfilePic: notification.senderProfilePicture,
-          eventId: notification.eventId,
-          eventName: notification.eventName,
+          notification: notification,
           time: formattedTime,
-          notificationId: notification.id,
-          senderDeviceToken: notification.deviceToken,
-          notificationType: notification.notificationType,
           rebuild: () {
             ref.read(homeTabControllerProvider.notifier).getNotifications();
           },
