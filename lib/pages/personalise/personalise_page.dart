@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/personalise/personalise_controller.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -23,19 +22,6 @@ class PersonalisePage extends ConsumerStatefulWidget {
 
 class _PersonalisePageState extends ConsumerState<PersonalisePage> {
   bool agree = true;
-  @override
-  void initState() {
-    initialise();
-    super.initState();
-  }
-
-  void initialise() {
-    ref.read(contactsServicesProvider).updateAllContacts();
-    // final personaliseController = ref.read(personaliseControllerProvider);
-    // final userInterest = ref.read(userProvider);
-    // personaliseController.selectedInterests.addAll(userInterest.interests);
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {

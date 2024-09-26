@@ -6,7 +6,22 @@ import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/services/permission_handler.dart';
+import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
+
+class ContactModel {
+  final String displayName;
+  final List<String> phones;
+  final String imageUrl;
+  final List<String>? email;
+
+  ContactModel({
+    required this.displayName,
+    required this.phones,
+    this.imageUrl = Defaults.contactAvatarUrl,
+    this.email,
+  });
+}
 
 final contactsServicesProvider = Provider<Contacts>((ref) {
   return Contacts(ref: ref);
@@ -14,37 +29,70 @@ final contactsServicesProvider = Provider<Contacts>((ref) {
 
 class Contacts {
   final Ref ref;
-  const Contacts({required this.ref});
+  Contacts({required this.ref});
 
-  Future<List<Contact>> getContacts() async {
-    if (kIsWeb) return <Contact>[];
+  List<ContactModel> _fetchedContacts = [];
+
+  Future<List<ContactModel>> getContacts() async {
+    if (kIsWeb) return <ContactModel>[];
     try {
-      var contacts = <Contact>[];
+      var contactModels = <ContactModel>[];
       if (await ref.read(appPermissionsProvider).getContactsPermission()) {
-        contacts = await ContactsService.getContacts().then(
+        contactModels = (await ContactsService.getContacts().then(
           (value) => value.where((element) {
             var check = element.phones != null && element.phones!.isNotEmpty;
             return check;
           }).toList(),
-        );
-        ref.read(newEventProvider.notifier).updateAllContacts(contacts);
+        ))
+            .map((e) {
+          Set<String> phones = {};
+          for (var num in e.phones!) {
+            phones.add(flattenNumber(num.value!, ref));
+          }
+          return ContactModel(
+            displayName: e.displayName ?? "zipbuzz-null",
+            phones: phones.toList(),
+            email: e.emails != null
+                ? e.emails!.isNotEmpty
+                    ? e.emails!.map((e) => e.value!).toList()
+                    : null
+                : null,
+          );
+        }).toList();
+        ref.read(newEventProvider.notifier).updateAllContacts(contactModels);
         ref.read(newEventProvider.notifier).resetContactSearch();
-        ref.read(editEventControllerProvider.notifier).updateAllContacts(contacts);
+        ref.read(editEventControllerProvider.notifier).updateAllContacts(contactModels);
         ref.read(editEventControllerProvider.notifier).resetContactSearch();
-        ref.read(groupControllerProvider.notifier).updateAllContacts(contacts);
+        ref.read(groupControllerProvider.notifier).updateAllContacts(contactModels);
         ref.read(groupControllerProvider.notifier).resetContactSearchResult();
       } else {
         showSnackBar(message: "We need contact permission to invite people");
         if (await ref.read(appPermissionsProvider).getContactsPermission()) {
-          contacts = await ContactsService.getContacts().then(
+          contactModels = (await ContactsService.getContacts().then(
             (value) => value.where((element) {
               var check = element.phones != null && element.phones!.isNotEmpty;
               return check;
             }).toList(),
-          );
+          ))
+              .map((e) {
+            Set<String> phones = {};
+            for (var num in e.phones!) {
+              phones.add(flattenNumber(num.value!, ref));
+            }
+            return ContactModel(
+              displayName: e.displayName ?? "zipbuzz-null",
+              phones: phones.toList(),
+              email: e.emails != null
+                  ? e.emails!.isNotEmpty
+                      ? e.emails!.map((e) => e.value!).toList()
+                      : null
+                  : null,
+            );
+          }).toList();
         }
       }
-      return contacts;
+      _fetchedContacts = contactModels;
+      return contactModels;
     } catch (e) {
       debugPrint("Error getting contacts: $e");
       rethrow;
@@ -53,14 +101,13 @@ class Contacts {
 
   Future<void> updateAllContacts() async {
     if (kIsWeb) return;
-    final contacts = await getContacts()
-        .then((value) => value.where((element) => element.phones != null).toList());
+    final contacts = await getContacts();
     ref.read(newEventProvider.notifier).updateAllContacts(contacts);
     ref.read(editEventControllerProvider.notifier).updateAllContacts(contacts);
     ref.read(groupControllerProvider.notifier).updateAllContacts(contacts);
   }
 
-  List<Contact> getMatchingContacts(List<String> numbers) {
+  List<ContactModel> getMatchingContacts(List<String> numbers) {
     final foundNumbers = <String>[];
     var userNumber =
         ref.read(userProvider).mobileNumber.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
@@ -74,15 +121,9 @@ class Contacts {
       }
       return phone;
     }).toList();
-    final contacts = ref.read(editEventControllerProvider.notifier).allContacts;
+    final contacts = _fetchedContacts;
     final matchingContacts = contacts.where((element) {
-      final contactNumbers = element.phones!.map((e) {
-        var phone = (e.value ?? "").replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (phone.length > 10) {
-          phone = phone.substring(phone.length - 10);
-        }
-        return phone;
-      }).toList();
+      final contactNumbers = element.phones;
       if (userNumber == contactNumbers.first) {
         return false;
       }
@@ -98,5 +139,21 @@ class Contacts {
       return false;
     }).toList();
     return matchingContacts;
+  }
+
+  static String flattenNumber(String number, Ref ref) {
+    final userCode = ref
+        .read(userProvider)
+        .mobileNumber
+        .substring(0, ref.read(userProvider).mobileNumber.length - 10);
+    final num = number.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+    if (num.length > 10) {
+      final code = num.substring(0, num.length - 10);
+      return "+$code${num.substring(num.length - 10)}";
+    } else if (num.length == 10) {
+      return userCode + num;
+    } else {
+      return num;
+    }
   }
 }

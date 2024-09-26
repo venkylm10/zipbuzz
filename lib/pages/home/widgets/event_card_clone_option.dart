@@ -7,9 +7,11 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/events/widgets/send_invitation_bell.dart';
+import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/tabs.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
@@ -63,7 +65,9 @@ class EventCardActionItems extends ConsumerWidget {
 
   void cloneEvent(WidgetRef ref) async {
     await fixCloneEventContacts(ref);
-    ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
+    ref
+        .read(homeTabControllerProvider.notifier)
+        .updateSelectedTab(event.groupName == 'zipbuzz-null' ? AppTabs.events : AppTabs.groups);
     ref.read(newEventProvider.notifier).cloneEvent = true;
     ref.read(newEventProvider.notifier).updateCategory(event.category);
     final eventMembers = event.eventMembers.where((element) {
@@ -98,6 +102,9 @@ class EventCardActionItems extends ConsumerWidget {
     ref.read(newEventProvider.notifier).updateEvent(clone);
     ref.read(newEventProvider.notifier).cloneHyperLinks(event.hyperlinks);
     ref.read(newEventProvider.notifier).updateCategory(event.category);
+    if (event.groupName != 'zipbuzz-null') {
+      navigatorKey.currentState!.pushNamed(CreateGroupEventScreen.id);
+    }
   }
 
   Future<void> fixCloneEventContacts(WidgetRef ref) async {

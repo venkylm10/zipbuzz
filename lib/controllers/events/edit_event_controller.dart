@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,6 +12,7 @@ import 'package:zipbuzz/models/interests/requests/user_interests_update_model.da
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
@@ -68,10 +68,10 @@ class EditEventController extends StateNotifier<EventModel> {
   int maxImages = 7;
   File? bannerImage;
   List<UserModel> coHosts = [];
-  List<Contact> eventInvites = [];
+  List<ContactModel> eventInvites = [];
   List<String> oldInviteNumbers = [];
-  List<Contact> allContacts = [];
-  List<Contact> contactSearchResult = [];
+  List<ContactModel> allContacts = [];
+  List<ContactModel> contactSearchResult = [];
   List<String> deletedImages = [];
   List<TextEditingController> urlControllers = [TextEditingController()];
   List<TextEditingController> urlNameControllers = [TextEditingController()];
@@ -231,11 +231,11 @@ class EditEventController extends StateNotifier<EventModel> {
     }
   }
 
-  void updateAllContacts(List<Contact> contacts) {
+  void updateAllContacts(List<ContactModel> contacts) {
     allContacts = contacts;
   }
 
-  void updateInvites(List<Contact> contacts) {
+  void updateInvites(List<ContactModel> contacts) {
     eventInvites = contacts;
   }
 
@@ -243,27 +243,28 @@ class EditEventController extends StateNotifier<EventModel> {
     contactSearchResult = allContacts;
   }
 
-  void updateSelectedContactsList(List<Contact> contacts) {
+  void updateSelectedContactsList(List<ContactModel> contacts) {
     eventInvites = contacts;
   }
 
-  void updateSelectedContact(Contact contact, {bool fix = false}) {
+  void updateSelectedContact(ContactModel contact, {bool fix = false}) {
     if (!eventInvites.contains(contact)) {
       if (state.attendees >= state.capacity) {
         state = state.copyWith(capacity: state.capacity + 1);
       }
       if (!fix) eventInvites.add(contact);
       final member = EventInviteMember(
-          image: "null",
-          phone: contact.phones!.isNotEmpty ? contact.phones!.first.value ?? "" : "",
-          name: contact.displayName ?? "",
-          status: "invited");
+        image: "null",
+        phone: contact.phones.first,
+        name: contact.displayName,
+        status: "invited",
+      );
       addEventMember(member);
       return;
     }
     if (!fix) eventInvites.remove(contact);
     final member = state.eventMembers.firstWhere(
-      (element) => element.phone == contact.phones!.first.value,
+      (element) => element.phone == contact.phones.first,
     );
     state = state.copyWith(
       attendees: state.attendees - 1,
@@ -287,17 +288,15 @@ class EditEventController extends StateNotifier<EventModel> {
     query = query.toLowerCase().trim();
     contactSearchResult = allContacts.where(
       (element) {
-        var name = (element.displayName ?? "").toLowerCase().contains(query);
+        var name = element.displayName.toLowerCase().contains(query);
         var number = false;
-        if (element.phones!.isNotEmpty) {
-          number = element.phones!.any((e) {
-            final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-            if (phone.length > 10) {
-              return phone.substring(phone.length - 10).contains(query);
-            }
-            return phone.contains(query);
-          });
-        }
+        number = element.phones.any((e) {
+          final phone = e;
+          if (phone.length > 10) {
+            return phone.substring(phone.length - 10).contains(query);
+          }
+          return phone.contains(query);
+        });
         return name || number;
       },
     ).toList();
@@ -409,7 +408,7 @@ class EditEventController extends StateNotifier<EventModel> {
       // sending invites
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final newInvitees = eventInvites.where((e) {
-        var number = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        var number = e.phones.first;
         if (number.length > 10) {
           number = number.substring(number.length - 10);
         }
@@ -420,8 +419,8 @@ class EditEventController extends StateNotifier<EventModel> {
       final countryDialCode = userNumber.substring(0, userNumber.length - 10);
       final phoneNumbers = newInvitees.map((e) {
         Set<String> nums = {};
-        for (var num in e.phones!) {
-          var number = num.value!.replaceAll(RegExp(r'[\s()-.]'), "").replaceAll(" ", "");
+        for (var num in e.phones) {
+          var number = num;
           if (number.length == 10) {
             number = countryDialCode + number;
           } else if (number.length > 10 && !number.startsWith("+")) {
@@ -435,9 +434,9 @@ class EditEventController extends StateNotifier<EventModel> {
       }).toList();
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,
-        images: newInvitees.map((e) => Defaults().contactAvatarUrl).toList(),
+        images: newInvitees.map((e) => Defaults.contactAvatarUrl).toList(),
         names: newInvitees.map((e) {
-          return e.displayName ?? "";
+          return e.displayName;
         }).toList(),
         senderName: ref.read(userProvider).name,
         eventName: eventPostModel.name,

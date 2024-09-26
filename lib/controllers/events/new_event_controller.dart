@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
@@ -14,6 +13,7 @@ import 'package:zipbuzz/models/interests/requests/user_interests_update_model.da
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/sign-in/sign_in_page.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
@@ -35,41 +35,40 @@ class NewEvent extends StateNotifier<EventModel> {
   NewEvent({required this.ref})
       : super(
           EventModel(
-            id: ref.read(userProvider).id,
-            title: "",
-            location: "",
-            date: DateTime.now().toString(),
-            startTime: "",
-            endTime: "",
-            attendees: 0,
-            category: 'Please select',
-            isFavorite: false,
-            bannerPath: "",
-            iconPath: "",
-            // updating this just after getting allInterests from the API
-            about: "",
-            hostId: ref.read(userProvider).id,
-            hostName: ref.read(userProvider).name,
-            hostPic: ref.read(userProvider).imageUrl,
-            capacity: 10,
-            isPrivate: true,
-            privateGuestList: false,
-            imageUrls: [],
-            eventMembers: [],
-            status: "nothing",
-            userDeviceToken: "",
-            hyperlinks: [],
-            members: 0,
-            groupName: 'zipbuzz-null'
-          ),
+              id: ref.read(userProvider).id,
+              title: "",
+              location: "",
+              date: DateTime.now().toString(),
+              startTime: "",
+              endTime: "",
+              attendees: 0,
+              category: 'Please select',
+              isFavorite: false,
+              bannerPath: "",
+              iconPath: "",
+              // updating this just after getting allInterests from the API
+              about: "",
+              hostId: ref.read(userProvider).id,
+              hostName: ref.read(userProvider).name,
+              hostPic: ref.read(userProvider).imageUrl,
+              capacity: 10,
+              isPrivate: true,
+              privateGuestList: false,
+              imageUrls: [],
+              eventMembers: [],
+              status: "nothing",
+              userDeviceToken: "",
+              hyperlinks: [],
+              members: 0,
+              groupName: 'zipbuzz-null'),
         );
   List<File> selectedImages = [];
   int maxImages = 7;
   File? bannerImage;
   List<UserModel> coHosts = [];
-  List<Contact> eventInvites = [];
-  List<Contact> allContacts = [];
-  List<Contact> contactSearchResult = [];
+  List<ContactModel> eventInvites = [];
+  List<ContactModel> allContacts = [];
+  List<ContactModel> contactSearchResult = [];
   List<TextEditingController> urlControllers = [TextEditingController()];
   List<TextEditingController> urlNameControllers = [TextEditingController()];
   bool cloneEvent = false;
@@ -212,17 +211,17 @@ class NewEvent extends StateNotifier<EventModel> {
     }
   }
 
-  void updateAllContacts(List<Contact> contacts) {
+  void updateAllContacts(List<ContactModel> contacts) {
     allContacts = contacts;
   }
 
-  void updateInvites(List<Contact> contacts) {
+  void updateInvites(List<ContactModel> contacts) {
     eventInvites = contacts;
     final members = eventInvites
         .map((e) => EventInviteMember(
-              image: Defaults().contactAvatarUrl,
-              phone: e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", ""),
-              name: e.displayName ?? "",
+              image: Defaults.contactAvatarUrl,
+              phone: e.phones.first,
+              name: e.displayName,
               status: 'invited',
             ))
         .toList();
@@ -245,8 +244,7 @@ class NewEvent extends StateNotifier<EventModel> {
     );
     eventInvites.removeWhere(
       (element) {
-        var number =
-            element.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        var number = element.phones.first;
         if (number.length > 10) {
           number = number.substring(number.length - 10);
         }
@@ -259,7 +257,7 @@ class NewEvent extends StateNotifier<EventModel> {
     );
   }
 
-  void updateSelectedContact(Contact contact, {bool fix = false}) {
+  void updateSelectedContact(ContactModel contact, {bool fix = false}) {
     if (!eventInvites.contains(contact)) {
       if (state.attendees >= state.capacity) {
         state = state.copyWith(capacity: state.capacity + 1);
@@ -267,8 +265,8 @@ class NewEvent extends StateNotifier<EventModel> {
       if (!fix) eventInvites.add(contact);
       final member = EventInviteMember(
         image: "null",
-        phone: contact.phones!.first.value!.replaceAll("-", "").replaceAll(" ", ""),
-        name: contact.displayName ?? "",
+        phone: contact.phones.first,
+        name: contact.displayName,
         status: 'invited',
       );
       addEventMember(member);
@@ -278,7 +276,7 @@ class NewEvent extends StateNotifier<EventModel> {
     final member = state.eventMembers.firstWhere(
       (element) {
         var number =
-            contact.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+            contact.phones.first;
         if (number.length > 10) {
           number = number.substring(number.length - 10);
         }
@@ -307,7 +305,7 @@ class NewEvent extends StateNotifier<EventModel> {
     );
   }
 
-  void updateSelectedContactsList(List<Contact> contacts) {
+  void updateSelectedContactsList(List<ContactModel> contacts) {
     eventInvites.clear();
     eventInvites.addAll(contacts);
   }
@@ -316,17 +314,15 @@ class NewEvent extends StateNotifier<EventModel> {
     query = query.toLowerCase().trim();
     contactSearchResult = allContacts.where(
       (element) {
-        var name = (element.displayName ?? "").toLowerCase().contains(query);
+        var name = element.displayName.toLowerCase().contains(query);
         var number = false;
-        if (element.phones!.isNotEmpty) {
-          number = element.phones!.any((e) {
-            final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        number = element.phones.any((e) {
+            final phone = e;
             if (phone.length > 10) {
               return phone.substring(phone.length - 10).contains(query);
             }
             return phone.contains(query);
           });
-        }
         return name || number;
       },
     ).toList();
@@ -459,27 +455,26 @@ class NewEvent extends StateNotifier<EventModel> {
       var eventDateTime = DateTime.parse(state.date);
       var formattedDate = formatWithSuffix(eventDateTime);
       // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
-      final inviteePicUrls = eventInvites.map((e) => Defaults().contactAvatarUrl).toList();
+      final inviteePicUrls = eventInvites.map((e) => Defaults.contactAvatarUrl).toList();
       final userNumber = ref.read(userProvider).mobileNumber;
       final countryDialCode = userNumber.substring(0, userNumber.length - 10);
       final phoneNumbers = eventInvites.map((e) {
         Set<String> nums = {};
         String code = "";
-        for (var num in e.phones!) {
-          var number = num.value!.replaceAll(RegExp(r'[\s()-.]'), "").replaceAll(" ", "");
-          code = number.substring(0, number.length - 10);
-          if (number.length == 10) {
-            number = countryDialCode + number;
-          } else if (number.length > 10 && !number.startsWith("+")) {
-            number = number.substring(number.length - 10);
-            number = "+$code$number";
+        for (var num in e.phones) {
+          code = num.substring(0, num.length - 10);
+          if (num.length == 10) {
+            num = countryDialCode + num;
+          } else if (num.length > 10 && !num.startsWith("+")) {
+            num = num.substring(num.length - 10);
+            num = "+$code$num";
           }
-          nums.add(number);
+          nums.add(num);
         }
         return nums.join(',');
       }).toList();
       final names = eventInvites.map((e) {
-        return e.displayName ?? "";
+        return e.displayName;
       }).toList();
       for (var e in phoneNumbers) {
         debugPrint("Phone Numbers: $e");
@@ -621,32 +616,31 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void resetNewEvent() {
     state = EventModel(
-      id: ref.read(userProvider).id,
-      title: "",
-      location: "",
-      date: DateTime.now().toString(),
-      startTime: "",
-      endTime: "",
-      attendees: 0,
-      category: 'Please select',
-      isFavorite: false,
-      bannerPath: "",
-      iconPath: allInterests.first.iconUrl,
-      about: "",
-      hostId: ref.read(userProvider).id,
-      hostName: ref.read(userProvider).name,
-      hostPic: ref.read(userProvider).imageUrl,
-      capacity: 10,
-      isPrivate: true,
-      imageUrls: [],
-      privateGuestList: false,
-      eventMembers: [],
-      status: "nothing",
-      userDeviceToken: "",
-      hyperlinks: [],
-      members: 0,
-      groupName: 'zipbuzz-null'
-    );
+        id: ref.read(userProvider).id,
+        title: "",
+        location: "",
+        date: DateTime.now().toString(),
+        startTime: "",
+        endTime: "",
+        attendees: 0,
+        category: 'Please select',
+        isFavorite: false,
+        bannerPath: "",
+        iconPath: allInterests.first.iconUrl,
+        about: "",
+        hostId: ref.read(userProvider).id,
+        hostName: ref.read(userProvider).name,
+        hostPic: ref.read(userProvider).imageUrl,
+        capacity: 10,
+        isPrivate: true,
+        imageUrls: [],
+        privateGuestList: false,
+        eventMembers: [],
+        status: "nothing",
+        userDeviceToken: "",
+        hyperlinks: [],
+        members: 0,
+        groupName: 'zipbuzz-null');
     eventInvites = [];
     bannerImage = null;
     urlControllers = [TextEditingController()];

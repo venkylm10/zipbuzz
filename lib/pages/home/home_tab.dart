@@ -10,6 +10,7 @@ import 'package:zipbuzz/pages/home/activities_sheet.dart';
 import 'package:zipbuzz/pages/home/widgets/home_interest_chip.dart';
 import 'package:zipbuzz/pages/home/widgets/home_upcoming_events.dart';
 import 'package:zipbuzz/pages/splash/widgets/version_check_pop_up.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -38,7 +39,10 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         if (check && mounted) setState(() {});
       });
     }
-    _checkLatestVersion();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(contactsServicesProvider).updateAllContacts();
+      _checkLatestVersion();
+    });
     super.initState();
   }
 
@@ -49,8 +53,6 @@ class _HomeTabState extends ConsumerState<HomeTab> {
   }
 
   void _checkLatestVersion() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (ref.read(userProvider).id == 3) return;
     final isLatest = await ref.read(dioServicesProvider).isLatestAppVersion();
     if (!isLatest) {
       await showDialog(

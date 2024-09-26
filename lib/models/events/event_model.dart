@@ -154,7 +154,7 @@ class EventModel {
           .toList(),
       notificationId: map['notificationId'] ?? -1,
       members: map['members'] ?? 0,
-      groupId: map['group_id'] ?? 0,
+      groupId: map['group_id'] ?? -1,
       groupName: map['group_name'] ?? "zipbuzz-null",
     );
   }

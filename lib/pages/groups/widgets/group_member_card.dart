@@ -54,7 +54,7 @@ class GroupMemberCard extends ConsumerWidget {
             CircleAvatar(
               radius: 16,
               backgroundImage: NetworkImage(
-                member.userId == 0 ? Defaults().contactAvatarUrl : member.profilePicture,
+                member.userId == 0 ? Defaults.contactAvatarUrl : member.profilePicture,
               ),
               backgroundColor: AppColors.bgGrey,
             ),
@@ -100,7 +100,7 @@ class GroupMemberCard extends ConsumerWidget {
       return GestureDetector(
         onTap: () async {
           final groupId = ref.read(groupControllerProvider).currentGroup!.id;
-          await ref.read(groupControllerProvider.notifier).addMemberToGroup(member.userId,groupId);
+          await ref.read(groupControllerProvider.notifier).addMemberToGroup(member.userId, groupId);
         },
         child: Container(
           margin: const EdgeInsets.only(left: 6),

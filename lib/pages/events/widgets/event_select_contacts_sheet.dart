@@ -1,4 +1,3 @@
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -108,7 +108,7 @@ class _EventSelectContactSheetState extends ConsumerState<EventSelectContactShee
                 ),
                 suffixIcon: InkWell(
                   onTap: () {
-                    searchController.text = "";
+                    searchController.clear();
                     updateSearchResult("");
                   },
                   child: const Padding(
@@ -211,10 +211,10 @@ class _EventSelectContactSheetState extends ConsumerState<EventSelectContactShee
     setState(() {});
   }
 
-  Widget buildInvitedContacts(List<Contact> selectedContacts) {
+  Widget buildInvitedContacts(List<ContactModel> selectedContacts) {
     final selectSearchContacts = selectedContacts.where(
       (element) {
-        final name = element.displayName ?? "";
+        final name = element.displayName;
         return name.toLowerCase().contains(searchController.text);
       },
     ).toList();
@@ -232,10 +232,8 @@ class _EventSelectContactSheetState extends ConsumerState<EventSelectContactShee
     );
   }
 
-  Widget buildSearchResult(List<Contact> contactSearchResult, List<Contact> selectedContacts) {
-    // final nonSelectedSearchedContact = contactSearchResult.where((element) {
-    //   return !selectedContacts.contains(element);
-    // }).toList();
+  Widget buildSearchResult(
+      List<ContactModel> contactSearchResult, List<ContactModel> selectedContacts) {
     return ListView.builder(
       itemCount: contactSearchResult.length + 1,
       shrinkWrap: true,
@@ -253,16 +251,9 @@ class _EventSelectContactSheetState extends ConsumerState<EventSelectContactShee
     );
   }
 
-  Widget buildContactCard(Contact contact, {bool isSelected = false}) {
-    final name = contact.displayName ?? "";
-    // final phoneNumber = contact.phones!.first.value ?? "";
-    // final phoneNumber = contact.phones?.map((phone) => phone.value).join(", ") ?? "";
-    final phoneNumbers = contact.phones != null
-        ? contact.phones!
-            .map((phone) => phone.value!.replaceAll(RegExp(r'[\s()-.]'), "").replaceAll(' ', ''))
-            .toSet()
-            .toList()
-        : [];
+  Widget buildContactCard(ContactModel contact, {bool isSelected = false}) {
+    final name = contact.displayName;
+    final phoneNumbers = contact.phones;
     final phoneNumber = phoneNumbers.join(", ");
     return InkWell(
       onTap: () {
@@ -283,27 +274,29 @@ class _EventSelectContactSheetState extends ConsumerState<EventSelectContactShee
           children: [
             buildAvatar(contact),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: AppStyles.h4.copyWith(
-                    fontWeight: FontWeight.w500,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: AppStyles.h4.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                if (contact.phones!.isNotEmpty)
                   Text(
                     phoneNumber,
+                    softWrap: true,
                     style: AppStyles.h5.copyWith(
                       fontWeight: FontWeight.w500,
                       color: AppColors.lightGreyColor,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
-            const Expanded(child: SizedBox()),
+            const SizedBox(width: 8),
             SvgPicture.asset(
               isSelected ? Assets.icons.checkbox_checked : Assets.icons.checkbox_unchecked,
               height: 20,
@@ -315,39 +308,17 @@ class _EventSelectContactSheetState extends ConsumerState<EventSelectContactShee
     );
   }
 
-  Widget buildAvatar(Contact contact) {
-    if (contact.avatar != null && contact.avatar!.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Image.memory(contact.avatar!, fit: BoxFit.cover),
+  Widget buildAvatar(ContactModel contact) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
         ),
-      );
-    } else {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: AppColors.borderGrey,
-          ),
-          child: Center(
-            child: Text(
-              contact.initials(),
-              style: AppStyles.h4.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+        child: Image.network(contact.imageUrl, fit: BoxFit.cover),
+      ),
+    );
   }
 }

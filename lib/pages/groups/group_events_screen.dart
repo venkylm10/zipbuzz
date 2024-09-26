@@ -103,9 +103,17 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
         final upcoming =
             ref.watch(groupControllerProvider).groupEventsTab == GroupEventsTab.upcoming;
         final events = ref.watch(groupControllerProvider).currentGroupMonthEvents.where((e) {
-          final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+          final today = DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+            TimeOfDay.now().hour,
+            TimeOfDay.now().minute,
+          );
           final eventDay = DateFormat('yyyy-MM-dd').parse(e.date);
-          return upcoming ? eventDay.isAfter(today) : eventDay.isBefore(today);
+          return upcoming
+              ? eventDay.isAtSameMomentAs(today) || eventDay.isAfter(today)
+              : eventDay.isBefore(today);
         }).toList();
         if (events.isEmpty) {
           return Padding(

@@ -7,6 +7,7 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
 class CreateGroupEventScreen extends StatelessWidget {
+  static const id = '/group/create-group-event';
   const CreateGroupEventScreen({
     super.key,
   });

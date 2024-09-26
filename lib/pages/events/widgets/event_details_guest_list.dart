@@ -38,7 +38,7 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
     'declined': AppColors.negativeRed,
     'invited': AppColors.borderGrey,
     'accepted': Colors.orange,
-    'pending' : Colors.yellow,
+    'pending': Colors.yellow,
   };
 
   @override
@@ -200,7 +200,7 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
-              member.image != "null" ? member.image : Defaults().contactAvatarUrl,
+              member.image != "null" ? member.image : Defaults.contactAvatarUrl,
               height: 32,
               width: 32,
             ),

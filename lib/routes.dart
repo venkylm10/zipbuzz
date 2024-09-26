@@ -4,6 +4,7 @@ import 'package:zipbuzz/pages/chat/chat_page.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
+import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/groups/group_events_screen.dart';
 import 'package:zipbuzz/pages/groups/group_members_screen.dart';
@@ -175,6 +176,14 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     case AddGroupMembers.id:
       return PageTransition(
         child: const AddGroupMembers(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
+    case CreateGroupEventScreen.id:
+      return PageTransition(
+        child: const CreateGroupEventScreen(),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),

@@ -36,7 +36,7 @@ class GroupMemberModel {
       phone: json['phone'],
       permissionType: permissionType,
       profilePicture: json['profile_picture'] == 'zipbuzz-null'
-          ? Defaults().contactAvatarUrl
+          ? Defaults.contactAvatarUrl
           : json['profile_picture'],
     );
   }

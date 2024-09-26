@@ -13,7 +13,6 @@ import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/pages/personalise/personalise_page.dart';
 import 'package:zipbuzz/pages/sign-in/web_sign_page.dart';
 import 'package:zipbuzz/pages/welcome/welcome_page.dart';
-import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/location_services.dart';
@@ -66,7 +65,6 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
       navigatorKey.currentState!.pushReplacementNamed(PersonalisePage.id);
       return;
     }
-    ref.read(contactsServicesProvider).updateAllContacts();
     ref.read(homeTabControllerProvider.notifier).cloneUserDataToQuery();
     ref.read(eventsControllerProvider.notifier).fetchEvents();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
@@ -74,7 +72,6 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
 
   void buildNextScreen() async {
     bool? login = box.read(BoxConstants.login) as bool?;
-    await Future.delayed(const Duration(milliseconds: 500));
     await DioServices.getToken();
     await updateInterestsData();
     if (login != null && login) {
@@ -97,8 +94,10 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
 
   @override
   void initState() {
-    buildNextScreen();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      buildNextScreen();
+    });
   }
 
   @override

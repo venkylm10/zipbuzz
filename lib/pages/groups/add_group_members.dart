@@ -1,7 +1,7 @@
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -189,7 +189,7 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
     });
   }
 
-  Widget _buildSelectedCardChip(Contact contact) {
+  Widget _buildSelectedCardChip(ContactModel contact) {
     return GestureDetector(
       onTap: () {
         ref.read(groupControllerProvider.notifier).toggleSelectedContact(contact);
@@ -204,7 +204,7 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              contact.displayName ?? contact.phones!.first.value!,
+              contact.displayName,
               style: AppStyles.h4.copyWith(color: Colors.white),
             ),
             const SizedBox(width: 8),
@@ -215,7 +215,7 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
     );
   }
 
-  Widget _buildMemberCard(Contact contact) {
+  Widget _buildMemberCard(ContactModel contact) {
     return Consumer(builder: (context, ref, child) {
       final selected = ref.watch(groupControllerProvider).selectedContacts.contains(contact);
       return GestureDetector(
@@ -236,11 +236,11 @@ class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                contact.displayName ?? "",
+                contact.displayName,
                 style: AppStyles.h4,
               ),
               Text(
-                contact.phones!.first.value ?? "",
+                contact.phones.first,
                 style: AppStyles.h5.copyWith(
                   fontStyle: FontStyle.italic,
                   color: AppColors.greyColor,

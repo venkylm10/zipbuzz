@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -20,6 +19,7 @@ import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/add_group_members.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
+import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
@@ -39,7 +39,7 @@ class GroupController extends StateNotifier<GroupState> {
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final contactSearchController = TextEditingController();
-  List<Contact> allContacts = [];
+  List<ContactModel> allContacts = [];
 
   void changeGroupEventsTab(GroupEventsTab tab) {
     state = state.copyWith(groupEventsTab: tab);
@@ -330,7 +330,7 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   // Contacts
-  void updateAllContacts(List<Contact> contacts) {
+  void updateAllContacts(List<ContactModel> contacts) {
     allContacts = contacts;
     state = state.copyWith(contactSearchResult: allContacts);
   }
@@ -348,18 +348,10 @@ class GroupController extends StateNotifier<GroupState> {
     state = state.copyWith(contactSearchResult: allContacts);
   }
 
-  bool _contactInSearch(Contact element, String query) {
-    var name = (element.displayName ?? "").toLowerCase().contains(query);
+  bool _contactInSearch(ContactModel element, String query) {
+    var name = element.displayName.toLowerCase().contains(query);
     var number = false;
-    if (element.phones!.isNotEmpty) {
-      number = element.phones!.any((e) {
-        final phone = e.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (phone.length > 10) {
-          return phone.substring(phone.length - 10).contains(query);
-        }
-        return phone.contains(query);
-      });
-    }
+    number = element.phones.any((e) => e.contains(query));
     return name || number;
   }
 
@@ -381,19 +373,9 @@ class GroupController extends StateNotifier<GroupState> {
     );
   }
 
-  void toggleSelectedContact(Contact contact) {
-    final userNumber = ref.read(userProvider).mobileNumber;
-    final countryDialCode = userNumber.substring(0, userNumber.length - 10);
+  void toggleSelectedContact(ContactModel contact) {
     var number =
-        contact.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-    (" ", "");
-    final code = number.substring(0, number.length - 10);
-    if (number.length == 10) {
-      number = countryDialCode + number;
-    } else if (number.length > 10 && !number.startsWith("+")) {
-      number = number.substring(number.length - 10);
-      number = "+$code$number";
-    }
+        contact.phones.first;
     if (state.members.any((e) => e.phone == number)) {
       showSnackBar(message: "User is already a member of the group");
       return;
@@ -421,7 +403,7 @@ class GroupController extends StateNotifier<GroupState> {
       final countryDialCode = userNumber.substring(0, userNumber.length - 10);
       for (var e in state.selectedContacts) {
         final user = ref.read(userProvider);
-        var number = e.phones!.first.value!.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        var number = e.phones.first;
         (" ", "");
         final code = number.substring(0, number.length - 10);
         if (number.length == 10) {
@@ -434,7 +416,7 @@ class GroupController extends StateNotifier<GroupState> {
           groupId: state.currentGroupDescription!.id,
           userId: user.id,
           title: state.currentGroupDescription!.groupName,
-          inviteName: e.displayName ?? 'zipbuzz-null',
+          inviteName: e.displayName,
           phoneNumber: number,
           invitingUserName: user.name,
         );
@@ -587,9 +569,9 @@ class GroupState {
   final List<GroupMemberModel> invites;
   final GroupMemberModel? currentGroupMember;
   final bool isAdmin;
-  final List<Contact> selectedContacts;
-  final List<Contact> contactSearchResult;
-  final List<Contact> selectedContactsSearchResult;
+  final List<ContactModel> selectedContacts;
+  final List<ContactModel> contactSearchResult;
+  final List<ContactModel> selectedContactsSearchResult;
   final bool invitingMembers;
   final GroupModel? currentGroup;
   final bool showCalendar;
@@ -646,9 +628,9 @@ class GroupState {
     List<GroupMemberModel>? invites,
     GroupMemberModel? currentGroupMember,
     bool? isAdmin,
-    List<Contact>? selectedContacts,
-    List<Contact>? contactSearchResult,
-    List<Contact>? selectedContactsSearchResult,
+    List<ContactModel>? selectedContacts,
+    List<ContactModel>? contactSearchResult,
+    List<ContactModel>? selectedContactsSearchResult,
     bool? invitingMembers,
     GroupModel? currentGroup,
     bool removingFiles = false,

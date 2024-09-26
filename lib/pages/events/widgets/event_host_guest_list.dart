@@ -13,8 +13,7 @@ final guestListTagProvider = StateProvider<String>((ref) => "Invited");
 final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);
 
 class EventHostGuestList extends StatelessWidget {
-
-   String formatName(String fullName) {
+  String formatName(String fullName) {
     // Split the full name into parts (assuming a first and last name)
     List<String> nameParts = fullName.split(' ');
 
@@ -156,7 +155,7 @@ class EventHostGuestList extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                    member.image != "null" ? member.image : Defaults().contactAvatarUrl,
+                    member.image != "null" ? member.image : Defaults.contactAvatarUrl,
                     height: 32,
                     width: 32),
               ),
@@ -173,11 +172,11 @@ class EventHostGuestList extends StatelessWidget {
                       style: AppStyles.h5,
                     ),
                     // if (member.phone != 'zipbuzz-null')
-                      // Text(
-                      //   member.phone,
-                      //   style: AppStyles.h6
-                      //       .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
-                      // ),
+                    // Text(
+                    //   member.phone,
+                    //   style: AppStyles.h6
+                    //       .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
+                    // ),
                   ],
                 ),
               ),
@@ -217,9 +216,9 @@ class EventHostGuestList extends StatelessWidget {
                         await ref
                             .read(dioServicesProvider)
                             .editUserStatus(event.id, member.userId, "confirm");
-                        await ref
-                            .read(dioServicesProvider)
-                            .updateRespondedNotification(member.userId, event.hostId, eventId :event.id);
+                        await ref.read(dioServicesProvider).updateRespondedNotification(
+                            member.userId, event.hostId,
+                            eventId: event.id);
                       },
                       child: buildGuestTag(member.status),
                     );
@@ -250,7 +249,7 @@ class EventHostGuestList extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                    member.image != "null" ? member.image : Defaults().contactAvatarUrl,
+                    member.image != "null" ? member.image : Defaults.contactAvatarUrl,
                     height: 32,
                     width: 32),
               ),
