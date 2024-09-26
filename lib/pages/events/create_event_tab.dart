@@ -5,6 +5,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/pages/events/widgets/create_event_urls.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
@@ -142,11 +143,25 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
         try {
           ref.read(groupControllerProvider.notifier).updateLoading(true);
           await ref.read(groupControllerProvider.notifier).getGroupMembers();
-          final phones = [
-            ...ref.read(groupControllerProvider).admins.map((e) => e.phone),
-            ...ref.read(groupControllerProvider).members.map((e) => e.phone),
+          final members = [
+            ...ref.read(groupControllerProvider).admins,
+            ...ref.read(groupControllerProvider).members,
           ];
+          final phones = members.map((e) => e.phone).toList();
           final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(phones);
+          final nonContactMembers = members.where((e) {
+            if (e.phone == ref.read(userProvider).mobileNumber) {
+              return false;
+            }
+            return !matchingContacts.any(
+              (e) => e.phones.contains(e.phones.first),
+            );
+          }).map((e) => ContactModel(
+                displayName: e.name,
+                phones: [e.phone],
+                imageUrl: e.profilePicture,
+              ));
+          matchingContacts.addAll(nonContactMembers);
           ref.read(newEventProvider.notifier).updateInvites(matchingContacts);
         } catch (e) {
           showSnackBar(message: "Something went wrong. Please try again later.");
