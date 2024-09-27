@@ -133,6 +133,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
               (!focusedEvents.contains(e) || !calendar);
         }).toList();
         if (events.isEmpty) {
+          if (calendar) return const SizedBox();
           return Padding(
             padding: const EdgeInsets.only(top: 44),
             child: NoUpcomingEventsBanner(

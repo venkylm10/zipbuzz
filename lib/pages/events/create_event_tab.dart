@@ -150,12 +150,14 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
           final phones = members.map((e) => e.phone).toList();
           final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(phones);
           final nonContactMembers = members.where((e) {
+            if (e.phone == 'zipbuzz-null') return false;
             if (e.phone == ref.read(userProvider).mobileNumber) {
               return false;
             }
-            return !matchingContacts.any(
-              (e) => e.phones.contains(e.phones.first),
+            final val = !matchingContacts.any(
+              (ele) => ele.phones.contains(e.phone),
             );
+            return val;
           }).map((e) => ContactModel(
                 displayName: e.name,
                 phones: [e.phone],

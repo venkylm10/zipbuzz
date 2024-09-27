@@ -152,11 +152,12 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
             rebuild: () {
               ref.read(homeTabControllerProvider.notifier).getNotifications();
             });
-      case 'group_accepted' || 'group_confirmed':
+      case 'group_accepted':
+        return const SizedBox();
+      case 'group_confirmed':
         return GroupAcceptCard(
           notification: notification,
           time: formattedTime,
-          confirmed: notification.notificationType == 'group_confirmed',
         );
       case 'group_member_request' || 'group_member_confirm':
         return GroupMemberRequestCard(

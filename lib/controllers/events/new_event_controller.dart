@@ -272,8 +272,8 @@ class NewEvent extends StateNotifier<EventModel> {
     if (!fix) eventInvites.remove(contact);
     final member = state.eventMembers.firstWhere(
       (element) {
-        final number = Contacts.flattenNumber(contact.phones.first, ref,null);
-        var phone = Contacts.flattenNumber(element.phone, ref,null);
+        final number = Contacts.flattenNumber(contact.phones.first, ref, null);
+        var phone = Contacts.flattenNumber(element.phone, ref, null);
         return phone == number;
       },
     );

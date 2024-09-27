@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/controllers/events/events_tab_controler.dart';
 import 'package:zipbuzz/controllers/events/new_event_controller.dart';
+import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
@@ -28,41 +29,45 @@ class EventCardActionItems extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hostId = event.hostId;
     final userId = ref.read(userProvider).id;
-    return Positioned(
-      right: 10,
-      top: 10,
-      child: Row(
-        children: [
-          if (hostId == userId)
-            InkWell(
-              onTap: () => cloneEvent(ref),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: SvgPicture.asset(
-                  Assets.icons.copy,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.primaryColor,
-                    BlendMode.srcIn,
+    final check = groupEvent
+        ? hostId == userId ||
+            ref.read(groupControllerProvider).admins.any((e) => e.userId == userId)
+        : hostId == userId;
+    return check
+        ? Positioned(
+            right: 10,
+            top: 10,
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () => cloneEvent(ref),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: SvgPicture.asset(
+                      Assets.icons.copy,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.primaryColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: SendNotificationBell(
+                    event: event,
+                    padding: const EdgeInsets.all(8),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ],
             ),
-          if (userId == hostId)
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: SendNotificationBell(
-                event: event,
-                padding: const EdgeInsets.all(8),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-        ],
-      ),
-    );
+          )
+        : const SizedBox();
   }
 
   void cloneEvent(WidgetRef ref) async {
