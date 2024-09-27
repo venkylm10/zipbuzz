@@ -248,10 +248,7 @@ class NewEvent extends StateNotifier<EventModel> {
         if (number.length > 10) {
           number = number.substring(number.length - 10);
         }
-        phone = phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (phone.length > 10) {
-          phone = phone.substring(phone.length - 10);
-        }
+        phone = phone.replaceAll("+", "").replaceAll(" ", "");
         return phone == number;
       },
     );
@@ -275,15 +272,8 @@ class NewEvent extends StateNotifier<EventModel> {
     if (!fix) eventInvites.remove(contact);
     final member = state.eventMembers.firstWhere(
       (element) {
-        var number =
-            contact.phones.first;
-        if (number.length > 10) {
-          number = number.substring(number.length - 10);
-        }
-        var phone = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-        if (phone.length > 10) {
-          phone = phone.substring(phone.length - 10);
-        }
+        final number = Contacts.flattenNumber(contact.phones.first, ref,null);
+        var phone = Contacts.flattenNumber(element.phone, ref,null);
         return phone == number;
       },
     );
@@ -317,12 +307,12 @@ class NewEvent extends StateNotifier<EventModel> {
         var name = element.displayName.toLowerCase().contains(query);
         var number = false;
         number = element.phones.any((e) {
-            final phone = e;
-            if (phone.length > 10) {
-              return phone.substring(phone.length - 10).contains(query);
-            }
-            return phone.contains(query);
-          });
+          final phone = e;
+          if (phone.length > 10) {
+            return phone.substring(phone.length - 10).contains(query);
+          }
+          return phone.contains(query);
+        });
         return name || number;
       },
     ).toList();

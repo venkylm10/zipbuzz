@@ -70,15 +70,9 @@ class EventInviteMoreGuestsButton extends ConsumerWidget {
     ref.read(editEventControllerProvider.notifier).updateEvent(event);
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
-    ref.read(editEventControllerProvider.notifier).updateOldInvites(event.eventMembers.map(
-          (e) {
-            var phone = e.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-            if (phone.length > 10) {
-              phone = phone.substring(phone.length - 10);
-            }
-            return phone;
-          },
-        ).toList());
+    ref
+        .read(editEventControllerProvider.notifier)
+        .updateOldInvites(event.eventMembers.map((e) => e.phone).toList());
     await fixInviteMoreContacts(ref);
     await showPreview(ref);
     ref.read(eventsControllerProvider.notifier).updateLoadingState(false);

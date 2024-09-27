@@ -29,7 +29,9 @@ final contactsServicesProvider = Provider<Contacts>((ref) {
 
 class Contacts {
   final Ref ref;
-  Contacts({required this.ref});
+  Contacts({required this.ref}) {
+    print("Check: '${flattenNumber("+() 782-937-7594",ref,null)}'");
+  }
 
   List<ContactModel> _fetchedContacts = [];
 
@@ -47,7 +49,7 @@ class Contacts {
             .map((e) {
           Set<String> phones = {};
           for (var num in e.phones!) {
-            phones.add(flattenNumber(num.value!, ref));
+            phones.add(flattenNumber(num.value!, ref, null));
           }
           return ContactModel(
             displayName: e.displayName ?? "zipbuzz-null",
@@ -77,7 +79,7 @@ class Contacts {
               .map((e) {
             Set<String> phones = {};
             for (var num in e.phones!) {
-              phones.add(flattenNumber(num.value!, ref));
+              phones.add(flattenNumber(num.value!, ref, null));
             }
             return ContactModel(
               displayName: e.displayName ?? "zipbuzz-null",
@@ -110,12 +112,12 @@ class Contacts {
   List<ContactModel> getMatchingContacts(List<String> numbers) {
     final foundNumbers = <String>[];
     var userNumber =
-        ref.read(userProvider).mobileNumber.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+        ref.read(userProvider).mobileNumber.replaceAll(RegExp(r'[\s()-+]'), "").replaceAll(" ", "");
     if (userNumber.length > 10) {
       userNumber = userNumber.substring(userNumber.length - 10);
     }
     final flattedNumbers = numbers.map((e) {
-      var phone = e.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+      var phone = e.replaceAll(RegExp(r'[\s()-+]'), "").replaceAll(" ", "");
       if (phone.length > 10) {
         phone = phone.substring(phone.length - 10);
       }
@@ -141,19 +143,25 @@ class Contacts {
     return matchingContacts;
   }
 
-  static String flattenNumber(String number, Ref ref) {
-    final userCode = ref
-        .read(userProvider)
-        .mobileNumber
-        .substring(0, ref.read(userProvider).mobileNumber.length - 10);
-    final num = number.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-    if (num.length > 10) {
-      final code = num.substring(0, num.length - 10);
-      return "+$code${num.substring(num.length - 10)}";
-    } else if (num.length == 10) {
-      return userCode + num;
-    } else {
-      return num;
+  
+  static String flattenNumber(String number, Ref? ref, WidgetRef? widgetRef) {
+    assert(ref != null || widgetRef != null);
+    late final String userMobileNumber;
+    if(ref != null){
+      userMobileNumber = ref.read(userProvider).mobileNumber;
+    }else{
+      userMobileNumber = widgetRef!.read(userProvider).mobileNumber;
     }
+    final userCode =
+        userMobileNumber.substring(0, userMobileNumber.length - 10).replaceAll("+", "");
+
+    final cleanedNumber = number.replaceAll(RegExp(r'[\s()\-+]'), "");
+    if (cleanedNumber.length > 10) {
+      final countryCode = cleanedNumber.substring(0, cleanedNumber.length - 10).replaceAll("+", "");
+      return "+$countryCode${cleanedNumber.substring(cleanedNumber.length - 10)}";
+    } else if (cleanedNumber.length == 10) {
+      return "+$userCode$cleanedNumber";
+    }
+    return cleanedNumber;
   }
 }

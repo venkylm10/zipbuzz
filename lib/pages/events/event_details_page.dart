@@ -79,14 +79,13 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   File? image;
 
   void fixInviteGuests() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     if (widget.event.eventMembers.isEmpty) {
       widget.rePublish
           ? ref.read(newEventProvider.notifier).resetEventMembers()
           : ref.read(editEventControllerProvider.notifier).resetEventMembers();
       return;
     }
-    if (!(widget.isPreview || widget.rePublish)) return;
+    if (!widget.isPreview && !widget.rePublish) return;
     setState(() {});
   }
 
@@ -138,8 +137,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   @override
   void initState() {
-    initialise();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialise();
+    });
   }
 
   @override
@@ -241,7 +242,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-                                  buildDescription(),
+                                  _buildDescription(),
                                   const SizedBox(height: 16),
                                   Divider(
                                     color: AppColors.greyColor.withOpacity(0.2),
@@ -255,7 +256,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     hosted: hosted,
                                   ),
                                   const SizedBox(height: 16),
-                                  buildPhotos(widget.isPreview, widget.rePublish, ref),
+                                  _buildPhotos(widget.isPreview, widget.rePublish, ref),
                                   const SizedBox(height: 16),
                                   Divider(
                                     color: AppColors.greyColor.withOpacity(0.2),
@@ -277,7 +278,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                   ),
                 ),
               ),
-              buildLoader(),
+              _buildLoader(),
             ],
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -345,12 +346,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     ref.read(newEventProvider.notifier).updateBannerImage(image!);
     ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
     ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
-    widget.dominantColor = await getDominantColor();
+    widget.dominantColor = await _getDominantColor();
     ref.read(loadingTextProvider.notifier).reset();
     setState(() {});
   }
 
-  Widget buildLoader() {
+  Widget _buildLoader() {
     return Consumer(
       builder: (context, ref, child) {
         final loading = ref.watch(eventsControllerProvider).loading;
@@ -379,7 +380,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     );
   }
 
-  Widget buildDescription() {
+  Widget _buildDescription() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -391,7 +392,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     );
   }
 
-  Future<Color> getDominantColor() async {
+  Future<Color> _getDominantColor() async {
     final previewBanner = ref.read(newEventProvider.notifier).bannerImage;
     Color dominantColor = Colors.green;
     if (previewBanner != null) {
@@ -411,7 +412,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     return dominantColor;
   }
 
-  Widget buildPhotos(bool isPreview, bool rePublish, WidgetRef ref) {
+  Widget _buildPhotos(bool isPreview, bool rePublish, WidgetRef ref) {
     final imageFiles = rePublish
         ? ref.watch(editEventControllerProvider.notifier).selectedImages
         : ref.watch(newEventProvider.notifier).selectedImages;

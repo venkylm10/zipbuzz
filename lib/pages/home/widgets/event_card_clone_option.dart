@@ -17,9 +17,11 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
 class EventCardActionItems extends ConsumerWidget {
   final EventModel event;
+  final bool groupEvent;
   const EventCardActionItems({
     super.key,
     required this.event,
+    required this.groupEvent,
   });
 
   @override
@@ -67,17 +69,13 @@ class EventCardActionItems extends ConsumerWidget {
     await fixCloneEventContacts(ref);
     ref
         .read(homeTabControllerProvider.notifier)
-        .updateSelectedTab(event.groupName == 'zipbuzz-null' ? AppTabs.events : AppTabs.groups);
+        .updateSelectedTab(!groupEvent ? AppTabs.events : AppTabs.groups);
     ref.read(newEventProvider.notifier).cloneEvent = true;
     ref.read(newEventProvider.notifier).updateCategory(event.category);
     final eventMembers = event.eventMembers.where((element) {
-      var num = element.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
+      var num = Contacts.flattenNumber(element.phone, null, ref);
       num = num.length > 10 ? num.substring(num.length - 10) : num;
-      var userNumber = ref
-          .read(userProvider)
-          .mobileNumber
-          .replaceAll(RegExp(r'[\s()-]+'), "")
-          .replaceAll(" ", "");
+      var userNumber = ref.read(userProvider).mobileNumber.replaceAll("+", "");
       userNumber =
           userNumber.length > 10 ? userNumber.substring(userNumber.length - 10) : userNumber;
       return num != userNumber;
@@ -102,7 +100,7 @@ class EventCardActionItems extends ConsumerWidget {
     ref.read(newEventProvider.notifier).updateEvent(clone);
     ref.read(newEventProvider.notifier).cloneHyperLinks(event.hyperlinks);
     ref.read(newEventProvider.notifier).updateCategory(event.category);
-    if (event.groupName != 'zipbuzz-null') {
+    if (groupEvent) {
       navigatorKey.currentState!.pushNamed(CreateGroupEventScreen.id);
     }
   }
@@ -111,15 +109,8 @@ class EventCardActionItems extends ConsumerWidget {
     showSnackBar(message: "Cloning event", duration: 1);
     final numbers = event.eventMembers
         .where((e) {
-          var num = e.phone.replaceAll(RegExp(r'[\s()-]+'), "").replaceAll(" ", "");
-          num = num.length > 10 ? num.substring(num.length - 10) : num;
-          var userNumber = ref
-              .read(userProvider)
-              .mobileNumber
-              .replaceAll(RegExp(r'[\s()-]+'), "")
-              .replaceAll(" ", "");
-          userNumber =
-              userNumber.length > 10 ? userNumber.substring(userNumber.length - 10) : userNumber;
+          var num = Contacts.flattenNumber(e.phone, null, ref);
+          var userNumber = Contacts.flattenNumber(ref.read(userProvider).mobileNumber, null, ref);
           return num != userNumber;
         })
         .map((e) => e.phone)

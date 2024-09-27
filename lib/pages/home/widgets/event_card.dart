@@ -28,6 +28,7 @@ class EventCard extends ConsumerStatefulWidget {
   final bool showTag;
   final bool myEvent;
   final bool changeRsvp;
+  final bool groupEvent;
 
   EventCard({
     super.key,
@@ -36,6 +37,7 @@ class EventCard extends ConsumerStatefulWidget {
     this.showTag = true,
     this.myEvent = false,
     this.changeRsvp = true,
+    this.groupEvent = false,
   });
 
   @override
@@ -128,7 +130,10 @@ class _EventCardState extends ConsumerState<EventCard> {
                       child: Stack(
                         children: [
                           _buildBanner(),
-                          EventCardActionItems(event: widget.event),
+                          EventCardActionItems(
+                            event: widget.event,
+                            groupEvent: widget.groupEvent,
+                          ),
                           _buildAttendees(),
                           EventCardCategoryDetails(
                             event: widget.event,

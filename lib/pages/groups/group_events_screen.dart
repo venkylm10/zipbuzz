@@ -136,7 +136,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return EventCard(event: events[index]);
+            return EventCard(event: events[index], groupEvent: true);
           },
         );
       }
@@ -149,7 +149,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          return EventCard(event: events[index]);
+          return EventCard(event: events[index], groupEvent: true);
         },
       );
     });
