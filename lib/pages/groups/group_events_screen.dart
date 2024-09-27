@@ -34,8 +34,10 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
   @override
   void initState() {
     groupDescription = ref.read(groupControllerProvider).currentGroupDescription!;
-    ref.read(groupControllerProvider.notifier).fetchGroupEvents();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(groupControllerProvider.notifier).fetchGroupEvents();
+    });
   }
 
   @override
@@ -49,6 +51,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
             const SizedBox(height: 12),
             _buildCalendar(),
             _buildFocusedDayEvents(),
+            _buildUpcomingEvents(),
           ],
         ),
         floatingActionButton: _floatingButton(),
@@ -64,13 +67,25 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
 
   Widget _floatingButton() {
     return Consumer(builder: (context, ref, child) {
+      final eventMap = ref.watch(groupControllerProvider).currentGroupMonthEventsMap;
+      final focusedDay = ref.watch(groupControllerProvider).focusedDay;
+      final focusedEvents = eventMap[focusedDay] ?? [];
       final upcoming = ref.watch(groupControllerProvider).groupEventsTab == GroupEventsTab.upcoming;
+      final today = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
+      final calendar = ref.watch(groupControllerProvider).showCalendar;
       final events = ref.watch(groupControllerProvider).currentGroupMonthEvents.where((e) {
-        final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
         final eventDay = DateFormat('yyyy-MM-dd').parse(e.date);
-        return upcoming ? eventDay.isAfter(today) : eventDay.isBefore(today);
+        return (upcoming
+                ? eventDay.isAtSameMomentAs(today) || eventDay.isAfter(today)
+                : eventDay.isBefore(today)) &&
+            (!focusedEvents.contains(e) || !calendar);
       }).toList();
-      if (events.isEmpty) return const SizedBox();
+      if (events.isEmpty && focusedEvents.isEmpty) return const SizedBox();
+      if (!upcoming && events.isEmpty) return const SizedBox();
       return GestureDetector(
         onTap: () {
           navigatorKey.currentState!.push(
@@ -96,24 +111,26 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
     });
   }
 
-  Widget _buildFocusedDayEvents() {
-    return Consumer(builder: (context, ref, child) {
-      final calendar = ref.watch(groupControllerProvider).showCalendar;
-      if (!calendar) {
+  Widget _buildUpcomingEvents() {
+    return Consumer(
+      builder: (context, ref, child) {
         final upcoming =
             ref.watch(groupControllerProvider).groupEventsTab == GroupEventsTab.upcoming;
+        final today = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+        );
+        final eventMap = ref.watch(groupControllerProvider).currentGroupMonthEventsMap;
+        final focusedDay = ref.watch(groupControllerProvider).focusedDay;
+        final focusedEvents = eventMap[focusedDay] ?? [];
+        final calendar = ref.watch(groupControllerProvider).showCalendar;
         final events = ref.watch(groupControllerProvider).currentGroupMonthEvents.where((e) {
-          final today = DateTime(
-            DateTime.now().year,
-            DateTime.now().month,
-            DateTime.now().day,
-            TimeOfDay.now().hour,
-            TimeOfDay.now().minute,
-          );
           final eventDay = DateFormat('yyyy-MM-dd').parse(e.date);
-          return upcoming
-              ? eventDay.isAtSameMomentAs(today) || eventDay.isAfter(today)
-              : eventDay.isBefore(today);
+          return (upcoming
+                  ? eventDay.isAtSameMomentAs(today) || eventDay.isAfter(today)
+                  : eventDay.isBefore(today)) &&
+              (!focusedEvents.contains(e) || !calendar);
         }).toList();
         if (events.isEmpty) {
           return Padding(
@@ -131,15 +148,33 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
           );
         }
         return ListView.builder(
-          itemCount: events.length,
+          itemCount: events.length + (calendar ? 1 : 0),
           padding: EdgeInsets.zero,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return EventCard(event: events[index], groupEvent: true);
+            if (index == 0 && calendar) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    "Upcoming Events",
+                    style: AppStyles.h3.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              );
+            }
+            return EventCard(event: events[index - (calendar ? 1 : 0)], groupEvent: true);
           },
         );
-      }
+      },
+    );
+  }
+
+  Widget _buildFocusedDayEvents() {
+    return Consumer(builder: (context, ref, child) {
+      final calendar = ref.watch(groupControllerProvider).showCalendar;
+      if (!calendar) return const SizedBox();
       final eventMap = ref.watch(groupControllerProvider).currentGroupMonthEventsMap;
       final focusedDay = ref.watch(groupControllerProvider).focusedDay;
       final events = eventMap[focusedDay] ?? [];

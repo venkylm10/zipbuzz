@@ -29,9 +29,7 @@ final contactsServicesProvider = Provider<Contacts>((ref) {
 
 class Contacts {
   final Ref ref;
-  Contacts({required this.ref}) {
-    print("Check: '${flattenNumber("+() 782-937-7594",ref,null)}'");
-  }
+  Contacts({required this.ref});
 
   List<ContactModel> _fetchedContacts = [];
 
@@ -143,13 +141,12 @@ class Contacts {
     return matchingContacts;
   }
 
-  
   static String flattenNumber(String number, Ref? ref, WidgetRef? widgetRef) {
     assert(ref != null || widgetRef != null);
     late final String userMobileNumber;
-    if(ref != null){
+    if (ref != null) {
       userMobileNumber = ref.read(userProvider).mobileNumber;
-    }else{
+    } else {
       userMobileNumber = widgetRef!.read(userProvider).mobileNumber;
     }
     final userCode =
