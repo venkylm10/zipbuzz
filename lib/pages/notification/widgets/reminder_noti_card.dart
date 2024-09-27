@@ -75,7 +75,7 @@ class ReminderNotiCard extends ConsumerWidget {
                     softWrap: true,
                   ),
                   Text(
-                    '${notification.senderName} has reminded you for the event - ${notification.eventName}',
+                    '${notification.senderName} has reminded you about the event - ${notification.eventName}',
                     style: AppStyles.h5,
                   ),
                 ],
