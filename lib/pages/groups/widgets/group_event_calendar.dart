@@ -9,15 +9,33 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
-class GroupEventCalendar extends ConsumerWidget {
+class GroupEventCalendar extends ConsumerStatefulWidget {
   const GroupEventCalendar({super.key});
 
+  @override
+  ConsumerState<GroupEventCalendar> createState() => _GroupEventCalendarState();
+}
+
+class _GroupEventCalendarState extends ConsumerState<GroupEventCalendar> {
   void onDaySelected(DateTime day, DateTime focusedDay, WidgetRef ref) {
     ref.read(groupControllerProvider.notifier).updateFocusedDay(focusedDay);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final today = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
+      ref.read(groupControllerProvider.notifier).updateFocusedDay(today);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     const double rowHeight = 46;
     final eventsMap = ref.watch(groupControllerProvider).currentGroupMonthEventsMap;
     final focusedDay = ref.watch(groupControllerProvider).focusedDay;

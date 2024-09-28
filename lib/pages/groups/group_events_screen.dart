@@ -159,7 +159,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    "Upcoming Events",
+                    "${upcoming ? "Upcoming" : "Past"} Events",
                     style: AppStyles.h3.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
