@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/community/community_controller.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
-import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/groups/group_events_screen.dart';
@@ -39,12 +38,13 @@ class GroupTabDescriptionList extends ConsumerWidget {
   }
 
   Widget _buildGroupsList(GroupTab tab, List<DescriptionModel> allGroups, WidgetRef ref) {
-    final user = ref.read(userProvider);
     final groups = tab == GroupTab.all
         ? allGroups.where((e) {
             return e.permissionType == 'o' || e.permissionType == 'a' || e.permissionType == 'm';
           }).toList()
-        : allGroups.where((e) => e.creatorId == user.id).toList();
+        : allGroups.where((e) {
+            return e.permissionType == 'a' || e.permissionType == 'o';
+          }).toList();
     final pendingOrRequestedGroups =
         allGroups.where((e) => e.permissionType == 'i' || e.permissionType == 'p').toList();
     if (groups.isEmpty && pendingOrRequestedGroups.isEmpty) {
@@ -60,16 +60,7 @@ class GroupTabDescriptionList extends ConsumerWidget {
         ),
       );
     }
-    if (tab == GroupTab.personal) {
-      return ListView.builder(
-        itemCount: groups.length,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return _buildGroupTitleCard(groups[index], ref);
-        },
-      );
-    }
-    final length = groups.length + (tab != GroupTab.all ? 0 : pendingOrRequestedGroups.length) + 1;
+    final length = groups.length + pendingOrRequestedGroups.length + 1;
     return ListView.builder(
       itemCount: length,
       shrinkWrap: true,

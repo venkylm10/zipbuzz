@@ -131,6 +131,13 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   Widget _buildExitButton() {
     return GestureDetector(
       onTap: () async {
+        if (ref.read(groupControllerProvider).admins.length == 1) {
+          showSnackBar(
+            message: "You are only member in the group. Please archive/delete the group instead.",
+            duration: 5,
+          );
+          return;
+        }
         final userId = ref.read(userProvider).id;
         final groupName = group.name;
         await ref.read(groupControllerProvider.notifier).deleteGroupMember(userId);

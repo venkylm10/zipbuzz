@@ -247,8 +247,17 @@ class GroupController extends StateNotifier<GroupState> {
       final group = await ref
           .read(dioServicesProvider)
           .getGroupDetails(ref.read(userProvider).id, groupId ?? state.currentGroupDescription!.id);
-      state = state.copyWith(currentGroup: group);
-      state = state.copyWith(loading: false);
+      final groupDescription = GroupDescriptionModel(
+        id: group.id,
+        groupName: group.name,
+        groupDescription: group.description,
+        groupProfileImage: group.image,
+      );
+      state = state.copyWith(
+        currentGroup: group,
+        currentGroupDescription: groupDescription,
+        loading: false,
+      );
     } catch (e) {
       showSnackBar(message: "Something went wrong while fetching group details");
       debugPrint(e.toString());
@@ -374,8 +383,7 @@ class GroupController extends StateNotifier<GroupState> {
   }
 
   void toggleSelectedContact(ContactModel contact) {
-    var number =
-        contact.phones.first;
+    var number = contact.phones.first;
     if (state.members.any((e) => e.phone == number)) {
       showSnackBar(message: "User is already a member of the group");
       return;
