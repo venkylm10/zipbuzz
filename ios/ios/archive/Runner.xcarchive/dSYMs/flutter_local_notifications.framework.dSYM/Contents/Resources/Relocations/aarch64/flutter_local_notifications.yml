@@ -1,0 +1,152 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/dhiransh/Library/Developer/Xcode/DerivedData/Runner-efoggmnbivmafvfhwqwflyujzsis/Build/Intermediates.noindex/ArchiveIntermediates/dev/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/flutter_local_notifications.framework/flutter_local_notifications'
+relocations:
+  - { offset: 0x5C51D, size: 0x8, addend: 0x0, symName: _flutter_local_notificationsVersionString, symObjAddr: 0x0, symBinAddr: 0xB380, symSize: 0x0 }
+  - { offset: 0x5C552, size: 0x8, addend: 0x0, symName: _flutter_local_notificationsVersionNumber, symObjAddr: 0x40, symBinAddr: 0xB3C0, symSize: 0x0 }
+  - { offset: 0x5C58F, size: 0x8, addend: 0x0, symName: '-[ActionEventSink init]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x6C }
+  - { offset: 0x5C604, size: 0x8, addend: 0x0, symName: '-[ActionEventSink init]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x6C }
+  - { offset: 0x5C63B, size: 0x8, addend: 0x0, symName: '-[ActionEventSink addItem:]', symObjAddr: 0x6C, symBinAddr: 0x406C, symSize: 0x20 }
+  - { offset: 0x5C688, size: 0x8, addend: 0x0, symName: '-[ActionEventSink onListenWithArguments:eventSink:]', symObjAddr: 0x8C, symBinAddr: 0x408C, symSize: 0x138 }
+  - { offset: 0x5C70E, size: 0x8, addend: 0x0, symName: '-[ActionEventSink onCancelWithArguments:]', symObjAddr: 0x1C4, symBinAddr: 0x41C4, symSize: 0x24 }
+  - { offset: 0x5C751, size: 0x8, addend: 0x0, symName: '-[ActionEventSink .cxx_destruct]', symObjAddr: 0x1E8, symBinAddr: 0x41E8, symSize: 0x30 }
+  - { offset: 0x5C7EC, size: 0x8, addend: 0x0, symName: '+[Converters parseNotificationCategoryOptions:]', symObjAddr: 0x0, symBinAddr: 0x4218, symSize: 0xFC }
+  - { offset: 0x5C840, size: 0x8, addend: 0x0, symName: '+[Converters parseNotificationCategoryOptions:]', symObjAddr: 0x0, symBinAddr: 0x4218, symSize: 0xFC }
+  - { offset: 0x5C8B2, size: 0x8, addend: 0x0, symName: '+[Converters parseNotificationActionOptions:]', symObjAddr: 0xFC, symBinAddr: 0x4314, symSize: 0xFC }
+  - { offset: 0x5C9A1, size: 0x8, addend: 0x0, symName: '+[FlutterEngineManager shouldAddAppDelegateToRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4410, symSize: 0x68 }
+  - { offset: 0x5C9BB, size: 0x8, addend: 0x0, symName: _backgroundEngine, symObjAddr: 0x2F80, symBinAddr: 0x15A30, symSize: 0x0 }
+  - { offset: 0x5C9EE, size: 0x8, addend: 0x0, symName: '+[FlutterEngineManager shouldAddAppDelegateToRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4410, symSize: 0x68 }
+  - { offset: 0x5CA31, size: 0x8, addend: 0x0, symName: '-[FlutterEngineManager init]', symObjAddr: 0x68, symBinAddr: 0x4478, symSize: 0x6C }
+  - { offset: 0x5CA68, size: 0x8, addend: 0x0, symName: '-[FlutterEngineManager startEngineIfNeeded:registerPlugins:]', symObjAddr: 0xD4, symBinAddr: 0x44E4, symSize: 0x1A8 }
+  - { offset: 0x5CB60, size: 0x8, addend: 0x0, symName: '___60-[FlutterEngineManager startEngineIfNeeded:registerPlugins:]_block_invoke', symObjAddr: 0x27C, symBinAddr: 0x468C, symSize: 0x94 }
+  - { offset: 0x5CBF6, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s, symObjAddr: 0x310, symBinAddr: 0x4720, symSize: 0x30 }
+  - { offset: 0x5CC1F, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s, symObjAddr: 0x340, symBinAddr: 0x4750, symSize: 0x30 }
+  - { offset: 0x5CC3E, size: 0x8, addend: 0x0, symName: '-[FlutterEngineManager registerDispatcherHandle:callbackHandle:]', symObjAddr: 0x370, symBinAddr: 0x4780, symSize: 0x64 }
+  - { offset: 0x5CC91, size: 0x8, addend: 0x0, symName: '-[FlutterEngineManager getCallbackHandle]', symObjAddr: 0x3D4, symBinAddr: 0x47E4, symSize: 0x10 }
+  - { offset: 0x5CCC8, size: 0x8, addend: 0x0, symName: '-[FlutterEngineManager .cxx_destruct]', symObjAddr: 0x3E4, symBinAddr: 0x47F4, symSize: 0xC }
+  - { offset: 0x5CE83, size: 0x8, addend: 0x0, symName: '+[FlutterLocalNotificationsPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4800, symSize: 0xCC }
+  - { offset: 0x5CE9D, size: 0x8, addend: 0x0, symName: _FOREGROUND_ACTION_IDENTIFIERS, symObjAddr: 0x6538, symBinAddr: 0x100A0, symSize: 0x0 }
+  - { offset: 0x5CEEB, size: 0x8, addend: 0x0, symName: _INITIALIZE_METHOD, symObjAddr: 0x6540, symBinAddr: 0x100A8, symSize: 0x0 }
+  - { offset: 0x5CF01, size: 0x8, addend: 0x0, symName: _GET_CALLBACK_METHOD, symObjAddr: 0x6548, symBinAddr: 0x100B0, symSize: 0x0 }
+  - { offset: 0x5CF17, size: 0x8, addend: 0x0, symName: _SHOW_METHOD, symObjAddr: 0x6550, symBinAddr: 0x100B8, symSize: 0x0 }
+  - { offset: 0x5CF2D, size: 0x8, addend: 0x0, symName: _ZONED_SCHEDULE_METHOD, symObjAddr: 0x6558, symBinAddr: 0x100C0, symSize: 0x0 }
+  - { offset: 0x5CF43, size: 0x8, addend: 0x0, symName: _PERIODICALLY_SHOW_METHOD, symObjAddr: 0x6560, symBinAddr: 0x100C8, symSize: 0x0 }
+  - { offset: 0x5CF59, size: 0x8, addend: 0x0, symName: _PERIODICALLY_SHOW_WITH_DURATION_METHOD, symObjAddr: 0x6568, symBinAddr: 0x100D0, symSize: 0x0 }
+  - { offset: 0x5CF6F, size: 0x8, addend: 0x0, symName: _CANCEL_METHOD, symObjAddr: 0x6570, symBinAddr: 0x100D8, symSize: 0x0 }
+  - { offset: 0x5CF85, size: 0x8, addend: 0x0, symName: _CANCEL_ALL_METHOD, symObjAddr: 0x6578, symBinAddr: 0x100E0, symSize: 0x0 }
+  - { offset: 0x5CF9B, size: 0x8, addend: 0x0, symName: _PENDING_NOTIFICATIONS_REQUESTS_METHOD, symObjAddr: 0x6580, symBinAddr: 0x100E8, symSize: 0x0 }
+  - { offset: 0x5CFB1, size: 0x8, addend: 0x0, symName: _GET_ACTIVE_NOTIFICATIONS_METHOD, symObjAddr: 0x6588, symBinAddr: 0x100F0, symSize: 0x0 }
+  - { offset: 0x5CFC7, size: 0x8, addend: 0x0, symName: _GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD, symObjAddr: 0x6590, symBinAddr: 0x100F8, symSize: 0x0 }
+  - { offset: 0x5CFDD, size: 0x8, addend: 0x0, symName: _CHANNEL, symObjAddr: 0x6598, symBinAddr: 0x10100, symSize: 0x0 }
+  - { offset: 0x5CFF3, size: 0x8, addend: 0x0, symName: _CALLBACK_CHANNEL, symObjAddr: 0x65A0, symBinAddr: 0x10108, symSize: 0x0 }
+  - { offset: 0x5D009, size: 0x8, addend: 0x0, symName: _ON_NOTIFICATION_METHOD, symObjAddr: 0x65A8, symBinAddr: 0x10110, symSize: 0x0 }
+  - { offset: 0x5D01F, size: 0x8, addend: 0x0, symName: _DID_RECEIVE_LOCAL_NOTIFICATION, symObjAddr: 0x65B0, symBinAddr: 0x10118, symSize: 0x0 }
+  - { offset: 0x5D035, size: 0x8, addend: 0x0, symName: _REQUEST_PERMISSIONS_METHOD, symObjAddr: 0x65B8, symBinAddr: 0x10120, symSize: 0x0 }
+  - { offset: 0x5D04B, size: 0x8, addend: 0x0, symName: _CHECK_PERMISSIONS_METHOD, symObjAddr: 0x65C0, symBinAddr: 0x10128, symSize: 0x0 }
+  - { offset: 0x5D061, size: 0x8, addend: 0x0, symName: _DAY, symObjAddr: 0x65C8, symBinAddr: 0x10130, symSize: 0x0 }
+  - { offset: 0x5D077, size: 0x8, addend: 0x0, symName: _REQUEST_SOUND_PERMISSION, symObjAddr: 0x65D0, symBinAddr: 0x10138, symSize: 0x0 }
+  - { offset: 0x5D08D, size: 0x8, addend: 0x0, symName: _REQUEST_ALERT_PERMISSION, symObjAddr: 0x65D8, symBinAddr: 0x10140, symSize: 0x0 }
+  - { offset: 0x5D0A3, size: 0x8, addend: 0x0, symName: _REQUEST_BADGE_PERMISSION, symObjAddr: 0x65E0, symBinAddr: 0x10148, symSize: 0x0 }
+  - { offset: 0x5D0B9, size: 0x8, addend: 0x0, symName: _REQUEST_PROVISIONAL_PERMISSION, symObjAddr: 0x65E8, symBinAddr: 0x10150, symSize: 0x0 }
+  - { offset: 0x5D0CF, size: 0x8, addend: 0x0, symName: _REQUEST_CRITICAL_PERMISSION, symObjAddr: 0x65F0, symBinAddr: 0x10158, symSize: 0x0 }
+  - { offset: 0x5D0E5, size: 0x8, addend: 0x0, symName: _DEFAULT_PRESENT_ALERT, symObjAddr: 0x65F8, symBinAddr: 0x10160, symSize: 0x0 }
+  - { offset: 0x5D0FB, size: 0x8, addend: 0x0, symName: _DEFAULT_PRESENT_SOUND, symObjAddr: 0x6600, symBinAddr: 0x10168, symSize: 0x0 }
+  - { offset: 0x5D111, size: 0x8, addend: 0x0, symName: _DEFAULT_PRESENT_BADGE, symObjAddr: 0x6608, symBinAddr: 0x10170, symSize: 0x0 }
+  - { offset: 0x5D127, size: 0x8, addend: 0x0, symName: _DEFAULT_PRESENT_BANNER, symObjAddr: 0x6610, symBinAddr: 0x10178, symSize: 0x0 }
+  - { offset: 0x5D13D, size: 0x8, addend: 0x0, symName: _DEFAULT_PRESENT_LIST, symObjAddr: 0x6618, symBinAddr: 0x10180, symSize: 0x0 }
+  - { offset: 0x5D153, size: 0x8, addend: 0x0, symName: _SOUND_PERMISSION, symObjAddr: 0x6620, symBinAddr: 0x10188, symSize: 0x0 }
+  - { offset: 0x5D169, size: 0x8, addend: 0x0, symName: _ALERT_PERMISSION, symObjAddr: 0x6628, symBinAddr: 0x10190, symSize: 0x0 }
+  - { offset: 0x5D17F, size: 0x8, addend: 0x0, symName: _BADGE_PERMISSION, symObjAddr: 0x6630, symBinAddr: 0x10198, symSize: 0x0 }
+  - { offset: 0x5D195, size: 0x8, addend: 0x0, symName: _PROVISIONAL_PERMISSION, symObjAddr: 0x6638, symBinAddr: 0x101A0, symSize: 0x0 }
+  - { offset: 0x5D1AB, size: 0x8, addend: 0x0, symName: _CRITICAL_PERMISSION, symObjAddr: 0x6640, symBinAddr: 0x101A8, symSize: 0x0 }
+  - { offset: 0x5D1C1, size: 0x8, addend: 0x0, symName: _CALLBACK_DISPATCHER, symObjAddr: 0x6648, symBinAddr: 0x101B0, symSize: 0x0 }
+  - { offset: 0x5D1D7, size: 0x8, addend: 0x0, symName: _ON_NOTIFICATION_CALLBACK_DISPATCHER, symObjAddr: 0x6650, symBinAddr: 0x101B8, symSize: 0x0 }
+  - { offset: 0x5D1ED, size: 0x8, addend: 0x0, symName: _PLATFORM_SPECIFICS, symObjAddr: 0x6658, symBinAddr: 0x101C0, symSize: 0x0 }
+  - { offset: 0x5D203, size: 0x8, addend: 0x0, symName: _ID, symObjAddr: 0x6660, symBinAddr: 0x101C8, symSize: 0x0 }
+  - { offset: 0x5D219, size: 0x8, addend: 0x0, symName: _TITLE, symObjAddr: 0x6668, symBinAddr: 0x101D0, symSize: 0x0 }
+  - { offset: 0x5D22F, size: 0x8, addend: 0x0, symName: _SUBTITLE, symObjAddr: 0x6670, symBinAddr: 0x101D8, symSize: 0x0 }
+  - { offset: 0x5D245, size: 0x8, addend: 0x0, symName: _BODY, symObjAddr: 0x6678, symBinAddr: 0x101E0, symSize: 0x0 }
+  - { offset: 0x5D25B, size: 0x8, addend: 0x0, symName: _SOUND, symObjAddr: 0x6680, symBinAddr: 0x101E8, symSize: 0x0 }
+  - { offset: 0x5D271, size: 0x8, addend: 0x0, symName: _ATTACHMENTS, symObjAddr: 0x6688, symBinAddr: 0x101F0, symSize: 0x0 }
+  - { offset: 0x5D287, size: 0x8, addend: 0x0, symName: _ATTACHMENT_IDENTIFIER, symObjAddr: 0x6690, symBinAddr: 0x101F8, symSize: 0x0 }
+  - { offset: 0x5D29D, size: 0x8, addend: 0x0, symName: _ATTACHMENT_FILE_PATH, symObjAddr: 0x6698, symBinAddr: 0x10200, symSize: 0x0 }
+  - { offset: 0x5D2B3, size: 0x8, addend: 0x0, symName: _ATTACHMENT_HIDE_THUMBNAIL, symObjAddr: 0x66A0, symBinAddr: 0x10208, symSize: 0x0 }
+  - { offset: 0x5D2C9, size: 0x8, addend: 0x0, symName: _ATTACHMENT_THUMBNAIL_CLIPPING_RECT, symObjAddr: 0x66A8, symBinAddr: 0x10210, symSize: 0x0 }
+  - { offset: 0x5D2DF, size: 0x8, addend: 0x0, symName: _INTERRUPTION_LEVEL, symObjAddr: 0x66B0, symBinAddr: 0x10218, symSize: 0x0 }
+  - { offset: 0x5D2F5, size: 0x8, addend: 0x0, symName: _THREAD_IDENTIFIER, symObjAddr: 0x66B8, symBinAddr: 0x10220, symSize: 0x0 }
+  - { offset: 0x5D30B, size: 0x8, addend: 0x0, symName: _PRESENT_ALERT, symObjAddr: 0x66C0, symBinAddr: 0x10228, symSize: 0x0 }
+  - { offset: 0x5D321, size: 0x8, addend: 0x0, symName: _PRESENT_SOUND, symObjAddr: 0x66C8, symBinAddr: 0x10230, symSize: 0x0 }
+  - { offset: 0x5D337, size: 0x8, addend: 0x0, symName: _PRESENT_BADGE, symObjAddr: 0x66D0, symBinAddr: 0x10238, symSize: 0x0 }
+  - { offset: 0x5D34D, size: 0x8, addend: 0x0, symName: _PRESENT_BANNER, symObjAddr: 0x66D8, symBinAddr: 0x10240, symSize: 0x0 }
+  - { offset: 0x5D363, size: 0x8, addend: 0x0, symName: _PRESENT_LIST, symObjAddr: 0x66E0, symBinAddr: 0x10248, symSize: 0x0 }
+  - { offset: 0x5D379, size: 0x8, addend: 0x0, symName: _BADGE_NUMBER, symObjAddr: 0x66E8, symBinAddr: 0x10250, symSize: 0x0 }
+  - { offset: 0x5D38F, size: 0x8, addend: 0x0, symName: _MILLISECONDS_SINCE_EPOCH, symObjAddr: 0x66F0, symBinAddr: 0x10258, symSize: 0x0 }
+  - { offset: 0x5D3A5, size: 0x8, addend: 0x0, symName: _REPEAT_INTERVAL, symObjAddr: 0x66F8, symBinAddr: 0x10260, symSize: 0x0 }
+  - { offset: 0x5D3BB, size: 0x8, addend: 0x0, symName: _REPEAT_INTERVAL_MILLISECODNS, symObjAddr: 0x6700, symBinAddr: 0x10268, symSize: 0x0 }
+  - { offset: 0x5D3D1, size: 0x8, addend: 0x0, symName: _SCHEDULED_DATE_TIME, symObjAddr: 0x6708, symBinAddr: 0x10270, symSize: 0x0 }
+  - { offset: 0x5D3E7, size: 0x8, addend: 0x0, symName: _TIME_ZONE_NAME, symObjAddr: 0x6710, symBinAddr: 0x10278, symSize: 0x0 }
+  - { offset: 0x5D3FD, size: 0x8, addend: 0x0, symName: _MATCH_DATE_TIME_COMPONENTS, symObjAddr: 0x6718, symBinAddr: 0x10280, symSize: 0x0 }
+  - { offset: 0x5D413, size: 0x8, addend: 0x0, symName: _UILOCALNOTIFICATION_DATE_INTERPRETATION, symObjAddr: 0x6720, symBinAddr: 0x10288, symSize: 0x0 }
+  - { offset: 0x5D429, size: 0x8, addend: 0x0, symName: _NOTIFICATION_ID, symObjAddr: 0x6728, symBinAddr: 0x10290, symSize: 0x0 }
+  - { offset: 0x5D43F, size: 0x8, addend: 0x0, symName: _PAYLOAD, symObjAddr: 0x6730, symBinAddr: 0x10298, symSize: 0x0 }
+  - { offset: 0x5D455, size: 0x8, addend: 0x0, symName: _NOTIFICATION_LAUNCHED_APP, symObjAddr: 0x6738, symBinAddr: 0x102A0, symSize: 0x0 }
+  - { offset: 0x5D46B, size: 0x8, addend: 0x0, symName: _ACTION_ID, symObjAddr: 0x6740, symBinAddr: 0x102A8, symSize: 0x0 }
+  - { offset: 0x5D481, size: 0x8, addend: 0x0, symName: _NOTIFICATION_RESPONSE_TYPE, symObjAddr: 0x6748, symBinAddr: 0x102B0, symSize: 0x0 }
+  - { offset: 0x5D497, size: 0x8, addend: 0x0, symName: _UNSUPPORTED_OS_VERSION_ERROR_CODE, symObjAddr: 0x6750, symBinAddr: 0x102B8, symSize: 0x0 }
+  - { offset: 0x5D4AD, size: 0x8, addend: 0x0, symName: _GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, symObjAddr: 0x6758, symBinAddr: 0x102C0, symSize: 0x0 }
+  - { offset: 0x5D4C3, size: 0x8, addend: 0x0, symName: _PRESENTATION_OPTIONS_USER_DEFAULTS, symObjAddr: 0x6760, symBinAddr: 0x102C8, symSize: 0x0 }
+  - { offset: 0x5D4D9, size: 0x8, addend: 0x0, symName: _IS_NOTIFICATIONS_ENABLED, symObjAddr: 0x6768, symBinAddr: 0x102D0, symSize: 0x0 }
+  - { offset: 0x5D4EF, size: 0x8, addend: 0x0, symName: _IS_SOUND_ENABLED, symObjAddr: 0x6770, symBinAddr: 0x102D8, symSize: 0x0 }
+  - { offset: 0x5D505, size: 0x8, addend: 0x0, symName: _IS_ALERT_ENABLED, symObjAddr: 0x6778, symBinAddr: 0x102E0, symSize: 0x0 }
+  - { offset: 0x5D51B, size: 0x8, addend: 0x0, symName: _IS_BADGE_ENABLED, symObjAddr: 0x6780, symBinAddr: 0x102E8, symSize: 0x0 }
+  - { offset: 0x5D531, size: 0x8, addend: 0x0, symName: _IS_PROVISIONAL_ENABLED, symObjAddr: 0x6788, symBinAddr: 0x102F0, symSize: 0x0 }
+  - { offset: 0x5D547, size: 0x8, addend: 0x0, symName: _IS_CRITICAL_ENABLED, symObjAddr: 0x6790, symBinAddr: 0x102F8, symSize: 0x0 }
+  - { offset: 0x5D569, size: 0x8, addend: 0x0, symName: _registerPlugins, symObjAddr: 0x14E10, symBinAddr: 0x15A38, symSize: 0x0 }
+  - { offset: 0x5D584, size: 0x8, addend: 0x0, symName: _actionEventSink, symObjAddr: 0x14E18, symBinAddr: 0x15A40, symSize: 0x0 }
+  - { offset: 0x5D65E, size: 0x8, addend: 0x0, symName: '+[FlutterLocalNotificationsPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4800, symSize: 0xCC }
+  - { offset: 0x5D6BD, size: 0x8, addend: 0x0, symName: '+[FlutterLocalNotificationsPlugin setPluginRegistrantCallback:]', symObjAddr: 0xCC, symBinAddr: 0x48CC, symSize: 0xC }
+  - { offset: 0x5D6FA, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin initWithChannel:registrar:]', symObjAddr: 0xD8, symBinAddr: 0x48D8, symSize: 0xC0 }
+  - { offset: 0x5D751, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin handleMethodCall:result:]', symObjAddr: 0x198, symBinAddr: 0x4998, symSize: 0x4E4 }
+  - { offset: 0x5D80D, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin pendingUserNotificationRequests:]', symObjAddr: 0x67C, symBinAddr: 0x4E7C, symSize: 0xA4 }
+  - { offset: 0x5D85C, size: 0x8, addend: 0x0, symName: '___67-[FlutterLocalNotificationsPlugin pendingUserNotificationRequests:]_block_invoke', symObjAddr: 0x720, symBinAddr: 0x4F20, symSize: 0x3BC }
+  - { offset: 0x5D910, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32b, symObjAddr: 0xADC, symBinAddr: 0x52DC, symSize: 0x10 }
+  - { offset: 0x5D939, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s, symObjAddr: 0xAEC, symBinAddr: 0x52EC, symSize: 0x8 }
+  - { offset: 0x5D958, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin activeUserNotificationRequests:]', symObjAddr: 0xAF4, symBinAddr: 0x52F4, symSize: 0xA4 }
+  - { offset: 0x5D9A7, size: 0x8, addend: 0x0, symName: '___66-[FlutterLocalNotificationsPlugin activeUserNotificationRequests:]_block_invoke', symObjAddr: 0xB98, symBinAddr: 0x5398, symSize: 0x46C }
+  - { offset: 0x5DA5B, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin pendingLocalNotificationRequests:]', symObjAddr: 0x1004, symBinAddr: 0x5804, symSize: 0x328 }
+  - { offset: 0x5DB2A, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin pendingNotificationRequests:]', symObjAddr: 0x132C, symBinAddr: 0x5B2C, symSize: 0x4 }
+  - { offset: 0x5DB6B, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin configureNotificationCategories:withCompletionHandler:]', symObjAddr: 0x1330, symBinAddr: 0x5B30, symSize: 0x564 }
+  - { offset: 0x5DD39, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin getActiveNotifications:]', symObjAddr: 0x1894, symBinAddr: 0x6094, symSize: 0x4 }
+  - { offset: 0x5DD7A, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin initialize:result:]', symObjAddr: 0x1898, symBinAddr: 0x6098, symSize: 0x5AC }
+  - { offset: 0x5DE36, size: 0x8, addend: 0x0, symName: '___53-[FlutterLocalNotificationsPlugin initialize:result:]_block_invoke', symObjAddr: 0x1E44, symBinAddr: 0x6644, symSize: 0x20 }
+  - { offset: 0x5DEDE, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40b, symObjAddr: 0x1E64, symBinAddr: 0x6664, symSize: 0x34 }
+  - { offset: 0x5DF07, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s, symObjAddr: 0x1E98, symBinAddr: 0x6698, symSize: 0x28 }
+  - { offset: 0x5DF26, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin requestPermissions:result:]', symObjAddr: 0x1EC0, symBinAddr: 0x66C0, symSize: 0x200 }
+  - { offset: 0x5DFD1, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin requestPermissionsImpl:alertPermission:badgePermission:provisionalPermission:criticalPermission:result:]', symObjAddr: 0x20C0, symBinAddr: 0x68C0, symSize: 0x14C }
+  - { offset: 0x5E0B3, size: 0x8, addend: 0x0, symName: '___138-[FlutterLocalNotificationsPlugin requestPermissionsImpl:alertPermission:badgePermission:provisionalPermission:criticalPermission:result:]_block_invoke', symObjAddr: 0x220C, symBinAddr: 0x6A0C, symSize: 0x4C }
+  - { offset: 0x5E12A, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin checkPermissions:result:]', symObjAddr: 0x2258, symBinAddr: 0x6A58, symSize: 0xA4 }
+  - { offset: 0x5E198, size: 0x8, addend: 0x0, symName: '___59-[FlutterLocalNotificationsPlugin checkPermissions:result:]_block_invoke', symObjAddr: 0x22FC, symBinAddr: 0x6AFC, symSize: 0x244 }
+  - { offset: 0x5E281, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin buildStandardUILocalNotification:]', symObjAddr: 0x2540, symBinAddr: 0x6D40, symSize: 0x654 }
+  - { offset: 0x5E372, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin getIdentifier:]', symObjAddr: 0x2B94, symBinAddr: 0x7394, symSize: 0x50 }
+  - { offset: 0x5E3B7, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin show:result:]', symObjAddr: 0x2BE4, symBinAddr: 0x73E4, symSize: 0xB0 }
+  - { offset: 0x5E42D, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin zonedSchedule:result:]', symObjAddr: 0x2C94, symBinAddr: 0x7494, symSize: 0xD0 }
+  - { offset: 0x5E4B4, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin periodicallyShow:result:]', symObjAddr: 0x2D64, symBinAddr: 0x7564, symSize: 0xD0 }
+  - { offset: 0x5E53B, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin cancel:result:]', symObjAddr: 0x2E34, symBinAddr: 0x7634, symSize: 0xEC }
+  - { offset: 0x5E5D8, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin cancelAll:]', symObjAddr: 0x2F20, symBinAddr: 0x7720, symSize: 0x68 }
+  - { offset: 0x5E653, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin buildStandardNotificationContent:result:]', symObjAddr: 0x2F88, symBinAddr: 0x7788, symSize: 0xC48 }
+  - { offset: 0x5E892, size: 0x8, addend: 0x0, symName: _getFlutterError, symObjAddr: 0x3BD0, symBinAddr: 0x83D0, symSize: 0xD8 }
+  - { offset: 0x5E8BD, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin buildUserNotificationCalendarTrigger:]', symObjAddr: 0x3CA8, symBinAddr: 0x84A8, symSize: 0x250 }
+  - { offset: 0x5E9FA, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin buildUserNotificationTimeIntervalTrigger:]', symObjAddr: 0x3EF8, symBinAddr: 0x86F8, symSize: 0x150 }
+  - { offset: 0x5EA63, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin buildUserDict:title:presentAlert:presentSound:presentBadge:presentBanner:presentList:payload:]', symObjAddr: 0x4048, symBinAddr: 0x8848, symSize: 0x1EC }
+  - { offset: 0x5EB30, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin addNotificationRequest:content:result:trigger:]', symObjAddr: 0x4234, symBinAddr: 0x8A34, symSize: 0xE8 }
+  - { offset: 0x5EBC6, size: 0x8, addend: 0x0, symName: '___81-[FlutterLocalNotificationsPlugin addNotificationRequest:content:result:trigger:]_block_invoke', symObjAddr: 0x431C, symBinAddr: 0x8B1C, symSize: 0x5C }
+  - { offset: 0x5EC4A, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin isAFlutterLocalNotification:]', symObjAddr: 0x4378, symBinAddr: 0x8B78, symSize: 0x130 }
+  - { offset: 0x5EC8F, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin handleSelectNotification:payload:]', symObjAddr: 0x44A8, symBinAddr: 0x8CA8, symSize: 0xF0 }
+  - { offset: 0x5ED07, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin containsKey:forDictionary:]', symObjAddr: 0x4598, symBinAddr: 0x8D98, symSize: 0xC4 }
+  - { offset: 0x5ED5D, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin userNotificationCenter:willPresentNotification:withCompletionHandler:]', symObjAddr: 0x465C, symBinAddr: 0x8E5C, symSize: 0x394 }
+  - { offset: 0x5EE8B, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin extractNotificationResponseDict:]', symObjAddr: 0x49F0, symBinAddr: 0x91F0, symSize: 0x2BC }
+  - { offset: 0x5EF14, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:]', symObjAddr: 0x4CAC, symBinAddr: 0x94AC, symSize: 0x380 }
+  - { offset: 0x5EFEA, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin application:didFinishLaunchingWithOptions:]', symObjAddr: 0x502C, symBinAddr: 0x982C, symSize: 0x190 }
+  - { offset: 0x5F060, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin application:didReceiveLocalNotification:]', symObjAddr: 0x51BC, symBinAddr: 0x99BC, symSize: 0x4 }
+  - { offset: 0x5F0B7, size: 0x8, addend: 0x0, symName: '-[FlutterLocalNotificationsPlugin .cxx_destruct]', symObjAddr: 0x51C0, symBinAddr: 0x99C0, symSize: 0x48 }
+...

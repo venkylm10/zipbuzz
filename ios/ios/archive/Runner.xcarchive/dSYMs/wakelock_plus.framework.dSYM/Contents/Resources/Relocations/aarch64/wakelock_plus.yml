@@ -1,0 +1,50 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/dhiransh/Library/Developer/Xcode/DerivedData/Runner-efoggmnbivmafvfhwqwflyujzsis/Build/Intermediates.noindex/ArchiveIntermediates/dev/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/wakelock_plus.framework/wakelock_plus'
+relocations:
+  - { offset: 0x5C51D, size: 0x8, addend: 0x0, symName: _wakelock_plusVersionString, symObjAddr: 0x0, symBinAddr: 0x54C0, symSize: 0x0 }
+  - { offset: 0x5C552, size: 0x8, addend: 0x0, symName: _wakelock_plusVersionNumber, symObjAddr: 0x30, symBinAddr: 0x54F0, symSize: 0x0 }
+  - { offset: 0x5C58F, size: 0x8, addend: 0x0, symName: '+[FLTToggleMessage makeWithEnable:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x4C }
+  - { offset: 0x5C59D, size: 0x8, addend: 0x0, symName: _FLTWakelockPlusApiGetCodec, symObjAddr: 0x628, symBinAddr: 0x4628, symSize: 0x40 }
+  - { offset: 0x5C5C3, size: 0x8, addend: 0x0, symName: _FLTWakelockPlusApiGetCodec.sSharedObject, symObjAddr: 0x59F0, symBinAddr: 0xD540, symSize: 0x0 }
+  - { offset: 0x5C5D9, size: 0x8, addend: 0x0, symName: _FLTWakelockPlusApiGetCodec.sPred, symObjAddr: 0x59F8, symBinAddr: 0xD548, symSize: 0x0 }
+  - { offset: 0x5C699, size: 0x8, addend: 0x0, symName: '+[FLTToggleMessage makeWithEnable:]', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x4C }
+  - { offset: 0x5C6EC, size: 0x8, addend: 0x0, symName: '+[FLTToggleMessage fromList:]', symObjAddr: 0x4C, symBinAddr: 0x404C, symSize: 0x74 }
+  - { offset: 0x5C755, size: 0x8, addend: 0x0, symName: _GetNullableObjectAtIndex, symObjAddr: 0xC0, symBinAddr: 0x40C0, symSize: 0x70 }
+  - { offset: 0x5C79E, size: 0x8, addend: 0x0, symName: '+[FLTToggleMessage nullableFromList:]', symObjAddr: 0x130, symBinAddr: 0x4130, symSize: 0x30 }
+  - { offset: 0x5C7E1, size: 0x8, addend: 0x0, symName: '-[FLTToggleMessage toList]', symObjAddr: 0x160, symBinAddr: 0x4160, symSize: 0xC0 }
+  - { offset: 0x5C818, size: 0x8, addend: 0x0, symName: '-[FLTToggleMessage enable]', symObjAddr: 0x220, symBinAddr: 0x4220, symSize: 0x8 }
+  - { offset: 0x5C84F, size: 0x8, addend: 0x0, symName: '-[FLTToggleMessage setEnable:]', symObjAddr: 0x228, symBinAddr: 0x4228, symSize: 0xC }
+  - { offset: 0x5C890, size: 0x8, addend: 0x0, symName: '-[FLTToggleMessage .cxx_destruct]', symObjAddr: 0x234, symBinAddr: 0x4234, symSize: 0xC }
+  - { offset: 0x5C8C3, size: 0x8, addend: 0x0, symName: '+[FLTIsEnabledMessage makeWithEnabled:]', symObjAddr: 0x240, symBinAddr: 0x4240, symSize: 0x4C }
+  - { offset: 0x5C916, size: 0x8, addend: 0x0, symName: '+[FLTIsEnabledMessage fromList:]', symObjAddr: 0x28C, symBinAddr: 0x428C, symSize: 0x74 }
+  - { offset: 0x5C97F, size: 0x8, addend: 0x0, symName: '+[FLTIsEnabledMessage nullableFromList:]', symObjAddr: 0x300, symBinAddr: 0x4300, symSize: 0x30 }
+  - { offset: 0x5C9C2, size: 0x8, addend: 0x0, symName: '-[FLTIsEnabledMessage toList]', symObjAddr: 0x330, symBinAddr: 0x4330, symSize: 0xC0 }
+  - { offset: 0x5C9F9, size: 0x8, addend: 0x0, symName: '-[FLTIsEnabledMessage enabled]', symObjAddr: 0x3F0, symBinAddr: 0x43F0, symSize: 0x8 }
+  - { offset: 0x5CA30, size: 0x8, addend: 0x0, symName: '-[FLTIsEnabledMessage setEnabled:]', symObjAddr: 0x3F8, symBinAddr: 0x43F8, symSize: 0xC }
+  - { offset: 0x5CA71, size: 0x8, addend: 0x0, symName: '-[FLTIsEnabledMessage .cxx_destruct]', symObjAddr: 0x404, symBinAddr: 0x4404, symSize: 0xC }
+  - { offset: 0x5CAA4, size: 0x8, addend: 0x0, symName: '-[FLTWakelockPlusApiCodecReader readValueOfType:]', symObjAddr: 0x410, symBinAddr: 0x4410, symSize: 0xA4 }
+  - { offset: 0x5CAEB, size: 0x8, addend: 0x0, symName: '-[FLTWakelockPlusApiCodecWriter writeValue:]', symObjAddr: 0x4B4, symBinAddr: 0x44B4, symSize: 0xDC }
+  - { offset: 0x5CB2E, size: 0x8, addend: 0x0, symName: '-[FLTWakelockPlusApiCodecReaderWriter writerWithData:]', symObjAddr: 0x590, symBinAddr: 0x4590, symSize: 0x4C }
+  - { offset: 0x5CB71, size: 0x8, addend: 0x0, symName: '-[FLTWakelockPlusApiCodecReaderWriter readerWithData:]', symObjAddr: 0x5DC, symBinAddr: 0x45DC, symSize: 0x4C }
+  - { offset: 0x5CC03, size: 0x8, addend: 0x0, symName: ___FLTWakelockPlusApiGetCodec_block_invoke, symObjAddr: 0x668, symBinAddr: 0x4668, symSize: 0x58 }
+  - { offset: 0x5CC49, size: 0x8, addend: 0x0, symName: _SetUpFLTWakelockPlusApi, symObjAddr: 0x6C0, symBinAddr: 0x46C0, symSize: 0x1A0 }
+  - { offset: 0x5CCDA, size: 0x8, addend: 0x0, symName: ___SetUpFLTWakelockPlusApi_block_invoke, symObjAddr: 0x860, symBinAddr: 0x4860, symSize: 0xD4 }
+  - { offset: 0x5CDBD, size: 0x8, addend: 0x0, symName: _wrapResult, symObjAddr: 0x934, symBinAddr: 0x4934, symSize: 0x1EC }
+  - { offset: 0x5CDF8, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s, symObjAddr: 0xB20, symBinAddr: 0x4B20, symSize: 0x8 }
+  - { offset: 0x5CE1F, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s, symObjAddr: 0xB28, symBinAddr: 0x4B28, symSize: 0x8 }
+  - { offset: 0x5CE3E, size: 0x8, addend: 0x0, symName: ___SetUpFLTWakelockPlusApi_block_invoke.44, symObjAddr: 0xB30, symBinAddr: 0x4B30, symSize: 0xA8 }
+  - { offset: 0x5D169, size: 0x8, addend: 0x0, symName: '+[UIApplication(idleTimerLock) load]', symObjAddr: 0x0, symBinAddr: 0x4BD8, symSize: 0x44 }
+  - { offset: 0x5D183, size: 0x8, addend: 0x0, symName: _idleTimerLockKey, symObjAddr: 0x148, symBinAddr: 0xD358, symSize: 0x0 }
+  - { offset: 0x5D192, size: 0x8, addend: 0x0, symName: '+[UIApplication(idleTimerLock) load]', symObjAddr: 0x0, symBinAddr: 0x4BD8, symSize: 0x44 }
+  - { offset: 0x5D272, size: 0x8, addend: 0x0, symName: '-[UIApplication(idleTimerLock) lock_setIdleTimerDisabled:]', symObjAddr: 0x44, symBinAddr: 0x4C1C, symSize: 0x3C }
+  - { offset: 0x5D2B5, size: 0x8, addend: 0x0, symName: '-[UIApplication(idleTimerLock) lock_idleTimerlockEnable:]', symObjAddr: 0x80, symBinAddr: 0x4C58, symSize: 0x50 }
+  - { offset: 0x5D360, size: 0x8, addend: 0x0, symName: '-[UIApplication(idleTimerLock) lock_idleTimerlockEnable]', symObjAddr: 0xD0, symBinAddr: 0x4CA8, symSize: 0x44 }
+  - { offset: 0x5D411, size: 0x8, addend: 0x0, symName: '+[WakelockPlusPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4CEC, symSize: 0x74 }
+  - { offset: 0x5D451, size: 0x8, addend: 0x0, symName: '+[WakelockPlusPlugin registerWithRegistrar:]', symObjAddr: 0x0, symBinAddr: 0x4CEC, symSize: 0x74 }
+  - { offset: 0x5D4FE, size: 0x8, addend: 0x0, symName: '-[WakelockPlusPlugin toggleMsg:error:]', symObjAddr: 0x74, symBinAddr: 0x4D60, symSize: 0xC0 }
+  - { offset: 0x5D55D, size: 0x8, addend: 0x0, symName: '-[WakelockPlusPlugin setIdleTimerDisabled:]', symObjAddr: 0x134, symBinAddr: 0x4E20, symSize: 0x84 }
+  - { offset: 0x5D5AC, size: 0x8, addend: 0x0, symName: '-[WakelockPlusPlugin isEnabledWithError:]', symObjAddr: 0x1B8, symBinAddr: 0x4EA4, symSize: 0x80 }
+  - { offset: 0x5D60B, size: 0x8, addend: 0x0, symName: '-[WakelockPlusPlugin setEnable:]', symObjAddr: 0x238, symBinAddr: 0x4F24, symSize: 0x8 }
+  - { offset: 0x5D648, size: 0x8, addend: 0x0, symName: '-[WakelockPlusPlugin enable]', symObjAddr: 0x240, symBinAddr: 0x4F2C, symSize: 0x8 }
+...

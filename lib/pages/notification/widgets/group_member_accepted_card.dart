@@ -92,7 +92,7 @@ class GroupMemberRequestCard extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    'Accept',
+                    'Confirm',
                     style: AppStyles.h5.copyWith(
                       color: Colors.white,
                     ),

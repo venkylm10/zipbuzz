@@ -1,0 +1,43 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/dhiransh/Library/Developer/Xcode/DerivedData/Runner-efoggmnbivmafvfhwqwflyujzsis/Build/Intermediates.noindex/ArchiveIntermediates/dev/IntermediateBuildFilesPath/UninstalledProducts/iphoneos/add_2_calendar.framework/add_2_calendar'
+relocations:
+  - { offset: 0x5F2B2, size: 0x8, addend: 0x0, symName: _add_2_calendarVersionString, symObjAddr: 0x0, symBinAddr: 0x9100, symSize: 0x0 }
+  - { offset: 0x5F2E7, size: 0x8, addend: 0x0, symName: _add_2_calendarVersionNumber, symObjAddr: 0x30, symBinAddr: 0x9130, symSize: 0x0 }
+  - { offset: 0x5F34C, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar14statusBarStyleSo08UIStatusdE0Vvp', symObjAddr: 0xDC98, symBinAddr: 0x11708, symSize: 0x0 }
+  - { offset: 0x5F35A, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar14statusBarStyle_WZ', symObjAddr: 0x0, symBinAddr: 0x4000, symSize: 0x5C }
+  - { offset: 0x5F56B, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginCMa', symObjAddr: 0x158, symBinAddr: 0x4158, symSize: 0x20 }
+  - { offset: 0x5F58A, size: 0x8, addend: 0x0, symName: '_$sypWOb', symObjAddr: 0x3F0, symBinAddr: 0x43F0, symSize: 0x10 }
+  - { offset: 0x5F59E, size: 0x8, addend: 0x0, symName: ___swift_instantiateConcreteTypeFromMangledName, symObjAddr: 0x400, symBinAddr: 0x4400, symSize: 0x40 }
+  - { offset: 0x5F5B2, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC6handle_6resultySo17FlutterMethodCallC_yypSgctFySbcfU_TA', symObjAddr: 0x464, symBinAddr: 0x4464, symSize: 0x60 }
+  - { offset: 0x5F5F0, size: 0x8, addend: 0x0, symName: '_$syXlSgIeyBy_ypSgIegn_TR', symObjAddr: 0x554, symBinAddr: 0x4554, symSize: 0xE8 }
+  - { offset: 0x5F648, size: 0x8, addend: 0x0, symName: '_$sSbs5Error_pSgIegyg_SbSo7NSErrorCSgIeyByy_TR', symObjAddr: 0x1348, symBinAddr: 0x5348, symSize: 0x64 }
+  - { offset: 0x5F671, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC23eventEditViewController_15didCompleteWithySo07EKEventghI0C_So0mgH6ActionVtF', symObjAddr: 0x16CC, symBinAddr: 0x56C8, symSize: 0x88 }
+  - { offset: 0x5F69B, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC23eventEditViewController_15didCompleteWithySo07EKEventghI0C_So0mgH6ActionVtFyycfU_', symObjAddr: 0x1754, symBinAddr: 0x5750, symSize: 0x80 }
+  - { offset: 0x5F6C4, size: 0x8, addend: 0x0, symName: _block_copy_helper, symObjAddr: 0x17D4, symBinAddr: 0x57D0, symSize: 0x10 }
+  - { offset: 0x5F6D8, size: 0x8, addend: 0x0, symName: _block_destroy_helper, symObjAddr: 0x17E4, symBinAddr: 0x57E0, symSize: 0x8 }
+  - { offset: 0x5F722, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC23eventEditViewController_15didCompleteWithySo07EKEventghI0C_So0mgH6ActionVtFTo', symObjAddr: 0x17EC, symBinAddr: 0x57E8, symSize: 0xBC }
+  - { offset: 0x5F761, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC07presentD15ModalToAddEvent_10eventStore10completionySo7EKEventC_So0nL0CySbcSgtFySb_s5Error_pSgtcfU1_TA', symObjAddr: 0x1918, symBinAddr: 0x5914, symSize: 0x130 }
+  - { offset: 0x5F7AB, size: 0x8, addend: 0x0, symName: '_$sSbIegy_SgWOy', symObjAddr: 0x1A48, symBinAddr: 0x5A44, symSize: 0x10 }
+  - { offset: 0x5F7BF, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC07presentD15ModalToAddEvent_10eventStore10completionySo7EKEventC_So0nL0CySbcSgtFySb_s5Error_pSgtcfU1_yyYbcfU_TA', symObjAddr: 0x1AF0, symBinAddr: 0x5AE8, symSize: 0x70 }
+  - { offset: 0x5F807, size: 0x8, addend: 0x0, symName: '_$syXlSgIeyBy_ypSgIegn_TRTA', symObjAddr: 0x1B84, symBinAddr: 0x5B7C, symSize: 0x8 }
+  - { offset: 0x5F81B, size: 0x8, addend: 0x0, symName: ___swift_project_boxed_opaque_existential_0, symObjAddr: 0x1B8C, symBinAddr: 0x5B84, symSize: 0x24 }
+  - { offset: 0x5F82F, size: 0x8, addend: 0x0, symName: ___swift_destroy_boxed_opaque_existential_0, symObjAddr: 0x1BB0, symBinAddr: 0x5BA8, symSize: 0x20 }
+  - { offset: 0x5F84E, size: 0x8, addend: 0x0, symName: '_$ss22__RawDictionaryStorageC4findys10_HashTableV6BucketV6bucket_Sb5foundtxSHRzlFSS_Tg5', symObjAddr: 0x1BD0, symBinAddr: 0x5BC8, symSize: 0x64 }
+  - { offset: 0x5F87B, size: 0x8, addend: 0x0, symName: '_$sypWOc', symObjAddr: 0x1C34, symBinAddr: 0x5C2C, symSize: 0x3C }
+  - { offset: 0x5F89A, size: 0x8, addend: 0x0, symName: '_$ss22__RawDictionaryStorageC4find_9hashValues10_HashTableV6BucketV6bucket_Sb5foundtx_SitSHRzlFSS_Tg5', symObjAddr: 0x1C70, symBinAddr: 0x5C68, symSize: 0xE0 }
+  - { offset: 0x5F912, size: 0x8, addend: 0x0, symName: '_$ss29getContiguousArrayStorageType3fors01_bcD0CyxGmxm_tlFSo16EKRecurrenceRuleC_Tgm5', symObjAddr: 0x1D50, symBinAddr: 0x5D48, symSize: 0x64 }
+  - { offset: 0x5FC1E, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC8register4withySo07FlutterE9Registrar_p_tFZ', symObjAddr: 0x5C, symBinAddr: 0x405C, symSize: 0xDC }
+  - { offset: 0x5FCA0, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginCACycfC', symObjAddr: 0x138, symBinAddr: 0x4138, symSize: 0x20 }
+  - { offset: 0x5FCC1, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC8register4withySo07FlutterE9Registrar_p_tFZTo', symObjAddr: 0x178, symBinAddr: 0x4178, symSize: 0xF0 }
+  - { offset: 0x5FD64, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC6handle_6resultySo17FlutterMethodCallC_yypSgctF', symObjAddr: 0x268, symBinAddr: 0x4268, symSize: 0x188 }
+  - { offset: 0x5FE34, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC6handle_6resultySo17FlutterMethodCallC_yypSgctFTo', symObjAddr: 0x4C4, symBinAddr: 0x44C4, symSize: 0x90 }
+  - { offset: 0x5FFF9, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC0a7EventToD033_C6CF5546A1D1C5B8544694E7515596CBLL4from10completionySDySSypG_ySbcSgtF', symObjAddr: 0x63C, symBinAddr: 0x463C, symSize: 0x9E4 }
+  - { offset: 0x6045A, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC07presentD15ModalToAddEvent_10eventStore10completionySo7EKEventC_So0nL0CySbcSgtF', symObjAddr: 0x1020, symBinAddr: 0x5020, symSize: 0x324 }
+  - { offset: 0x605E2, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC012presentEventD11DetailModal5event0J5StoreySo7EKEventC_So0lK0CtF', symObjAddr: 0x13AC, symBinAddr: 0x53AC, symSize: 0x198 }
+  - { offset: 0x6067E, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC012presentEventD11DetailModal5event0J5StoreySo7EKEventC_So0lK0CtFyycfU_', symObjAddr: 0x1544, symBinAddr: 0x5544, symSize: 0xBC }
+  - { offset: 0x606A7, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginCACycfc', symObjAddr: 0x1630, symBinAddr: 0x562C, symSize: 0x30 }
+  - { offset: 0x606DA, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginCACycfcTo', symObjAddr: 0x1660, symBinAddr: 0x565C, symSize: 0x3C }
+  - { offset: 0x6070F, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginCfD', symObjAddr: 0x169C, symBinAddr: 0x5698, symSize: 0x30 }
+  - { offset: 0x607A7, size: 0x8, addend: 0x0, symName: '_$s14add_2_calendar18Add2CalendarPluginC11createEvent33_C6CF5546A1D1C5B8544694E7515596CBLL10eventStore13alarmInterval5title11description8location8timeZone9startDate03endZ06allDay3url4argsSo7EKEventCSo07EKEventQ0C_SdSgS2SSgAV10Foundation04TimeX0VSgAW0Z0VSgA1_SbAVSDySSypGtFTf4nnnnnnnnnnnd_n', symObjAddr: 0x1DB4, symBinAddr: 0x5DAC, symSize: 0x974 }
+...
