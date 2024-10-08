@@ -12,7 +12,7 @@ abstract class AppEnvironment {
 
   static String get getStoreUrl => Platform.isAndroid ? playStoreUrl : appStoreUrl;
 
-  static const websiteUrl = 'https://zipbuzz.me';
+  static const websiteUrl = 'https://buzzme.site';
 
   static late String cloudFunctionBaseUrl,
       realtimeDataBaseUrl,
@@ -25,11 +25,11 @@ abstract class AppEnvironment {
     _env = env;
 
     /// Update this before every release
-    _appVersion = "1.0.66";
+    _appVersion = "1.0.68";
 
     switch (env) {
       case Environment.dev:
-        cloudFunctionBaseUrl = "https://dev.zipbuzz.me/";
+        cloudFunctionBaseUrl = "https://dev.buzzme.site/";
         realtimeDataBaseUrl = 'https://shwipt-dev-default-rtdb.firebaseio.com/';
         dynamicLinkBaseUrl = 'https://zipbuzz.page.link';
         appDisplayName = 'Buzz.Me';
@@ -53,7 +53,7 @@ abstract class AppEnvironment {
         uxCamKey = '';
         break;
       case Environment.prod:
-        cloudFunctionBaseUrl = "https://admin.zipbuzz.me/";
+        cloudFunctionBaseUrl = "https://web.buzzme.site/";
         realtimeDataBaseUrl = '';
         dynamicLinkBaseUrl = '';
         appDisplayName = 'Buzz.Me';
