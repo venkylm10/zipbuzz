@@ -39,7 +39,9 @@ class GroupTabDescriptionList extends ConsumerWidget {
 
   Widget _buildGroupsList(GroupTab tab, List<DescriptionModel> allGroups, WidgetRef ref) {
     final groups = tab == GroupTab.all
-        ? allGroups
+        ? allGroups.where((e) {
+            return e.permissionType == 'a' || e.permissionType == 'o' || e.permissionType == 'm';
+          }).toList()
         : allGroups.where((e) {
             return e.permissionType == 'a' || e.permissionType == 'o' || e.permissionType == 'm';
           }).toList();
