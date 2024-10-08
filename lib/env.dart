@@ -12,7 +12,7 @@ abstract class AppEnvironment {
 
   static String get getStoreUrl => Platform.isAndroid ? playStoreUrl : appStoreUrl;
 
-  static const websiteUrl = 'https://zipbuzz.me';
+  static const websiteUrl = 'https://buzzme.site';
 
   static late String cloudFunctionBaseUrl,
       realtimeDataBaseUrl,
