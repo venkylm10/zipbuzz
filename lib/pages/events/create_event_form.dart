@@ -163,15 +163,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
         // ),
         // const SizedBox(height: 16),
-        Row(
-          children: [
-            Text("Event category", style: AppStyles.h4),
-            Text(
-              "*",
-              style: AppStyles.h4.copyWith(color: Colors.red),
-            ),
-          ],
-        ),
+        _title("Event category", neccessary: true),
         const SizedBox(height: 4),
         const CreateEventCategoryDropDown(),
         // broadDivider(),
@@ -180,15 +172,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
         // ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Text("Event title", style: AppStyles.h4),
-            Text(
-              "*",
-              style: AppStyles.h4.copyWith(color: Colors.red),
-            ),
-          ],
-        ),
+        _title("Event title", neccessary: true),
         const SizedBox(height: 4),
         CustomTextField(
           controller: nameController,
@@ -333,6 +317,19 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _title(String title, {bool neccessary = false}) {
+    return Row(
+      children: [
+        Text(title, style: AppStyles.h4),
+        if (neccessary)
+          Text(
+            "*",
+            style: AppStyles.h4.copyWith(color: Colors.red),
+          ),
       ],
     );
   }
