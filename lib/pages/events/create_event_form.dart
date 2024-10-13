@@ -158,19 +158,9 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text(
-        //   "Category",
-        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        // ),
-        // const SizedBox(height: 16),
         _title("Event category", neccessary: true),
         const SizedBox(height: 4),
         const CreateEventCategoryDropDown(),
-        // broadDivider(),
-        // Text(
-        //   "Title & Description",
-        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        // ),
         const SizedBox(height: 16),
         _title("Event title", neccessary: true),
         const SizedBox(height: 4),
@@ -181,20 +171,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           textInputAction: TextInputAction.next,
         ),
         const SizedBox(height: 16),
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: "Event description",
-                style: AppStyles.h4,
-              ),
-              TextSpan(
-                text: "*",
-                style: AppStyles.h4.copyWith(color: Colors.red),
-              ),
-            ],
-          ),
-        ),
+        _title("Event description", neccessary: true),
         const SizedBox(height: 4),
         CustomTextField(
           controller: descriptionController,
@@ -203,20 +180,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           onChanged: updateDescription,
         ),
         const SizedBox(height: 16),
-        // broadDivider(),
-        // Text(
-        //   "Location & Time",
-        //   style: AppStyles.h5.copyWith(color: AppColors.lightGreyColor),
-        // ),
-        Row(
-          children: [
-            Text("Enter venue/location", style: AppStyles.h4),
-            Text(
-              "*",
-              style: AppStyles.h4.copyWith(color: Colors.red),
-            ),
-          ],
-        ),
+        _title("Event venue/location", neccessary: true),
         const SizedBox(height: 4),
         CustomTextField(
           controller: locationController,
@@ -232,15 +196,7 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
           textInputAction: TextInputAction.done,
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Text("Choose date", style: AppStyles.h4),
-            Text(
-              "*",
-              style: AppStyles.h4.copyWith(color: Colors.red),
-            ),
-          ],
-        ),
+        _title("Choose date", neccessary: true),
         const SizedBox(height: 4),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -260,21 +216,9 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Text("Start Time", style: AppStyles.h4),
-                  Text(
-                    "*",
-                    style: AppStyles.h4.copyWith(color: Colors.red),
-                  ),
-                ],
-              ),
-            ),
+            Expanded(child: _title("Start Time", neccessary: true)),
             const SizedBox(width: 8),
-            Expanded(
-              child: Text("End Time", style: AppStyles.h4),
-            ),
+            Expanded(child: _title("End Time")),
           ],
         ),
         const SizedBox(height: 4),
@@ -322,15 +266,20 @@ class _CreateEventFormState extends ConsumerState<CreateEventForm> {
   }
 
   Widget _title(String title, {bool neccessary = false}) {
-    return Row(
-      children: [
-        Text(title, style: AppStyles.h4),
-        if (neccessary)
-          Text(
-            "*",
-            style: AppStyles.h4.copyWith(color: Colors.red),
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: title,
+            style: AppStyles.h4,
           ),
-      ],
+          if (neccessary)
+            TextSpan(
+              text: "*",
+              style: AppStyles.h4.copyWith(color: Colors.red),
+            ),
+        ],
+      ),
     );
   }
 

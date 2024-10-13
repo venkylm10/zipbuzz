@@ -27,6 +27,7 @@ class EventModel {
   String status;
   String userDeviceToken;
   final List<HyperLinks> hyperlinks;
+  final List<TicketType> ticketTypes;
   final int notificationId;
   int members;
   int groupId;
@@ -60,6 +61,7 @@ class EventModel {
     required this.members,
     this.groupId = -1,
     required this.groupName,
+    required this.ticketTypes,
   });
 
   EventModel copyWith({
@@ -90,6 +92,7 @@ class EventModel {
     int? members,
     int? groupId,
     String? groupName,
+    List<TicketType>? ticketTypes,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -119,6 +122,7 @@ class EventModel {
       members: members ?? this.members,
       groupId: groupId ?? this.groupId,
       groupName: groupName ?? this.groupName,
+      ticketTypes: ticketTypes ?? this.ticketTypes,
     );
   }
 
@@ -156,6 +160,9 @@ class EventModel {
       members: map['members'] ?? 0,
       groupId: map['group_id'] ?? -1,
       groupName: map['group_name'] ?? "zipbuzz-null",
+      ticketTypes: ((map['ticket_types'] ?? []) as List)
+          .map((e) => TicketType.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -221,6 +228,7 @@ class EventModel {
       notificationId: res.notificationId,
       members: res.members,
       groupName: res.groupName,
+      ticketTypes: res.ticketTypes,
     );
   }
 }
@@ -244,6 +252,32 @@ class HyperLinks {
       'id': id,
       'url_name': urlName,
       'url': url,
+    };
+  }
+}
+
+class TicketType {
+  final int id;
+  final String title;
+  final int price;
+  final int quantity;
+  TicketType({required this.id,required this.title, required this.price,required this.quantity});
+
+  factory TicketType.fromMap(Map<String, dynamic> map) {
+    return TicketType(
+      id: map['id'] as int,
+      title: map['title'] as String,
+      price: map['price'] as int,
+      quantity: map['quantity'] as int,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'price': price,
+      'quantity': quantity,
     };
   }
 }

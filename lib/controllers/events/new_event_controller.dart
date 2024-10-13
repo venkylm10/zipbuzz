@@ -35,32 +35,34 @@ class NewEvent extends StateNotifier<EventModel> {
   NewEvent({required this.ref})
       : super(
           EventModel(
-              id: ref.read(userProvider).id,
-              title: "",
-              location: "",
-              date: DateTime.now().toString(),
-              startTime: "",
-              endTime: "",
-              attendees: 0,
-              category: 'Please select',
-              isFavorite: false,
-              bannerPath: "",
-              iconPath: "",
-              // updating this just after getting allInterests from the API
-              about: "",
-              hostId: ref.read(userProvider).id,
-              hostName: ref.read(userProvider).name,
-              hostPic: ref.read(userProvider).imageUrl,
-              capacity: 10,
-              isPrivate: true,
-              privateGuestList: false,
-              imageUrls: [],
-              eventMembers: [],
-              status: "nothing",
-              userDeviceToken: "",
-              hyperlinks: [],
-              members: 0,
-              groupName: 'zipbuzz-null'),
+            id: ref.read(userProvider).id,
+            title: "",
+            location: "",
+            date: DateTime.now().toString(),
+            startTime: "",
+            endTime: "",
+            attendees: 0,
+            category: 'Please select',
+            isFavorite: false,
+            bannerPath: "",
+            iconPath: "",
+            // updating this just after getting allInterests from the API
+            about: "",
+            hostId: ref.read(userProvider).id,
+            hostName: ref.read(userProvider).name,
+            hostPic: ref.read(userProvider).imageUrl,
+            capacity: 10,
+            isPrivate: true,
+            privateGuestList: false,
+            imageUrls: [],
+            eventMembers: [],
+            status: "nothing",
+            userDeviceToken: "",
+            hyperlinks: [],
+            members: 0,
+            groupName: 'zipbuzz-null',
+            ticketTypes: [],
+          ),
         );
   List<File> selectedImages = [];
   int maxImages = 7;
@@ -567,6 +569,19 @@ class NewEvent extends StateNotifier<EventModel> {
     }
   }
 
+  void toggleTicketTypes(bool value) {
+    if (value) {
+      final defaultTickets = [
+        TicketType(id: 0, title: "Adults", price: 0, quantity: 0),
+        TicketType(id: 0, title: "Kids under 12", price: 0, quantity: 0),
+        TicketType(id: 0, title: "Seniors", price: 0, quantity: 0),
+      ];
+      state = state.copyWith(ticketTypes: defaultTickets);
+    } else {
+      state = state.copyWith(ticketTypes: []);
+    }
+  }
+
   void updateInterests(InterestModel interest) async {
     ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
     final contains = ref.read(userProvider).interests.contains(interest.activity);
@@ -604,31 +619,33 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void resetNewEvent() {
     state = EventModel(
-        id: ref.read(userProvider).id,
-        title: "",
-        location: "",
-        date: DateTime.now().toString(),
-        startTime: "",
-        endTime: "",
-        attendees: 0,
-        category: 'Please select',
-        isFavorite: false,
-        bannerPath: "",
-        iconPath: allInterests.first.iconUrl,
-        about: "",
-        hostId: ref.read(userProvider).id,
-        hostName: ref.read(userProvider).name,
-        hostPic: ref.read(userProvider).imageUrl,
-        capacity: 10,
-        isPrivate: true,
-        imageUrls: [],
-        privateGuestList: false,
-        eventMembers: [],
-        status: "nothing",
-        userDeviceToken: "",
-        hyperlinks: [],
-        members: 0,
-        groupName: 'zipbuzz-null');
+      id: ref.read(userProvider).id,
+      title: "",
+      location: "",
+      date: DateTime.now().toString(),
+      startTime: "",
+      endTime: "",
+      attendees: 0,
+      category: 'Please select',
+      isFavorite: false,
+      bannerPath: "",
+      iconPath: allInterests.first.iconUrl,
+      about: "",
+      hostId: ref.read(userProvider).id,
+      hostName: ref.read(userProvider).name,
+      hostPic: ref.read(userProvider).imageUrl,
+      capacity: 10,
+      isPrivate: true,
+      imageUrls: [],
+      privateGuestList: false,
+      eventMembers: [],
+      status: "nothing",
+      userDeviceToken: "",
+      hyperlinks: [],
+      members: 0,
+      groupName: 'zipbuzz-null',
+      ticketTypes: [],
+    );
     eventInvites = [];
     bannerImage = null;
     urlControllers = [TextEditingController()];

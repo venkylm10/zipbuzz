@@ -120,10 +120,7 @@ class EventCardActionItems extends ConsumerWidget {
         })
         .map((e) => e.phone)
         .toList();
-    print("Matching numbers Length: ${numbers.length}");
-    print(numbers.first);
     final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
-    print("Matching contacts Length: ${matchingContacts.length}");
     await Future.delayed(const Duration(milliseconds: 500));
     ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
     await Future.delayed(const Duration(milliseconds: 500));

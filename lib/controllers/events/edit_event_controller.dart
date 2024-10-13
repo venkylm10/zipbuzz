@@ -61,6 +61,7 @@ class EditEventController extends StateNotifier<EventModel> {
             hyperlinks: [],
             members: 0,
             groupName: 'zipbuzz-null',
+            ticketTypes: [],
           ),
         );
   int eventId = 1;
@@ -528,6 +529,19 @@ class EditEventController extends StateNotifier<EventModel> {
     } catch (e) {
       debugPrint("Failed to move to edited event $e");
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+    }
+  }
+
+  void toggleTicketTypes(bool value) {
+    if (value) {
+      final defaultTickets = [
+        TicketType(id: 0, title: "Adults", price: 0, quantity: 0),
+        TicketType(id: 0, title: "Kids under 12", price: 0, quantity: 0),
+        TicketType(id: 0, title: "Seniors", price: 0, quantity: 0),
+      ];
+      state = state.copyWith(ticketTypes: defaultTickets);
+    } else {
+      state = state.copyWith(ticketTypes: []);
     }
   }
 }
