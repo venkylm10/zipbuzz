@@ -463,9 +463,7 @@ class NewEvent extends StateNotifier<EventModel> {
         }
         return nums.join(',');
       }).toList();
-      final names = eventInvites.map((e) {
-        return e.displayName;
-      }).toList();
+      final names = eventInvites.map((e) => e.displayName).toList();
       for (var e in phoneNumbers) {
         debugPrint("Phone Numbers: $e");
       }

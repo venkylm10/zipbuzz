@@ -29,11 +29,11 @@ class EventCardActionItems extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hostId = event.hostId;
     final userId = ref.read(userProvider).id;
-    final check = groupEvent
+    final isHostOrAdmin = groupEvent
         ? hostId == userId ||
             ref.read(groupControllerProvider).admins.any((e) => e.userId == userId)
         : hostId == userId;
-    return check
+    return isHostOrAdmin
         ? Positioned(
             right: 10,
             top: 10,
@@ -121,6 +121,7 @@ class EventCardActionItems extends ConsumerWidget {
         .map((e) => e.phone)
         .toList();
     final matchingContacts = ref.read(contactsServicesProvider).getMatchingContacts(numbers);
+    print("Matching contacts Length: ${matchingContacts.length}");
     await Future.delayed(const Duration(milliseconds: 500));
     ref.read(newEventProvider.notifier).updateSelectedContactsList(matchingContacts);
     await Future.delayed(const Duration(milliseconds: 500));
