@@ -15,6 +15,7 @@ import 'package:zipbuzz/models/trace_log_model.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_app_bar.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_attendee_numbers.dart';
 import 'package:zipbuzz/pages/events/widgets/event_details_banner.dart';
+import 'package:zipbuzz/pages/events/widgets/event_details_ticket_info.dart';
 import 'package:zipbuzz/pages/events/widgets/send_broadcast_message_button.dart';
 import 'package:zipbuzz/pages/events/widgets/send_invitation_bell.dart';
 import 'package:zipbuzz/pages/home/home.dart';
@@ -248,6 +249,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     color: AppColors.greyColor.withOpacity(0.2),
                                     thickness: 0,
                                   ),
+                                  EventDetailsTicketInfo(event: widget.event),
                                   EventDetailsCommonGuestList(
                                     event: widget.event,
                                     isPreview: widget.isPreview,
