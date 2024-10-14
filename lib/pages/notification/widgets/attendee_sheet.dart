@@ -105,20 +105,22 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
   Widget _ticketedAttendeeNumber() {
     return Column(
       children: List.generate(widget.event.ticketTypes.length, (index) {
+        final name = widget.event.ticketTypes[index].title;
+        final price = widget.event.ticketTypes[index].price;
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             children: [
               Expanded(
                 child: Text(
-                  "Adult :",
+                  "$name :",
                   style: AppStyles.h4,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
               Text(
-                "200",
+                "\$$price",
                 style: AppStyles.h4.copyWith(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w500,

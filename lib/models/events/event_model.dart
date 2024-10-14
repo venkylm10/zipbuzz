@@ -257,21 +257,24 @@ class HyperLinks {
 }
 
 class TicketType {
+  final int id;
   final String title;
   final int price;
   final int quantity;
-  TicketType({required this.title, required this.price,required this.quantity});
+  TicketType({this.id = 0, required this.title, required this.price, this.quantity = 0});
 
   factory TicketType.fromMap(Map<String, dynamic> map) {
     return TicketType(
+      id: map['id'] as int,
       title: map['ticket_name'] as String,
       price: map['ticket_price'] as int,
-      quantity: map['quantity'] as int ?? 0,
+      quantity: map['quantity'] as int? ?? 0,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'ticket_name': title,
       'ticket_price': price,
       'quantity': quantity,

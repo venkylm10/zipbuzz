@@ -302,7 +302,7 @@ class DBServices {
         }
         return events..sort((a, b) => a.date.compareTo(b.date));
       } catch (e) {
-        debugPrint("Error In Getting Events: $e");
+        debugPrint("Error In Getting User Events: $e");
         return [];
       }
     }
