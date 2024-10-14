@@ -257,15 +257,13 @@ class HyperLinks {
 }
 
 class TicketType {
-  final int id;
   final String title;
   final int price;
   final int quantity;
-  TicketType({required this.id,required this.title, required this.price,required this.quantity});
+  TicketType({required this.title, required this.price,required this.quantity});
 
   factory TicketType.fromMap(Map<String, dynamic> map) {
     return TicketType(
-      id: map['id'] as int,
       title: map['title'] as String,
       price: map['price'] as int,
       quantity: map['quantity'] as int,
@@ -274,10 +272,22 @@ class TicketType {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'title': title,
       'price': price,
       'quantity': quantity,
     };
+  }
+
+  TicketType copyWith({
+    int? id,
+    String? title,
+    int? price,
+    int? quantity,
+  }) {
+    return TicketType(
+      title: title ?? this.title,
+      price: price ?? this.price,
+      quantity: quantity ?? this.quantity,
+    );
   }
 }

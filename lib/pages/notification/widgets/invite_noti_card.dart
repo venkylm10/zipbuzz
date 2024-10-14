@@ -4,6 +4,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
@@ -170,6 +171,15 @@ class InviteNotiCard extends ConsumerWidget {
   }
 
   Future<void> acceptInvite(WidgetRef ref) async {
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+    EventModel? event;
+    try {
+      event = await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
+    } catch (e) {
+      showSnackBar(message: "Error getting event details");
+    }
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+    if (event == null) return;
     await showModalBottomSheet(
       context: navigatorKey.currentContext!,
       isScrollControlled: true,
@@ -179,6 +189,7 @@ class InviteNotiCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20),
           child: AttendeeNumberResponse(
             notification: notification,
+            event: event!,
             onSubmit: (context, attendees, commentController) async {
               Navigator.of(context).pop();
               ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
@@ -235,6 +246,15 @@ class InviteNotiCard extends ConsumerWidget {
   }
 
   Future<void> declineInvite(WidgetRef ref) async {
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
+    EventModel? event;
+    try {
+      event = await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
+    } catch (e) {
+      showSnackBar(message: "Error getting event details");
+    }
+    ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+    if (event == null) return;
     showModalBottomSheet(
       context: navigatorKey.currentContext!,
       isScrollControlled: true,
@@ -245,6 +265,7 @@ class InviteNotiCard extends ConsumerWidget {
           child: AttendeeNumberResponse(
             notification: notification,
             comment: "Sorry, I can't make it",
+            event: event!,
             onSubmit: (context, attendees, commentController) async {
               Navigator.of(context).pop();
               ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
