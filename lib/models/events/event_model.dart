@@ -264,16 +264,16 @@ class TicketType {
 
   factory TicketType.fromMap(Map<String, dynamic> map) {
     return TicketType(
-      title: map['title'] as String,
-      price: map['price'] as int,
-      quantity: map['quantity'] as int,
+      title: map['ticket_name'] as String,
+      price: map['ticket_price'] as int,
+      quantity: map['quantity'] as int ?? 0,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'title': title,
-      'price': price,
+      'ticket_name': title,
+      'ticket_price': price,
       'quantity': quantity,
     };
   }
