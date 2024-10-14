@@ -26,36 +26,38 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
         _buildToggleButton(ref, event),
         _buildTicketTypes(ref, event),
         _buildAddNewTypeButton(ref, event),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            children: [
-              Text("PayPal.me", style: AppStyles.h4),
-              const SizedBox(width: 8),
-              Expanded(
-                child: CustomTextField(
-                    controller: rePublish
-                        ? ref.read(editEventControllerProvider.notifier).paypalLinkController
-                        : ref.read(newEventProvider.notifier).paypalLinkController),
-              )
-            ],
+        if (event.ticketTypes.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                Text("PayPal.me", style: AppStyles.h4),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomTextField(
+                      controller: rePublish
+                          ? ref.read(editEventControllerProvider.notifier).paypalLinkController
+                          : ref.read(newEventProvider.notifier).paypalLinkController),
+                )
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            children: [
-              Text("Venmo ID", style: AppStyles.h4),
-              const SizedBox(width: 8),
-              Expanded(
-                child: CustomTextField(
-                    controller: rePublish
-                        ? ref.read(editEventControllerProvider.notifier).venmoIdController
-                        : ref.read(newEventProvider.notifier).venmoIdController),
-              )
-            ],
+        if (event.ticketTypes.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                Text("Venmo ID", style: AppStyles.h4),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomTextField(
+                      controller: rePublish
+                          ? ref.read(editEventControllerProvider.notifier).venmoIdController
+                          : ref.read(newEventProvider.notifier).venmoIdController),
+                )
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
@@ -220,6 +222,9 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
   }
 
   void _updatePrice(WidgetRef ref, String val, int index) {
+    if (val.length > 1 && val[0] == "0") {
+      val = val.substring(1);
+    }
     if (rePublish) {
       ref.read(editEventControllerProvider.notifier).updateTicketPrice(index, val);
     } else {

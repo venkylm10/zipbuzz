@@ -565,9 +565,13 @@ class EditEventController extends StateNotifier<EventModel> {
   }
 
   void updateTicketPrice(int index, String price) {
+    var text = ticketPriceControllers[index].text.trim();
     if (price.isEmpty) {
       price = "0";
       ticketPriceControllers[index].text = price;
+    } else if (text.length > 1 && text[0] == '0') {
+      text = text.substring(1);
+      ticketPriceControllers[index].text = text;
     }
     final tickets = state.ticketTypes;
     final num = int.parse(price);
