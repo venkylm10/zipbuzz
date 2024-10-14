@@ -95,6 +95,7 @@ class _EventJoinButtonState extends ConsumerState<EventJoinButton> {
                   borderRadius: BorderRadius.circular(20),
                   child: AttendeeNumberResponse(
                     notification: notification,
+                    event: event,
                     onSubmit: (context, attendees, commentController) async {
                       Navigator.of(context).pop();
                       ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
@@ -226,6 +227,7 @@ class _EventJoinButtonState extends ConsumerState<EventJoinButton> {
                   child: AttendeeNumberResponse(
                     notification: notification,
                     comment: "Sorry, I can't make it",
+                    event: event,
                     onSubmit: (context, attendees, commentController) async {
                       Navigator.of(context).pop();
                       ref.read(eventsControllerProvider.notifier).updateLoadingState(true);

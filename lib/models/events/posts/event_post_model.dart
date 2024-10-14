@@ -1,23 +1,27 @@
 class EventPostModel {
-  EventPostModel(
-      {required this.banner,
-      required this.category,
-      required this.name,
-      required this.description,
-      required this.date,
-      required this.venue,
-      required this.startTime,
-      required this.endTime,
-      required this.hostId,
-      required this.hostName,
-      required this.hostPic,
-      required this.eventType,
-      required this.capacity,
-      required this.filledCapacity,
-      required this.guestList,
-      required this.isPrivate,
-      this.groupId = 0,
-      this.groupName = 'zipbuzz-null'});
+  EventPostModel({
+    required this.banner,
+    required this.category,
+    required this.name,
+    required this.description,
+    required this.date,
+    required this.venue,
+    required this.startTime,
+    required this.endTime,
+    required this.hostId,
+    required this.hostName,
+    required this.hostPic,
+    required this.eventType,
+    required this.capacity,
+    required this.filledCapacity,
+    required this.guestList,
+    required this.isPrivate,
+    this.groupId = 0,
+    this.groupName = 'zipbuzz-null',
+    this.isTicketedEvent = false,
+    required this.paypalLink,
+    required this.venmoLink,
+  });
   final String banner;
   final String category;
   final String name;
@@ -36,27 +40,9 @@ class EventPostModel {
   final bool isPrivate;
   final int? groupId;
   final String? groupName;
-
-  factory EventPostModel.fromMap(Map<String, dynamic> json) {
-    return EventPostModel(
-      banner: json['banner'],
-      category: json['category'],
-      name: json['name'],
-      description: json['description'],
-      date: json['date'],
-      venue: json['venue'],
-      startTime: json['start_time'],
-      endTime: json['end_time'],
-      hostId: json['host_id'],
-      hostName: json['host_name'],
-      hostPic: json['host_pic'],
-      eventType: json['event_type'],
-      capacity: json['capacity'],
-      filledCapacity: json['filled_capacity'],
-      guestList: json['guest_list'],
-      isPrivate: json['is_private'],
-    );
-  }
+  final bool isTicketedEvent;
+  final String paypalLink;
+  final String venmoLink;
 
   Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
@@ -78,6 +64,9 @@ class EventPostModel {
     data['is_private'] = isPrivate;
     data['group_id'] = groupId;
     data['group_name'] = groupName;
+    data['is_ticketed_event'] = isTicketedEvent;
+    data['paypal_link'] = paypalLink;
+    data['venmo_link'] = venmoLink;
     return data;
   }
 }

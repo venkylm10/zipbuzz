@@ -84,6 +84,7 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
             borderRadius: BorderRadius.circular(20),
             child: AttendeeNumberResponse(
               notification: notification,
+              event: event,
               onSubmit: (context, attendees, commentController) async {
                 if (clicked) return;
                 clicked = true;

@@ -29,11 +29,11 @@ class EventCardActionItems extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hostId = event.hostId;
     final userId = ref.read(userProvider).id;
-    final check = groupEvent
+    final isHostOrAdmin = groupEvent
         ? hostId == userId ||
             ref.read(groupControllerProvider).admins.any((e) => e.userId == userId)
         : hostId == userId;
-    return check
+    return isHostOrAdmin
         ? Positioned(
             right: 10,
             top: 10,

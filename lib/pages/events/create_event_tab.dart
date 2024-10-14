@@ -7,6 +7,7 @@ import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/pages/events/widgets/create_event_urls.dart';
+import 'package:zipbuzz/pages/events/widgets/create_event_ticket_type_fields.dart';
 import 'package:zipbuzz/services/contact_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -77,6 +78,7 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
           CreateEventUrls(rebuild: () {
             setState(() {});
           }),
+          CreateEventTicketTypeFields(rePublish: widget.rePublish),
           _showAndInviteGuestsButton(),
           const SizedBox(height: 32),
         ],

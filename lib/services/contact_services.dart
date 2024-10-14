@@ -47,7 +47,8 @@ class Contacts {
             .map((e) {
           Set<String> phones = {};
           for (var num in e.phones!) {
-            phones.add(flattenNumber(num.value!, ref, null));
+            final phone = flattenNumber(num.value!, ref, null);
+            phones.add(phone);
           }
           return ContactModel(
             displayName: e.displayName ?? "zipbuzz-null",
@@ -109,18 +110,8 @@ class Contacts {
 
   List<ContactModel> getMatchingContacts(List<String> numbers) {
     final foundNumbers = <String>[];
-    var userNumber =
-        ref.read(userProvider).mobileNumber.replaceAll(RegExp(r'[\s()-+]'), "").replaceAll(" ", "");
-    if (userNumber.length > 10) {
-      userNumber = userNumber.substring(userNumber.length - 10);
-    }
-    final flattedNumbers = numbers.map((e) {
-      var phone = e.replaceAll(RegExp(r'[\s()-+]'), "").replaceAll(" ", "");
-      if (phone.length > 10) {
-        phone = phone.substring(phone.length - 10);
-      }
-      return phone;
-    }).toList();
+    var userNumber = flattenNumber(ref.read(userProvider).mobileNumber, ref, null);
+    final flattedNumbers = numbers.map((e) => flattenNumber(e, ref, null)).toList();
     final contacts = _fetchedContacts;
     final matchingContacts = contacts.where((element) {
       final contactNumbers = element.phones;

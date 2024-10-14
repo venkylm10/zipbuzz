@@ -27,6 +27,7 @@ class EventResponseModel {
   final int notificationId;
   final int members;
   final String groupName;
+  final List<TicketType> ticketTypes;
 
   EventResponseModel({
     required this.id,
@@ -55,6 +56,7 @@ class EventResponseModel {
     required this.notificationId,
     required this.members,
     required this.groupName,
+    required this.ticketTypes,
   });
 
   Map<String, dynamic> toMap() {
@@ -84,6 +86,8 @@ class EventResponseModel {
       'guest_list': guestList,
       'notification_id': notificationId,
       'members': members,
+      'group_name': groupName,
+      'ticket_types': ticketTypes.map((ticketType) => ticketType.toMap()).toList(),
     };
   }
 
@@ -115,6 +119,7 @@ class EventResponseModel {
       notificationId: map['notification_id'] as int,
       members: map['members'] as int,
       groupName: map['group_name'] as String? ?? 'zipbuzz-null',
+      ticketTypes: ((map['ticket_types'] ?? []) as List).map((e) => TicketType.fromMap(e)).toList(),
     );
   }
 }

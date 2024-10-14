@@ -112,6 +112,21 @@ class DioServices {
     }
   }
 
+  Future<void> postEventTickets(int eventId, List<String> titles, List<int> prices) async {
+    for (int i = 0; i < titles.length; i++) {
+      try {
+        await dio.post(DioConstants.postEventTickets, data: {
+          "event_id": eventId,
+          "ticket_name": titles[i],
+          "ticket_price": prices[i],
+        });
+      } catch (e) {
+        debugPrint("Error posting event tickets: $e");
+      }
+    }
+    debugPrint("Posted event tickets");
+  }
+
   // make request
   Future<void> makeRequest(MakeRequestModel model) async {
     try {

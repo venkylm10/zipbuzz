@@ -35,32 +35,34 @@ class NewEvent extends StateNotifier<EventModel> {
   NewEvent({required this.ref})
       : super(
           EventModel(
-              id: ref.read(userProvider).id,
-              title: "",
-              location: "",
-              date: DateTime.now().toString(),
-              startTime: "",
-              endTime: "",
-              attendees: 0,
-              category: 'Please select',
-              isFavorite: false,
-              bannerPath: "",
-              iconPath: "",
-              // updating this just after getting allInterests from the API
-              about: "",
-              hostId: ref.read(userProvider).id,
-              hostName: ref.read(userProvider).name,
-              hostPic: ref.read(userProvider).imageUrl,
-              capacity: 10,
-              isPrivate: true,
-              privateGuestList: false,
-              imageUrls: [],
-              eventMembers: [],
-              status: "nothing",
-              userDeviceToken: "",
-              hyperlinks: [],
-              members: 0,
-              groupName: 'zipbuzz-null'),
+            id: ref.read(userProvider).id,
+            title: "",
+            location: "",
+            date: DateTime.now().toString(),
+            startTime: "",
+            endTime: "",
+            attendees: 0,
+            category: 'Please select',
+            isFavorite: false,
+            bannerPath: "",
+            iconPath: "",
+            // updating this just after getting allInterests from the API
+            about: "",
+            hostId: ref.read(userProvider).id,
+            hostName: ref.read(userProvider).name,
+            hostPic: ref.read(userProvider).imageUrl,
+            capacity: 10,
+            isPrivate: true,
+            privateGuestList: false,
+            imageUrls: [],
+            eventMembers: [],
+            status: "nothing",
+            userDeviceToken: "",
+            hyperlinks: [],
+            members: 0,
+            groupName: 'zipbuzz-null',
+            ticketTypes: [],
+          ),
         );
   List<File> selectedImages = [];
   int maxImages = 7;
@@ -425,12 +427,11 @@ class NewEvent extends StateNotifier<EventModel> {
         isPrivate: state.isPrivate,
         groupId: groupId,
         groupName: groupName,
+        isTicketedEvent: state.ticketTypes.isNotEmpty,
+        paypalLink:
+            paypalLinkController.text.trim().isEmpty ? "zipbuzz-null" : paypalLinkController.text,
+        venmoLink: venmoIdController.text.trim().isEmpty ? "zipbuzz-null" : venmoIdController.text,
       );
-
-      // print(eventPostModel.toMap());
-      // ref.read(loadingTextProvider.notifier).reset();
-      // return;
-
       ref.read(loadingTextProvider.notifier).updateLoadingText("Creating Event...");
       int eventId = 0;
       if (groupEvent) {
@@ -444,7 +445,6 @@ class NewEvent extends StateNotifier<EventModel> {
 
       var eventDateTime = DateTime.parse(state.date);
       var formattedDate = formatWithSuffix(eventDateTime);
-      // ref.read(loadingTextProvider.notifier).updateLoadingText("Sending invites...");
       final inviteePicUrls = eventInvites.map((e) => Defaults.contactAvatarUrl).toList();
       final userNumber = ref.read(userProvider).mobileNumber;
       final countryDialCode = userNumber.substring(0, userNumber.length - 10);
@@ -463,9 +463,7 @@ class NewEvent extends StateNotifier<EventModel> {
         }
         return nums.join(',');
       }).toList();
-      final names = eventInvites.map((e) {
-        return e.displayName;
-      }).toList();
+      final names = eventInvites.map((e) => e.displayName).toList();
       for (var e in phoneNumbers) {
         debugPrint("Phone Numbers: $e");
       }
@@ -493,11 +491,17 @@ class NewEvent extends StateNotifier<EventModel> {
       await ref
           .read(dioServicesProvider)
           .sendEventUrls(eventId, urlControllers, urlNameControllers);
+
+      // upload event tickets
+      await ref.read(dioServicesProvider).postEventTickets(
+            eventId,
+            state.ticketTypes.map((e) => e.title).toList(),
+            state.ticketTypes.map((e) => e.price).toList(),
+          );
+
       // upload event images
-      if (state.imageUrls.isNotEmpty) {
-        for (var i = 0; i < state.imageUrls.length; i++) {
-          await ref.read(dioServicesProvider).addClonedImage(eventId, state.imageUrls[i]);
-        }
+      for (var i = 0; i < state.imageUrls.length; i++) {
+        await ref.read(dioServicesProvider).addClonedImage(eventId, state.imageUrls[i]);
       }
       ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
       await ref.read(dioServicesProvider).postEventImages(eventId, selectedImages);
@@ -569,6 +573,68 @@ class NewEvent extends StateNotifier<EventModel> {
     }
   }
 
+  final ticketTitleControllers = <TextEditingController>[];
+  final ticketPriceControllers = <TextEditingController>[];
+  final paypalLinkController = TextEditingController();
+  final venmoIdController = TextEditingController();
+
+  void toggleTicketTypes(bool value) {
+    if (value) {
+      final defaultTickets = [
+        TicketType(title: "Adults", price: 0, quantity: 0),
+        TicketType(title: "Kids under 12", price: 0, quantity: 0),
+        TicketType(title: "Seniors", price: 0, quantity: 0),
+      ];
+      ticketTitleControllers.addAll(
+        defaultTickets.map((e) => TextEditingController(text: e.title)),
+      );
+      ticketPriceControllers.addAll(defaultTickets.map(
+        (e) => TextEditingController(text: e.price.toString()),
+      ));
+      state = state.copyWith(ticketTypes: defaultTickets);
+    } else {
+      ticketTitleControllers.clear();
+      ticketPriceControllers.clear();
+      state = state.copyWith(ticketTypes: []);
+    }
+  }
+
+  void updateTicketTitle(int index, String title) {
+    final tickets = state.ticketTypes;
+    tickets[index] = tickets[index].copyWith(title: title);
+    state = state.copyWith(ticketTypes: tickets);
+  }
+
+  void updateTicketPrice(int index, String price) {
+    var text = ticketPriceControllers[index].text.trim();
+    if (price.isEmpty) {
+      price = "0";
+      ticketPriceControllers[index].text = price;
+    } else if (text.length > 1 && text[0] == '0') {
+      text = text.substring(1);
+      ticketPriceControllers[index].text = text;
+    }
+    final tickets = state.ticketTypes;
+    final num = int.parse(price);
+    tickets[index] = tickets[index].copyWith(price: num);
+    state = state.copyWith(ticketTypes: tickets);
+  }
+
+  void removeTicketType(int index) {
+    final tickets = state.ticketTypes;
+    tickets.removeAt(index);
+    state = state.copyWith(ticketTypes: tickets);
+    ticketPriceControllers.removeAt(index);
+    ticketTitleControllers.removeAt(index);
+  }
+
+  void addTicketType() {
+    final ticket = TicketType(title: "", price: 0, quantity: 0);
+    state = state.copyWith(ticketTypes: state.ticketTypes..add(ticket));
+    ticketTitleControllers.add(TextEditingController(text: "Title"));
+    ticketPriceControllers.add(TextEditingController(text: "0"));
+  }
+
   void updateInterests(InterestModel interest) async {
     ref.read(homeTabControllerProvider.notifier).toggleHomeTabInterest(interest);
     final contains = ref.read(userProvider).interests.contains(interest.activity);
@@ -606,31 +672,33 @@ class NewEvent extends StateNotifier<EventModel> {
 
   void resetNewEvent() {
     state = EventModel(
-        id: ref.read(userProvider).id,
-        title: "",
-        location: "",
-        date: DateTime.now().toString(),
-        startTime: "",
-        endTime: "",
-        attendees: 0,
-        category: 'Please select',
-        isFavorite: false,
-        bannerPath: "",
-        iconPath: allInterests.first.iconUrl,
-        about: "",
-        hostId: ref.read(userProvider).id,
-        hostName: ref.read(userProvider).name,
-        hostPic: ref.read(userProvider).imageUrl,
-        capacity: 10,
-        isPrivate: true,
-        imageUrls: [],
-        privateGuestList: false,
-        eventMembers: [],
-        status: "nothing",
-        userDeviceToken: "",
-        hyperlinks: [],
-        members: 0,
-        groupName: 'zipbuzz-null');
+      id: ref.read(userProvider).id,
+      title: "",
+      location: "",
+      date: DateTime.now().toString(),
+      startTime: "",
+      endTime: "",
+      attendees: 0,
+      category: 'Please select',
+      isFavorite: false,
+      bannerPath: "",
+      iconPath: allInterests.first.iconUrl,
+      about: "",
+      hostId: ref.read(userProvider).id,
+      hostName: ref.read(userProvider).name,
+      hostPic: ref.read(userProvider).imageUrl,
+      capacity: 10,
+      isPrivate: true,
+      imageUrls: [],
+      privateGuestList: false,
+      eventMembers: [],
+      status: "nothing",
+      userDeviceToken: "",
+      hyperlinks: [],
+      members: 0,
+      groupName: 'zipbuzz-null',
+      ticketTypes: [],
+    );
     eventInvites = [];
     bannerImage = null;
     urlControllers = [TextEditingController()];
