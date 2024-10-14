@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/pages/events/widgets/event_payment_links.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
@@ -9,17 +10,17 @@ class EventDetailsTicketInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (event.ticketTypes.isEmpty) return const SizedBox();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (event.ticketTypes.isNotEmpty)
-          Text(
-            "Tickets Info",
-            style: AppStyles.h5.copyWith(
-              color: AppColors.lightGreyColor,
-            ),
+        Text(
+          "Tickets Info",
+          style: AppStyles.h5.copyWith(
+            color: AppColors.lightGreyColor,
           ),
-        if (event.ticketTypes.isNotEmpty) const SizedBox(height: 8),
+        ),
+        const SizedBox(height: 8),
         Column(
           children: List.generate(event.ticketTypes.length, (index) {
             final last = index == event.ticketTypes.length - 1;
@@ -47,6 +48,8 @@ class EventDetailsTicketInfo extends StatelessWidget {
             );
           }),
         ),
+        const SizedBox(height: 16),
+        EventPaymentLinks(event: event),
         const SizedBox(height: 16),
         Divider(
           color: AppColors.greyColor.withOpacity(0.2),

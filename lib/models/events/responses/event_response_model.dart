@@ -28,6 +28,8 @@ class EventResponseModel {
   final int members;
   final String groupName;
   final List<TicketType> ticketTypes;
+  final String paypalLink;
+  final String venmoLink;
 
   EventResponseModel({
     required this.id,
@@ -57,6 +59,8 @@ class EventResponseModel {
     required this.members,
     required this.groupName,
     required this.ticketTypes,
+    required this.paypalLink,
+    required this.venmoLink,
   });
 
   Map<String, dynamic> toMap() {
@@ -88,6 +92,8 @@ class EventResponseModel {
       'members': members,
       'group_name': groupName,
       'ticket_types': ticketTypes.map((ticketType) => ticketType.toMap()).toList(),
+      'paypal_link': paypalLink,
+      'venmo_link': venmoLink,
     };
   }
 
@@ -120,6 +126,8 @@ class EventResponseModel {
       members: map['members'] as int,
       groupName: map['group_name'] as String? ?? 'zipbuzz-null',
       ticketTypes: ((map['ticket_types'] ?? []) as List).map((e) => TicketType.fromMap(e)).toList(),
+      paypalLink: map['paypal_link'] ?? 'zipbuzz-null',
+      venmoLink: map['venmo_link'] ?? 'zipbuzz-null',
     );
   }
 }

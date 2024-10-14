@@ -62,6 +62,8 @@ class NewEvent extends StateNotifier<EventModel> {
             members: 0,
             groupName: 'zipbuzz-null',
             ticketTypes: [],
+            paypalLink: 'zipbuzz-null',
+            venmoLink: 'zipbuzz-null',
           ),
         );
   List<File> selectedImages = [];
@@ -698,6 +700,8 @@ class NewEvent extends StateNotifier<EventModel> {
       members: 0,
       groupName: 'zipbuzz-null',
       ticketTypes: [],
+      paypalLink: 'zipbuzz-null',
+            venmoLink: 'zipbuzz-null',
     );
     eventInvites = [];
     bannerImage = null;

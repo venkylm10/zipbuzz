@@ -62,6 +62,8 @@ class EditEventController extends StateNotifier<EventModel> {
             members: 0,
             groupName: 'zipbuzz-null',
             ticketTypes: [],
+            paypalLink: 'zipbuzz-null',
+            venmoLink: 'zipbuzz-null',
           ),
         );
   int eventId = 1;

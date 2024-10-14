@@ -32,6 +32,8 @@ class EventModel {
   int members;
   int groupId;
   String groupName;
+  final String paypalLink;
+  final String venmoLink;
   EventModel({
     required this.id,
     required this.title,
@@ -62,6 +64,8 @@ class EventModel {
     this.groupId = -1,
     required this.groupName,
     required this.ticketTypes,
+    required this.paypalLink,
+    required this.venmoLink,
   });
 
   EventModel copyWith({
@@ -93,6 +97,8 @@ class EventModel {
     int? groupId,
     String? groupName,
     List<TicketType>? ticketTypes,
+    String? paypalLink,
+    String? venmoLink,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -123,6 +129,8 @@ class EventModel {
       groupId: groupId ?? this.groupId,
       groupName: groupName ?? this.groupName,
       ticketTypes: ticketTypes ?? this.ticketTypes,
+      paypalLink: paypalLink ?? this.paypalLink,
+      venmoLink: venmoLink ?? this.venmoLink,
     );
   }
 
@@ -163,6 +171,8 @@ class EventModel {
       ticketTypes: ((map['ticket_types'] ?? []) as List)
           .map((e) => TicketType.fromMap(e as Map<String, dynamic>))
           .toList(),
+      paypalLink: map['paypal_link'] ?? "zipbuzz-null",
+      venmoLink: map['venmo_link'] ?? "zipbuzz-null",
     );
   }
 
@@ -196,6 +206,9 @@ class EventModel {
       "members": members,
       "group_id": groupId,
       "group_name": groupName,
+      "ticket_types": ticketTypes.map((e) => e.toMap()).toList(),
+      "paypal_link": paypalLink,
+      "venmo_link": venmoLink,
     };
   }
 
@@ -229,6 +242,8 @@ class EventModel {
       members: res.members,
       groupName: res.groupName,
       ticketTypes: res.ticketTypes,
+      paypalLink: res.paypalLink,
+      venmoLink: res.venmoLink,
     );
   }
 }

@@ -92,6 +92,8 @@ class AppIcons {
   final group_tab = 'assets/icons/group_tab.png';
   final reminderIcon = 'assets/icons/reminder_icon.png';
   final broadcastIcon = 'assets/icons/broadcast_icon.png';
+  final paypal = 'assets/icons/paypal.svg';
+  final venmo = 'assets/icons/venmo.svg';
 }
 
 class WelcomeImage {
