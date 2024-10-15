@@ -5,6 +5,7 @@ class MakeRequestModel {
   int members;
   int userId;
   bool userDecision;
+  int totalAmount;
 
   MakeRequestModel({
     required this.userId,
@@ -13,6 +14,7 @@ class MakeRequestModel {
     required this.phoneNumber,
     required this.members,
     this.userDecision = false,
+    this.totalAmount = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,17 +25,7 @@ class MakeRequestModel {
       'phone_number': phoneNumber,
       'members': members,
       "user_decision": userDecision ? "yes" : "no",
+      "total_amount": totalAmount,
     };
-  }
-
-  static MakeRequestModel fromMap(Map<String, dynamic> map) {
-    return MakeRequestModel(
-      userId: map['user_id'],
-      eventId: map['event_id'],
-      name: map['name'],
-      phoneNumber: map['phone_number'],
-      members: map['members'],
-      userDecision: map['user_decision'] == "yes",
-    );
   }
 }

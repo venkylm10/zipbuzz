@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 
@@ -16,8 +17,10 @@ class EventPaymentLinks extends StatelessWidget {
         if (paypal)
           Expanded(
             child: GestureDetector(
-              onTap: () {
-                print(event.paypalLink);
+              onTap: () async {
+                if (await canLaunchUrlString(event.paypalLink)) {
+                  launchUrlString(event.paypalLink);
+                }
               },
               child: Container(
                 height: 42,
@@ -26,9 +29,7 @@ class EventPaymentLinks extends StatelessWidget {
                   color: Colors.yellow[600],
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Expanded(
-                  child: SvgPicture.asset(Assets.icons.paypal),
-                ),
+                child: SvgPicture.asset(Assets.icons.paypal),
               ),
             ),
           ),
@@ -36,8 +37,10 @@ class EventPaymentLinks extends StatelessWidget {
         if (venmo)
           Expanded(
             child: GestureDetector(
-              onTap: () {
-                print(event.venmoLink);
+              onTap: () async {
+                if (await canLaunchUrlString(event.venmoLink)) {
+                  launchUrlString(event.venmoLink);
+                }
               },
               child: Container(
                 height: 42,

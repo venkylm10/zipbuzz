@@ -5,16 +5,14 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/notification/widgets/attendee_sheet.dart';
-import 'package:zipbuzz/services/chat_services.dart';
+import 'package:zipbuzz/pages/notification/widgets/ticket_event_payment_link_sheet.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -190,40 +188,33 @@ class InviteNotiCard extends ConsumerWidget {
           child: AttendeeNumberResponse(
             notification: notification,
             event: event!,
-            onSubmit: (context, attendees, commentController) async {
+            onSubmit: (context, attendees, commentController, amount) async {
               Navigator.of(context).pop();
               ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
-              final user = ref.read(userProvider);
-              await ref.read(dioServicesProvider).updateUserNotificationYN(
-                  notification.senderId, user.id, "yes", notification.eventId);
-              await ref
-                  .read(dioServicesProvider)
-                  .updateUserNotification(notification.id, "requested");
+              final event =
+                  await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
               try {
-                final user = ref.read(userProvider);
-                var model = MakeRequestModel(
-                  userId: user.id,
-                  eventId: notification.eventId,
-                  name: user.name,
-                  phoneNumber: user.mobileNumber,
-                  members: attendees,
-                  userDecision: true,
-                );
-                await ref.read(dioServicesProvider).makeRequest(model);
-                await ref.read(dioServicesProvider).increaseDecision(notification.eventId, "yes");
-                NotificationServices.sendMessageNotification(
-                  notification.eventName,
-                  "${user.name} RSVP'd Yes to the event",
-                  notification.deviceToken,
-                  notification.eventId,
-                );
-
-                if (commentController.text.trim().isNotEmpty) {
-                  final event =
-                      await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
-                  await ref
-                      .read(chatServicesProvider)
-                      .sendMessage(event: event, message: commentController.text);
+                await ref.read(eventsControllerProvider.notifier).respondToInvite(
+                      event,
+                      notification,
+                      attendees,
+                      commentController.text.trim(),
+                      accepted: true,
+                    );
+                ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                rebuildCall();
+                if (event.ticketTypes.isNotEmpty) {
+                  await showModalBottomSheet(
+                    context: navigatorKey.currentContext!,
+                    isScrollControlled: true,
+                    enableDrag: true,
+                    builder: (context) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: TicketEventPaymentLinkSheet(event: event),
+                      );
+                    },
+                  );
                 }
               } catch (e) {
                 debugPrint("Error requesting to join: $e");
@@ -266,33 +257,19 @@ class InviteNotiCard extends ConsumerWidget {
             notification: notification,
             comment: "Sorry, I can't make it",
             event: event!,
-            onSubmit: (context, attendees, commentController) async {
+            onSubmit: (context, attendees, commentController, amount) async {
               Navigator.of(context).pop();
               ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
-              final user = ref.read(userProvider);
-              await ref.read(dioServicesProvider).updateUserNotificationYN(
-                  notification.senderId, user.id, "no", notification.eventId);
-              await ref
-                  .read(dioServicesProvider)
-                  .updateUserNotification(notification.id, "declined");
+              final event =
+                  await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
               try {
-                final user = ref.read(userProvider);
-                var model = MakeRequestModel(
-                  userId: user.id,
-                  eventId: notification.eventId,
-                  name: user.name,
-                  phoneNumber: user.mobileNumber,
-                  members: attendees,
-                  userDecision: false,
-                );
-                await ref.read(dioServicesProvider).makeRequest(model);
-                await ref.read(dioServicesProvider).increaseDecision(notification.eventId, "no");
-                NotificationServices.sendMessageNotification(
-                  notification.eventName,
-                  "${user.name} RSVP'd No to the event",
-                  notification.deviceToken,
-                  notification.eventId,
-                );
+                await ref.read(eventsControllerProvider.notifier).respondToInvite(
+                      event,
+                      notification,
+                      attendees,
+                      commentController.text.trim(),
+                      accepted: false,
+                    );
               } catch (e) {
                 debugPrint("Error declining invite: $e");
               }

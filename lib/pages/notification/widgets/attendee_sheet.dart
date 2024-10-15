@@ -20,8 +20,8 @@ class AttendeeNumberResponse extends ConsumerStatefulWidget {
   });
   final NotificationData notification;
   final bool inviteReply;
-  final Function(BuildContext context, int attendees, TextEditingController commentController)
-      onSubmit;
+  final Future Function(BuildContext context, int attendees,
+      TextEditingController commentController, int totalAmount) onSubmit;
   final EventModel event;
   final String comment;
 
@@ -33,7 +33,8 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
   int attendees = 1;
   final commentController = TextEditingController();
   final focusNode = FocusNode();
-  final List<int> countController = [];
+  final List<int> counts = [];
+  var noTicketsSelected = false;
 
   void increment() {
     setState(() {
@@ -51,7 +52,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
   @override
   void initState() {
     for (int i = 0; i < widget.event.ticketTypes.length; i++) {
-      countController.add(0);
+      counts.add(0);
     }
     super.initState();
     commentController.text = widget.comment;
@@ -74,11 +75,70 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
             const SizedBox(height: 16),
             if (widget.event.ticketTypes.isEmpty) _nonTicktedAttendeeNumber(),
             if (widget.event.ticketTypes.isNotEmpty) _ticketedAttendeeNumber(),
+            if (widget.event.ticketTypes.isNotEmpty)
+              Row(
+                children: [
+                  Expanded(child: Text("Total:", style: AppStyles.h4)),
+                  Builder(builder: (context) {
+                    final total = counts.fold<int>(
+                      0,
+                      (previousValue, element) =>
+                          previousValue +
+                          element * widget.event.ticketTypes[counts.indexOf(element)].price,
+                    );
+                    return Text(
+                      "\$$total",
+                      style: AppStyles.h3.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  }),
+                  const SizedBox(width: 8),
+                ],
+              ),
             const SizedBox(height: 24),
             if (widget.event.ticketTypes.isNotEmpty) EventPaymentLinks(event: widget.event),
+            if (noTicketsSelected)
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    "No tickets selected",
+                    style: AppStyles.h4.copyWith(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             const SizedBox(height: 24),
             InkWell(
-              onTap: () => widget.onSubmit(context, attendees, commentController),
+              onTap: () async {
+                var amount = 0;
+                if (widget.event.ticketTypes.isNotEmpty) {
+                  final tickets = <TicketType>[];
+                  for (var i = 0; i < widget.event.ticketTypes.length; i++) {
+                    tickets.add(widget.event.ticketTypes[i].copyWith(quantity: counts[i]));
+                  }
+                  amount = tickets.fold<int>(
+                    0,
+                    (previousValue, element) => previousValue + element.price * element.quantity,
+                  );
+                  if (amount == 0) {
+                    noTicketsSelected = true;
+                    setState(() {});
+                    return;
+                  } else {
+                    noTicketsSelected = false;
+                  }
+                }
+                final attendees = widget.event.ticketTypes.isEmpty
+                    ? this.attendees
+                    : counts.fold<int>(
+                        0,
+                        (previousValue, element) => previousValue + element,
+                      );
+                await widget.onSubmit(context, attendees, commentController, amount);
+              },
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
@@ -146,7 +206,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                 ),
               ),
               const SizedBox(width: 20),
-              Text("${countController[index]}", style: AppStyles.h2),
+              Text("${counts[index]}", style: AppStyles.h2),
               const SizedBox(width: 20),
               Container(
                 decoration: const BoxDecoration(
@@ -211,14 +271,14 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
 
   void _increamentTicketCount(int index) {
     setState(() {
-      countController[index]++;
+      counts[index]++;
     });
   }
 
   void _decreamentTicketCount(int index) {
-    if (countController[index] == 0) return;
+    if (counts[index] == 0) return;
     setState(() {
-      countController[index]--;
+      counts[index]--;
     });
   }
 }

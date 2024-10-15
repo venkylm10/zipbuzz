@@ -326,6 +326,20 @@ class EditEventController extends StateNotifier<EventModel> {
       showSnackBar(message: "Please enter event start time");
       return false;
     }
+    final total = state.ticketTypes.fold<int>(
+      0,
+      (previousValue, element) => previousValue + element.price,
+    );
+    if (state.ticketTypes.isNotEmpty) {
+      if (total == 0) {
+        showSnackBar(message: "Please enter ticket prices");
+        return false;
+      } else if (paypalLinkController.text.trim().isEmpty &&
+          venmoIdController.text.trim().isEmpty) {
+        showSnackBar(message: "Please enter payment links");
+        return false;
+      }
+    }
     return true;
   }
 

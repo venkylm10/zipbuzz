@@ -7,10 +7,14 @@ import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
+import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
+import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
+import 'package:zipbuzz/services/chat_services.dart';
 import 'package:zipbuzz/services/db_services.dart';
 import 'package:zipbuzz/services/dio_services.dart';
+import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 
 final eventsControllerProvider = StateNotifierProvider<EventsControllerProvider, EventsController>(
@@ -272,6 +276,41 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     String year = DateFormat('yyyy').format(dateTime);
     String dayOfWeek = DateFormat('EEEE').format(dateTime);
     return '$month-$day-$year ($dayOfWeek)';
+  }
+
+  Future<void> respondToInvite(
+      EventModel event, NotificationData notification, int attendees, String message,
+      {bool accepted = true}) async {
+    final user = ref.read(userProvider);
+    await ref.read(dioServicesProvider).updateUserNotificationYN(
+        notification.senderId, user.id, accepted ? "yes" : "no", notification.eventId);
+    await ref
+        .read(dioServicesProvider)
+        .updateUserNotification(notification.id, accepted ? "requested" : "declined");
+    var model = MakeRequestModel(
+      userId: user.id,
+      eventId: notification.eventId,
+      name: user.name,
+      phoneNumber: user.mobileNumber,
+      members: attendees,
+      userDecision: accepted,
+    );
+    await ref.read(dioServicesProvider).makeRequest(model);
+    await ref
+        .read(dioServicesProvider)
+        .increaseDecision(notification.eventId, accepted ? "yes" : "no");
+    NotificationServices.sendMessageNotification(
+      notification.eventName,
+      "${user.name} RSVP'd Yes to the event",
+      notification.deviceToken,
+      notification.eventId,
+    );
+    if (message.isNotEmpty) {
+      await ref.read(chatServicesProvider).sendMessage(
+            event: event,
+            message: message,
+          );
+    }
   }
 }
 
