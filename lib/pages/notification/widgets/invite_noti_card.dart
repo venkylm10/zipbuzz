@@ -211,7 +211,10 @@ class InviteNotiCard extends ConsumerWidget {
                     builder: (context) {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: TicketEventPaymentLinkSheet(event: event),
+                        child: TicketEventPaymentLinkSheet(
+                          event: event,
+                          totalAmount: amount,
+                        ),
                       );
                     },
                   );

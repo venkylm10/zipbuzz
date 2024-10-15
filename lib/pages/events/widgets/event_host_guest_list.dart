@@ -14,19 +14,12 @@ final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref
 
 class EventHostGuestList extends StatelessWidget {
   String formatName(String fullName) {
-    // Split the full name into parts (assuming a first and last name)
     List<String> nameParts = fullName.split(' ');
-
-    // Ensure that there are at least two parts (first and last name)
     if (nameParts.length < 2) {
-      return fullName; // Return the original name if there's no last name
+      return fullName;
     }
-
-    // Extract the first name and the first letter of the last name
     String firstName = nameParts[0];
-    String lastInitial = nameParts[1][0]; // First character of the last name
-
-    // Return the formatted name: "FirstName L."
+    String lastInitial = nameParts[1][0];
     return '$firstName $lastInitial.';
   }
 
@@ -167,7 +160,6 @@ class EventHostGuestList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      // member.name,
                       formattedName,
                       style: AppStyles.h5,
                     ),
@@ -192,6 +184,22 @@ class EventHostGuestList extends StatelessWidget {
                     "+${member.attendees - 1}",
                     style: AppStyles.h4.copyWith(
                       color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+              if (member.totalAmount > 0)
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: const Color(0xFFEAF6ED),
+                  ),
+                  child: Text(
+                    "\$${member.totalAmount}",
+                    style: AppStyles.h5.copyWith(
+                      color: Colors.green.shade500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

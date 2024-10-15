@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
-import 'package:zipbuzz/pages/events/widgets/event_payment_links.dart';
-import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
@@ -97,7 +94,6 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                 ],
               ),
             const SizedBox(height: 24),
-            if (widget.event.ticketTypes.isNotEmpty) EventPaymentLinks(event: widget.event),
             if (noTicketsSelected)
               Align(
                 alignment: Alignment.center,

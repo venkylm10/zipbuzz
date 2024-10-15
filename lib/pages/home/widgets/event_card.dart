@@ -50,7 +50,7 @@ class _EventCardState extends ConsumerState<EventCard> {
   bool isMounted = true;
 
   void navigateToEventDetails() async {
-    debugPrint(widget.event.id.toString());
+    debugPrint("Event ID: ${widget.event.id}");
     final dominantColor = await getDominantColor();
     ref.read(guestListTagProvider.notifier).update((state) => "Invited");
     await navigatorKey.currentState!.push(

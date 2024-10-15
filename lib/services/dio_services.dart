@@ -73,6 +73,7 @@ class DioServices {
     ).get(DioConstants.getTokenApi);
 
     final token = res.data['token'] as String;
+    debugPrint("Token: $token");
     GetStorage().write(BoxConstants.accessToken, token);
   }
 

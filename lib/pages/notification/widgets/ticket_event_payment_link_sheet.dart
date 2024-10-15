@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/pages/events/widgets/event_payment_links.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
@@ -9,7 +8,8 @@ import '../../../utils/constants/styles.dart';
 
 class TicketEventPaymentLinkSheet extends StatelessWidget {
   final EventModel event;
-  const TicketEventPaymentLinkSheet({super.key, required this.event});
+  final int totalAmount;
+  const TicketEventPaymentLinkSheet({super.key, required this.event, required this.totalAmount});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +39,19 @@ class TicketEventPaymentLinkSheet extends StatelessWidget {
               "Do complete your payment!\nSo Host can confirm your request.",
               style: AppStyles.h4,
               textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(child: Text("Total:", style: AppStyles.h4)),
+                Text(
+                  "\$$totalAmount",
+                  style: AppStyles.h3.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
             ),
             const SizedBox(height: 16),
             EventPaymentLinks(event: event),

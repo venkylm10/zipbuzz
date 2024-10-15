@@ -5,7 +5,6 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
@@ -117,7 +116,10 @@ class _EventJoinButtonState extends ConsumerState<EventJoinButton> {
                             builder: (context) {
                               return ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child: TicketEventPaymentLinkSheet(event: event),
+                                child: TicketEventPaymentLinkSheet(
+                                  event: event,
+                                  totalAmount: amount,
+                                ),
                               );
                             },
                           );

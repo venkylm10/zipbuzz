@@ -3,14 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_update_rsvp_sheet.dart';
 import 'package:zipbuzz/pages/notification/widgets/attendee_sheet.dart';
 import 'package:zipbuzz/pages/notification/widgets/ticket_event_payment_link_sheet.dart';
-import 'package:zipbuzz/services/chat_services.dart';
-import 'package:zipbuzz/services/dio_services.dart';
-import 'package:zipbuzz/services/notification_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -113,7 +109,10 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                       builder: (context) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: TicketEventPaymentLinkSheet(event: event),
+                          child: TicketEventPaymentLinkSheet(
+                            event: event,
+                            totalAmount: amount,
+                          ),
                         );
                       },
                     );
