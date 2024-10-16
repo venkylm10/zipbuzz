@@ -92,6 +92,7 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                         notification,
                         attendees,
                         commentController.text.trim(),
+                        amount,
                         accepted: true,
                       );
                   clicked = false;

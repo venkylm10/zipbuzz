@@ -279,7 +279,7 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
   }
 
   Future<void> respondToInvite(
-      EventModel event, NotificationData notification, int attendees, String message,
+      EventModel event, NotificationData notification, int attendees, String message, int amount,
       {bool accepted = true}) async {
     final user = ref.read(userProvider);
     await ref.read(dioServicesProvider).updateUserNotificationYN(
@@ -294,6 +294,7 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
       phoneNumber: user.mobileNumber,
       members: attendees,
       userDecision: accepted,
+      totalAmount: amount,
     );
     await ref.read(dioServicesProvider).makeRequest(model);
     await ref

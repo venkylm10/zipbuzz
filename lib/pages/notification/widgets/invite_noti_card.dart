@@ -199,6 +199,7 @@ class InviteNotiCard extends ConsumerWidget {
                       notification,
                       attendees,
                       commentController.text.trim(),
+                      amount,
                       accepted: true,
                     );
                 ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
@@ -271,6 +272,7 @@ class InviteNotiCard extends ConsumerWidget {
                       notification,
                       attendees,
                       commentController.text.trim(),
+                      amount,
                       accepted: false,
                     );
               } catch (e) {

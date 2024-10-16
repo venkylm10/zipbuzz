@@ -103,6 +103,7 @@ class _EventJoinButtonState extends ConsumerState<EventJoinButton> {
                               notification,
                               attendees,
                               commentController.text.trim(),
+                              amount,
                             );
                         widget.event.status = "requested";
                         setState(() {});
@@ -226,6 +227,7 @@ class _EventJoinButtonState extends ConsumerState<EventJoinButton> {
                               notification,
                               attendees,
                               commentController.text.trim(),
+                              amount,
                               accepted: false,
                             );
                       } catch (e) {
