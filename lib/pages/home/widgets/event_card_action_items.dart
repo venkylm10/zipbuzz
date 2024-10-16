@@ -99,11 +99,18 @@ class EventCardActionItems extends ConsumerWidget {
           imageUrls: event.imageUrls,
           isPrivate: event.isPrivate,
           privateGuestList: event.privateGuestList,
+          ticketTypes: event.ticketTypes,
+          groupId: event.groupId,
+          groupName: event.groupName,
+          paypalLink: event.paypalLink,
+          venmoLink: event.venmoLink,
+          inviteUrl: event.inviteUrl,
         );
 
     ref.read(eventTabControllerProvider.notifier).updateIndex(2);
     ref.read(newEventProvider.notifier).updateEvent(clone);
-    ref.read(newEventProvider.notifier).cloneHyperLinks(event.hyperlinks);
+    ref.read(newEventProvider.notifier).cloneHyperLinks();
+    ref.read(newEventProvider.notifier).cloneTicketTypes();
     ref.read(newEventProvider.notifier).updateCategory(event.category);
     if (groupEvent) {
       navigatorKey.currentState!.pushNamed(CreateGroupEventScreen.id);

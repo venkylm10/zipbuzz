@@ -8,7 +8,7 @@ import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/requests/event_members_request_model.dart';
 import 'package:zipbuzz/pages/home/widgets/add_to_calendar.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_category_details.dart';
-import 'package:zipbuzz/pages/home/widgets/event_card_clone_option.dart';
+import 'package:zipbuzz/pages/home/widgets/event_card_action_items.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_host_chip.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_rsvp_update_button.dart';
 import 'package:zipbuzz/services/dio_services.dart';
@@ -28,7 +28,6 @@ class EventCard extends ConsumerStatefulWidget {
   final bool showTag;
   final bool myEvent;
   final bool changeRsvp;
-  final bool groupEvent;
 
   EventCard({
     super.key,
@@ -37,7 +36,6 @@ class EventCard extends ConsumerStatefulWidget {
     this.showTag = true,
     this.myEvent = false,
     this.changeRsvp = true,
-    this.groupEvent = false,
   });
 
   @override
@@ -132,7 +130,7 @@ class _EventCardState extends ConsumerState<EventCard> {
                           _buildBanner(),
                           EventCardActionItems(
                             event: widget.event,
-                            groupEvent: widget.groupEvent,
+                            groupEvent: widget.event.groupId != -1,
                           ),
                           _buildAttendees(),
                           EventCardCategoryDetails(

@@ -165,7 +165,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
                 ),
               );
             }
-            return EventCard(event: events[index - (calendar ? 1 : 0)], groupEvent: true);
+            return EventCard(event: events[index - (calendar ? 1 : 0)]);
           },
         );
       },
@@ -185,7 +185,7 @@ class _GroupEventsScreenState extends ConsumerState<GroupEventsScreen> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) {
-          return EventCard(event: events[index], groupEvent: true);
+          return EventCard(event: events[index]);
         },
       );
     });

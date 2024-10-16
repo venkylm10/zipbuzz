@@ -77,13 +77,13 @@ class NewEvent extends StateNotifier<EventModel> {
   List<TextEditingController> urlNameControllers = [TextEditingController()];
   bool cloneEvent = false;
 
-  void cloneHyperLinks(List<HyperLinks> hyperlinks) {
-    if (hyperlinks.isEmpty) return;
+  void cloneHyperLinks() {
+    if (state.hyperlinks.isEmpty) return;
     urlControllers = [];
     urlNameControllers = [];
-    for (var i = 0; i < hyperlinks.length; i++) {
-      urlControllers.add(TextEditingController(text: hyperlinks[i].url));
-      urlNameControllers.add(TextEditingController(text: hyperlinks[i].urlName));
+    for (var i = 0; i < state.hyperlinks.length; i++) {
+      urlControllers.add(TextEditingController(text: state.hyperlinks[i].url));
+      urlNameControllers.add(TextEditingController(text: state.hyperlinks[i].urlName));
     }
   }
 
@@ -649,6 +649,24 @@ class NewEvent extends StateNotifier<EventModel> {
     state = state.copyWith(ticketTypes: state.ticketTypes..add(ticket));
     ticketTitleControllers.add(TextEditingController(text: "Title"));
     ticketPriceControllers.add(TextEditingController(text: "0"));
+  }
+
+  void cloneTicketTypes() {
+    ticketTitleControllers.clear();
+    ticketPriceControllers.clear();
+    for (var i = 0; i < state.ticketTypes.length; i++) {
+      ticketTitleControllers.add(TextEditingController(text: state.ticketTypes[i].title));
+      ticketPriceControllers
+          .add(TextEditingController(text: state.ticketTypes[i].price.toString()));
+    }
+    paypalLinkController.clear();
+    venmoIdController.clear();
+    if (state.paypalLink != "zipbuzz-null") {
+      paypalLinkController.text = state.paypalLink;
+    }
+    if (state.venmoLink != "zipbuzz-null") {
+      venmoIdController.text = state.venmoLink;
+    }
   }
 
   void updateInterests(InterestModel interest) async {
