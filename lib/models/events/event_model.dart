@@ -240,6 +240,7 @@ class EventModel {
       hyperlinks: res.hyperlinks,
       notificationId: res.notificationId,
       members: res.members,
+      groupId: res.groupId,
       groupName: res.groupName,
       ticketTypes: res.ticketTypes,
       paypalLink: res.paypalLink,

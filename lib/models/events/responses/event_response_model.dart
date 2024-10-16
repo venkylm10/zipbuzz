@@ -26,6 +26,7 @@ class EventResponseModel {
   final bool guestList;
   final int notificationId;
   final int members;
+  final int groupId;
   final String groupName;
   final List<TicketType> ticketTypes;
   final String paypalLink;
@@ -57,6 +58,7 @@ class EventResponseModel {
     required this.guestList,
     required this.notificationId,
     required this.members,
+    required this.groupId,
     required this.groupName,
     required this.ticketTypes,
     required this.paypalLink,
@@ -124,6 +126,7 @@ class EventResponseModel {
       guestList: map['guest_list'] as bool,
       notificationId: map['notification_id'] as int,
       members: map['members'] as int,
+      groupId: map['group_id'] ?? -1,
       groupName: map['group_name'] as String? ?? 'zipbuzz-null',
       ticketTypes: ((map['ticket_types'] ?? []) as List).map((e) => TicketType.fromMap(e)).toList(),
       paypalLink: map['paypal_link'] ?? 'zipbuzz-null',

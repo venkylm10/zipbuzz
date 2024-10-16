@@ -7,6 +7,7 @@ import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/models/groups/res/group_description_res.dart';
 import 'package:zipbuzz/pages/events/widgets/send_invitation_bell.dart';
 import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/services/contact_services.dart';
@@ -72,9 +73,9 @@ class EventCardActionItems extends ConsumerWidget {
 
   void cloneEvent(WidgetRef ref) async {
     await fixCloneEventContacts(ref);
-    ref
-        .read(homeTabControllerProvider.notifier)
-        .updateSelectedTab(!groupEvent ? AppTabs.events : AppTabs.groups);
+    if (!groupEvent) {
+      ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
+    }
     ref.read(newEventProvider.notifier).cloneEvent = true;
     ref.read(newEventProvider.notifier).updateCategory(event.category);
     final eventMembers = event.eventMembers.where((element) {
@@ -107,13 +108,20 @@ class EventCardActionItems extends ConsumerWidget {
           inviteUrl: event.inviteUrl,
         );
 
-    ref.read(eventTabControllerProvider.notifier).updateIndex(2);
     ref.read(newEventProvider.notifier).updateEvent(clone);
     ref.read(newEventProvider.notifier).cloneHyperLinks();
     ref.read(newEventProvider.notifier).cloneTicketTypes();
     ref.read(newEventProvider.notifier).updateCategory(event.category);
     if (groupEvent) {
+      final groupDesc = GroupDescriptionModel(
+          id: event.groupId,
+          groupName: event.groupName,
+          groupDescription: "Group",
+          groupProfileImage: "zipbuzz-null");
+      ref.read(groupControllerProvider.notifier).updateCurrentGroupDescription(groupDesc);
       navigatorKey.currentState!.pushNamed(CreateGroupEventScreen.id);
+    } else {
+      ref.read(eventTabControllerProvider.notifier).updateIndex(2);
     }
   }
 
