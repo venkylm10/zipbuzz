@@ -206,31 +206,30 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
             ),
           ),
           const SizedBox(width: 8),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.25,
-                child: Text(
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   member.name,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                  maxLines: 2,
                   style: AppStyles.h5,
                 ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.25,
-                child: Text(
-                  member.phone != "zipbuzz-null" ? member.phone : "",
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: AppStyles.h6
-                      .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
-                ),
-              ),
-            ],
+                // SizedBox(
+                //   width: MediaQuery.of(context).size.width * 0.25,
+                //   child: Text(
+                //     member.phone != "zipbuzz-null" ? member.phone : "",
+                //     overflow: TextOverflow.ellipsis,
+                //     maxLines: 1,
+                //     style: AppStyles.h6
+                //         .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
+                //   ),
+                // ),
+              ],
+            ),
           ),
         ],
       ),

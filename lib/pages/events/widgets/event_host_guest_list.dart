@@ -272,12 +272,12 @@ class EventHostGuestList extends StatelessWidget {
                       member.name,
                       style: AppStyles.h5,
                     ),
-                    if (member.phone != 'zipbuzz-null')
-                      Text(
-                        member.phone,
-                        style: AppStyles.h6
-                            .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
-                      ),
+                    // if (member.phone != 'zipbuzz-null')
+                    //   Text(
+                    //     member.phone,
+                    //     style: AppStyles.h6
+                    //         .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
+                    //   ),
                   ],
                 ),
               ),

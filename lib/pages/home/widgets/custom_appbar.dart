@@ -34,139 +34,136 @@ class CustomAppBar extends ConsumerStatefulWidget implements PreferredSizeWidget
 class _CustomAppBarState extends ConsumerState<CustomAppBar> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(
-        bottom: Radius.circular(30),
-      ),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        height: widget.preferredSize.height,
-        decoration: const BoxDecoration(
-          color: AppColors.primaryColor,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: widget.preferredSize.height,
+      decoration: const ShapeDecoration(
+        color: AppColors.primaryColor,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(30),
           ),
         ),
-        child: Stack(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 5),
-              child: AppBar(
-                backgroundColor: AppColors.primaryColor,
-                elevation: 0,
-                forceMaterialTransparency: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(30),
-                  ),
+      ),
+      child: Stack(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 5),
+            child: AppBar(
+              backgroundColor: AppColors.primaryColor,
+              elevation: 0,
+              forceMaterialTransparency: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
                 ),
-                leading: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: SvgPicture.asset(
-                    Assets.icons.geo,
-                  ),
-                ),
-                titleSpacing: -5,
-                title: Consumer(builder: (context, ref, child) {
-                  final userLocation = ref.watch(userLocationProvider);
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Builder(builder: (context) {
-                        var neighborhood = '';
-                        if (userLocation.neighborhood.isNotEmpty &&
-                            userLocation.neighborhood != 'None') {
-                          neighborhood = "${userLocation.neighborhood}, ";
-                        }
-                        var city = '';
-                        if (userLocation.city.isNotEmpty && userLocation.city != 'None') {
-                          city = "${userLocation.city}, ";
-                        }
-                        var country = '';
-                        if (userLocation.country.isNotEmpty && userLocation.country != 'None') {
-                          country = userLocation.country;
-                        }
-                        return Text(
-                          "$neighborhood$city$country",
-                          style: AppStyles.h5.copyWith(color: Colors.white),
-                        );
-                      }),
-                      Text(
-                        userLocation.zipcode,
-                        style: AppStyles.h5.copyWith(
-                          color: Colors.white.withOpacity(0.5),
-                        ),
-                      )
-                    ],
-                  );
-                }),
-                actions: [
-                  _searchIcon(),
-                  const SizedBox(width: 12),
-                  _notificationBellIcon(),
-                  const SizedBox(width: 12),
-                ],
               ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: !widget.isSearching
-                    ? const SizedBox()
-                    : SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _appBarSearchField(),
-                            _zipcodeSearchField(),
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "Interests: ",
-                                      style: AppStyles.h5.copyWith(color: Colors.white),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        enableDrag: true,
-                                        isDismissible: true,
-                                        builder: (context) {
-                                          return const ActivitiesSheet(querySheet: true);
-                                        },
-                                      );
-                                    },
-                                    child: Container(
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: AppColors.primaryColor,
-                                      ),
-                                      child: const Icon(Icons.add_rounded, color: Colors.white),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            _buildQueryInterests(),
-                            _buildClearText(),
-                          ],
-                        ),
+              leading: Padding(
+                padding: const EdgeInsets.all(10),
+                child: SvgPicture.asset(
+                  Assets.icons.geo,
+                ),
+              ),
+              titleSpacing: -5,
+              title: Consumer(builder: (context, ref, child) {
+                final userLocation = ref.watch(userLocationProvider);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Builder(builder: (context) {
+                      var neighborhood = '';
+                      if (userLocation.neighborhood.isNotEmpty &&
+                          userLocation.neighborhood != 'None') {
+                        neighborhood = "${userLocation.neighborhood}, ";
+                      }
+                      var city = '';
+                      if (userLocation.city.isNotEmpty && userLocation.city != 'None') {
+                        city = "${userLocation.city}, ";
+                      }
+                      var country = '';
+                      if (userLocation.country.isNotEmpty && userLocation.country != 'None') {
+                        country = userLocation.country;
+                      }
+                      return Text(
+                        "$neighborhood$city$country",
+                        style: AppStyles.h5.copyWith(color: Colors.white),
+                      );
+                    }),
+                    Text(
+                      userLocation.zipcode,
+                      style: AppStyles.h5.copyWith(
+                        color: Colors.white.withOpacity(0.5),
                       ),
-              ),
+                    )
+                  ],
+                );
+              }),
+              actions: [
+                _searchIcon(),
+                const SizedBox(width: 12),
+                _notificationBellIcon(),
+                const SizedBox(width: 12),
+              ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: !widget.isSearching
+                  ? const SizedBox()
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _appBarSearchField(),
+                          _zipcodeSearchField(),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Interests: ",
+                                    style: AppStyles.h5.copyWith(color: Colors.white),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      enableDrag: true,
+                                      isDismissible: true,
+                                      builder: (context) {
+                                        return const ActivitiesSheet(querySheet: true);
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                    child: const Icon(Icons.add_rounded, color: Colors.white),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          _buildQueryInterests(),
+                          _buildClearText(),
+                        ],
+                      ),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
