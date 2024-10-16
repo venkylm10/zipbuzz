@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/events/edit_event_controller.dart';
 import 'package:zipbuzz/pages/events/edit_event_form.dart';
+import 'package:zipbuzz/pages/events/widgets/create_event_ticket_type_fields.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
@@ -50,56 +51,59 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
   Widget build(BuildContext context) {
     final internectConnection = ref.watch(checkInternetProvider);
     return CustomBezel(
-      child: internectConnection != const AsyncData(false) ? GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Scaffold(
-              appBar: AppBar(
-                leading: backButton(),
-                title: Text(
-                  "Editing Event",
-                  style: AppStyles.h2.copyWith(
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w600,
+      child: internectConnection != const AsyncData(false)
+          ? GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Scaffold(
+                appBar: AppBar(
+                  leading: backButton(),
+                  title: Text(
+                    "Editing Event",
+                    style: AppStyles.h2.copyWith(
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  centerTitle: true,
+                  forceMaterialTransparency: true,
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const EditEventBannerSelector(),
+                        const SizedBox(height: 16),
+                        const EditEventForm(),
+                        broadDivider(),
+                        const AddHosts(),
+                        broadDivider(),
+                        const EventTypeAndCapacity(rePublish: true),
+                        broadDivider(),
+                        const EditEventPhotos(),
+                        broadDivider(),
+                        const CreateEventTicketTypeFields(rePublish: true),
+                        broadDivider(),
+                        EventHostGuestList(
+                          event: ref.watch(editEventControllerProvider),
+                          guests: ref.watch(editEventControllerProvider).eventMembers,
+                        ),
+                        broadDivider(),
+                        const SizedBox(height: 16),
+                        buildSaveButton(),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
                   ),
                 ),
-                centerTitle: true,
-                forceMaterialTransparency: true,
               ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const EditEventBannerSelector(),
-                      const SizedBox(height: 16),
-                      const EditEventForm(),
-                      broadDivider(),
-                      const AddHosts(),
-                      broadDivider(),
-                      const EventTypeAndCapacity(rePublish: true),
-                      broadDivider(),
-                      const EditEventPhotos(),
-                      broadDivider(),
-                      const SizedBox(height: 16),
-                      EventHostGuestList(
-                        event: ref.watch(editEventControllerProvider),
-                        guests: ref.watch(editEventControllerProvider).eventMembers,
-                      ),
-                      broadDivider(),
-                      const SizedBox(height: 16),
-                      buildSaveButton(),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ): const NoInternetScreen(showLoader: false),
+            )
+          : const NoInternetScreen(showLoader: false),
     );
   }
 
@@ -152,11 +156,18 @@ class _CreateEventState extends ConsumerState<EditEventPage> {
 
   void showPreview() async {
     final dominantColor = await getDominantColor();
-    final event = ref.read(editEventControllerProvider);
+    final paypalLink =
+        ref.read(editEventControllerProvider.notifier).paypalLinkController.text.trim();
+    final venmoLink = ref.read(editEventControllerProvider.notifier).venmoIdController.text.trim();
+    final event = ref.read(editEventControllerProvider).copyWith(
+          paypalLink: paypalLink.isEmpty ? 'zipbuzz-null' : paypalLink,
+          venmoLink: venmoLink.isEmpty ? 'zipbuzz-null' : venmoLink,
+        );
+    ref.read(editEventControllerProvider.notifier).updateEvent(event);
     await navigatorKey.currentState!.pushNamed(
       EventDetailsPage.id,
       arguments: {
-        'event': ref.read(editEventControllerProvider),
+        'event': event,
         'rePublish': true,
         'dominantColor': dominantColor,
         'randInt': randInt,

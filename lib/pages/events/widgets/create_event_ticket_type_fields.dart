@@ -35,9 +35,11 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: CustomTextField(
-                      controller: rePublish
-                          ? ref.read(editEventControllerProvider.notifier).paypalLinkController
-                          : ref.read(newEventProvider.notifier).paypalLinkController),
+                    hintText: "PayPal.Me/UserName",
+                    controller: rePublish
+                        ? ref.read(editEventControllerProvider.notifier).paypalLinkController
+                        : ref.read(newEventProvider.notifier).paypalLinkController,
+                  ),
                 )
               ],
             ),
@@ -51,9 +53,11 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: CustomTextField(
-                      controller: rePublish
-                          ? ref.read(editEventControllerProvider.notifier).venmoIdController
-                          : ref.read(newEventProvider.notifier).venmoIdController),
+                    hintText: "username, phone or email",
+                    controller: rePublish
+                        ? ref.read(editEventControllerProvider.notifier).venmoIdController
+                        : ref.read(newEventProvider.notifier).venmoIdController,
+                  ),
                 )
               ],
             ),

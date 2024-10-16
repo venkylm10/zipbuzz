@@ -48,17 +48,15 @@ import 'widgets/event_details_common_guest_list.dart';
 class EventDetailsPage extends ConsumerStatefulWidget {
   static const id = '/event/details';
   final EventModel event;
-  final int randInt;
   final bool isPreview;
   final bool rePublish;
   final bool clone;
   final bool showBottomBar;
-  Color dominantColor;
+  final Color dominantColor;
   final bool groupEvent;
-  EventDetailsPage({
+  const EventDetailsPage({
     super.key,
     required this.event,
-    this.randInt = 0,
     this.isPreview = false,
     this.rePublish = false,
     required this.dominantColor,
@@ -74,6 +72,7 @@ class EventDetailsPage extends ConsumerStatefulWidget {
 class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   final bodyScrollController = ScrollController();
   Color eventColor = Colors.white;
+  late Color dominantColor;
   double horizontalMargin = 16;
   int maxImages = 0;
   List<UserModel> coHosts = [];
@@ -138,6 +137,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
 
   @override
   void initState() {
+    dominantColor = widget.dominantColor;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialise();
@@ -154,7 +154,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-          backgroundColor: widget.dominantColor,
+          backgroundColor: dominantColor,
           resizeToAvoidBottomInset: false,
           appBar: EventDetailsAppBar(
             isPreview: widget.isPreview,
@@ -177,7 +177,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                         EventDetailsBanner(
                           event: widget.event,
                           isPreview: widget.isPreview,
-                          dominantColor: widget.dominantColor,
+                          dominantColor: dominantColor,
                         ),
                         Transform.translate(
                           offset: const Offset(0, -40),
@@ -249,7 +249,11 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     color: AppColors.greyColor.withOpacity(0.2),
                                     thickness: 0,
                                   ),
-                                  EventDetailsTicketInfo(event: widget.event),
+                                  EventDetailsTicketInfo(
+                                    event: widget.event,
+                                    isPreview: widget.isPreview,
+                                    rePublish: widget.rePublish,
+                                  ),
                                   EventDetailsCommonGuestList(
                                     event: widget.event,
                                     isPreview: widget.isPreview,
@@ -348,7 +352,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     ref.read(newEventProvider.notifier).updateBannerImage(image!);
     ref.read(editEventControllerProvider.notifier).updateBannerImage(image!);
     ref.read(loadingTextProvider.notifier).updateLoadingText("Updating banner image...");
-    widget.dominantColor = await _getDominantColor();
+    dominantColor = await _getDominantColor();
     ref.read(loadingTextProvider.notifier).reset();
     setState(() {});
   }

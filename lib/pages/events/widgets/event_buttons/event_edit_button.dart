@@ -72,6 +72,7 @@ class EventEditButton extends ConsumerWidget {
     ref.read(editEventControllerProvider.notifier).updateEvent(event);
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
+    ref.read(editEventControllerProvider.notifier).cloneTicketTypes();
     await fixEditContacts(ref);
     await navigatorKey.currentState!.pushNamed(EditEventPage.id);
     ref.read(editEventControllerProvider.notifier).updateBannerImage(null);

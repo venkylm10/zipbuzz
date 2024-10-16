@@ -16,6 +16,8 @@ class EditEventRequestModel {
   final int filledCapacity;
   final bool isPrivate;
   final bool guestList;
+  final String paypalLink;
+  final String venmoLink;
 
   EditEventRequestModel({
     required this.eventId,
@@ -35,6 +37,8 @@ class EditEventRequestModel {
     required this.filledCapacity,
     required this.isPrivate,
     required this.guestList,
+    required this.paypalLink,
+    required this.venmoLink,
   });
 
   Map<String, dynamic> toMap() {
@@ -56,28 +60,8 @@ class EditEventRequestModel {
       'filled_capacity': filledCapacity,
       'is_private': isPrivate,
       'guest_list': guestList,
+      'paypal_link': paypalLink,
+      'venmo_link': venmoLink,
     };
-  }
-
-  factory EditEventRequestModel.fromMap(Map<String, dynamic> map) {
-    return EditEventRequestModel(
-      eventId: map['event_id'] as int,
-      banner: map['banner'] as String,
-      category: map['category'] as String,
-      name: map['name'] as String,
-      description: map['description'] as String,
-      date: map['date'] as String,
-      venue: map['venue'] as String,
-      startTime: map['start_time'] as String,
-      endTime: map['end_time'] as String,
-      hostPic: map['host_pic'] as String,
-      hostId: map['host_id'] as int,
-      eventType: map['event_type'] as bool,
-      hostName: map['host_name'] as String,
-      capacity: map['capacity'] as int,
-      filledCapacity: map['filled_capacity'] as int,
-      isPrivate: map['is_private'] as bool,
-      guestList: map['guest_list'] as bool,
-    );
   }
 }

@@ -140,6 +140,16 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
     if (ref.read(newEventProvider.notifier).validateNewEvent()) {
       final dominantColor = await _getDominantColor();
       ref.read(newEventProvider.notifier).updateHyperlinks();
+      final paypalLink = ref.read(newEventProvider.notifier).paypalLinkController.text.trim();
+      final venmoLink = ref.read(newEventProvider.notifier).venmoIdController.text.trim();
+      var event = ref.read(newEventProvider);
+      event = event.copyWith(
+        paypalLink: paypalLink.isNotEmpty ? paypalLink : 'zipbuzz-null',
+      );
+      event = event.copyWith(
+        venmoLink: venmoLink.isNotEmpty ? venmoLink : 'zipbuzz-null',
+      );
+      ref.read(newEventProvider.notifier).updateEvent(event);
       final clone = ref.read(newEventProvider.notifier).cloneEvent;
       if (widget.groupEvent) {
         try {
@@ -179,7 +189,6 @@ class _CreateEventState extends ConsumerState<CreateEventTab> {
             event: ref.read(newEventProvider),
             isPreview: true,
             dominantColor: dominantColor,
-            randInt: randInt,
             clone: clone,
             groupEvent: widget.groupEvent,
             rePublish: false,

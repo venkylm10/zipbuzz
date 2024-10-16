@@ -7,6 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
 import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/notifications/post_notification_model.dart';
@@ -116,7 +117,7 @@ class DioServices {
   Future<void> postEventTickets(int eventId, List<String> titles, List<int> prices) async {
     for (int i = 0; i < titles.length; i++) {
       try {
-        await dio.post(DioConstants.postEventTickets, data: {
+        await dio.post(DioConstants.eventTickets, data: {
           "event_id": eventId,
           "ticket_name": titles[i],
           "ticket_price": prices[i],
@@ -126,6 +127,36 @@ class DioServices {
       }
     }
     debugPrint("Posted event tickets");
+  }
+
+  Future<void> editEventTickets(List<TicketType> tickets) async {
+    for (var e in tickets) {
+      try {
+        if (e.id == 0) continue;
+        await dio.put(DioConstants.eventTickets, data: {
+          'ticket_id': e.id,
+          'ticket_price': e.price,
+        });
+      } catch (e) {
+        debugPrint("Error editing event tickets: $e");
+      }
+    }
+    debugPrint("Edited event tickets");
+  }
+
+  Future<void> deleteEventTickets(List<TicketType> tickets) async {
+    for (var e in tickets) {
+      try {
+        if (e.id == 0) continue;
+        await dio.delete(DioConstants.eventTickets, data: {
+          'ticket_id': e.id,
+          'ticket_price': e.price,
+        });
+      } catch (e) {
+        debugPrint("Error deleting event tickets: $e");
+      }
+    }
+    debugPrint("Deleted event tickets");
   }
 
   // make request

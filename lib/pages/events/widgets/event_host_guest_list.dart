@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
@@ -12,17 +13,7 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 final guestListTagProvider = StateProvider<String>((ref) => "Invited");
 final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);
 
-class EventHostGuestList extends StatelessWidget {
-  String formatName(String fullName) {
-    List<String> nameParts = fullName.split(' ');
-    if (nameParts.length < 2) {
-      return fullName;
-    }
-    String firstName = nameParts[0];
-    String lastInitial = nameParts[1][0];
-    return '$firstName $lastInitial.';
-  }
-
+class EventHostGuestList extends ConsumerStatefulWidget {
   const EventHostGuestList({
     super.key,
     required this.event,
@@ -33,6 +24,21 @@ class EventHostGuestList extends StatelessWidget {
   final EventModel event;
   final List<EventInviteMember> guests;
   final bool interative;
+
+  @override
+  ConsumerState<EventHostGuestList> createState() => _EventHostGuestListState();
+}
+
+class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
+  String formatName(String fullName) {
+    List<String> nameParts = fullName.split(' ');
+    if (nameParts.length < 2) {
+      return fullName;
+    }
+    String firstName = nameParts[0];
+    String lastInitial = nameParts[1][0];
+    return '$firstName $lastInitial.';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,12 +128,12 @@ class EventHostGuestList extends StatelessWidget {
 
   ListView buildInviteMembers() {
     return ListView.builder(
-      itemCount: guests.length,
+      itemCount: widget.guests.length,
       shrinkWrap: true,
       padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        final member = guests[index];
+        final member = widget.guests[index];
         return buildMembercard(member, context, index);
       },
     );
@@ -187,7 +193,7 @@ class EventHostGuestList extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (member.totalAmount > 0)
+              if (member.totalAmount > 0 && widget.event.hostId == ref.read(userProvider).id)
                 Container(
                   padding: const EdgeInsets.all(8),
                   margin: const EdgeInsets.only(right: 8),
@@ -203,12 +209,12 @@ class EventHostGuestList extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (interative || member.status == "confirm")
+              if (widget.interative || member.status == "confirm")
                 Consumer(
                   builder: (context, ref, child) {
                     return InkWell(
                       onTap: () async {
-                        if (!interative || !isPending) return;
+                        if (!widget.interative || !isPending) return;
                         if (member.status == "declined") return;
                         if (member.status == "host") return;
                         var newMember = member;
@@ -223,10 +229,10 @@ class EventHostGuestList extends StatelessWidget {
                         ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                         await ref
                             .read(dioServicesProvider)
-                            .editUserStatus(event.id, member.userId, "confirm");
+                            .editUserStatus(widget.event.id, member.userId, "confirm");
                         await ref.read(dioServicesProvider).updateRespondedNotification(
-                            member.userId, event.hostId,
-                            eventId: event.id);
+                            member.userId, widget.event.hostId,
+                            eventId: widget.event.id);
                       },
                       child: buildGuestTag(member.status),
                     );
@@ -285,7 +291,7 @@ class EventHostGuestList extends StatelessWidget {
             ],
           ),
         ),
-        if (index != guests.length - 1)
+        if (index != widget.guests.length - 1)
           Divider(
             color: AppColors.greyColor.withOpacity(0.2),
             thickness: 0,
@@ -302,7 +308,7 @@ class EventHostGuestList extends StatelessWidget {
           return const SizedBox();
         }
         var text = "";
-        if (interative) {
+        if (widget.interative) {
           if (status == "pending") {
             text = "Confirm";
           } else if (status == 'host') {
@@ -351,7 +357,7 @@ class EventHostGuestList extends StatelessWidget {
           tags.length,
           (index) => Consumer(builder: (context, ref, child) {
             final selectedTag = ref.watch(guestListTagProvider);
-            final allLength = guests.length;
+            final allLength = widget.guests.length;
             var respondedLength = 0;
             var confirmedLength = 0;
             final data = ref.watch(eventRequestMembersProvider);

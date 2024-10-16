@@ -52,7 +52,7 @@ class DioConstants {
   static const String sendMobileOTP = '/users/verify_mobile/';
   static const String traceLog = "/helpers/create_log/";
   static const String postGroupNotification = 'users/user_group_notification/';
-  static const String postEventTickets = '/events/event_tickets/';
+  static const String eventTickets = '/events/event_tickets/';
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

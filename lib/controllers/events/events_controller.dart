@@ -92,22 +92,10 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     state = state.copyWith(upcomingEvents: events);
   }
 
-  void updatePastEvents() {
-    var events = <EventModel>[];
-    state.eventsMap.forEach((key, value) {
-      if (key.isBefore(state.today)) {
-        events.addAll(value);
-      }
-    });
-    events.sort((a, b) => b.date.compareTo(a.date));
-    state = state.copyWith(pastEvents: events);
-  }
-
   void adjustEventData() {
     updateEventsMap();
     updateFocusedEvents();
     updateUpcomingEvents();
-    updatePastEvents();
   }
 
   Future<void> fetchUserEvents() async {
@@ -260,11 +248,6 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     final article = "aeiou".contains(event.category[0].toLowerCase()) ? "an" : "a";
 
     final formattedDate = _formatDateTime(DateTime.parse(event.date));
-    // const playStore =
-    //     'Play Store : https://play.google.com/store/apps/details?id=com.abacus.zipbuzz';
-
-    // const appStore = 'App Store : https://apps.apple.com/in/app/buzz-me/id6477519288';
-
     final shareText =
         "${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${event.about}\nDate: $formattedDate at ${event.startTime}\nLocation: ${event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at https://zipbuzz.me/";
     Share.share(shareText);
@@ -313,6 +296,18 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
           );
     }
   }
+
+  String getVenmoLink(EventModel event, int amount) {
+    final title = event.title.split(' ').join('%20');
+    return "https://venmo.com/?txn=charge&audience=private&recipients=${event.venmoLink}&amount=$amount&note=$title";
+  }
+
+  String getPayPalLink(EventModel event, int amount) {
+    final splits = event.paypalLink.split('/');
+    if (splits.length == 1) return "";
+    final paypalId = splits[1];
+    return "https://www.paypal.com/paypalme/$paypalId/$amount";
+  }
 }
 
 class EventsController {
@@ -322,7 +317,6 @@ class EventsController {
   List<EventModel> currentMonthEvents = [];
   List<EventModel> userEvents = [];
   List<EventModel> upcomingEvents = [];
-  List<EventModel> pastEvents = [];
   List<EventModel> userUpcomingEvents = [];
   List<EventModel> userPastEvents = [];
   List<EventModel> focusedEvents = [];
@@ -343,7 +337,6 @@ class EventsController {
     List<EventModel>? currentMonthEvents,
     List<EventModel>? userEvents,
     List<EventModel>? upcomingEvents,
-    List<EventModel>? pastEvents,
     List<EventModel>? userUpcomingEvents,
     List<EventModel>? userPastEvents,
     List<EventModel>? focusedEvents,
@@ -372,7 +365,6 @@ class EventsController {
     res.focusedDay = focusedDay ?? this.focusedDay;
     res.loading = loading ?? this.loading;
     res.upcomingEvents = upcomingEvents ?? this.upcomingEvents;
-    res.pastEvents = pastEvents ?? this.pastEvents;
     return res;
   }
 }

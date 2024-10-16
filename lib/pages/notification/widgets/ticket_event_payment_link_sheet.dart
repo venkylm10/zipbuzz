@@ -54,7 +54,7 @@ class TicketEventPaymentLinkSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            EventPaymentLinks(event: event),
+            EventPaymentLinks(event: event, amount: totalAmount),
             const SizedBox(height: 24),
           ],
         ),

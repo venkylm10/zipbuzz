@@ -116,7 +116,6 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
       final isPreview = args['isPreview'] ?? false;
       final rePublish = args['rePublish'] ?? false;
       final dominantColor = args['dominantColor'] as Color;
-      final randInt = args['randInt'] as int?;
       final clone = args['clone'] ?? false;
       final showBottomBar = args['showBottomBar'] ?? false;
       return PageTransition(
@@ -124,7 +123,6 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
           event: event,
           isPreview: isPreview,
           dominantColor: dominantColor,
-          randInt: randInt ?? 0,
           rePublish: rePublish,
           clone: clone,
           showBottomBar: showBottomBar,

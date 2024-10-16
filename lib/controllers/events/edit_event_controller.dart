@@ -5,6 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
+import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/posts/event_invite_post_model.dart';
 import 'package:zipbuzz/models/events/requests/edit_event_model.dart';
@@ -23,7 +24,6 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/database_constants.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
-import 'package:zipbuzz/utils/tabs.dart';
 import 'package:zipbuzz/utils/widgets/loader.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 
@@ -78,6 +78,8 @@ class EditEventController extends StateNotifier<EventModel> {
   List<String> deletedImages = [];
   List<TextEditingController> urlControllers = [TextEditingController()];
   List<TextEditingController> urlNameControllers = [TextEditingController()];
+  List<TicketType> deletedTickets = [];
+  List<TicketType> newTickets = [];
 
   void updateOldInvites(List<String> numbers) {
     oldInviteNumbers = numbers.map((e) => Contacts.flattenNumber(e, ref, null)).toList();
@@ -401,10 +403,19 @@ class EditEventController extends StateNotifier<EventModel> {
         filledCapacity: state.attendees,
         isPrivate: state.isPrivate,
         guestList: !state.privateGuestList,
+        paypalLink: state.groupId != -1 ? state.paypalLink : 'zipbuzz-null',
+        venmoLink: state.groupId != -1 ? state.venmoLink : 'zipbuzz-null',
       );
 
       ref.read(loadingTextProvider.notifier).updateLoadingText("Editing Event...");
       await ref.read(dbServicesProvider).editEvent(eventPostModel);
+      await ref.read(dioServicesProvider).editEventTickets(state.ticketTypes);
+      await ref.read(dioServicesProvider).deleteEventTickets(deletedTickets);
+      await ref.read(dioServicesProvider).postEventTickets(
+            eventId,
+            newTickets.map((e) => e.title).toList(),
+            newTickets.map((e) => e.price).toList(),
+          );
       if (selectedImages.isNotEmpty) {
         // upload event images
         ref.read(loadingTextProvider.notifier).updateLoadingText("Uploading event images...");
@@ -515,33 +526,30 @@ class EditEventController extends StateNotifier<EventModel> {
     try {
       var eventDateTime = DateTime.parse(state.date);
       ref.read(eventsControllerProvider.notifier).updatedFocusedDay(eventDateTime);
-      ref.read(homeTabControllerProvider.notifier).updateSelectedTab(AppTabs.events);
-      // await ref.read(eventsControllerProvider.notifier).fetchEvents();
-      // ref.read(eventsControllerProvider.notifier).updateUpcomingEvents();
-      // ref.read(eventsControllerProvider.notifier).updateFocusedEvents();
-      ref.read(loadingTextProvider.notifier).reset();
-      showSnackBar(message: "Event edited successfully");
-      navigatorKey.currentState!.pop();
-      // navigatorKey.currentState!.pop();
       final image = NetworkImage(state.bannerPath);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
         image,
       );
       final dominantColor = generator.dominantColor?.color;
       final updatedEvent = await ref.read(dbServicesProvider).getEventDetails(eventId);
-      Map<String, dynamic> args = {
-        'event': updatedEvent,
-        'isPreview': false,
-        'dominantColor': dominantColor ?? const Color(0xFF4a5759),
-        'randInt': 0,
-      };
       await ref.read(eventsControllerProvider.notifier).fetchEvents();
       await ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+      ref.read(loadingTextProvider.notifier).reset();
+      showSnackBar(message: "Event edited successfully");
+      navigatorKey.currentState!.pop();
+      navigatorKey.currentState!.pop();
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
-      await navigatorKey.currentState!.pushReplacementNamed(
-        EventDetailsPage.id,
-        arguments: args,
-      );
+      navigatorKey.currentState!.pushReplacement(NavigationController.getTransition(
+        EventDetailsPage(
+          event: updatedEvent,
+          dominantColor: dominantColor ?? const Color(0xFF4a5759),
+          clone: false,
+          groupEvent: updatedEvent.groupId != -1,
+          isPreview: false,
+          rePublish: false,
+          showBottomBar: true,
+        ),
+      ));
     } catch (e) {
       debugPrint("Failed to move to edited event $e");
       ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
@@ -567,7 +575,9 @@ class EditEventController extends StateNotifier<EventModel> {
         (e) => TextEditingController(text: e.price.toString()),
       ));
       state = state.copyWith(ticketTypes: defaultTickets);
+      newTickets.addAll(defaultTickets);
     } else {
+      deletedTickets.addAll(state.ticketTypes);
       ticketTitleControllers.clear();
       ticketPriceControllers.clear();
       state = state.copyWith(ticketTypes: []);
@@ -597,6 +607,7 @@ class EditEventController extends StateNotifier<EventModel> {
 
   void removeTicketType(int index) {
     final tickets = state.ticketTypes;
+    deletedTickets.add(state.ticketTypes[index]);
     tickets.removeAt(index);
     state = state.copyWith(ticketTypes: tickets);
     ticketPriceControllers.removeAt(index);
@@ -605,8 +616,29 @@ class EditEventController extends StateNotifier<EventModel> {
 
   void addTicketType() {
     final ticket = TicketType(title: "", price: 0, quantity: 0);
+    newTickets.add(ticket);
     state = state.copyWith(ticketTypes: state.ticketTypes..add(ticket));
     ticketTitleControllers.add(TextEditingController(text: "Title"));
     ticketPriceControllers.add(TextEditingController(text: "0"));
+  }
+
+  void cloneTicketTypes() {
+    deletedTickets.clear();
+    newTickets.clear();
+    ticketTitleControllers.clear();
+    ticketPriceControllers.clear();
+    for (var i = 0; i < state.ticketTypes.length; i++) {
+      ticketTitleControllers.add(TextEditingController(text: state.ticketTypes[i].title));
+      ticketPriceControllers
+          .add(TextEditingController(text: state.ticketTypes[i].price.toString()));
+    }
+    paypalLinkController.clear();
+    venmoIdController.clear();
+    if (state.paypalLink != "zipbuzz-null") {
+      paypalLinkController.text = state.paypalLink;
+    }
+    if (state.venmoLink != "zipbuzz-null") {
+      venmoIdController.text = state.venmoLink;
+    }
   }
 }
