@@ -12,10 +12,12 @@ class EventInviteMember {
   });
 
   factory EventInviteMember.fromMap(Map<String, dynamic> map) {
+    final nameSplits = map['name'].toString().split(' ');
+    final name = nameSplits.length > 1 ? "${nameSplits[0]} ${nameSplits[1][0]}." : nameSplits[0];
     return EventInviteMember(
       image: map['image'] as String,
       phone: map['phone'] as String,
-      name: map['name'] as String,
+      name: name,
       status: map['status'] as String,
     );
   }

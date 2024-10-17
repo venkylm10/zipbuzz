@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
-import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 import 'package:zipbuzz/pages/events/widgets/event_payment_links.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
