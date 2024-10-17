@@ -127,7 +127,7 @@ class GroupMemberCard extends ConsumerWidget {
       onTap: () {
         final user = ref.read(userProvider);
         final shareText =
-            "${user.name} invites to you to join Buzz.Me\n\nDownload Buzz.Me at https://zipbuzz.me/download";
+            "${user.name} invites to you to join Buzz.Me\n\nDownload Buzz.Me at https://buzzme.site/download";
         Share.share(shareText);
       },
       child: Container(

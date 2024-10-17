@@ -70,7 +70,7 @@ class SettingsTiles extends StatelessWidget {
                 "Privacy Policy",
                 Assets.icons.privacy_policy,
                 onTap: () {
-                  launchUrlString("https://admin.zipbuzz.me/privacy/");
+                  launchUrlString("https://web.buzzme.site/privacy/");
                 },
               ),
             ],

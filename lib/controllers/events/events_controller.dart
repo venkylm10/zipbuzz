@@ -249,7 +249,7 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
 
     final formattedDate = _formatDateTime(DateTime.parse(event.date));
     final shareText =
-        "${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${event.about}\nDate: $formattedDate at ${event.startTime}\nLocation: ${event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at https://zipbuzz.me/";
+        "${event.hostName} has invited you for $article ${event.category} event via Buzz.Me:\n${event.title}\nInvitation: ${event.about}\nDate: $formattedDate at ${event.startTime}\nLocation: ${event.location}\n\nMore details at : $eventUrl\n\nDownload Buzz.Me at https://www.buzzme.site/download";
     Share.share(shareText);
   }
 

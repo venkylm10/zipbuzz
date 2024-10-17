@@ -47,7 +47,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       navigatorKey: navigatorKey,
       scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
-      title: 'ZipBuzz',
+      title: 'BuzzMe',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
