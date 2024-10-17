@@ -66,7 +66,9 @@ class _AuthGateState extends ConsumerState<SplashScreen> {
       return;
     }
     ref.read(homeTabControllerProvider.notifier).cloneUserDataToQuery();
-    ref.read(eventsControllerProvider.notifier).fetchEvents();
+    ref.read(loadingTextProvider.notifier).updateLoadingText("Getting Events...");
+    await ref.read(eventsControllerProvider.notifier).fetchEvents();
+    ref.read(loadingTextProvider.notifier).reset();
     navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
   }
 

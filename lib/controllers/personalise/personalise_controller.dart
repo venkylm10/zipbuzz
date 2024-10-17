@@ -279,9 +279,10 @@ class PersonaliseController {
         ref.read(newEventProvider.notifier).updateHostId(id);
         ref.read(newEventProvider.notifier).updateHostName(user.name);
         ref.read(newEventProvider.notifier).updateHostPic(user.imageUrl);
-        ref.read(loadingTextProvider.notifier).reset();
         ref.read(homeTabControllerProvider.notifier).cloneUserDataToQuery();
+        ref.read(loadingTextProvider.notifier).updateLoadingText("Getting Events...");
         await ref.read(eventsControllerProvider.notifier).fetchEvents();
+        ref.read(loadingTextProvider.notifier).reset();
         navigatorKey.currentState!.pushNamedAndRemoveUntil(Home.id, (route) => false);
       } catch (e) {
         ref.read(loadingTextProvider.notifier).reset();
