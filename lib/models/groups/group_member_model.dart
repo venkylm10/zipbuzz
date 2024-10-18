@@ -1,4 +1,5 @@
 import 'package:zipbuzz/utils/constants/defaults.dart';
+import 'package:zipbuzz/utils/extensions.dart';
 
 class GroupMemberModel {
   final int userId;
@@ -32,7 +33,7 @@ class GroupMemberModel {
     }
     return GroupMemberModel(
       userId: json['user_id'],
-      name: json['username'],
+      name: json['username'].toString().formattedName,
       phone: json['phone'],
       permissionType: permissionType,
       profilePicture: json['profile_picture'] == 'zipbuzz-null'

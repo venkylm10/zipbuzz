@@ -1,3 +1,5 @@
+import 'package:zipbuzz/utils/extensions.dart';
+
 class EventRequestMember {
   String image;
   String phone;
@@ -20,12 +22,10 @@ class EventRequestMember {
   });
 
   factory EventRequestMember.fromMap(Map<String, dynamic> map) {
-    final nameSplits = map['name'].toString().split(' ');
-    final name = nameSplits.length > 1 ? "${nameSplits[0]} ${nameSplits[1][0]}." : nameSplits[0];
     return EventRequestMember(
       image: map['image'] as String,
       phone: map['phone'] as String,
-      name: name,
+      name: map['name'].toString().formattedName,
       status: map['status'] as String,
       id: map['id'] as int,
       attendees: map['attendees'] as int,
