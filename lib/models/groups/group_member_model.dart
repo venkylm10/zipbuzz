@@ -7,6 +7,7 @@ class GroupMemberModel {
   final String phone;
   final GroupPermissionType permissionType;
   final String profilePicture;
+  final DateTime relatedTime;
 
   GroupMemberModel({
     required this.userId,
@@ -14,6 +15,7 @@ class GroupMemberModel {
     required this.phone,
     required this.permissionType,
     required this.profilePicture,
+    required this.relatedTime,
   });
 
   factory GroupMemberModel.fromJson(Map<String, dynamic> json) {
@@ -39,6 +41,7 @@ class GroupMemberModel {
       profilePicture: json['profile_picture'] == 'zipbuzz-null'
           ? Defaults.contactAvatarUrl
           : json['profile_picture'],
+      relatedTime: DateTime.parse(json['related_time']).toLocal(),
     );
   }
 }

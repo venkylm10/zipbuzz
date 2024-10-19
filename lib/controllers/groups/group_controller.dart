@@ -265,8 +265,14 @@ class GroupController extends StateNotifier<GroupState> {
     }
   }
 
-  Future<void> getGroupMembers() async {
-    state = state.copyWith(fetchingMembers: true);
+  void updateFetchingMembers(bool fetching) {
+    state = state.copyWith(fetchingMembers: fetching);
+  }
+
+  Future<void> getGroupMembers({bool loader = true}) async {
+    if (loader) {
+      state = state.copyWith(fetchingMembers: true);
+    }
     try {
       final res =
           await ref.read(dioServicesProvider).getGroupMembers(state.currentGroupDescription!.id);

@@ -9,6 +9,7 @@ import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 final guestListTagProvider = StateProvider<String>((ref) => "Invited");
 final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);
@@ -278,12 +279,13 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
                       member.name,
                       style: AppStyles.h5,
                     ),
-                    // if (member.phone != 'zipbuzz-null')
-                    //   Text(
-                    //     member.phone,
-                    //     style: AppStyles.h6
-                    //         .copyWith(fontStyle: FontStyle.italic, color: AppColors.lightGreyColor),
-                    //   ),
+                    Text(
+                      timeago.format(member.memberTime!, locale: 'en_short'),
+                      style: AppStyles.h6.copyWith(
+                        fontStyle: FontStyle.italic,
+                        color: AppColors.lightGreyColor,
+                      ),
+                    )
                   ],
                 ),
               ),

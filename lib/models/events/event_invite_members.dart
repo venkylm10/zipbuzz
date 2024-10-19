@@ -5,12 +5,14 @@ class EventInviteMember {
   String phone;
   String name;
   String status;
+  DateTime? memberTime;
 
   EventInviteMember({
     required this.image,
     required this.phone,
     required this.name,
     required this.status,
+    this.memberTime,
   });
 
   factory EventInviteMember.fromMap(Map<String, dynamic> map) {
@@ -19,6 +21,7 @@ class EventInviteMember {
       phone: map['phone'] as String,
       name: map['name'].toString().formattedName,
       status: map['status'] as String,
+      memberTime: DateTime.parse(map['member_time']).toLocal(),
     );
   }
 
@@ -28,6 +31,7 @@ class EventInviteMember {
       'phone': phone,
       'name': name,
       'status': status,
+      'member_time': memberTime?.toUtc().toIso8601String(),
     };
   }
 }
