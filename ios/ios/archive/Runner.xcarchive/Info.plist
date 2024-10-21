@@ -13,7 +13,7 @@
 		<key>CFBundleIdentifier</key>
 		<string>com.zipbuzz.me.dev</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.0.66</string>
+		<string>1.0.75</string>
 		<key>CFBundleVersion</key>
 		<string>1</string>
 		<key>SigningIdentity</key>
@@ -24,7 +24,7 @@
 	<key>ArchiveVersion</key>
 	<integer>2</integer>
 	<key>CreationDate</key>
-	<date>2024-10-02T16:52:29Z</date>
+	<date>2024-10-19T10:59:17Z</date>
 	<key>Name</key>
 	<string>dev</string>
 	<key>SchemeName</key>

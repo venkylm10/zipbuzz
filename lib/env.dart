@@ -25,7 +25,7 @@ abstract class AppEnvironment {
     _env = env;
 
     /// Update this before every release
-    _appVersion = "1.0.68";
+    _appVersion = "1.0.75";
 
     switch (env) {
       case Environment.dev:

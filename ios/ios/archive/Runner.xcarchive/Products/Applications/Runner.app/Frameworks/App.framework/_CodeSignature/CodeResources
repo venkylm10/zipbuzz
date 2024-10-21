@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		1PVbu4WIyGnRmW0zFBkJzGJt1GA=
+		Ms/VBiCG+9TS/mqtnrCIw4GNaoA=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		JllrVSand1uYGdZNMx2uGALk0bA=
+		z0N9edrjtrBvy3Z4a4t6ladkhKs=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -244,6 +244,10 @@
 		<data>
 		AF764HDHHrDLCq8rX45Dm2aPtSI=
 		</data>
+		<key>flutter_assets/assets/icons/paypal.svg</key>
+		<data>
+		y99IztMTo29gTA17xxQRBCjMcZQ=
+		</data>
 		<key>flutter_assets/assets/icons/people.svg</key>
 		<data>
 		Cd4/23FKwHymXXFt8IhAntWxY3s=
@@ -339,6 +343,10 @@
 		<key>flutter_assets/assets/icons/twitter.png</key>
 		<data>
 		moctAENoXBY0rAcI83y9HC732Oc=
+		</data>
+		<key>flutter_assets/assets/icons/venmo.svg</key>
+		<data>
+		kjl6OJR4YgRx4eyy52EUnUVttsk=
 		</data>
 		<key>flutter_assets/assets/icons/wine_tasting.png</key>
 		<data>
@@ -1499,14 +1507,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			tRtXJ/CQR02UHiZ3EE9lqOz/I+Tk0i38LbS6FDDMhSs=
+			DkFa1s7zHSZO5B21jyEDbM3UjmJFET9aQ4Hqa5Vv0+Y=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			6wKmOmIunqCxnIrX5rgCtM/PAquLyaaGXqWRjKwuIRw=
+			+KEGjtSfhLNsHRY1L80dI1ar7y6mUDY7e7Q+ySs8i2E=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -1908,6 +1916,13 @@
 			z3uRxJcWoLwYRzITf4PVDeeL4SpBfXWcUjiD7d8I6Ek=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/icons/paypal.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			K0WRDyELldw4V8cnUxQ9UmojOkhTgzZWDFPknk5tOcw=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/icons/people.svg</key>
 		<dict>
 			<key>hash2</key>
@@ -2074,6 +2089,13 @@
 			<key>hash2</key>
 			<data>
 			6XMJiabSE3hrX0tKySmqRHWHgjjoXhwszyaCv5vpxTA=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/icons/venmo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			kkbUfKWBfWbHSVW7rbEydun6Z9aR49YYchkLDl8Jrtc=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/icons/wine_tasting.png</key>
