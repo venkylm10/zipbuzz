@@ -77,9 +77,10 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   int maxImages = 0;
   List<UserModel> coHosts = [];
   File? image;
+  late EventModel event;
 
   void fixInviteGuests() async {
-    if (widget.event.eventMembers.isEmpty) {
+    if (event.eventMembers.isEmpty) {
       widget.rePublish
           ? ref.read(newEventProvider.notifier).resetEventMembers()
           : ref.read(editEventControllerProvider.notifier).resetEventMembers();
@@ -90,7 +91,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   }
 
   void getEventColor() {
-    eventColor = interestColors[widget.event.category]!;
+    eventColor = interestColors[event.category]!;
     setState(() {});
   }
 
@@ -117,26 +118,27 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       userId: user.id,
       actionCode: ActionCode.ViewEvent,
       actionDetails: "Event Details Page",
-      eventId: widget.event.id,
+      eventId: event.id,
       successFlag: true,
     );
     ref.read(dioServicesProvider).traceLog(trace);
-    await ref.read(dbServicesProvider).getEventRequestMembers(widget.event.id);
+    await ref.read(dbServicesProvider).getEventRequestMembers(event.id);
     final members = await ref
         .read(dioServicesProvider)
-        .getEventMembers(EventMembersRequestModel(eventId: widget.event.id));
-    widget.event.eventMembers = members;
+        .getEventMembers(EventMembersRequestModel(eventId: event.id));
+    event.eventMembers = members;
     final joined = ref
         .read(eventRequestMembersProvider)
         .firstWhereOrNull((element) => element.id == ref.read(userProvider).id);
     if (joined != null) {
-      widget.event.status = "confirmed";
+      event.status = "confirmed";
     }
     setState(() {});
   }
 
   @override
   void initState() {
+    event = widget.event;
     dominantColor = widget.dominantColor;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -147,7 +149,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final hosted = widget.event.hostId == ref.read(userProvider).id;
+    final hosted = event.hostId == ref.read(userProvider).id;
     return CustomBezel(
         child: GestureDetector(
       onTap: () {
@@ -175,7 +177,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         EventDetailsBanner(
-                          event: widget.event,
+                          event: event,
                           isPreview: widget.isPreview,
                           dominantColor: dominantColor,
                         ),
@@ -200,15 +202,15 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     softWrap: true,
                                     text: TextSpan(
                                       children: [
-                                        if (widget.event.groupName != 'zipbuzz-null')
+                                        if (event.groupName != 'zipbuzz-null')
                                           TextSpan(
-                                            text: '${widget.event.groupName} > ',
+                                            text: '${event.groupName} > ',
                                             style: AppStyles.h2.copyWith(
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         TextSpan(
-                                          text: widget.event.title,
+                                          text: event.title,
                                           style: AppStyles.h2,
                                         ),
                                       ],
@@ -229,7 +231,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-                                  EventDetails(event: widget.event),
+                                  EventDetails(event: event),
                                   const SizedBox(height: 16),
                                   Divider(
                                     color: AppColors.greyColor.withOpacity(0.2),
@@ -250,12 +252,12 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     thickness: 0,
                                   ),
                                   EventDetailsTicketInfo(
-                                    event: widget.event,
+                                    event: event,
                                     isPreview: widget.isPreview,
                                     rePublish: widget.rePublish,
                                   ),
                                   EventDetailsCommonGuestList(
-                                    event: widget.event,
+                                    event: event,
                                     isPreview: widget.isPreview,
                                     rePublish: widget.rePublish,
                                     clone: widget.clone,
@@ -269,7 +271,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     thickness: 0,
                                   ),
                                   EventHosts(
-                                    event: widget.event,
+                                    event: event,
                                     isPreview: widget.isPreview,
                                   ),
                                   const SizedBox(height: 16),
@@ -289,7 +291,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           floatingActionButton: EventButtons(
-            event: widget.event,
+            event: event,
             isPreview: widget.isPreview,
             rePublish: widget.rePublish,
             groupEvent: widget.groupEvent,
@@ -312,17 +314,17 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       children: [
         EventChip(
           eventColor: eventColor,
-          interest: widget.event.category,
-          iconPath: widget.event.iconPath,
+          interest: event.category,
+          iconPath: event.iconPath,
         ),
         EventDetailsAttendeeNumbers(
-            event: widget.event, isPreview: widget.isPreview, rePublish: widget.rePublish),
-        if (!widget.isPreview) EventQRCode(event: widget.event),
-        if (!widget.isPreview && !widget.rePublish) SendNotificationBell(event: widget.event),
+            event: event, isPreview: widget.isPreview, rePublish: widget.rePublish),
+        if (!widget.isPreview) EventQRCode(event: event),
+        if (!widget.isPreview && !widget.rePublish) SendNotificationBell(event: event),
         if (!widget.isPreview && !widget.rePublish)
           SendBroadcastMessageButton(
-            event: widget.event,
-            guests: widget.event.eventMembers,
+            event: event,
+            guests: event.eventMembers,
           ),
       ],
     );
@@ -390,10 +392,8 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomHyperLinkedTextSpan(text: widget.event.about),
-        widget.event.hyperlinks.isEmpty
-            ? const SizedBox()
-            : EventUrls(hyperlinks: widget.event.hyperlinks),
+        CustomHyperLinkedTextSpan(text: event.about),
+        event.hyperlinks.isEmpty ? const SizedBox() : EventUrls(hyperlinks: event.hyperlinks),
       ],
     );
   }
@@ -408,7 +408,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       );
       dominantColor = generator.dominantColor!.color;
     } else {
-      final image = NetworkImage(interestBanners[widget.event.category]!);
+      final image = NetworkImage(interestBanners[event.category]!);
       final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
         image,
       );
@@ -422,7 +422,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
     final imageFiles = rePublish
         ? ref.watch(editEventControllerProvider.notifier).selectedImages
         : ref.watch(newEventProvider.notifier).selectedImages;
-    final imageUrls = widget.event.imageUrls;
+    final imageUrls = event.imageUrls;
     return EventDetailsImages(
       isPreview: isPreview,
       rePublish: rePublish,
@@ -431,6 +431,15 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
       imageUrls: imageUrls,
       maxImages: maxImages,
       clone: widget.clone,
+      status: event.status,
+      eventId: event.id,
+      updateEvent: (val) {
+        setState(() {
+          event = val;
+        });
+        ref.read(eventsControllerProvider.notifier).fetchEvents();
+        ref.read(eventsControllerProvider.notifier).fetchUserEvents();
+      },
     );
   }
 }

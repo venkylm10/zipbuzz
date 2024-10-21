@@ -48,7 +48,7 @@ class ImageServices {
     return File(pickedImage.path);
   }
 
-  Future<List<XFile?>> pickMultipleImages() async {
+  Future<List<XFile>> pickMultipleImages() async {
     if (kIsWeb) {
       showSnackBar(message: "Not available on web");
       return [];

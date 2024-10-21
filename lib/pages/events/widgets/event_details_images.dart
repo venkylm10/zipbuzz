@@ -3,7 +3,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/pages/events/event_upload_new_images.dart';
+import 'package:zipbuzz/services/db_services.dart';
+import 'package:zipbuzz/services/image_picker.dart';
+import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
+import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 
 class EventDetailsImages extends StatelessWidget {
@@ -14,6 +21,9 @@ class EventDetailsImages extends StatelessWidget {
   final List<String> imageUrls;
   final int maxImages;
   final bool clone;
+  final String status;
+  final int eventId;
+  final Function(EventModel) updateEvent;
   const EventDetailsImages({
     super.key,
     required this.isPreview,
@@ -23,25 +33,29 @@ class EventDetailsImages extends StatelessWidget {
     required this.imageUrls,
     required this.maxImages,
     required this.clone,
+    required this.status,
+    required this.eventId,
+    required this.updateEvent,
   });
 
   @override
   Widget build(BuildContext context) {
-    return isPreview || rePublish ? buildPreviewOrRepublishImages() : buildDetailsImages();
+    return isPreview || rePublish ? buildPreviewOrRepublishImages() : buildDetailsImages(context);
   }
 
-  Column buildDetailsImages() {
+  Column buildDetailsImages(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (imageUrls.isNotEmpty)
+        if (imageUrls.isNotEmpty || status == 'confirmed' || status == 'hosted')
           Text(
             "Photos",
             style: AppStyles.h5.copyWith(
               color: AppColors.lightGreyColor,
             ),
           ),
-        if (imageUrls.isNotEmpty) const SizedBox(height: 16),
+        if (imageUrls.isNotEmpty || status == 'confirmed' || status == 'hosted')
+          const SizedBox(height: 16),
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: StaggeredGrid.count(
@@ -64,6 +78,41 @@ class EventDetailsImages extends StatelessWidget {
             ),
           ),
         ),
+        if (status == 'confirmed' || status == 'hosted')
+          InkWell(
+            onTap: () async {
+              final images = await ref.read(imageServicesProvider).pickMultipleImages();
+              if (images.isEmpty) return;
+              bool? res = await Navigator.of(navigatorKey.currentContext!).push(MaterialPageRoute(
+                  builder: (_) => EventUploadNewImages(eventId: eventId, images: images)));
+              if (res == true) {
+                final event = await ref.read(dbServicesProvider).getEventDetails(eventId);
+                updateEvent(event);
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.bgGrey,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.borderGrey),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(Assets.icons.add_circle),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Add",
+                    style: AppStyles.h4.copyWith(
+                      color: AppColors.greyColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
       ],
     );
   }

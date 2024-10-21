@@ -45,7 +45,7 @@ class _AddEventPhotosState extends ConsumerState<AddEventPhotos> {
     var pickedImages = await ref.read(imageServicesProvider).pickMultipleImages();
     if (pickedImages.isNotEmpty) {
       pickedImages.map((pickedImage) {
-        image = File(pickedImage!.path);
+        image = File(pickedImage.path);
         ref.read(newEventProvider.notifier).selectedImages.add(image!);
       }).toList();
     }
