@@ -113,7 +113,9 @@ class _GroupMemberCardState extends ConsumerState<GroupMemberCard> {
     );
   }
 
-  GestureDetector _buildInviteAgainButton(WidgetRef ref) {
+  Widget _buildInviteAgainButton(WidgetRef ref) {
+    final admin = ref.watch(groupControllerProvider).isAdmin;
+    if (!admin) return const SizedBox();
     return GestureDetector(
       onTap: () async {
         final group = ref.read(groupControllerProvider).currentGroup!;
@@ -201,6 +203,8 @@ class _GroupMemberCardState extends ConsumerState<GroupMemberCard> {
 
   Widget _buildInviteToBuzzMeButton(WidgetRef ref) {
     if (!widget.invitee || widget.member.userId != 0) return const SizedBox();
+    final admin = ref.watch(groupControllerProvider).isAdmin;
+    if (!admin) return const SizedBox();
     return GestureDetector(
       onTap: () {
         final user = ref.read(userProvider);

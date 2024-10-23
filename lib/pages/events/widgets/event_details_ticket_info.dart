@@ -59,7 +59,35 @@ class EventDetailsTicketInfo extends StatelessWidget {
             );
           }),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
+        Consumer(builder: (context, ref, child) {
+          final userId = ref.read(userProvider).id;
+          final member = ref.watch(eventRequestMembersProvider).where((e) => e.userId == userId);
+          if (member.isEmpty) return const SizedBox();
+          final amount = member.first.totalAmount;
+          if (amount == 0) return const SizedBox(height: 8);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Your Total: \$$amount",
+                  style: AppStyles.h4.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  "Ingnore this if you have already paid",
+                  style: AppStyles.h5.copyWith(
+                    color: AppColors.greyColor,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
         Consumer(builder: (context, ref, child) {
           var amount = 0;
           final userId = ref.read(userProvider).id;

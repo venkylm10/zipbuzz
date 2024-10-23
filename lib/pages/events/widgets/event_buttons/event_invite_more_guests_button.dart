@@ -70,6 +70,7 @@ class EventInviteMoreGuestsButton extends ConsumerWidget {
     ref.read(editEventControllerProvider.notifier).updateEvent(event);
     ref.read(editEventControllerProvider.notifier).resetInvites();
     ref.read(editEventControllerProvider.notifier).initialiseHyperLinks();
+    ref.read(editEventControllerProvider.notifier).cloneTicketTypes();
     ref
         .read(editEventControllerProvider.notifier)
         .updateOldInvites(event.eventMembers.map((e) => e.phone).toList());

@@ -86,7 +86,6 @@ class GroupsTab extends ConsumerWidget {
           final tab = GroupTab.values[index];
           final currentTab = ref.watch(groupControllerProvider).currentTab;
           return Expanded(
-            // flex: first ? 2 : 3,
             flex: 1,
             child: InkWell(
               onTap: () {
