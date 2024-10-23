@@ -72,7 +72,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Your Total: \$$amount",
+                  "Your Total: \$${amount.toStringAsFixed(2)}",
                   style: AppStyles.h4.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

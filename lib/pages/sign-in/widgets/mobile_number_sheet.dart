@@ -158,7 +158,7 @@ class _MobileNumberSheetState extends ConsumerState<MobileNumberSheet> {
       final otp = (await ref.read(dioServicesProvider).sendOTP(number)).toString();
       if (AppEnvironment.environment == Environment.dev) {
         debugPrint("OTP: $otp");
-        // showSnackBar(message: "OTP: $otp", duration: 5);
+        showSnackBar(message: "OTP: $otp", duration: 5);
       }
       setState(() {
         this.otp = otp;

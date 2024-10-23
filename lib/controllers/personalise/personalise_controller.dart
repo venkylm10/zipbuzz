@@ -150,7 +150,12 @@ class PersonaliseController {
     if (currentEmail == email) {
       return false;
     }
-    final token = await FirebaseMessaging.instance.getToken() ?? 'zipbuzz-null';
+    String token = 'zipbuzz-null';
+    try {
+      token = await FirebaseMessaging.instance.getToken() ?? 'zipbuzz-null';
+    } catch (e) {
+      debugPrint("FAILED TO GET DEVICE TOKEN");
+    }
     final id = await ref
         .read(dioServicesProvider)
         .getUserId(UserIdRequestModel(email: email, deviceToken: token));

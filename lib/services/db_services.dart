@@ -113,7 +113,12 @@ class DBServices {
   Future<void> createUser({required UserModel user}) async {
     try {
       debugPrint("CREATING NEW USER");
-
+      String token = 'zipbuzz-null';
+      try {
+        token = await FirebaseMessaging.instance.getToken() ?? 'zipbuzz-null';
+      } catch (e) {
+        debugPrint("FAILED TO GET DEVICE TOKEN");
+      }
       final userDetails = UserDetailsModel(
         phoneNumber: user.mobileNumber,
         zipcode: user.zipcode,
@@ -122,9 +127,7 @@ class DBServices {
         description: user.about,
         username: user.name,
         isAmbassador: false,
-        deviceToken: kIsWeb
-            ? "zipbuzz-null"
-            : (await FirebaseMessaging.instance.getToken() ?? 'zipbuzz-null'),
+        deviceToken: kIsWeb ? "zipbuzz-null" : token,
       );
 
       final userSocials = UserSocialsModel(
