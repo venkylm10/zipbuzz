@@ -48,7 +48,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    "\$${event.ticketTypes[index].price}",
+                    "\$ ${event.ticketTypes[index].price.toStringAsFixed(2)}",
                     style: AppStyles.h4.copyWith(
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w500,
@@ -72,7 +72,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Your Total: \$${amount.toStringAsFixed(2)}",
+                  "Your Total: \$ ${amount.toStringAsFixed(2)}",
                   style: AppStyles.h4.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

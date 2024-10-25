@@ -33,7 +33,14 @@ class Contacts {
 
   List<ContactModel> _fetchedContacts = [];
 
+  int _permissonCount = 0;
+
   Future<List<ContactModel>> getContacts() async {
+    _permissonCount++;
+    if (_permissonCount >= 3) {
+      _permissonCount = 0;
+      return <ContactModel>[];
+    }
     if (kIsWeb) return <ContactModel>[];
     try {
       var contactModels = <ContactModel>[];
@@ -68,34 +75,14 @@ class Contacts {
         ref.read(groupControllerProvider.notifier).resetContactSearchResult();
       } else {
         showSnackBar(message: "We need contact permission to invite people");
-        if (await ref.read(appPermissionsProvider).getContactsPermission()) {
-          contactModels = (await ContactsService.getContacts().then(
-            (value) => value.where((element) {
-              var check = element.phones != null && element.phones!.isNotEmpty;
-              return check;
-            }).toList(),
-          ))
-              .map((e) {
-            Set<String> phones = {};
-            for (var num in e.phones!) {
-              phones.add(flattenNumber(num.value!, ref, null));
-            }
-            return ContactModel(
-              displayName: e.displayName ?? "zipbuzz-null",
-              phones: phones.toList(),
-              email: e.emails != null
-                  ? e.emails!.isNotEmpty
-                      ? e.emails!.map((e) => e.value!).toList()
-                      : null
-                  : null,
-            );
-          }).toList();
-        }
+        return await getContacts();
       }
       _fetchedContacts = contactModels;
+      _permissonCount = 0;
       return contactModels;
     } catch (e) {
       debugPrint("Error getting contacts: $e");
+      _permissonCount = 0;
       rethrow;
     }
   }
