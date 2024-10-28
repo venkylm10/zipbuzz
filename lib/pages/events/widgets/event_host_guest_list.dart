@@ -203,7 +203,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
                     color: const Color(0xFFEAF6ED),
                   ),
                   child: Text(
-                    "\$${member.totalAmount}",
+                    "${member.totalAmount.toStringAsFixed(2)} \$",
                     style: AppStyles.h5.copyWith(
                       color: Colors.green.shade500,
                       fontWeight: FontWeight.w600,
