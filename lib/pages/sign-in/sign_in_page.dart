@@ -71,13 +71,6 @@ class SignInSheet extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              // SignInButton(
-              //   title: "Login",
-              //   iconPath: "zipbuzz-null",
-              //   onTap: () =>
-              //       ref.read(authServicesProvider).googleUserExistsFlow("venkylm10@gmail.com"),
-              // ),
-              // const SizedBox(height: 24),
               SignInButton(
                 title: "Google",
                 iconPath: Assets.icons.google_logo,

@@ -9,41 +9,41 @@ PODS:
     - AppAuth/Core
   - contacts_service (0.2.2):
     - Flutter
-  - Firebase/Auth (11.0.0):
+  - Firebase/Auth (11.2.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 11.0.0)
-  - Firebase/CoreOnly (11.0.0):
-    - FirebaseCore (= 11.0.0)
-  - Firebase/Database (11.0.0):
+    - FirebaseAuth (~> 11.2.0)
+  - Firebase/CoreOnly (11.2.0):
+    - FirebaseCore (= 11.2.0)
+  - Firebase/Database (11.2.0):
     - Firebase/CoreOnly
-    - FirebaseDatabase (~> 11.0.0)
-  - Firebase/Messaging (11.0.0):
+    - FirebaseDatabase (~> 11.2.0)
+  - Firebase/Messaging (11.2.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 11.0.0)
-  - Firebase/Storage (11.0.0):
+    - FirebaseMessaging (~> 11.2.0)
+  - Firebase/Storage (11.2.0):
     - Firebase/CoreOnly
-    - FirebaseStorage (~> 11.0.0)
-  - firebase_auth (5.3.0):
-    - Firebase/Auth (= 11.0.0)
+    - FirebaseStorage (~> 11.2.0)
+  - firebase_auth (5.3.1):
+    - Firebase/Auth (= 11.2.0)
     - firebase_core
     - Flutter
-  - firebase_core (3.5.0):
-    - Firebase/CoreOnly (= 11.0.0)
+  - firebase_core (3.6.0):
+    - Firebase/CoreOnly (= 11.2.0)
     - Flutter
-  - firebase_database (11.1.3):
-    - Firebase/Database (= 11.0.0)
+  - firebase_database (11.1.4):
+    - Firebase/Database (= 11.2.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (15.1.2):
-    - Firebase/Messaging (= 11.0.0)
+  - firebase_messaging (15.1.3):
+    - Firebase/Messaging (= 11.2.0)
     - firebase_core
     - Flutter
-  - firebase_storage (12.3.1):
-    - Firebase/Storage (= 11.0.0)
+  - firebase_storage (12.3.4):
+    - Firebase/Storage (= 11.2.0)
     - firebase_core
     - Flutter
-  - FirebaseAppCheckInterop (11.2.0)
-  - FirebaseAuth (11.0.0):
+  - FirebaseAppCheckInterop (11.4.0)
+  - FirebaseAuth (11.2.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseAuthInterop (~> 11.0)
     - FirebaseCore (~> 11.0)
@@ -52,27 +52,27 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GTMSessionFetcher/Core (~> 3.4)
     - RecaptchaInterop (~> 100.0)
-  - FirebaseAuthInterop (11.2.0)
-  - FirebaseCore (11.0.0):
+  - FirebaseAuthInterop (11.4.0)
+  - FirebaseCore (11.2.0):
     - FirebaseCoreInternal (~> 11.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreExtension (11.2.0):
+  - FirebaseCoreExtension (11.4.1):
     - FirebaseCore (~> 11.0)
-  - FirebaseCoreInternal (11.2.0):
+  - FirebaseCoreInternal (11.4.2):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseDatabase (11.0.0):
+  - FirebaseDatabase (11.2.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseCore (~> 11.0)
     - FirebaseSharedSwift (~> 11.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - leveldb-library (~> 1.22)
-  - FirebaseInstallations (11.2.0):
+  - FirebaseInstallations (11.4.0):
     - FirebaseCore (~> 11.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
-  - FirebaseMessaging (11.0.0):
+  - FirebaseMessaging (11.2.0):
     - FirebaseCore (~> 11.0)
     - FirebaseInstallations (~> 11.0)
     - GoogleDataTransport (~> 10.0)
@@ -81,8 +81,8 @@ PODS:
     - GoogleUtilities/Reachability (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - nanopb (~> 3.30910.0)
-  - FirebaseSharedSwift (11.2.0)
-  - FirebaseStorage (11.0.0):
+  - FirebaseSharedSwift (11.4.0)
+  - FirebaseStorage (11.2.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseAuthInterop (~> 11.0)
     - FirebaseCore (~> 11.0)
@@ -167,14 +167,14 @@ PODS:
     - Flutter
   - sign_in_with_apple (0.0.1):
     - Flutter
-  - sqflite (0.0.3):
+  - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
   - Toast (4.1.1)
   - TOCropViewController (2.7.4)
   - url_launcher_ios (0.0.1):
     - Flutter
-  - UXCam (3.6.16)
+  - UXCam (3.6.17)
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -201,7 +201,7 @@ DEPENDENCIES:
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
-  - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
@@ -273,8 +273,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/share_plus/ios"
   sign_in_with_apple:
     :path: ".symlinks/plugins/sign_in_with_apple/ios"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/darwin"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player_avfoundation:
@@ -286,23 +286,23 @@ SPEC CHECKSUMS:
   add_2_calendar: 5eee66d5a3b99cd5e1487a7e03abd4e3ac4aff11
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
   contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
-  Firebase: 9f574c08c2396885b5e7e100ed4293d956218af9
-  firebase_auth: f27287630c4d9e2c3c63e64d9240822ad6b07e5b
-  firebase_core: 2ec6b789859c7c24766344ec71fdf78639402d56
-  firebase_database: 1732a4ff01b8b0b8c261375441aa0a31d1aed982
-  firebase_messaging: a18e1e02b2e8e69097c8173e0c851be223b21c50
-  firebase_storage: 9e484b4e90a239066e535a2ee2b6d662b140372b
-  FirebaseAppCheckInterop: ea21450529cf0ebd132788dd8916a0269abc684f
-  FirebaseAuth: d5cf28be74d7e82257f6a3f717509eff70d3cf4a
-  FirebaseAuthInterop: 47c09558af5d1b31f16fb352387c72d4804f4a24
-  FirebaseCore: 3cf438f431f18c12cdf2aaf64434648b63f7e383
-  FirebaseCoreExtension: cda74ddfb001224bd8fd1d6e74698b4ed07803de
-  FirebaseCoreInternal: 0c569513412da9f3b31bd0b340013bbee8f295c5
-  FirebaseDatabase: 47b021386877846d30a7f3527c4f4fad8fd04b19
-  FirebaseInstallations: 771177d89d6c451dc6e50085ec82e2fc77ed0a4a
-  FirebaseMessaging: d2d1d9c62c46dd2db49a952f7deb5b16ad2c9742
-  FirebaseSharedSwift: 7a0d78d155ede78407f0fdc89fbc914014c7c540
-  FirebaseStorage: f9e2bf027d549db18b6195a37b31c85f56e40200
+  Firebase: 98e6bf5278170668a7983e12971a66b2cd57fc8c
+  firebase_auth: 0c77e299a8f2d1c74d1b1f6b78b3d4d802c19f47
+  firebase_core: 2bedc3136ec7c7b8561c6123ed0239387b53f2af
+  firebase_database: d52bf1a2e0542f565925feed43fa5c4350576ed7
+  firebase_messaging: 15d114e1a41fc31e4fbabcd48d765a19eec94a38
+  firebase_storage: cee0d3d2e947db11289bbb57ed73a447ea111ec1
+  FirebaseAppCheckInterop: 1b9643ae2f1ee214488caa2f8e32b7bc2f0f3735
+  FirebaseAuth: 2a198b8cdbbbd457f08d74df7040feb0a0e7777a
+  FirebaseAuthInterop: 9ac948965ac13ec9d8a080f39490ddb2bda30520
+  FirebaseCore: a282032ae9295c795714ded2ec9c522fc237f8da
+  FirebaseCoreExtension: f1bc67a4702931a7caa097d8e4ac0a1b0d16720e
+  FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238
+  FirebaseDatabase: 7f0bcea9a7c0554284019a6bac1d80e7288ee831
+  FirebaseInstallations: 6ef4a1c7eb2a61ee1f74727d7f6ce2e72acf1414
+  FirebaseMessaging: c9ec7b90c399c7a6100297e9d16f8a27fc7f7152
+  FirebaseSharedSwift: 505dae2d05969dbf6d43749a642bb1bf230f0252
+  FirebaseStorage: 9353f926690b2329957860abfcbc8b4074fe45e8
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_uxcam: 6f8575c8ba00731933523d526f6301c5b8d565b1
@@ -317,18 +317,18 @@ SPEC CHECKSUMS:
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   leveldb-library: e8eadf9008a61f9e1dde3978c086d2b6d9b9dc28
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
+  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  share_plus: 8875f4f2500512ea181eef553c3e27dba5135aad
+  share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
-  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
+  sqflite_darwin: a553b1fd6fe66f53bbb0fe5b4f5bab93f08d7a13
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
-  UXCam: 48aaffc77928fc5a70b1ee1f130743d00603df1d
+  UXCam: 14826c417263c24c3eca11b4d00c4aa017e700c5
   video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
   wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
 

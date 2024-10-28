@@ -175,11 +175,6 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text(
-            "\$",
-            style: AppStyles.h3.copyWith(fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(width: 4),
           Expanded(
             flex: 2,
             child: CustomTextField(
@@ -188,7 +183,13 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
               onChanged: (val) {
                 _updatePrice(ref, val, index);
               },
+              textAlign: TextAlign.end,
             ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            "\$",
+            style: AppStyles.h3.copyWith(fontWeight: FontWeight.w500),
           ),
           const SizedBox(width: 8),
           Consumer(builder: (context, ref, child) {

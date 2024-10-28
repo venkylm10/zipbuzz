@@ -429,7 +429,7 @@ class NewEvent extends StateNotifier<EventModel> {
         category: state.category,
         name: state.title,
         description: state.about,
-        date: DateTime(date.year, date.month, date.day).toString(),
+        date: DateTime(date.year, date.month, date.day).toUtc().toString(),
         venue: state.location,
         startTime: state.startTime,
         endTime: state.endTime.isEmpty ? "null" : state.endTime,

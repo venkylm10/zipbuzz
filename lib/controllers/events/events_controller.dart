@@ -299,7 +299,7 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
 
   String getVenmoLink(EventModel event, int amount) {
     final title = event.title.split(' ').join('%20');
-    return "https://venmo.com/?txn=charge&audience=private&recipients=${event.venmoLink}&amount=$amount&note=$title";
+    return "https://venmo.com/?txn=charge&audience=private&recipients=${event.venmoLink}&amount=$amount&note=${title.replaceAll(' ', '%20')}";
   }
 
   String getPayPalLink(EventModel event, int amount) {
