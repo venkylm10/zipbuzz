@@ -5,7 +5,7 @@ class MakeRequestModel {
   int members;
   int userId;
   bool userDecision;
-  int totalAmount;
+  double totalAmount;
 
   MakeRequestModel({
     required this.userId,

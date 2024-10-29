@@ -22,6 +22,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (event.ticketTypes.isEmpty) return const SizedBox();
+    final hosted = event.status == 'hosted';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,7 +49,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    "${event.ticketTypes[index].price.toStringAsFixed(2)} \$",
+                    "\$${event.ticketTypes[index].price.toStringAsFixed(2)}",
                     style: AppStyles.h4.copyWith(
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w500,
@@ -72,7 +73,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Your Total: ${amount.toStringAsFixed(2)} \$",
+                  "Your Total: \$${amount.toStringAsFixed(2)}",
                   style: AppStyles.h4.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -89,7 +90,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
           );
         }),
         Consumer(builder: (context, ref, child) {
-          var amount = 0;
+          var amount = 0.0;
           final userId = ref.read(userProvider).id;
           if (!isPreview && !rePublish) {
             final member =
@@ -100,9 +101,13 @@ class EventDetailsTicketInfo extends StatelessWidget {
                 .firstWhere((e) => e.userId == userId)
                 .totalAmount;
           }
-          return EventPaymentLinks(event: event, amount: amount);
+          return EventPaymentLinks(
+            event: event,
+            amount: amount,
+            hideButtons: true,
+          );
         }),
-        broadDivider(),
+        broadDivider(host: hosted),
       ],
     );
   }

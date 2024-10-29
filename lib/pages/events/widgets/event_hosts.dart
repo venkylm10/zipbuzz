@@ -48,7 +48,6 @@ class _EventHostsState extends ConsumerState<EventHosts> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
         Text(
           "Hosts",
           style: AppStyles.h5.copyWith(

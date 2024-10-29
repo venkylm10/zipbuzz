@@ -12,6 +12,7 @@ import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/utils/widgets/broad_divider.dart';
 
 class EventDetailsImages extends StatelessWidget {
   final bool isPreview;
@@ -44,6 +45,7 @@ class EventDetailsImages extends StatelessWidget {
   }
 
   Column buildDetailsImages(BuildContext context) {
+    final hosted = status == 'hosted';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -79,39 +81,47 @@ class EventDetailsImages extends StatelessWidget {
           ),
         ),
         if (status == 'confirmed' || status == 'hosted')
-          InkWell(
-            onTap: () async {
-              final images = await ref.read(imageServicesProvider).pickMultipleImages();
-              if (images.isEmpty) return;
-              bool? res = await Navigator.of(navigatorKey.currentContext!).push(MaterialPageRoute(
-                  builder: (_) => EventUploadNewImages(eventId: eventId, images: images)));
-              if (res == true) {
-                final event = await ref.read(dbServicesProvider).getEventDetails(eventId);
-                updateEvent(event);
-              }
-            },
-            child: Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.bgGrey,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.borderGrey),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(Assets.icons.add_circle),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Add",
-                    style: AppStyles.h4.copyWith(
-                      color: AppColors.greyColor,
+          Column(
+            children: [
+              InkWell(
+                onTap: () async {
+                  final images = await ref.read(imageServicesProvider).pickMultipleImages();
+                  if (images.isEmpty) return;
+                  bool? res = await Navigator.of(navigatorKey.currentContext!).push(
+                    MaterialPageRoute(
+                      builder: (_) => EventUploadNewImages(eventId: eventId, images: images),
                     ),
+                  );
+                  if (res == true) {
+                    final event = await ref.read(dbServicesProvider).getEventDetails(eventId);
+                    updateEvent(event);
+                  }
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgGrey,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.borderGrey),
                   ),
-                ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(Assets.icons.add_circle),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Add",
+                        style: AppStyles.h4.copyWith(
+                          color: AppColors.greyColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              broadDivider(host: hosted),
+            ],
           )
       ],
     );

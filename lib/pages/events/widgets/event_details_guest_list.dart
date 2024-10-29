@@ -8,6 +8,7 @@ import 'package:zipbuzz/pages/events/widgets/event_host_guest_list.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/utils/widgets/broad_divider.dart';
 
 class EventDetailsGuestList extends ConsumerStatefulWidget {
   const EventDetailsGuestList({
@@ -56,7 +57,8 @@ class _EventDetailsGuestListState extends ConsumerState<EventDetailsGuestList> {
         const SizedBox(height: 16),
         buildGuests(context),
         if (widget.guests.length > subListLength) const SizedBox(height: 16),
-        if (widget.guests.length > subListLength) loadMoreButton()
+        if (widget.guests.length > subListLength) loadMoreButton(),
+        broadDivider(host: false),
       ],
     );
   }

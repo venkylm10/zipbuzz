@@ -8,7 +8,7 @@ import '../../../utils/constants/styles.dart';
 
 class TicketEventPaymentLinkSheet extends StatelessWidget {
   final EventModel event;
-  final int totalAmount;
+  final double totalAmount;
   const TicketEventPaymentLinkSheet({super.key, required this.event, required this.totalAmount});
 
   @override

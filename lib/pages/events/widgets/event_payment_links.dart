@@ -13,8 +13,15 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 class EventPaymentLinks extends ConsumerWidget {
   final EventModel event;
   final bool pop;
-  final int amount;
-  const EventPaymentLinks({super.key, required this.event, required this.amount, this.pop = false});
+  final double amount;
+  final bool hideButtons;
+  const EventPaymentLinks({
+    super.key,
+    required this.event,
+    required this.amount,
+    this.pop = false,
+    this.hideButtons = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +37,6 @@ class EventPaymentLinks extends ConsumerWidget {
                 child: Container(
                   height: 42,
                   padding: const EdgeInsets.all(8),
-                  margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
@@ -66,44 +72,46 @@ class EventPaymentLinks extends ConsumerWidget {
                   ),
                 ),
               ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () async {
-                    if (amount == 0) {
-                      showSnackBar(message: "Nothing to pay!", duration: 2);
-                      return;
-                    }
-                    final paypalLink =
-                        ref.read(eventsControllerProvider.notifier).getPayPalLink(event, amount);
-                    if (paypalLink.isEmpty) {
+              if (!hideButtons)
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () async {
+                      if (amount == 0) {
+                        showSnackBar(message: "Nothing to pay!", duration: 2);
+                        return;
+                      }
+                      final paypalLink =
+                          ref.read(eventsControllerProvider.notifier).getPayPalLink(event, amount);
+                      if (paypalLink.isEmpty) {
+                        showSnackBar(
+                          message: "Please contact host to correct the PayPal link!",
+                          duration: 5,
+                        );
+                        return;
+                      }
+                      debugPrint(paypalLink);
                       showSnackBar(
-                        message: "Please contact host to correct the PayPal link!",
-                        duration: 5,
+                        message: "Once payment is done, Please wait till the host confirms it",
+                        duration: 2,
                       );
-                      return;
-                    }
-                    debugPrint(paypalLink);
-                    showSnackBar(
-                      message: "Once payment is done, Please wait till the host confirms it",
-                      duration: 2,
-                    );
-                    await Future.delayed(const Duration(seconds: 2));
-                    await launchUrlString(
-                      paypalLink,
-                      mode: LaunchMode.externalApplication,
-                    );
-                  },
-                  child: Container(
-                    height: 42,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.yellow[600],
-                      borderRadius: BorderRadius.circular(4),
+                      await Future.delayed(const Duration(seconds: 2));
+                      await launchUrlString(
+                        paypalLink,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    child: Container(
+                      height: 42,
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.only(left: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.yellow[600],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: SvgPicture.asset(Assets.icons.paypal),
                     ),
-                    child: SvgPicture.asset(Assets.icons.paypal),
                   ),
                 ),
-              ),
             ],
           ),
         if (paypal && venmo) const SizedBox(height: 8),
@@ -115,7 +123,6 @@ class EventPaymentLinks extends ConsumerWidget {
                 child: Container(
                   height: 42,
                   padding: const EdgeInsets.all(8),
-                  margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
@@ -154,50 +161,52 @@ class EventPaymentLinks extends ConsumerWidget {
                   ),
                 ),
               ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () async {
-                    if (amount == 0) {
-                      showSnackBar(message: "Nothing to pay!", duration: 2);
-                      return;
-                    }
-                    final venmoLink =
-                        ref.read(eventsControllerProvider.notifier).getVenmoLink(event, amount);
-                    if (venmoLink.isEmpty) {
+              if (!hideButtons)
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () async {
+                      if (amount == 0) {
+                        showSnackBar(message: "Nothing to pay!", duration: 2);
+                        return;
+                      }
+                      final venmoLink =
+                          ref.read(eventsControllerProvider.notifier).getVenmoLink(event, amount);
+                      if (venmoLink.isEmpty) {
+                        showSnackBar(
+                          message: "Please contact host to correct the Venmo ID!",
+                          duration: 5,
+                        );
+                        return;
+                      }
+                      debugPrint(venmoLink);
                       showSnackBar(
-                        message: "Please contact host to correct the Venmo ID!",
-                        duration: 5,
+                        message: "Once payment is done, Please wait till the host confirms it",
+                        duration: 2,
                       );
-                      return;
-                    }
-                    debugPrint(venmoLink);
-                    showSnackBar(
-                      message: "Once payment is done, Please wait till the host confirms it",
-                      duration: 2,
-                    );
-                    await Future.delayed(const Duration(seconds: 2));
-                    launchUrlString(
-                      venmoLink,
-                      mode: LaunchMode.externalApplication,
-                    );
-                  },
-                  child: Container(
-                    height: 42,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xff3d95ce),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: SvgPicture.asset(
-                      Assets.icons.venmo,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
+                      await Future.delayed(const Duration(seconds: 2));
+                      launchUrlString(
+                        venmoLink,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    child: Container(
+                      height: 42,
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.only(left: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff3d95ce),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: SvgPicture.asset(
+                        Assets.icons.venmo,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
       ],

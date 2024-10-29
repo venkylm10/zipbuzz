@@ -328,7 +328,7 @@ class EditEventController extends StateNotifier<EventModel> {
       showSnackBar(message: "Please enter event start time");
       return false;
     }
-    final total = state.ticketTypes.fold<int>(
+    final total = state.ticketTypes.fold<double>(
       0,
       (previousValue, element) => previousValue + element.price,
     );
@@ -572,7 +572,7 @@ class EditEventController extends StateNotifier<EventModel> {
         defaultTickets.map((e) => TextEditingController(text: e.title)),
       );
       ticketPriceControllers.addAll(defaultTickets.map(
-        (e) => TextEditingController(text: e.price.toString()),
+        (e) => TextEditingController(),
       ));
       state = state.copyWith(ticketTypes: defaultTickets);
       newTickets.addAll(defaultTickets);
@@ -590,18 +590,9 @@ class EditEventController extends StateNotifier<EventModel> {
     state = state.copyWith(ticketTypes: tickets);
   }
 
-  void updateTicketPrice(int index, String price) {
-    var text = ticketPriceControllers[index].text.trim();
-    if (price.isEmpty) {
-      price = "0";
-      ticketPriceControllers[index].text = price;
-    } else if (text.length > 1 && text[0] == '0') {
-      text = text.substring(1);
-      ticketPriceControllers[index].text = text;
-    }
+  void updateTicketPrice(int index, double price) {
     final tickets = state.ticketTypes;
-    final num = int.parse(price);
-    tickets[index] = tickets[index].copyWith(price: num);
+    tickets[index] = tickets[index].copyWith(price: price);
     state = state.copyWith(ticketTypes: tickets);
   }
 
