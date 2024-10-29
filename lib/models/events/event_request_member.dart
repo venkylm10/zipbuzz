@@ -9,6 +9,7 @@ class EventRequestMember {
   int id;
   int userId;
   double totalAmount;
+  String ticketDetails;
 
   EventRequestMember({
     required this.image,
@@ -19,9 +20,13 @@ class EventRequestMember {
     required this.attendees,
     required this.userId,
     required this.totalAmount,
+    required this.ticketDetails,
   });
 
   factory EventRequestMember.fromMap(Map<String, dynamic> map) {
+    // "Adults : 2 @ 15.00 ; Kids: 1 @ 8.00 ; Seniors: 1 @12.00 ; Total: $10.00"
+    String ticketDetails = map['ticket_details'] as String;
+    final totalAmount = double.tryParse(ticketDetails.split('\$').last) ?? 0.0;
     return EventRequestMember(
       image: map['image'] as String,
       phone: map['phone'] as String,
@@ -30,7 +35,8 @@ class EventRequestMember {
       id: map['id'] as int,
       attendees: map['attendees'] as int,
       userId: map['user_id'] as int,
-      totalAmount: double.parse(map['total_amount'].toString()),
+      totalAmount: totalAmount,
+      ticketDetails: ticketDetails,
     );
   }
 

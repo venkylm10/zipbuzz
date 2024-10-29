@@ -5,6 +5,7 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/models/groups/post/log_ticket_model.dart';
 import 'package:zipbuzz/models/interests/requests/user_interests_update_model.dart';
 import 'package:zipbuzz/models/interests/responses/interest_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
@@ -202,9 +203,18 @@ class InviteNotiCard extends ConsumerWidget {
                       amount,
                       accepted: true,
                     );
-                ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                 rebuildCall();
                 if (event.ticketTypes.isNotEmpty) {
+                  var ticketDetails = event.ticketDetails;
+                  final model = LogTicketModel(
+                    eventId: event.id,
+                    userId: ref.read(userProvider).id,
+                    ticketDetails: ticketDetails,
+                    paymentAmount: amount,
+                    guestComment: commentController.text.trim(),
+                  );
+                  await ref.read(dioServicesProvider).createTicketLog(model);
+                  ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                   await showModalBottomSheet(
                     context: navigatorKey.currentContext!,
                     isScrollControlled: true,
@@ -220,6 +230,7 @@ class InviteNotiCard extends ConsumerWidget {
                     },
                   );
                 }
+                ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
               } catch (e) {
                 debugPrint("Error requesting to join: $e");
               }
