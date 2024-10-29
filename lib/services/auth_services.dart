@@ -127,7 +127,7 @@ class AuthServices {
     final id = await _ref.read(dbServicesProvider).getUserId(
           UserIdRequestModel(
             email: email,
-            deviceToken: await FirebaseMessaging.instance.getToken() ?? "",
+            deviceToken: await _ref.read(notificationServicesProvider).getToken(),
           ),
         );
     await _ref.read(dbServicesProvider).getOwnUserData(UserDetailsRequestModel(userId: id!));
