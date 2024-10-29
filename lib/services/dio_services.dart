@@ -26,6 +26,7 @@ import 'package:zipbuzz/models/groups/post/accept_group_model.dart';
 import 'package:zipbuzz/models/groups/post/edit_group_model.dart';
 import 'package:zipbuzz/models/groups/post/invite_group_member_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
+import 'package:zipbuzz/models/groups/post/log_ticket_model.dart';
 import 'package:zipbuzz/models/groups/res/community_and_group_res.dart';
 import 'package:zipbuzz/models/groups/res/get_group_display_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
@@ -1266,5 +1267,10 @@ class DioServices {
     } catch (e) {
       debugPrint("Error logging: $e");
     }
+  }
+
+  Future<void> createTicketLog(LogTicketModel model) async {
+    await dio.post(DioConstants.logTicket, data: model.toJson());
+    debugPrint("Logged Ticket");
   }
 }

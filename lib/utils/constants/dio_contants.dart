@@ -53,6 +53,7 @@ class DioConstants {
   static const String traceLog = "/helpers/create_log/";
   static const String postGroupNotification = 'users/user_group_notification/';
   static const String eventTickets = '/events/event_tickets/';
+  static const String logTicket = 'events/ticket_log/';
 
   // country dial code
   static const String countryCode = "http://ip-api.com/json/";

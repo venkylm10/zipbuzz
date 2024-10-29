@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
+import 'package:zipbuzz/models/groups/post/log_ticket_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/pages/home/widgets/event_card_update_rsvp_sheet.dart';
 import 'package:zipbuzz/pages/notification/widgets/attendee_sheet.dart';
 import 'package:zipbuzz/pages/notification/widgets/ticket_event_payment_link_sheet.dart';
+import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -101,8 +103,17 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                   event.status = "requested";
                   updateStatus('requested', event.eventMembers.length);
                   showSnackBar(message: "Requested to join event");
-                  ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                   if (event.ticketTypes.isNotEmpty) {
+                    var ticketDetails = event.ticketDetails;
+                    final model = LogTicketModel(
+                      eventId: event.id,
+                      userId: user.id,
+                      ticketDetails: ticketDetails,
+                      paymentAmount: amount,
+                      guestComment: commentController.text.trim(),
+                    );
+                    await ref.read(dioServicesProvider).createTicketLog(model);
+                    ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                     await showModalBottomSheet(
                       context: navigatorKey.currentContext!,
                       isScrollControlled: true,
@@ -118,6 +129,7 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                       },
                     );
                   }
+                  ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                 } catch (e) {
                   clicked = false;
                   debugPrint("Error accepting the request: $e");

@@ -247,6 +247,17 @@ class EventModel {
       venmoLink: res.venmoLink,
     );
   }
+
+  String get ticketDetails {
+    var details = ticketTypes
+        .map((e) => "${e.title} : ${e.quantity} @ ${e.price.toStringAsFixed(2)} ;")
+        .toList()
+        .join();
+    final amount = ticketTypes.fold<double>(
+        0.0, (previousValue, element) => previousValue + element.price * element.quantity);
+    details += " Total: \$${amount.toStringAsFixed(2)}";
+    return details;
+  }
 }
 
 class HyperLinks {

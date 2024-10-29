@@ -27,7 +27,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Tickets Info",
+          "Ticket pricing",
           style: AppStyles.h5.copyWith(
             color: AppColors.lightGreyColor,
           ),
@@ -68,23 +68,23 @@ class EventDetailsTicketInfo extends StatelessWidget {
           final amount = member.first.totalAmount;
           if (amount == 0) return const SizedBox(height: 8);
           return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Your Total: \$${amount.toStringAsFixed(2)}",
-                  style: AppStyles.h4.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  "Ingnore this if you have already paid",
-                  style: AppStyles.h5.copyWith(
-                    color: AppColors.greyColor,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                // Text(
+                //   "Your Total: \$${amount.toStringAsFixed(2)}",
+                //   style: AppStyles.h4.copyWith(
+                //     fontWeight: FontWeight.w600,
+                //   ),
+                // ),
+                // Text(
+                //   "Ingnore this if you have already paid",
+                //   style: AppStyles.h5.copyWith(
+                //     color: AppColors.greyColor,
+                //     fontStyle: FontStyle.italic,
+                //   ),
+                // ),
               ],
             ),
           );
@@ -104,7 +104,7 @@ class EventDetailsTicketInfo extends StatelessWidget {
           return EventPaymentLinks(
             event: event,
             amount: amount,
-            hideButtons: true,
+            hideButtons: hosted,
           );
         }),
         broadDivider(host: hosted),
