@@ -8,7 +8,7 @@ class EventRequestMember {
   int attendees;
   int id;
   int userId;
-  int totalAmount;
+  double totalAmount;
 
   EventRequestMember({
     required this.image,
@@ -30,7 +30,7 @@ class EventRequestMember {
       id: map['id'] as int,
       attendees: map['attendees'] as int,
       userId: map['user_id'] as int,
-      totalAmount: map['total_amount'] as int,
+      totalAmount: double.parse(map['total_amount'].toString()),
     );
   }
 

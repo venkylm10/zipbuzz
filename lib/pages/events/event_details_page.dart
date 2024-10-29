@@ -24,6 +24,7 @@ import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/services/image_picker.dart';
 import 'package:zipbuzz/utils/action_code.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
+import 'package:zipbuzz/utils/widgets/broad_divider.dart';
 import 'package:zipbuzz/utils/widgets/custom_bezel.dart';
 import 'package:zipbuzz/utils/widgets/custom_hyper_linked_textspan.dart';
 import 'package:zipbuzz/utils/widgets/loader.dart';
@@ -218,12 +219,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                   ),
                                   const SizedBox(height: 10),
                                   _buildDetailTags(),
-                                  const SizedBox(height: 16),
-                                  Divider(
-                                    color: AppColors.greyColor.withOpacity(0.2),
-                                    thickness: 0,
-                                  ),
-                                  const SizedBox(height: 16),
+                                  broadDivider(host: hosted),
                                   Text(
                                     "Event details",
                                     style: AppStyles.h5.copyWith(
@@ -232,12 +228,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                   ),
                                   const SizedBox(height: 16),
                                   EventDetails(event: event),
-                                  const SizedBox(height: 16),
-                                  Divider(
-                                    color: AppColors.greyColor.withOpacity(0.2),
-                                    thickness: 0,
-                                  ),
-                                  const SizedBox(height: 16),
+                                  broadDivider(host: hosted),
                                   Text(
                                     "Event description",
                                     style: AppStyles.h5.copyWith(
@@ -246,11 +237,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                   ),
                                   const SizedBox(height: 16),
                                   _buildDescription(),
-                                  const SizedBox(height: 16),
-                                  Divider(
-                                    color: AppColors.greyColor.withOpacity(0.2),
-                                    thickness: 0,
-                                  ),
+                                  broadDivider(host: hosted),
                                   EventDetailsTicketInfo(
                                     event: event,
                                     isPreview: widget.isPreview,
@@ -263,13 +250,7 @@ class _EventDetailsPageState extends ConsumerState<EventDetailsPage> {
                                     clone: widget.clone,
                                     hosted: hosted,
                                   ),
-                                  const SizedBox(height: 16),
                                   _buildPhotos(widget.isPreview, widget.rePublish, ref),
-                                  const SizedBox(height: 16),
-                                  Divider(
-                                    color: AppColors.greyColor.withOpacity(0.2),
-                                    thickness: 0,
-                                  ),
                                   EventHosts(
                                     event: event,
                                     isPreview: widget.isPreview,

@@ -31,11 +31,11 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               children: [
-                Text("PayPal.me", style: AppStyles.h4),
+                Text("PayPal.Me/", style: AppStyles.h4),
                 const SizedBox(width: 8),
                 Expanded(
                   child: CustomTextField(
-                    hintText: "PayPal.Me/UserName",
+                    hintText: "UserName",
                     controller: rePublish
                         ? ref.read(editEventControllerProvider.notifier).paypalLinkController
                         : ref.read(newEventProvider.notifier).paypalLinkController,
@@ -179,6 +179,7 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
             flex: 2,
             child: CustomTextField(
               controller: priceController,
+              hintText: "00.00",
               keyboardType: TextInputType.number,
               onChanged: (val) {
                 _updatePrice(ref, val, index);
@@ -232,13 +233,12 @@ class CreateEventTicketTypeFields extends ConsumerWidget {
   }
 
   void _updatePrice(WidgetRef ref, String val, int index) {
-    if (val.length > 1 && val[0] == "0") {
-      val = val.substring(1);
-    }
+    final price = double.tryParse(val);
+    if (price == null) return;
     if (rePublish) {
-      ref.read(editEventControllerProvider.notifier).updateTicketPrice(index, val);
+      ref.read(editEventControllerProvider.notifier).updateTicketPrice(index, price);
     } else {
-      ref.read(newEventProvider.notifier).updateTicketPrice(index, val);
+      ref.read(newEventProvider.notifier).updateTicketPrice(index, price);
     }
   }
 }

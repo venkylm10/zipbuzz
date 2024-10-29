@@ -18,7 +18,7 @@ class AttendeeNumberResponse extends ConsumerStatefulWidget {
   final NotificationData notification;
   final bool inviteReply;
   final Future Function(BuildContext context, int attendees,
-      TextEditingController commentController, int totalAmount) onSubmit;
+      TextEditingController commentController, double totalAmount) onSubmit;
   final EventModel event;
   final String comment;
 
@@ -77,7 +77,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                 children: [
                   Expanded(child: Text("Total:", style: AppStyles.h4)),
                   Builder(builder: (context) {
-                    final total = counts.fold<int>(
+                    final total = counts.fold<double>(
                       0,
                       (previousValue, element) =>
                           previousValue +
@@ -109,13 +109,13 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
             const SizedBox(height: 24),
             InkWell(
               onTap: () async {
-                var amount = 0;
+                var amount = 0.0;
                 if (widget.event.ticketTypes.isNotEmpty) {
                   final tickets = <TicketType>[];
                   for (var i = 0; i < widget.event.ticketTypes.length; i++) {
                     tickets.add(widget.event.ticketTypes[i].copyWith(quantity: counts[i]));
                   }
-                  amount = tickets.fold<int>(
+                  amount = tickets.fold<double>(
                     0,
                     (previousValue, element) => previousValue + element.price * element.quantity,
                   );

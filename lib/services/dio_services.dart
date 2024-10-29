@@ -114,7 +114,7 @@ class DioServices {
     }
   }
 
-  Future<void> postEventTickets(int eventId, List<String> titles, List<int> prices) async {
+  Future<void> postEventTickets(int eventId, List<String> titles, List<double> prices) async {
     for (int i = 0; i < titles.length; i++) {
       try {
         await dio.post(DioConstants.eventTickets, data: {

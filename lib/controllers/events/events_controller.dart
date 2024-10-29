@@ -262,7 +262,7 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
   }
 
   Future<void> respondToInvite(
-      EventModel event, NotificationData notification, int attendees, String message, int amount,
+      EventModel event, NotificationData notification, int attendees, String message, double amount,
       {bool accepted = true}) async {
     final user = ref.read(userProvider);
     await ref.read(dioServicesProvider).updateUserNotificationYN(
@@ -297,16 +297,14 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
     }
   }
 
-  String getVenmoLink(EventModel event, int amount) {
+  String getVenmoLink(EventModel event, double amount) {
     final title = event.title.split(' ').join('%20');
-    return "https://venmo.com/?txn=charge&audience=private&recipients=${event.venmoLink}&amount=$amount&note=${title.replaceAll(' ', '%20')}";
+    return "https://venmo.com/?txn=charge&audience=private&recipients=${event.venmoLink}&amount=${amount.toStringAsFixed(2)}&note=${title.replaceAll(' ', '%20')}";
   }
 
-  String getPayPalLink(EventModel event, int amount) {
-    final splits = event.paypalLink.split('/');
-    if (splits.length == 1) return "";
-    final paypalId = splits[1];
-    return "https://www.paypal.com/paypalme/$paypalId/$amount";
+  String getPayPalLink(EventModel event, double amount) {
+    final paypalId = event.paypalLink;
+    return "https://www.paypal.com/paypalme/$paypalId/${amount.toStringAsFixed(2)}";
   }
 }
 

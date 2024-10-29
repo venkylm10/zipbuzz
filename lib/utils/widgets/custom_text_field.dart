@@ -20,6 +20,8 @@ class CustomTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final TextAlign textAlign;
   final Color? borderColor;
+  final List<TextInputFormatter> inputFormatters;
+  final TextStyle? hintStyle;
   const CustomTextField({
     super.key,
     required this.controller,
@@ -38,6 +40,8 @@ class CustomTextField extends StatelessWidget {
     this.textInputAction,
     this.textAlign = TextAlign.start,
     this.borderColor,
+    this.inputFormatters = const [],
+    this.hintStyle,
   });
 
   Widget? buildCounter() {
@@ -77,7 +81,10 @@ class CustomTextField extends StatelessWidget {
               focusNode: focusNode,
               cursorColor: AppColors.primaryColor,
               style: AppStyles.h4,
-              inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(maxLength),
+                ...inputFormatters,
+              ],
               maxLines: maxLines,
               onChanged: onChanged,
               keyboardType: keyboardType,
@@ -86,7 +93,7 @@ class CustomTextField extends StatelessWidget {
               decoration: InputDecoration(
                 enabled: enabled!,
                 hintText: hintText,
-                hintStyle: AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
+                hintStyle: hintStyle ?? AppStyles.h4.copyWith(color: AppColors.lightGreyColor),
                 contentPadding: const EdgeInsets.all(8),
                 counter: buildCounter(),
                 border: const OutlineInputBorder(

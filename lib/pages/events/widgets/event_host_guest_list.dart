@@ -8,6 +8,7 @@ import 'package:zipbuzz/services/dio_services.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/defaults.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
+import 'package:zipbuzz/utils/widgets/broad_divider.dart';
 import 'package:zipbuzz/utils/widgets/snackbar.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -57,7 +58,8 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
             borderRadius: BorderRadius.circular(8),
           ),
           child: buildMembersList(),
-        )
+        ),
+        broadDivider(host: true),
       ],
     );
   }

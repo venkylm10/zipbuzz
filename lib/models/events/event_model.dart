@@ -275,7 +275,7 @@ class HyperLinks {
 class TicketType {
   final int id;
   final String title;
-  final int price;
+  final double price;
   final int quantity;
   TicketType({this.id = 0, required this.title, required this.price, this.quantity = 0});
 
@@ -283,7 +283,7 @@ class TicketType {
     return TicketType(
       id: map['id'] as int,
       title: map['ticket_name'] as String,
-      price: map['ticket_price'] as int,
+      price: map['ticket_price'] as double,
       quantity: map['quantity'] as int? ?? 0,
     );
   }
@@ -300,7 +300,7 @@ class TicketType {
   TicketType copyWith({
     int? id,
     String? title,
-    int? price,
+    double? price,
     int? quantity,
   }) {
     return TicketType(
