@@ -1,6 +1,6 @@
 class UserIdRequestModel {
   final String email;
-  final String deviceToken;
+  final String? deviceToken;
   const UserIdRequestModel({
     required this.email,
     required this.deviceToken,

@@ -140,7 +140,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.2.0</string>
+					<string>11.4.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -170,7 +170,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.0.0</string>
+					<string>11.2.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -200,7 +200,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.2.0</string>
+					<string>11.4.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -230,7 +230,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.0.0</string>
+					<string>11.2.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -260,7 +260,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.2.0</string>
+					<string>11.4.1</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -290,7 +290,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.2.0</string>
+					<string>11.4.2</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -320,7 +320,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.0.0</string>
+					<string>11.2.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -350,7 +350,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.2.0</string>
+					<string>11.4.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -380,7 +380,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.0.0</string>
+					<string>11.2.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -410,7 +410,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.2.0</string>
+					<string>11.4.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -440,7 +440,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>11.0.0</string>
+					<string>11.2.0</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -920,7 +920,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>1.22.5</string>
+					<string>1.22.6</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -1089,7 +1089,7 @@
 						<string>Cloud Managed Apple Distribution</string>
 					</dict>
 					<key>name</key>
-					<string>sqflite.framework</string>
+					<string>sqflite_darwin.framework</string>
 					<key>symbols</key>
 					<true/>
 					<key>team</key>
@@ -1100,7 +1100,7 @@
 						<string>ZipBuzz LLC</string>
 					</dict>
 					<key>versionNumber</key>
-					<string>0.0.3</string>
+					<string>0.0.4</string>
 				</dict>
 				<dict>
 					<key>architectures</key>
@@ -1231,7 +1231,7 @@
 				<string>ZipBuzz LLC</string>
 			</dict>
 			<key>versionNumber</key>
-			<string>1.0.77</string>
+			<string>1.0.82</string>
 		</dict>
 	</array>
 </dict>

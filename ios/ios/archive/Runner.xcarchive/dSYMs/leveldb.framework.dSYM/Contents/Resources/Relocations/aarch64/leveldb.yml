@@ -586,13 +586,13 @@ relocations:
   - { offset: 0xAE8BE, size: 0x8, addend: 0x0, symName: __ZN7leveldb10EnvWrapper20SleepForMicrosecondsEi, symObjAddr: 0x4C8, symBinAddr: 0x17700, symSize: 0x10 }
   - { offset: 0xB0D75, size: 0x8, addend: 0x0, symName: __ZN7leveldb12_GLOBAL__N_127g_open_read_only_file_limitE, symObjAddr: 0x4BD4, symBinAddr: 0x35768, symSize: 0x0 }
   - { offset: 0xB0D8F, size: 0x8, addend: 0x0, symName: __ZN7leveldb12_GLOBAL__N_112g_mmap_limitE, symObjAddr: 0x4BD8, symBinAddr: 0x3576C, symSize: 0x0 }
-  - { offset: 0xB0DA3, size: 0x8, addend: 0x0, symName: __ZN7leveldb12_GLOBAL__N_112SingletonEnvINS0_8PosixEnvEE16env_initialized_E.0, symObjAddr: 0x8CB28, symBinAddr: 0x358A8, symSize: 0x0 }
+  - { offset: 0xB0DA3, size: 0x8, addend: 0x0, symName: __ZN7leveldb12_GLOBAL__N_112SingletonEnvINS0_8PosixEnvEE16env_initialized_E.0, symObjAddr: 0x8CB18, symBinAddr: 0x358A8, symSize: 0x0 }
   - { offset: 0xB0F3B, size: 0x8, addend: 0x0, symName: __ZN7leveldb12_GLOBAL__N_110PosixErrorERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEi, symObjAddr: 0x1930, symBinAddr: 0x19030, symSize: 0xB4 }
   - { offset: 0xBD817, size: 0x8, addend: 0x0, symName: __ZNSt3__114__thread_proxyB8ne180100INS_5tupleIJNS_10unique_ptrINS_15__thread_structENS_14default_deleteIS3_EEEEPFvPN7leveldb12_GLOBAL__N_18PosixEnvEESA_EEEEEPvSE_, symObjAddr: 0x346C, symBinAddr: 0x1A0EC, symSize: 0x68 }
   - { offset: 0xBDEE3, size: 0x8, addend: 0x0, symName: __ZNSt3__114__thread_proxyB8ne180100INS_5tupleIJNS_10unique_ptrINS_15__thread_structENS_14default_deleteIS3_EEEEPFvPvES7_EEEEES7_S7_, symObjAddr: 0x3608, symBinAddr: 0x1A288, symSize: 0x74 }
   - { offset: 0xBE3C7, size: 0x8, addend: 0x0, symName: __ZNSt3__1lsB8ne180100IcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_NS_11__thread_idE, symObjAddr: 0x3B94, symBinAddr: 0x1A740, symSize: 0x1C0 }
   - { offset: 0xBFC45, size: 0x8, addend: 0x0, symName: __ZN7leveldb3Env7DefaultEv, symObjAddr: 0x50, symBinAddr: 0x17760, symSize: 0x6C }
-  - { offset: 0xBFC69, size: 0x8, addend: 0x0, symName: __ZZN7leveldb3Env7DefaultEvE13env_container, symObjAddr: 0x8CA08, symBinAddr: 0x35788, symSize: 0x0 }
+  - { offset: 0xBFC69, size: 0x8, addend: 0x0, symName: __ZZN7leveldb3Env7DefaultEvE13env_container, symObjAddr: 0x8C9F8, symBinAddr: 0x35788, symSize: 0x0 }
   - { offset: 0xC01E1, size: 0x8, addend: 0x0, symName: __ZN7leveldb12_GLOBAL__N_18PosixEnv9NowMicrosEv, symObjAddr: 0x1864, symBinAddr: 0x18F74, symSize: 0x38 }
   - { offset: 0xC07A4, size: 0x8, addend: 0x0, symName: __ZN7leveldb18EnvPosixTestHelper18SetReadOnlyFDLimitEi, symObjAddr: 0x0, symBinAddr: 0x17710, symSize: 0x28 }
   - { offset: 0xC0814, size: 0x8, addend: 0x0, symName: __ZN7leveldb18EnvPosixTestHelper20SetReadOnlyMMapLimitEi, symObjAddr: 0x28, symBinAddr: 0x17738, symSize: 0x28 }
