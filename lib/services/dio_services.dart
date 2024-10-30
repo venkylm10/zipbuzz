@@ -164,6 +164,7 @@ class DioServices {
   Future<void> makeRequest(MakeRequestModel model) async {
     try {
       await dio.post(DioConstants.makeRequests, data: model.toMap());
+      debugPrint("Request made");
     } catch (e) {
       debugPrint("Error sending user request: $e");
     }
@@ -182,6 +183,7 @@ class DioServices {
     try {
       await dio
           .post(DioConstants.increaseDecision, data: {"event_id": eventId, "decision": decicion});
+      debugPrint("Decision increased: $decicion");
     } catch (e) {
       debugPrint("Error decision increasing: $e");
     }
@@ -224,6 +226,7 @@ class DioServices {
         "notification_id": notificationId,
         "notification_type": notificationType,
       });
+      debugPrint("Updated user notification: $notificationType");
     } catch (e) {
       debugPrint(e.toString());
       rethrow;
@@ -242,6 +245,7 @@ class DioServices {
       await dio.post(DioConstants.userNotification, data: {
         'notification_data': data,
       });
+      debugPrint("Updated notification: $notificationType");
     } catch (e) {
       debugPrint(e.toString());
       rethrow;

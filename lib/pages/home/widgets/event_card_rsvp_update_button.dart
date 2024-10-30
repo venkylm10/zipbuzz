@@ -85,7 +85,7 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
             child: AttendeeNumberResponse(
               notification: notification,
               event: event,
-              onSubmit: (context, attendees, commentController, amount) async {
+              onSubmit: (context, event, attendees, commentController, amount) async {
                 if (clicked) return;
                 clicked = true;
                 try {
@@ -98,7 +98,6 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                         accepted: true,
                       );
                   clicked = false;
-                  navigatorKey.currentState!.pop();
                   await Future.delayed(const Duration(milliseconds: 300));
                   event.status = "requested";
                   updateStatus('requested', event.eventMembers.length);
@@ -128,10 +127,13 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                         );
                       },
                     );
+                    navigatorKey.currentState!.pop();
                   }
                   ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
+                  navigatorKey.currentState!.pop();
                 } catch (e) {
                   clicked = false;
+                  ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                   debugPrint("Error accepting the request: $e");
                   navigatorKey.currentState!.pop();
                   await Future.delayed(const Duration(milliseconds: 300));

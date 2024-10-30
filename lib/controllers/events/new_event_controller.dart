@@ -429,7 +429,7 @@ class NewEvent extends StateNotifier<EventModel> {
         category: state.category,
         name: state.title,
         description: state.about,
-        date: DateTime(date.year, date.month, date.day).toUtc().toString(),
+        date: DateTime(date.year, date.month, date.day).toString(),
         venue: state.location,
         startTime: state.startTime,
         endTime: state.endTime.isEmpty ? "null" : state.endTime,
@@ -480,8 +480,9 @@ class NewEvent extends StateNotifier<EventModel> {
         return nums.join(',');
       }).toList();
       final names = eventInvites.map((e) => e.displayName).toList();
+      debugPrint("Phone Numbers");
       for (var e in phoneNumbers) {
-        debugPrint("Phone Numbers: $e");
+        debugPrint(e);
       }
       final eventInvitePostModel = EventInvitePostModel(
         phoneNumbers: phoneNumbers,

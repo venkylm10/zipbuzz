@@ -189,11 +189,9 @@ class InviteNotiCard extends ConsumerWidget {
           child: AttendeeNumberResponse(
             notification: notification,
             event: event!,
-            onSubmit: (context, attendees, commentController, amount) async {
+            onSubmit: (context, event, attendees, commentController, amount) async {
               Navigator.of(context).pop();
               ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
-              final event =
-                  await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
               try {
                 await ref.read(eventsControllerProvider.notifier).respondToInvite(
                       event,
@@ -272,11 +270,9 @@ class InviteNotiCard extends ConsumerWidget {
             notification: notification,
             comment: "Sorry, I can't make it",
             event: event!,
-            onSubmit: (context, attendees, commentController, amount) async {
+            onSubmit: (context, event, attendees, commentController, amount) async {
               Navigator.of(context).pop();
               ref.read(eventsControllerProvider.notifier).updateLoadingState(true);
-              final event =
-                  await ref.read(dbServicesProvider).getEventDetails(notification.eventId);
               try {
                 await ref.read(eventsControllerProvider.notifier).respondToInvite(
                       event,

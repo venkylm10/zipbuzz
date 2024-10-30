@@ -17,7 +17,7 @@ class AttendeeNumberResponse extends ConsumerStatefulWidget {
   });
   final NotificationData notification;
   final bool inviteReply;
-  final Future Function(BuildContext context, int attendees,
+  final Future Function(BuildContext context, EventModel updatedEvent, int attendees,
       TextEditingController commentController, double totalAmount) onSubmit;
   final EventModel event;
   final String comment;
@@ -77,14 +77,12 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                 children: [
                   Expanded(child: Text("Total:", style: AppStyles.h4)),
                   Builder(builder: (context) {
-                    final total = counts.fold<double>(
-                      0,
-                      (previousValue, element) =>
-                          previousValue +
-                          element * widget.event.ticketTypes[counts.indexOf(element)].price,
-                    );
+                    var total = 0.0;
+                    for (int i = 0; i < widget.event.ticketTypes.length; i++) {
+                      total += widget.event.ticketTypes[i].price * counts[i];
+                    }
                     return Text(
-                      "\$$total",
+                      "\$${total.toStringAsFixed(2)}",
                       style: AppStyles.h3.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -133,7 +131,14 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
                         0,
                         (previousValue, element) => previousValue + element,
                       );
-                await widget.onSubmit(context, attendees, commentController, amount);
+                final updatedTickets = <TicketType>[];
+                for (var i = 0; i < widget.event.ticketTypes.length; i++) {
+                  updatedTickets.add(widget.event.ticketTypes[i].copyWith(quantity: counts[i]));
+                }
+                final updatedEvent = widget.event.copyWith(
+                  ticketTypes: widget.event.ticketTypes.isEmpty ? null : updatedTickets,
+                );
+                await widget.onSubmit(context, updatedEvent, attendees, commentController, amount);
               },
               child: Container(
                 width: double.infinity,
@@ -181,7 +186,7 @@ class _AttendeeNumberResponseState extends ConsumerState<AttendeeNumberResponse>
               ),
               const SizedBox(width: 8),
               Text(
-                "\$$price",
+                "\$${price.toStringAsFixed(2)}",
                 style: AppStyles.h4.copyWith(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w500,
