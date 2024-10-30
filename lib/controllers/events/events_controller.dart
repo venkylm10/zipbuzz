@@ -9,7 +9,6 @@ import 'package:zipbuzz/models/events/join_request_model.dart';
 import 'package:zipbuzz/models/events/posts/add_fav_event_model_class.dart';
 import 'package:zipbuzz/models/events/posts/make_request_model.dart';
 import 'package:zipbuzz/models/events/requests/user_events_request_model.dart';
-import 'package:zipbuzz/models/groups/post/log_ticket_model.dart';
 import 'package:zipbuzz/models/notification_data.dart';
 import 'package:zipbuzz/models/user/user_model.dart';
 import 'package:zipbuzz/services/chat_services.dart';
@@ -46,22 +45,26 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
   }
 
   Future<void> fetchEvents() async {
-    final day = currentDay;
-    var month = day.month.toString();
-    month = month.length == 1 ? '0$month' : month;
-    final year = day.year.toString();
-    final interests =
-        ref.read(homeTabControllerProvider).queryInterests.map((e) => e.activity).toList();
-    final zipcode = ref.read(homeTabControllerProvider.notifier).zipcodeControler.text.trim();
-    final userEventsRequestModel = UserEventsRequestModel(
-      userId: ref.read(userProvider).id,
-      month: "$year-$month",
-      category: interests,
-      zipcode: zipcode,
-    );
-    final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
-    state = state.copyWith(currentMonthEvents: list);
-    adjustEventData();
+    try {
+      final day = currentDay;
+      var month = day.month.toString();
+      month = month.length == 1 ? '0$month' : month;
+      final year = day.year.toString();
+      final interests =
+          ref.read(homeTabControllerProvider).queryInterests.map((e) => e.activity).toList();
+      final zipcode = ref.read(homeTabControllerProvider.notifier).zipcodeControler.text.trim();
+      final userEventsRequestModel = UserEventsRequestModel(
+        userId: ref.read(userProvider).id,
+        month: "$year-$month",
+        category: interests,
+        zipcode: zipcode,
+      );
+      final list = await ref.read(dbServicesProvider).getAllEvents(userEventsRequestModel);
+      state = state.copyWith(currentMonthEvents: list);
+      adjustEventData();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   void fixHomeEvents(List<EventModel> events) {

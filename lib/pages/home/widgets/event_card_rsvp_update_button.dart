@@ -127,7 +127,6 @@ class EventCardRsvpUpdateButton extends ConsumerWidget {
                         );
                       },
                     );
-                    navigatorKey.currentState!.pop();
                   }
                   ref.read(eventsControllerProvider.notifier).updateLoadingState(false);
                   navigatorKey.currentState!.pop();

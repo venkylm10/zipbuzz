@@ -66,9 +66,8 @@ class EventDetailsTicketInfo extends StatelessWidget {
           var amount = 0.0;
           final userId = ref.read(userProvider).id;
           if (!isPreview && !rePublish) {
-            final member = ref
-                .read(eventRequestMembersProvider)
-                .indexWhere((e) => e.userId == userId);
+            final member =
+                ref.read(eventRequestMembersProvider).indexWhere((e) => e.userId == userId);
             if (member == -1) return const SizedBox();
             amount = ref
                 .read(eventRequestMembersProvider)
@@ -83,14 +82,12 @@ class EventDetailsTicketInfo extends StatelessWidget {
         }),
         Consumer(builder: (context, ref, child) {
           final userId = ref.read(userProvider).id;
-          final member = ref
-              .watch(eventRequestMembersProvider)
-              .where((e) => e.userId == userId);
+          final member = ref.watch(eventRequestMembersProvider).where((e) => e.userId == userId);
           if (member.isEmpty) return const SizedBox();
           // final amount = member.first.totalAmount;
-          if (member.first.ticketDetails == 'zipbuzz-null' &&
-              !isPreview &&
-              !rePublish) return const SizedBox();
+          if (member.first.ticketDetails == 'zipbuzz-null' || isPreview || rePublish) {
+            return const SizedBox();
+          }
           return Padding(
             padding: const EdgeInsets.only(top: 16),
             child: Text(

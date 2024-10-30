@@ -13,8 +13,7 @@ import 'package:zipbuzz/utils/widgets/snackbar.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 final guestListTagProvider = StateProvider<String>((ref) => "Invited");
-final eventRequestMembersProvider =
-    StateProvider<List<EventRequestMember>>((ref) => []);
+final eventRequestMembersProvider = StateProvider<List<EventRequestMember>>((ref) => []);
 
 class EventHostGuestList extends ConsumerStatefulWidget {
   const EventHostGuestList({
@@ -105,8 +104,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
         itemBuilder: (context, index) {
           final member = responedMembers[index];
           return buildRequestMemberCard(member, context, index,
-              isPending: member.status == "pending",
-              isLast: index == responedMembers.length - 1);
+              isPending: member.status == "pending", isLast: index == responedMembers.length - 1);
         },
       );
     });
@@ -115,10 +113,8 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
   Widget buildConfirmedMembers() {
     return Consumer(builder: (context, ref, child) {
       var data = ref.watch(eventRequestMembersProvider);
-      final confirmedMembers = data
-          .where((element) =>
-              element.status == "confirm" || element.status == 'host')
-          .toList();
+      final confirmedMembers =
+          data.where((element) => element.status == "confirm" || element.status == 'host').toList();
       return ListView.builder(
         itemCount: confirmedMembers.length,
         shrinkWrap: true,
@@ -146,8 +142,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
     );
   }
 
-  Column buildRequestMemberCard(
-      EventRequestMember member, BuildContext context, int index,
+  Column buildRequestMemberCard(EventRequestMember member, BuildContext context, int index,
       {bool isPending = false, bool isLast = false}) {
     String formattedName = formatName(member.name);
     return Column(
@@ -162,9 +157,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                    member.image != "null"
-                        ? member.image
-                        : Defaults.contactAvatarUrl,
+                    member.image != "null" ? member.image : Defaults.contactAvatarUrl,
                     height: 32,
                     width: 32),
               ),
@@ -179,15 +172,6 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
                       formattedName,
                       style: AppStyles.h5,
                     ),
-                    if (member.ticketDetails != 'zipbuzz-null')
-                      Text(
-                        member.ticketDetails,
-                        style: AppStyles.h5.copyWith(
-                          color: AppColors.greyColor,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
                   ],
                 ),
               ),
@@ -206,8 +190,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
                     ),
                   ),
                 ),
-              if (member.totalAmount > 0 &&
-                  widget.event.hostId == ref.read(userProvider).id)
+              if (member.totalAmount > 0 && widget.event.hostId == ref.read(userProvider).id)
                 Container(
                   padding: const EdgeInsets.all(8),
                   margin: const EdgeInsets.only(right: 8),
@@ -233,27 +216,20 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
                         if (member.status == "host") return;
                         var newMember = member;
                         newMember.status = "confirm";
-                        var updateMembers =
-                            ref.read(eventRequestMembersProvider);
-                        updateMembers.removeWhere(
-                            (element) => element.userId == newMember.userId);
+                        var updateMembers = ref.read(eventRequestMembersProvider);
+                        updateMembers.removeWhere((element) => element.userId == newMember.userId);
                         updateMembers.add(newMember);
                         ref
                             .read(eventRequestMembersProvider.notifier)
                             .update((state) => updateMembers);
-                        showSnackBar(
-                            message:
-                                "${member.name} was confirmed for the event.");
-                        ref
-                            .read(guestListTagProvider.notifier)
-                            .update((state) => "Confirmed");
-                        await ref.read(dioServicesProvider).editUserStatus(
-                            widget.event.id, member.userId, "confirm");
+                        showSnackBar(message: "${member.name} was confirmed for the event.");
+                        ref.read(guestListTagProvider.notifier).update((state) => "Confirmed");
                         await ref
                             .read(dioServicesProvider)
-                            .updateRespondedNotification(
-                                member.userId, widget.event.hostId,
-                                eventId: widget.event.id);
+                            .editUserStatus(widget.event.id, member.userId, "confirm");
+                        await ref.read(dioServicesProvider).updateRespondedNotification(
+                            member.userId, widget.event.hostId,
+                            eventId: widget.event.id);
                       },
                       child: buildGuestTag(member.status),
                     );
@@ -262,6 +238,17 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
             ],
           ),
         ),
+        if (member.ticketDetails != 'zipbuzz-null')
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              member.ticketDetails,
+              style: AppStyles.h5.copyWith(
+                color: AppColors.greyColor,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
         if (!isLast)
           Divider(
             color: AppColors.greyColor.withOpacity(0.2),
@@ -271,8 +258,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
     );
   }
 
-  Column buildMembercard(
-      EventInviteMember member, BuildContext context, int index) {
+  Column buildMembercard(EventInviteMember member, BuildContext context, int index) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -285,9 +271,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                    member.image != "null"
-                        ? member.image
-                        : Defaults.contactAvatarUrl,
+                    member.image != "null" ? member.image : Defaults.contactAvatarUrl,
                     height: 32,
                     width: 32),
               ),
@@ -359,9 +343,7 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
           child: Text(
             text,
             style: AppStyles.h5.copyWith(
-              color: status == "declined"
-                  ? Colors.red.shade500
-                  : Colors.green.shade500,
+              color: status == "declined" ? Colors.red.shade500 : Colors.green.shade500,
             ),
           ),
         );
@@ -400,30 +382,23 @@ class _EventHostGuestListState extends ConsumerState<EventHostGuestList> {
             }
             return InkWell(
               onTap: () {
-                ref
-                    .read(guestListTagProvider.notifier)
-                    .update((state) => tags[index]);
+                ref.read(guestListTagProvider.notifier).update((state) => tags[index]);
               },
               child: Container(
                 margin: const EdgeInsets.only(right: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: selectedTag == tags[index]
-                      ? AppColors.primaryColor
-                      : Colors.transparent,
+                  color: selectedTag == tags[index] ? AppColors.primaryColor : Colors.transparent,
                   borderRadius: BorderRadius.circular(40),
                   border: Border.all(
-                    color: selectedTag == tags[index]
-                        ? AppColors.primaryColor
-                        : AppColors.borderGrey,
+                    color:
+                        selectedTag == tags[index] ? AppColors.primaryColor : AppColors.borderGrey,
                   ),
                 ),
                 child: Text(
                   "${tags[index]} (${tags[index] == "Invited" ? allLength : tags[index] == "RSVPs" ? respondedLength : confirmedLength})",
                   style: AppStyles.h5.copyWith(
-                    color: selectedTag == tags[index]
-                        ? Colors.white
-                        : AppColors.greyColor,
+                    color: selectedTag == tags[index] ? Colors.white : AppColors.greyColor,
                   ),
                 ),
               ),
