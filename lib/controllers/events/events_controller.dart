@@ -291,7 +291,7 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
       notification.eventId,
     );
     if (message.isNotEmpty) {
-      await ref.read(chatServicesProvider).sendMessage(
+      ref.read(chatServicesProvider).sendMessage(
             event: event,
             message: message,
           );
