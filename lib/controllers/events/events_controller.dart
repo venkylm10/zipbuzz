@@ -308,7 +308,7 @@ class EventsControllerProvider extends StateNotifier<EventsController> {
 
   String getPayPalLink(EventModel event, double amount) {
     final paypalId = event.paypalLink;
-    return "https://www.paypal.com/paypalme/$paypalId/${amount.toStringAsFixed(2)}";
+    return "https://PayPal.Me/$paypalId/${amount.toStringAsFixed(2)}";
   }
 }
 

@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		Ms/VBiCG+9TS/mqtnrCIw4GNaoA=
+		nChnkxq5Y+oFZVvPLKcz1IdNYyc=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		z0N9edrjtrBvy3Z4a4t6ladkhKs=
+		1AmJXnim28zsMgVNk+btylLPkYc=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -58,7 +58,7 @@
 		</data>
 		<key>flutter_assets/assets/icons/broadcast_icon.png</key>
 		<data>
-		3MU5JlpsqG5u5LhJ+wpQ7v1c5rA=
+		Qz9pm0vgvj3S1W8oRm8sgSbAQWA=
 		</data>
 		<key>flutter_assets/assets/icons/calendar.svg</key>
 		<data>
@@ -428,9 +428,17 @@
 		<data>
 		ovDb5ByeqfH0vNrgrWvFGBcTz6U=
 		</data>
+		<key>flutter_assets/assets/images/paypalIcon.jpeg</key>
+		<data>
+		5WUHPdfY3u/rkU+lPyYlUBeotVw=
+		</data>
 		<key>flutter_assets/assets/images/profile.png</key>
 		<data>
 		9buVRsVmdwFmCiPQffmRyE9Q7zQ=
+		</data>
+		<key>flutter_assets/assets/images/venmoIcon.png</key>
+		<data>
+		NPTKUPlB2QkLYLjEHBbnZ7ml3HA=
 		</data>
 		<key>flutter_assets/assets/images/welcome/welcome1.png</key>
 		<data>
@@ -1507,14 +1515,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			DkFa1s7zHSZO5B21jyEDbM3UjmJFET9aQ4Hqa5Vv0+Y=
+			3ARX1yrrRFf6I7rja33SjkdJjtoA4rYqd6/efQSiEFM=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			+KEGjtSfhLNsHRY1L80dI1ar7y6mUDY7e7Q+ySs8i2E=
+			kJA//XFcrecVFnVyE6p2ff8bxp9q1QRLgModSpXalJ4=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -1591,7 +1599,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			JCW/MEePBgxWHrqMwt2XjRlDZCFLB5/X3AVrSHOeHp0=
+			rkXj2+Jcg17Zi3DqUmvx7SZVI47+86aWzw6LKwievBM=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/icons/calendar.svg</key>
@@ -2238,11 +2246,25 @@
 			MIH7K3HzzdXSzPDy2WIZV4AkVkgdZUwNyHkOSLzPtXM=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/paypalIcon.jpeg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			uQmPho0zr/XKA68tJlrrHmdyW65JGmgCZ78lWHkV8Xg=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/profile.png</key>
 		<dict>
 			<key>hash2</key>
 			<data>
 			Gn/Vpyz0sojyiJArXJ8QMS6cCHGN+ITMobY7GSM+qFQ=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/images/venmoIcon.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PYuyQeOUC7CW2AKE2FN3NZ0yKX14XX4oygtJoSN9F88=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/images/welcome/welcome1.png</key>
