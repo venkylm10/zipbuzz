@@ -16,7 +16,7 @@ import 'package:zipbuzz/models/groups/post/invite_group_member_model.dart';
 import 'package:zipbuzz/models/groups/post/create_group_model.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
-import 'package:zipbuzz/pages/groups/add_group_members.dart';
+import 'package:zipbuzz/pages/groups/add_group_or_community_members.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
 import 'package:zipbuzz/services/contact_services.dart';
@@ -139,7 +139,7 @@ class GroupController extends StateNotifier<GroupState> {
       updateLoading(false);
       toggleCreatingGroup();
       showSnackBar(message: "Group created successfully!. Invite members to group");
-      await navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+      await navigatorKey.currentState!.pushNamed(AddGroupOrCommunityMembers.id);
       resetController();
       await navigatorKey.currentState!.pushNamed(GroupDetailsScreen.id, arguments: {
         'group_id': groupId,
@@ -570,6 +570,7 @@ class GroupState {
   final GroupTab currentTab;
   final GroupEventsTab groupEventsTab;
   final bool creatingGroup;
+  final bool creatingCommunity;
   final File? profileImage;
   final File? bannerImage;
   final bool privateGroup;
@@ -597,6 +598,7 @@ class GroupState {
       this.groupEventsTab = GroupEventsTab.upcoming,
       this.currentTab = GroupTab.all,
       this.creatingGroup = false,
+      this.creatingCommunity = false,
       this.profileImage,
       this.bannerImage,
       this.privateGroup = true,
@@ -629,6 +631,7 @@ class GroupState {
     GroupEventsTab? groupEventsTab,
     GroupTab? currentTab,
     bool? creatingGroup,
+    bool? creatingCommunity,
     File? profileImage,
     File? bannerImage,
     bool? privateGroup,
@@ -658,6 +661,7 @@ class GroupState {
       groupEventsTab: groupEventsTab ?? this.groupEventsTab,
       currentTab: currentTab ?? this.currentTab,
       creatingGroup: creatingGroup ?? this.creatingGroup,
+      creatingCommunity: creatingCommunity ?? this.creatingCommunity,
       profileImage: removingFiles ? profileImage : profileImage ?? this.profileImage,
       bannerImage: removingFiles ? bannerImage : bannerImage ?? this.bannerImage,
       privateGroup: privateGroup ?? this.privateGroup,

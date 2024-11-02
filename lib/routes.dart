@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:zipbuzz/pages/chat/chat_page.dart';
+import 'package:zipbuzz/pages/community/community_detail_page.dart';
 import 'package:zipbuzz/pages/events/event_details_page.dart';
 import 'package:zipbuzz/pages/events/edit_event_page.dart';
-import 'package:zipbuzz/pages/groups/add_group_members.dart';
+import 'package:zipbuzz/pages/groups/add_group_or_community_members.dart';
 import 'package:zipbuzz/pages/groups/create_group_event_screen.dart';
 import 'package:zipbuzz/pages/groups/group_details_screen.dart';
 import 'package:zipbuzz/pages/groups/group_events_screen.dart';
@@ -171,9 +172,9 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
         duration: const Duration(milliseconds: 250),
         reverseDuration: const Duration(milliseconds: 250),
       );
-    case AddGroupMembers.id:
+    case AddGroupOrCommunityMembers.id:
       return PageTransition(
-        child: const AddGroupMembers(),
+        child: const AddGroupOrCommunityMembers(),
         type: PageTransitionType.fade,
         settings: settings,
         duration: const Duration(milliseconds: 250),
@@ -188,6 +189,14 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
         reverseDuration: const Duration(milliseconds: 250),
       );
 
+    case CommunityDetailPage.id:
+      return PageTransition(
+        child: const CommunityDetailPage(),
+        type: PageTransitionType.fade,
+        settings: settings,
+        duration: const Duration(milliseconds: 250),
+        reverseDuration: const Duration(milliseconds: 250),
+      );
     default:
       return PageTransition(
         child: const SplashScreen(),

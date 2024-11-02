@@ -78,4 +78,13 @@ class DioConstants {
   static const String uploadBannerImage = '/groups/group_banner_images/';
   static const String uploadMainImage = '/groups/group_main_images/';
   static const String updateGroup = '/groups/group_update/';
+
+  // Community
+  static const communityImage = '/groups/community_image/';
+  static const communityBanner = '/groups/community_banner/';
+  static const addCommunity = '/groups/community_add/';
+  static const getCommunityDetails = '/groups/community_display/';
+  static const getCommunityMembers = '/groups/community_members_listing/';
+  static const addCommunityMember = '/groups/community_member_add/';
+  
 }

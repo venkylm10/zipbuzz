@@ -6,6 +6,7 @@ import 'package:zipbuzz/controllers/events/events_controller.dart';
 import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/models/groups/res/description_model.dart';
 import 'package:zipbuzz/models/groups/res/group_description_res.dart';
+import 'package:zipbuzz/pages/community/community_detail_page.dart';
 import 'package:zipbuzz/pages/groups/group_events_screen.dart';
 import 'package:zipbuzz/pages/home/widgets/no_upcoming_events_banner.dart';
 import 'package:zipbuzz/pages/notification/notification_page.dart';
@@ -138,8 +139,67 @@ class GroupTabDescriptionList extends ConsumerWidget {
       itemCount: communities.length,
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        return _buildGroupTitleCard(communities[index], ref);
+        return _buildCommuityTitleCard(communities[index], ref);
       },
+    );
+  }
+
+  Widget _buildCommuityTitleCard(DescriptionModel description, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(communityControllerProvider.notifier).updateLoading(true);
+        ref.read(communityControllerProvider.notifier).updateCurrentDesc(description);
+        navigatorKey.currentState!.pushNamed(CommunityDetailPage.id);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.borderGrey),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: Image.network(
+                description.profileImage,
+                width: 44,
+                height: 44,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Center(
+                      child: CupertinoActivityIndicator(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                description.name,
+                style: AppStyles.h4.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              ">",
+              style: AppStyles.h4.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 12.5,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

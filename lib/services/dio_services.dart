@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/env.dart';
+import 'package:zipbuzz/models/community/post/add_community_model.dart';
+import 'package:zipbuzz/models/community/res/community_details_model.dart';
 import 'package:zipbuzz/models/events/event_invite_members.dart';
 import 'package:zipbuzz/models/events/event_model.dart';
 import 'package:zipbuzz/models/events/event_request_member.dart';
@@ -1276,5 +1278,56 @@ class DioServices {
   Future<void> createTicketLog(LogTicketModel model) async {
     await dio.post(DioConstants.logTicket, data: model.toJson());
     debugPrint("Logged Ticket");
+  }
+
+  Future<String> addCommunityImage(File file) async {
+    try {
+      final fileName = file.path.split('/').last;
+      final data = FormData.fromMap({
+        'community_image': await MultipartFile.fromFile(file.path, filename: fileName),
+      });
+      final res = await dio.post(DioConstants.communityImage, data: data);
+      return res.data['community_image_url'];
+    } catch (e) {
+      debugPrint("Error adding community image: $e");
+      rethrow;
+    }
+  }
+
+  Future<String> addCommunityBanner(File file) async {
+    try {
+      final fileName = file.path.split('/').last;
+      final data = FormData.fromMap({
+        'community_banner': await MultipartFile.fromFile(file.path, filename: fileName),
+      });
+      final res = await dio.post(DioConstants.communityBanner, data: data);
+      return res.data['community_banner_url'];
+    } catch (e) {
+      debugPrint("Error adding community banner: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> createCommunity(AddCommunityModel model) async {
+    try {
+      final res = await dio.post(DioConstants.addCommunity, data: model.toJson());
+      print(res.data);
+    } catch (e) {
+      debugPrint("Error creating community: $e");
+      rethrow;
+    }
+  }
+
+  Future<CommunityDetailsModel> getCommunityDetails(int userId, int communityId) async {
+    try {
+      final res = await dio.post(DioConstants.getCommunityDetails, data: {
+        'user_id': userId,
+        'community_id': communityId,
+      });
+      return CommunityDetailsModel.fromJson(res.data['community_data']);
+    } catch (e) {
+      debugPrint("Error getting community details: $e");
+      rethrow;
+    }
   }
 }

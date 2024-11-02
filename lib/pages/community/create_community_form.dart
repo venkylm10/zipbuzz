@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:zipbuzz/controllers/community/community_controller.dart';
-import 'package:zipbuzz/controllers/groups/group_controller.dart';
 import 'package:zipbuzz/utils/constants/assets.dart';
 import 'package:zipbuzz/utils/constants/colors.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
@@ -37,20 +36,6 @@ class CreateCommunityForm extends ConsumerWidget {
               _buildAddButton(ref, isProfile: true),
               _buildFieldTitle("Community Banner Image", false),
               _buildAddButton(ref, isProfile: false),
-              // _buildFieldTitle("Group url", false),
-              // HyperlinkFields(
-              //   nameController: TextEditingController(),
-              //   urlController: TextEditingController(),
-              //   onDelete: () {},
-              // ),
-              // _buildFieldTitle("Group visibility", false),
-              // Row(
-              //   children: [
-              //     groupTypeCard(ref, "Public group", "Shown to All", false),
-              //     const SizedBox(width: 8),
-              //     groupTypeCard(ref, "Private group", "By Invitation Only", true),
-              //   ],
-              // ),
               const SizedBox(height: 16),
               createCommunityButton(ref),
               const SizedBox(height: 32),
@@ -63,7 +48,7 @@ class CreateCommunityForm extends ConsumerWidget {
   }
 
   Widget _buildLoader(WidgetRef ref) {
-    if (!ref.watch(groupControllerProvider).loading) return const SizedBox();
+    if (!ref.watch(communityControllerProvider).loading) return const SizedBox();
     return Positioned.fill(
       child: Container(
         color: Colors.white.withOpacity(0.6),
@@ -83,7 +68,7 @@ class CreateCommunityForm extends ConsumerWidget {
   Widget createCommunityButton(WidgetRef ref) {
     return InkWell(
       onTap: () {
-        // ref.read(groupControllerProvider.notifier).createGroup();
+        ref.read(communityControllerProvider.notifier).createCommunity();
       },
       child: Ink(
         padding: const EdgeInsets.all(12),
@@ -104,58 +89,6 @@ class CreateCommunityForm extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _communityTypeCard(
-    WidgetRef ref,
-    String title,
-    String subTitle,
-    bool value,
-  ) {
-    final selected = ref.watch(groupControllerProvider).privateGroup;
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          if (value == selected) return;
-          ref.read(groupControllerProvider.notifier).updateGroupVisibility(value);
-        },
-        child: Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: AppColors.bgGrey,
-            border: Border.all(
-              color: selected == value ? AppColors.primaryColor : AppColors.borderGrey,
-            ),
-          ),
-          child: Row(
-            children: [
-              Radio(
-                value: value,
-                groupValue: selected,
-                activeColor: AppColors.primaryColor,
-                onChanged: (value) {
-                  if (value == null || value == selected) return;
-                  ref.read(groupControllerProvider.notifier).updateGroupVisibility(value);
-                },
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: AppStyles.h4),
-                  Text(
-                    subTitle,
-                    style: AppStyles.h5.copyWith(
-                      color: AppColors.lightGreyColor,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

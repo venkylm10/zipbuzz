@@ -5,7 +5,7 @@ import 'package:zipbuzz/controllers/home/home_tab_controller.dart';
 import 'package:zipbuzz/controllers/navigation_controller.dart';
 import 'package:zipbuzz/controllers/profile/user_controller.dart';
 import 'package:zipbuzz/models/groups/group_model.dart';
-import 'package:zipbuzz/pages/groups/add_group_members.dart';
+import 'package:zipbuzz/pages/groups/add_group_or_community_members.dart';
 import 'package:zipbuzz/pages/groups/edit_group_screen.dart';
 import 'package:zipbuzz/pages/groups/group_members_screen.dart';
 import 'package:zipbuzz/pages/home/home.dart';
@@ -174,7 +174,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
         onTap: () async {
           ref.read(groupControllerProvider.notifier).clearSelectedContacts();
           ref.read(groupControllerProvider.notifier).contactSearchController.clear();
-          await navigatorKey.currentState!.pushNamed(AddGroupMembers.id);
+          await navigatorKey.currentState!.pushNamed(AddGroupOrCommunityMembers.id);
           await navigatorKey.currentState!.pushNamed(GroupMembersScreen.id);
         },
         child: Container(

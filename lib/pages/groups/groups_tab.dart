@@ -81,7 +81,7 @@ class GroupsTab extends ConsumerWidget {
   Row _buildGroupTabs(WidgetRef ref) {
     return Row(
       children: List.generate(
-        GroupTab.values.length - 1,
+        GroupTab.values.length,
         (index) {
           final tab = GroupTab.values[index];
           final currentTab = ref.watch(groupControllerProvider).currentTab;

@@ -7,15 +7,16 @@ import 'package:zipbuzz/utils/constants/globals.dart';
 import 'package:zipbuzz/utils/constants/styles.dart';
 import 'package:zipbuzz/utils/widgets/custom_text_field.dart';
 
-class AddGroupMembers extends ConsumerStatefulWidget {
+class AddGroupOrCommunityMembers extends ConsumerStatefulWidget {
   static const id = '/groups/group-details/add-group-members';
-  const AddGroupMembers({super.key});
+  final bool isCommunity;
+  const AddGroupOrCommunityMembers({super.key, this.isCommunity = false});
 
   @override
-  ConsumerState<AddGroupMembers> createState() => _AddGroupMembersState();
+  ConsumerState<AddGroupOrCommunityMembers> createState() => _AddGroupMembersState();
 }
 
-class _AddGroupMembersState extends ConsumerState<AddGroupMembers> {
+class _AddGroupMembersState extends ConsumerState<AddGroupOrCommunityMembers> {
   @override
   void initState() {
     resetContacts();
